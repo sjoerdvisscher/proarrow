@@ -4,16 +4,22 @@
 --
 -- Unlike "Proarrow.Category.Instance.Free" (which is generic over an arbitrary /list/ of
 -- structures), this is hardcoded to exactly the BiCCC signature. The point of the dedicated
--- encoding is simplicity: a closed object grammar with the lowering built into 'Ob', every
--- structural morphism in one 'Term' GADT, and the type equality @tensor = product@ stated
+-- encoding is simplicity: a closed object grammar whose shapes are the objects, every
+-- structural morphism a 'Step' in a composition spine ('Term'), and the type equality @tensor = product@ stated
 -- directly (its 'Proarrow.Category.Monoidal.Monoidal' instance sets @a ** b = a && b@) -- which is
--- what makes it a comfortable foundation for tools like "Proarrow.Tools.CCC".
+-- what makes it a comfortable foundation for tools like "Proarrow.Tools.CCC". It is genuinely
+-- free: the base @k@ need only be a category; @BiCCC@ is asked of the /target/ of 'interp'.
 module Proarrow.Category.Instance.FreeBiCCC
   ( FBC (..)
   , Term (..)
+  , Step (..)
+  , step
+  , emb
   , Lower
   , interp
   , KnownFBCOb (fbcCase)
+  , withLowerOb
+  , withLowerIdOb
   , fbcOb
   ) where
 
@@ -40,6 +46,8 @@ import Proarrow.Limit.BinaryProduct
   )
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
+import Proarrow.Profunctor.Instance.Identity (Id)
+import Proarrow.Profunctor.Representable (Representable (..), withObRep, type (%))
 
 -- | Object expressions of the free BiCCC on generators @p@: base objects (@OBJ@, carrying an
 -- actual object of @k@ — the category @p@'s generating morphisms are themselves between),
@@ -53,62 +61,69 @@ type data FBC (p :: k +-> k)
   | SUM (FBC p) (FBC p)
   | EXPO (FBC p) (FBC p)
 
--- | Interpret an object expression as the object of @k@ it denotes.
-type family Lower (a :: FBC p) :: k where
-  Lower (OBJ x) = x
-  Lower UNIT = TerminalObject
-  Lower (PROD a b) = Lower a && Lower b
-  Lower ZERO = InitialObject
-  Lower (SUM a b) = Lower a || Lower b
-  Lower (EXPO a b) = Lower a ~~> Lower b
+-- | Interpret an object expression along a functor @f@ out of the base category: base objects go
+-- through @f@ and the formers are rebuilt in the target. This is the object part of 'interp', the
+-- universal property of the free BiCCC; @Lower ('Id' :: 'CAT' k)@ is an object's denotation in @k@
+-- itself, and is what 'Ob' carries (see the 'CategoryOf' instance).
+type family Lower (f :: k +-> k') (a :: FBC (p :: k +-> k)) :: k' where
+  Lower f (OBJ x) = f % x
+  Lower f UNIT = TerminalObject
+  Lower f (PROD a b) = Lower f a && Lower f b
+  Lower f ZERO = InitialObject
+  Lower f (SUM a b) = Lower f a || Lower f b
+  Lower f (EXPO a b) = Lower f a ~~> Lower f b
 
--- | A term of the free BiCCC: one constructor per operation, including composition itself.
--- No smart constructors, no normal forms — e.g. @Compose Id f@ and @f@ are different 'Term's
--- that happen to interpret to the same morphism. @p@ (and the base category @k@ it's a
--- profunctor on) is carried purely by the kind of @a@/@b@ (@FBC p@), the same way
--- "Proarrow.Category.Instance.Free"'s @Free@ carries its generating profunctor, so it doesn't
--- need to be an explicit parameter of 'Term' itself.
+-- | One operation of the free BiCCC, between the objects it acts on: a generator ('Emb') or a
+-- structural morphism, with the sub-terms of 'Pair', 'Case' and 'Curry' kept relative to the
+-- object the step acts on. @p@ (and with it the base category @k@) is carried purely by the kind
+-- of @a@\/@b@ (@FBC p@), the same way "Proarrow.Category.Instance.Free"'s @Struct@ carries its
+-- structure list.
+type Step :: CAT (FBC p)
+data Step a b where
+  Emb :: (Ob x, Ob y) => p x y -> Step (OBJ x :: FBC p) (OBJ y)
+  Terminate :: (Ob a) => Step a UNIT
+  Absurd :: (Ob a) => Step ZERO a
+  Fst :: (Ob a, Ob b) => Step (PROD a b) a
+  Snd :: (Ob a, Ob b) => Step (PROD a b) b
+  Pair :: Term c a -> Term c b -> Step c (PROD a b)
+  Inl :: (Ob a, Ob b) => Step a (SUM a b)
+  Inr :: (Ob a, Ob b) => Step b (SUM a b)
+  Case :: Term a c -> Term b c -> Step (SUM a b) c
+  Curry :: (Ob a, Ob b) => Term (PROD a b) c -> Step a (EXPO b c)
+  Apply :: (Ob a, Ob b) => Step (PROD (EXPO a b) a) b
+
+-- | A term of the free BiCCC: a right-associated composition spine of 'Step's ending in 'Nil',
+-- exactly the shape of "Proarrow.Category.Instance.Free"'s @Free@, so the category laws hold
+-- definitionally. No other equations: e.g. @fst . (f &&& g)@ and @f@ are different 'Term's that
+-- interpret to the same morphism, and equality is decided by 'interp'.
 type Term :: CAT (FBC p)
 data Term a b where
-  Id :: (Ob a) => Term a a
-  Compose :: Term b c -> Term a b -> Term a c
-  Emb :: (Ob x, Ob y) => p x y -> Term (OBJ x :: FBC p) (OBJ y)
-  Terminate :: (Ob a) => Term a UNIT
-  Absurd :: (Ob a) => Term ZERO a
-  Fst :: (Ob a, Ob b) => Term (PROD a b) a
-  Snd :: (Ob a, Ob b) => Term (PROD a b) b
-  Pair :: Term c a -> Term c b -> Term c (PROD a b)
-  Inl :: (Ob a, Ob b) => Term a (SUM a b)
-  Inr :: (Ob a, Ob b) => Term b (SUM a b)
-  Case :: Term a c -> Term b c -> Term (SUM a b) c
-  Curry :: (Ob a, Ob b) => Term (PROD a b) c -> Term a (EXPO b c)
-  Apply :: (Ob a, Ob b) => Term (PROD (EXPO a b) a) b
+  Nil :: (Ob a) => Term a a
+  Cons :: (Ob a, Ob b) => Step a b -> Term i a -> Term i b
 
-instance forall k (p :: k +-> k). (BiCCC k) => Profunctor (Term :: CAT (FBC p)) where
+-- | A single step as a term.
+step :: forall {k} {p :: k +-> k} (a :: FBC p) b. (Ob a, Ob b) => Step a b -> Term a b
+step s = Cons s Nil
+
+-- | A generator as a term.
+emb :: forall {k} {p :: k +-> k} (x :: k) y. (Ob x, Ob y) => p x y -> Term (OBJ x :: FBC p) (OBJ y)
+emb g = step (Emb g)
+
+instance forall k (p :: k +-> k). Profunctor (Term :: CAT (FBC p)) where
   dimap = dimapDefault
-  r \\ Id = r
-  r \\ Compose g f = r \\ g \\ f
-  r \\ Emb _ = r
-  r \\ Terminate = r
-  r \\ Absurd = r
-  r \\ (Fst @a @b) = withObProd @_ @(Lower a) @(Lower b) r
-  r \\ (Snd @a @b) = withObProd @_ @(Lower a) @(Lower b) r
-  r \\ (Pair @_ @a @b f g) = withObProd @_ @(Lower a) @(Lower b) r \\ f \\ g
-  r \\ (Inl @a @b) = withObCoprod @_ @(Lower a) @(Lower b) r
-  r \\ (Inr @a @b) = withObCoprod @_ @(Lower a) @(Lower b) r
-  r \\ (Case @a @_ @b f g) = withObCoprod @_ @(Lower a) @(Lower b) r \\ f \\ g
-  r \\ (Curry @_ @b @c f) = withObExp @_ @(Lower b) @(Lower c) r \\ f
-  r \\ (Apply @a @b) = withObExp @_ @(Lower a) @(Lower b) (withObProd @_ @(Lower a ~~> Lower b) @(Lower a) r)
+  r \\ Nil = r
+  r \\ Cons _ g = r \\ g
 
-instance forall k (p :: k +-> k). (BiCCC k) => Promonad (Term :: CAT (FBC p)) where
-  id = Id
-  (.) = Compose
+instance forall k (p :: k +-> k). Promonad (Term :: CAT (FBC p)) where
+  id = Nil
+  Nil . g = g
+  Cons s f . g = Cons s (f . g)
 
 -- | The bicartesian closed category freely generated over the objects of @k@ and the generators
--- @p@: arrows are 'Term's, interpreted back into @k@ by 'interp'.
-instance forall k (p :: k +-> k). (BiCCC k) => CategoryOf (FBC p) where
+-- @p@: arrows are 'Term's, interpreted into any BiCCC by 'interp'. An object is a shape.
+instance forall k (p :: k +-> k). CategoryOf (FBC p) where
   type (~>) = Term
-  type Ob (a :: FBC (p :: k +-> k)) = (Ob (Lower a :: k), KnownFBCOb a)
+  type Ob (a :: FBC (p :: k +-> k)) = KnownFBCOb a
 
 -- | Witnesses that an object expression is well-formed by case analysis on its shape.
 type KnownFBCOb :: forall {k} {p :: k +-> k}. FBC p -> Constraint
@@ -125,84 +140,83 @@ class KnownFBCOb (a :: FBC (p :: k +-> k)) where
 instance (Ob x) => KnownFBCOb (OBJ x :: FBC p) where
   fbcCase o _ _ _ _ _ = o
 
-instance forall k (p :: k +-> k). (BiCCC k) => KnownFBCOb (UNIT :: FBC p) where
+instance forall k (p :: k +-> k). KnownFBCOb (UNIT :: FBC p) where
   fbcCase _ u _ _ _ _ = u
 
-instance forall k (p :: k +-> k). (BiCCC k) => KnownFBCOb (ZERO :: FBC p) where
+instance forall k (p :: k +-> k). KnownFBCOb (ZERO :: FBC p) where
   fbcCase _ _ _ z _ _ = z
 
-instance forall k (p :: k +-> k) a b. (BiCCC k, KnownFBCOb (a :: FBC p), KnownFBCOb b) => KnownFBCOb (PROD a b) where
-  fbcCase _ _ prod _ _ _ = withLowerOb @a (withLowerOb @b prod)
+instance forall k (p :: k +-> k) a b. (KnownFBCOb (a :: FBC p), KnownFBCOb b) => KnownFBCOb (PROD a b) where
+  fbcCase _ _ prod _ _ _ = prod
 
-instance forall k (p :: k +-> k) a b. (BiCCC k, KnownFBCOb (a :: FBC p), KnownFBCOb b) => KnownFBCOb (SUM a b) where
-  fbcCase _ _ _ _ sm _ = withLowerOb @a (withLowerOb @b sm)
+instance forall k (p :: k +-> k) a b. (KnownFBCOb (a :: FBC p), KnownFBCOb b) => KnownFBCOb (SUM a b) where
+  fbcCase _ _ _ _ sm _ = sm
 
-instance forall k (p :: k +-> k) a b. (BiCCC k, KnownFBCOb (a :: FBC p), KnownFBCOb b) => KnownFBCOb (EXPO a b) where
-  fbcCase _ _ _ _ _ ex = withLowerOb @a (withLowerOb @b ex)
+instance forall k (p :: k +-> k) a b. (KnownFBCOb (a :: FBC p), KnownFBCOb b) => KnownFBCOb (EXPO a b) where
+  fbcCase _ _ _ _ _ ex = ex
 
--- | Recover 'Ob' of the /interpreted/ shape (needed to call @k@'s own 'withObProd'\/
--- 'withObCoprod'\/'withObExp') from only the /leaves'/ 'Ob', by case analysis via 'fbcCase' —
--- deliberately weaker than requiring the already-bundled, full 'Ob' of the sub-shapes, since
--- that would make it impossible to ever construct in the first place (needing 'Ob' of a
--- compound shape to construct 'Ob' of a bigger compound shape containing it).
-withLowerOb :: forall {k} {p :: k +-> k} a r. (BiCCC k, KnownFBCOb (a :: FBC p)) => ((Ob (Lower a :: k)) => r) -> r
+-- | Recover 'Ob' of the shape interpreted along @f@ into a BiCCC @k'@ (needed to call the
+-- target's own 'withObProd'\/'withObCoprod'\/'withObExp'), by case analysis via 'fbcCase'. This is
+-- where @BiCCC@ enters: the free category itself asks nothing of @k@.
+withLowerOb
+  :: forall {k} {k'} {p :: k +-> k} (f :: k +-> k') a r
+   . (BiCCC k', KnownFBCOb (a :: FBC p), Representable f)
+  => ((Ob (Lower f a)) => r) -> r
 withLowerOb r =
   fbcCase @a
+    (\ @x -> withObRep @f @x r)
     r
+    (\ @x @y -> withLowerOb @f @x (withLowerOb @f @y (withObProd @k' @(Lower f x) @(Lower f y) r)))
     r
-    (\ @x @y -> withObProd @k @(Lower x) @(Lower y) r)
-    r
-    (\ @x @y -> withObCoprod @k @(Lower x) @(Lower y) r)
-    (\ @x @y -> withObExp @k @(Lower x) @(Lower y) r)
+    (\ @x @y -> withLowerOb @f @x (withLowerOb @f @y (withObCoprod @k' @(Lower f x) @(Lower f y) r)))
+    (\ @x @y -> withLowerOb @f @x (withLowerOb @f @y (withObExp @k' @(Lower f x) @(Lower f y) r)))
 
--- | The identity morphism on @a@, recovered by case analysis via 'fbcCase' — the only place
--- 'KnownFBCOb' is needed once it's bundled into 'Ob' (see 'CategoryOf' above): everywhere else,
--- an 'Ob' proof in hand is already enough, and 'Proarrow.Object.obj' gives the identity directly.
-fbcOb :: forall {k} {p :: k +-> k} a. (BiCCC k, KnownFBCOb (a :: FBC p)) => Term a a
-fbcOb =
-  fbcCase @a
-    Id
-    Id
-    (\ @x @y -> withObProd @(FBC p) @x @y Id)
-    Id
-    (\ @x @y -> withObCoprod @(FBC p) @x @y Id)
-    (\ @x @y -> withObExp @(FBC p) @x @y Id)
+-- | 'withLowerOb' at the identity: the 'Ob' of a shape's denotation in @k@ itself, when @k@ is a
+-- BiCCC.
+withLowerIdOb
+  :: forall {k} {p :: k +-> k} a r. (BiCCC k, KnownFBCOb (a :: FBC p)) => ((Ob (Lower (Id :: CAT k) a)) => r) -> r
+withLowerIdOb = withLowerOb @(Id :: CAT k) @a
 
-instance forall k (p :: k +-> k). (BiCCC k) => HasTerminalObject (FBC p) where
+-- | The identity morphism on a shape. A shape /is/ an object ('CategoryOf' above), so this is
+-- 'Id'; it is kept as the name the DSL in "Proarrow.Tools.CCC" reaches for.
+fbcOb :: forall {k} {p :: k +-> k} a. (KnownFBCOb (a :: FBC p)) => Term a a
+fbcOb = Nil
+
+instance forall k (p :: k +-> k). HasTerminalObject (FBC p) where
   type TerminalObject = UNIT
-  terminate = Terminate
-instance forall k (p :: k +-> k). (BiCCC k) => HasInitialObject (FBC p) where
+  terminate = step Terminate
+instance forall k (p :: k +-> k). HasInitialObject (FBC p) where
   type InitialObject = ZERO
-  initiate = Absurd
+  initiate = step Absurd
 
-instance forall k (p :: k +-> k). (BiCCC k) => HasBinaryProducts (FBC p) where
+instance forall k (p :: k +-> k). HasBinaryProducts (FBC p) where
   type a && b = PROD a b
-  withObProd @a @b r = withObProd @k @(Lower a) @(Lower b) r
-  fst = Fst
-  snd = Snd
-  f &&& g = Pair f g \\ f
+  withObProd r = r
+  fst = step Fst
+  snd = step Snd
+  f &&& g = step (Pair f g) \\ f \\ g
 
-instance forall k (p :: k +-> k). (BiCCC k) => HasBinaryCoproducts (FBC p) where
+instance forall k (p :: k +-> k). HasBinaryCoproducts (FBC p) where
   type a || b = SUM a b
-  withObCoprod @a @b r = withObCoprod @k @(Lower a) @(Lower b) r
-  lft = Inl
-  rgt = Inr
-  f ||| g = Case f g \\ f
+  withObCoprod r = r
+  lft = step Inl
+  rgt = step Inr
+  f ||| g = step (Case f g) \\ f \\ g
 
-instance forall k (p :: k +-> k). (BiCCC k) => MonoidalProfunctor (Term :: CAT (FBC p)) where
+instance forall k (p :: k +-> k). MonoidalProfunctor (Term :: CAT (FBC p)) where
   one = id
   (**) = (***)
 
 -- | The free bicartesian closed category is cartesian, so every object is a (natural) comonoid:
 -- the diagonal and the terminal map.
-instance forall k (p :: k +-> k) (a :: FBC p). (BiCCC k, Ob a) => Comonoid a where
+instance forall k (p :: k +-> k) (a :: FBC p). (Ob a) => Comonoid a where
   counit = terminate
   comult = diag
 
-instance forall k (p :: k +-> k) (a :: FBC p). (BiCCC k, Ob a) => CocommutativeComonoid a
-instance forall k (p :: k +-> k). (BiCCC k) => CopyDiscard (FBC p)
+instance forall k (p :: k +-> k) (a :: FBC p). (Ob a) => CocommutativeComonoid a
+instance forall k (p :: k +-> k). CopyDiscard (FBC p)
 
-instance forall k (p :: k +-> k). (BiCCC k) => Monoidal (FBC p) where
+instance forall k (p :: k +-> k). Monoidal (FBC p) where
   type a ** b = a && b
   type Unit = TerminalObject
   withOb2 @a @b = withObProd @_ @a @b
@@ -212,34 +226,48 @@ instance forall k (p :: k +-> k). (BiCCC k) => Monoidal (FBC p) where
   rightUnitorInv = rightUnitorProdInv
   associator @a @b @c = associatorProd @a @b @c
   associatorInv @a @b @c = associatorProdInv @a @b @c
-instance forall k (p :: k +-> k). (BiCCC k) => SymMonoidal (FBC p) where
+instance forall k (p :: k +-> k). SymMonoidal (FBC p) where
   swap @a @b = swapProd @a @b
 
-instance forall k (p :: k +-> k). (BiCCC k) => Closed (FBC p) where
+instance forall k (p :: k +-> k). Closed (FBC p) where
   type a ~~> b = EXPO a b
-  withObExp @a @b r = withObExp @k @(Lower a) @(Lower b) r
-  curry = Curry
-  apply = Apply
+  withObExp r = r
+  curry f = step (Curry f) \\ f
+  apply = step Apply
 
--- | Interpret a 'Term' as the morphism of @k@ it denotes, given an interpretation of the
--- generators, provided @k@ is itself a BiCCC. This is the one place the meaning of a 'Term' is
--- pinned down; everything else (including equality) is defined in terms of it.
+-- | Interpret a 'Term' along a functor @f@ into any BiCCC @k'@, given an interpretation of the
+-- generators between the images of their objects -- the universal property of the free BiCCC.
+-- At @f = 'Id'@ this evaluates the term in the base category @k@ itself. This is the one place the
+-- meaning of a 'Term' is pinned down; everything else (including equality) is defined in terms
+-- of it.
 interp
-  :: forall {k} (p :: k +-> k) src tgt
-   . (BiCCC k)
-  => (forall x y. p x y -> x ~> y)
+  :: forall {k} {k'} (p :: k +-> k) (f :: k +-> k') src tgt
+   . (BiCCC k', Representable f)
+  => (forall x y. (Ob x, Ob y) => p x y -> f % x ~> f % y)
   -> Term (src :: FBC p) tgt
-  -> Lower src ~> Lower tgt
-interp _ Id = id
-interp gn (Compose g f) = interp gn g . interp gn f
-interp gn (Emb g) = gn g
-interp _ Terminate = terminate
-interp _ Absurd = initiate
-interp _ (Fst @a @b) = fst @_ @(Lower a) @(Lower b)
-interp _ (Snd @a @b) = snd @_ @(Lower a) @(Lower b)
-interp gn (Pair f g) = interp gn f &&& interp gn g
-interp _ (Inl @a @b) = lft @_ @(Lower a) @(Lower b)
-interp _ (Inr @a @b) = rgt @_ @(Lower a) @(Lower b)
-interp gn (Case f g) = interp gn f ||| interp gn g
-interp gn (Curry @a @b @c f) = curry @_ @(Lower a) @(Lower b) @(Lower c) (interp gn f)
-interp _ (Apply @a @b) = apply @_ @(Lower a) @(Lower b)
+  -> Lower f src ~> Lower f tgt
+interp gn = go
+  where
+    go :: forall (x :: FBC p) y. Term x y -> Lower f x ~> Lower f y
+    go (Nil @a) = withLowerOb @f @a id
+    go (Cons s g) = interpStep @p @f gn s . go g
+
+-- | Interpret one 'Step'; the sub-terms of 'Pair', 'Case' and 'Curry' go through 'interp'.
+interpStep
+  :: forall {k} {k'} (p :: k +-> k) (f :: k +-> k') s t
+   . (BiCCC k', Representable f)
+  => (forall x y. (Ob x, Ob y) => p x y -> f % x ~> f % y)
+  -> Step (s :: FBC p) t
+  -> Lower f s ~> Lower f t
+interpStep gn (Emb g) = gn g
+interpStep _ (Terminate @a) = withLowerOb @f @a (terminate @k' @(Lower f a))
+interpStep _ (Absurd @a) = withLowerOb @f @a (initiate @k' @(Lower f a))
+interpStep _ (Fst @a @b) = withLowerOb @f @a (withLowerOb @f @b (fst @k' @(Lower f a) @(Lower f b)))
+interpStep _ (Snd @a @b) = withLowerOb @f @a (withLowerOb @f @b (snd @k' @(Lower f a) @(Lower f b)))
+interpStep gn (Pair l r) = interp @p @f gn l &&& interp @p @f gn r
+interpStep _ (Inl @a @b) = withLowerOb @f @a (withLowerOb @f @b (lft @k' @(Lower f a) @(Lower f b)))
+interpStep _ (Inr @a @b) = withLowerOb @f @a (withLowerOb @f @b (rgt @k' @(Lower f a) @(Lower f b)))
+interpStep gn (Case l r) = interp @p @f gn l ||| interp @p @f gn r
+interpStep gn (Curry @a @b @c h) =
+  withLowerOb @f @a (withLowerOb @f @b (curry @k' @(Lower f a) @(Lower f b) @(Lower f c) (interp @p @f gn h)))
+interpStep _ (Apply @a @b) = withLowerOb @f @a (withLowerOb @f @b (apply @k' @(Lower f a) @(Lower f b)))

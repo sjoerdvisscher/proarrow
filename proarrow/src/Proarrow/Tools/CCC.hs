@@ -33,7 +33,7 @@ module Proarrow.Tools.CCC
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb, Lower, Term (Emb), fbcOb, interp)
+import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb, Lower, Term, emb, fbcOb, interp)
 import Proarrow.Category.Monoidal.Cartesian (BiCCC)
 import Proarrow.Category.Monoidal.Closed (Closed (..), lower)
 import Proarrow.Category.Monoidal.Distributive (distLProd)
@@ -77,11 +77,11 @@ type family Mul (i :: Ctx k) :: FBC (Id :: CAT k) where
 newtype Free (i :: Ctx k) (a :: FBC (Id :: CAT k)) = MkFree {unFree :: Term (Mul i) a}
 
 type KnownCtx :: forall {k}. Ctx k -> Constraint
-class (BiCCC k) => KnownCtx (i :: Ctx k) where
+class KnownCtx (i :: Ctx k) where
   ctxOb :: Obj (Mul i)
   pushOb :: forall a. (KnownFBCOb a) => Obj (Mul (a ': i))
 
-instance (BiCCC k) => KnownCtx ('[] :: Ctx k) where
+instance KnownCtx ('[] :: Ctx k) where
   ctxOb = id
   pushOb @a = withObProd @(FBC (Id :: CAT k)) @UNIT @a id \\ fbcOb @a
 
@@ -128,21 +128,21 @@ lam f = MkFree (curry @(FBC (Id :: CAT k)) @(Mul i) @a @b (unFree (f xa)) \\ ctx
 -- | Function application.
 ($)
   :: forall {k} a b i
-   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i (EXPO a b) -> Free i a -> Free i b
+   . (KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i (EXPO a b) -> Free i a -> Free i b
 MkFree f $ MkFree g = MkFree (apply @(FBC (Id :: CAT k)) @a @b . (f &&& g) \\ fbcOb @a \\ fbcOb @b)
 
 -- | Embed a morphism of the target category as a term between embedded objects.
-lift :: forall {k} a b i. (BiCCC k, Ob (a :: k), Ob b) => a ~> b -> Free i (OBJ a) -> Free i (OBJ b)
-lift f (MkFree g) = MkFree (Emb (Id f) . g)
+lift :: forall {k} a b i. (Ob (a :: k), Ob b) => a ~> b -> Free i (OBJ a) -> Free i (OBJ b)
+lift f (MkFree g) = MkFree (emb (Id f) . g)
 
 fstSnd
   :: forall {k} a b i
-   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i (PROD a b) -> (Free i a, Free i b)
+   . (KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i (PROD a b) -> (Free i a, Free i b)
 fstSnd (MkFree f) =
   (MkFree (fst @(FBC (Id :: CAT k)) @a @b . f), MkFree (snd @(FBC (Id :: CAT k)) @a @b . f)) \\ fbcOb @a \\ fbcOb @b
 
 pattern (:&)
-  :: (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i a -> Free i b -> Free i (PROD a b)
+  :: (KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i a -> Free i b -> Free i (PROD a b)
 pattern x :& y <- (fstSnd -> (x, y))
   where
     x :& y = MkFree (unFree x &&& unFree y)
@@ -150,10 +150,10 @@ pattern x :& y <- (fstSnd -> (x, y))
 {-# COMPLETE (:&) #-}
 
 -- | Inject as the left\/right branch of a sum.
-lft :: forall {k} a b i. (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i a -> Free i (SUM a b)
+lft :: forall {k} a b i. (KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i a -> Free i (SUM a b)
 lft (MkFree f) = MkFree (BC.lft @(FBC (Id :: CAT k)) @a @b . f \\ fbcOb @a \\ fbcOb @b)
 
-rgt :: forall {k} a b i. (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i b -> Free i (SUM a b)
+rgt :: forall {k} a b i. (KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i b -> Free i (SUM a b)
 rgt (MkFree f) = MkFree (BC.rgt @(FBC (Id :: CAT k)) @a @b . f \\ fbcOb @a \\ fbcOb @b)
 
 -- | Uncurry a function term into the body of a 'lam' binding its argument.
@@ -189,8 +189,9 @@ either f g m = caseT m (uncurryF f) (uncurryF g)
 -- by unwrapping 'Id' — the free category was built over @k@'s own hom-sets directly).
 toCCC
   :: forall {k} a b
-   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free '[] (EXPO a b) -> Lower a ~> Lower b
-toCCC (MkFree f) = interp unId (lower @a @b f) \\ fbcOb @a \\ fbcOb @b
+   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b)
+  => Free '[] (EXPO a b) -> Lower (Id :: CAT k) a ~> Lower (Id :: CAT k) b
+toCCC (MkFree f) = interp @_ @(Id :: CAT k) unId (lower @a @b f) \\ fbcOb @a \\ fbcOb @b
 
 -- $
 -- The examples below double as a regression test for the whole front end: each one exercises

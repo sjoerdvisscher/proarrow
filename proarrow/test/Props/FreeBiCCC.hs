@@ -4,13 +4,27 @@
 module Props.FreeBiCCC where
 
 import Control.Applicative (Alternative (..))
+import Control.Monad (unless)
 import Data.Kind (Constraint, Type)
 import Data.Type.Equality ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (fst, id, snd, (.))
 
-import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb (fbcCase), Lower, Term (..), interp)
-import Proarrow.Core (CAT, CategoryOf (..))
+import Proarrow.Category.Instance.FreeBiCCC
+  ( FBC (..)
+  , KnownFBCOb (fbcCase)
+  , Lower
+  , Step (..)
+  , Term (..)
+  , emb
+  , interp
+  , step
+  )
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..))
+import Proarrow.Functor (Prelude (..))
+import Proarrow.Profunctor.Instance.Identity (Id)
+import Proarrow.Profunctor.Instance.Star (Star)
 
 import Proarrow.Testing
   ( GenTotal (..)
@@ -46,7 +60,20 @@ test =
     , propCartesian @(FBC Prim) (\r -> r) (\r -> r)
     , propBinaryCoproducts @(FBC Prim) (\r -> r)
     , propClosed @(FBC Prim) (\r -> r) (\r -> r)
+    , testProperty "interp along a non-identity functor (Star Maybe)" $ do
+        unless (interpMaybe (emb NotP) (Prelude (Just True)) == Prelude (Just False)) (testFailed "Emb")
+        unless
+          (interpMaybe (step (Pair Nil (emb NotP))) (Prelude (Just True)) == (Prelude (Just True), Prelude (Just False)))
+          (testFailed "Pair")
+        unless (interpMaybe (Cons Snd (step (Pair Nil (emb NotP)))) (Prelude Nothing) == Prelude Nothing) (testFailed "Cons")
     ]
+
+-- | The universal property at a functor other than the identity: interpret terms along
+-- @'Star' ('Prelude' 'Maybe')@, so base objects lower to @Maybe x@ while the formers are rebuilt in
+-- @Type@ -- e.g. @PROD (OBJ Bool) (OBJ Bool)@ lowers to @(Maybe Bool, Maybe Bool)@, not to
+-- @Maybe (Bool, Bool)@. A compile-time check that 'interp' is not tied to @f = 'Id'@.
+interpMaybe :: Term (a :: FBC Prim) b -> Lower (Star (Prelude Maybe)) a -> Lower (Star (Prelude Maybe)) b
+interpMaybe = interp @Prim @(Star (Prelude Maybe)) (\NotP (Prelude m) -> Prelude (fmap not m))
 
 -- | A shallow singleton witnessing only the /top-level/ shape of an object expression — one
 -- level of case analysis, exactly like 'fbcCase' itself, rather than a deep tree mirroring the
@@ -136,80 +163,83 @@ genTerm fuel =
       | fuel <= 0 = empty
       | otherwise = oneOfTotal [prodB, sumSrcB, sumTgtB, expoB, composeB]
     idB = case eqSFBC sa sb of
-      Just Refl -> pure Id
+      Just Refl -> pure Nil
       Nothing -> empty
     terminateB = case sb of
-      SUnit -> pure Terminate
+      SUnit -> pure (step Terminate)
       _ -> empty
     absurdB = case sa of
-      SZero -> pure Absurd
+      SZero -> pure (step Absurd)
       _ -> empty
     prodB = case sb of
-      SProd @b1 @b2 -> Pair <$> genTerm @a @b1 (fuel - 1) <*> genTerm @a @b2 (fuel - 1)
+      SProd @b1 @b2 -> (\l r -> step (Pair l r)) <$> genTerm @a @b1 (fuel - 1) <*> genTerm @a @b2 (fuel - 1)
       _ -> empty
     sumSrcB = case sa of
-      SSum @a1 @a2 -> Case <$> genTerm @a1 @b (fuel - 1) <*> genTerm @a2 @b (fuel - 1)
+      SSum @a1 @a2 -> (\l r -> step (Case l r)) <$> genTerm @a1 @b (fuel - 1) <*> genTerm @a2 @b (fuel - 1)
       _ -> empty
     sumTgtB = case sb of
-      SSum @b1 @b2 -> oneOfTotal [Compose Inl <$> genTerm @a @b1 (fuel - 1), Compose Inr <$> genTerm @a @b2 (fuel - 1)]
+      SSum @b1 @b2 -> oneOfTotal [Cons Inl <$> genTerm @a @b1 (fuel - 1), Cons Inr <$> genTerm @a @b2 (fuel - 1)]
       _ -> empty
     expoB = case sb of
-      SExpo @b1 @b2 -> Curry <$> genTerm @(PROD a b1) @b2 (fuel - 1)
+      SExpo @b1 @b2 -> step . Curry <$> genTerm @(PROD a b1) @b2 (fuel - 1)
       _ -> empty
     -- Route through every palette shape as a possible intermediate object. This is what lets
     -- the generator ever produce e.g. an 'Apply', or compose two embedded generators.
     composeB =
       oneOfTotal
-        [ Compose <$> genTerm @mid @b (fuel - 1) <*> genTerm @a @mid (fuel - 1)
+        [ (.) <$> genTerm @mid @b (fuel - 1) <*> genTerm @a @mid (fuel - 1)
         | Some @mid <- palette
         ]
     -- a ~ PROD (EXPO ea1 ea2) r, with r ~ ea1 and b ~ ea2.
     applyB = case sa of
       SProd @sl @sr -> case theFBC @sl of
         SExpo @sea1 @sea2 -> case (eqSFBC (theFBC @sr) (theFBC @sea1), eqSFBC sb (theFBC @sea2)) of
-          (Just Refl, Just Refl) -> pure Apply
+          (Just Refl, Just Refl) -> pure (step Apply)
           _ -> empty
         _ -> empty
       _ -> empty
     fstSndB = case sa of
       SProd @sa1 @sa2 ->
         oneOfTotal
-          [ case eqSFBC sb (theFBC @sa1) of Just Refl -> pure Fst; Nothing -> empty
-          , case eqSFBC sb (theFBC @sa2) of Just Refl -> pure Snd; Nothing -> empty
+          [ case eqSFBC sb (theFBC @sa1) of Just Refl -> pure (step Fst); Nothing -> empty
+          , case eqSFBC sb (theFBC @sa2) of Just Refl -> pure (step Snd); Nothing -> empty
           ]
       _ -> empty
     embB = case (sa, sb) of
       (SObj @x, SObj @y) -> case (eqOb @Type @x @Bool, eqOb @Type @y @Bool) of
-        (Just Refl, Just Refl) -> pure (Emb NotP)
+        (Just Refl, Just Refl) -> pure (emb NotP)
         _ -> empty
       _ -> empty
 
 instance Testable (FBC Prim) where
-  type TestOb a = (KnownFBCOb a, FBCTestOb a, TestOb (Lower a))
+  type TestOb a = (KnownFBCOb a, FBCTestOb a, TestOb (Lower (Id :: CAT Type) a))
   showOb @a = showSFBC (theFBC @a)
   eqOb @a @b = eqSFBC (theFBC @a) (theFBC @b)
   genSome = genSomeDef @Palette
 
 -- | Render a 'Term' as the operator expression it's built from, e.g. @"curry (fst . not)"@.
 showTerm :: Term (a :: FBC Prim) b -> String
-showTerm Id = "id"
-showTerm (Compose g f) = showTerm g ++ " . " ++ showTerm f
-showTerm (Emb NotP) = "not"
-showTerm Terminate = "terminate"
-showTerm Absurd = "absurd"
-showTerm Fst = "fst"
-showTerm Snd = "snd"
-showTerm (Pair f g) = "(" ++ showTerm f ++ " &&& " ++ showTerm g ++ ")"
-showTerm Inl = "inl"
-showTerm Inr = "inr"
-showTerm (Case f g) = "(" ++ showTerm f ++ " ||| " ++ showTerm g ++ ")"
-showTerm (Curry f) = "curry (" ++ showTerm f ++ ")"
-showTerm Apply = "apply"
+showTerm Nil = "id"
+showTerm (Cons s Nil) = showStep s
+showTerm (Cons s g) = showStep s ++ " . " ++ showTerm g
+
+showStep :: Step (a :: FBC Prim) b -> String
+showStep (Emb NotP) = "not"
+showStep Terminate = "terminate"
+showStep Absurd = "absurd"
+showStep Fst = "fst"
+showStep Snd = "snd"
+showStep (Pair f g) = "(" ++ showTerm f ++ " &&& " ++ showTerm g ++ ")"
+showStep Inl = "inl"
+showStep Inr = "inr"
+showStep (Case f g) = "(" ++ showTerm f ++ " ||| " ++ showTerm g ++ ")"
+showStep (Curry f) = "curry (" ++ showTerm f ++ ")"
+showStep Apply = "apply"
 
 -- | Two terms are equal iff they denote the same function once interpreted into 'Type' —
 -- decided semantically (by sampling, via 'eqHask'), not by a symbolic decision procedure.
 instance (TestOb a, TestOb b) => TestingEqShow (Term (a :: FBC Prim) b) where
-  eqP l r = eqHask (interp interpPrim l) (interp interpPrim r)
+  eqP l r = eqHask (interp @_ @(Id :: CAT Type) interpPrim l) (interp @_ @(Id :: CAT Type) interpPrim r)
   showP = showTerm
 
 instance (TestOb a, TestOb b) => TestableType (Term (a :: FBC Prim) b) where
