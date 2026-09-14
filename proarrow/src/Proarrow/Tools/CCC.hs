@@ -34,7 +34,8 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb, Lower, Term (Emb), fbcOb, interp)
-import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..), lower)
+import Proarrow.Category.Monoidal.Cartesian (BiCCC)
+import Proarrow.Category.Monoidal.Closed (Closed (..), lower)
 import Proarrow.Category.Monoidal.Distributive (distLProd)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts ((|||)), type (||))
 import Proarrow.Colimit.BinaryCoproduct qualified as BC

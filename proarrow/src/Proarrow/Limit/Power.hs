@@ -14,9 +14,10 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (SymMonoidal (..), leftUnitorInvWith)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian)
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject, TerminalObject, terminate)
 import Proarrow.Profunctor.Representable (Representable (..))
 

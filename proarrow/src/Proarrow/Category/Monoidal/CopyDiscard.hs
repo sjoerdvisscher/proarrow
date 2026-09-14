@@ -7,8 +7,9 @@
 -- "Proarrow.Category.Instance.Mat" and "Proarrow.Category.Instance.FinRel". Concretely it is a
 -- __cocommutative comonoid supply__: every object is a 'Proarrow.Monoid.CocommutativeComonoid'
 -- (the @'Supplies' 'CocommutativeComonoid' k@ superclass) and @copy@\/@discard@ default to its
--- comult\/counit. Unlike 'Proarrow.Limit.BinaryProduct.Cartesian'
--- the comonoids need not be /natural/, so morphisms may duplicate\/delete resources non-uniformly.
+-- comult\/counit. Unlike in 'Proarrow.Category.Monoidal.Cartesian.Cartesian' (which has this class as a
+-- superclass, by Fox's theorem) the comonoids need not be /natural/, so morphisms may
+-- duplicate\/delete resources non-uniformly.
 module Proarrow.Category.Monoidal.CopyDiscard where
 
 import Data.Kind (Type)
@@ -19,13 +20,16 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
+  , Tensor
   , leftUnitorWith
   , rightUnitorWith
   )
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), listCase)
-import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj)
-import Proarrow.Limit.BinaryProduct (HasProducts, PROD (..))
+import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Supplies)
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Representable (Rep (..))
 
 class (SymMonoidal k, Supplies CocommutativeComonoid k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a
@@ -33,13 +37,17 @@ class (SymMonoidal k, Supplies CocommutativeComonoid k) => CopyDiscard k where
   discard :: (Ob (a :: k)) => a ~> Unit
   discard = counit
 
+-- | The constant functor ignores the acting object: discard it. Only copying\/discarding is
+-- needed, so this works in biproduct categories as well as cartesian ones.
+instance (CopyDiscard k, Ob r) => Strong Tensor (Rep (Constant r) :: k +-> k) where
+  act @a (Rep @y p) = withOb2 @k @a @y (Rep (p . leftUnitorWith (discard @k @a))) \\ p
+
 copyS :: (CopyDiscard k, Ob (a :: k)) => '[a] ~> '[a, a]
 copyS = Str copy
 
 discardS :: (CopyDiscard k, Ob (a :: k)) => '[a] ~> '[]
 discardS = Str discard
 
-instance (HasProducts k) => CopyDiscard (PROD k)
 instance CopyDiscard Type
 instance CopyDiscard ()
 

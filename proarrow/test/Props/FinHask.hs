@@ -18,9 +18,6 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..))
 import Proarrow.Core (CategoryOf (..), UN)
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
-import Test.Falsify.Generator (minimalValue)
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -32,6 +29,9 @@ import Proarrow.Testing
   , optGen
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
+import Test.Falsify.Generator (minimalValue)
 
 test :: TestTree
 test =
@@ -41,6 +41,7 @@ test =
     , propTerminalObject @FINHASK
     , propInitialObject @FINHASK
     , propBinaryProducts @FINHASK (\r -> r)
+    , propCartesian @FINHASK (\r -> r) (\r -> r)
     , propBinaryCoproducts @FINHASK (\r -> r)
     , propDistributive @FINHASK (\r -> r) (\r -> r)
     , propClosed @FINHASK (\r -> r) (\r -> r)

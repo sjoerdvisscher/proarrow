@@ -16,10 +16,9 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Struct (Par), SymMonoidal (..), type (**!))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), concatMany, obj1, singleton, splitMany, (==))
-import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Limit.BinaryProduct (Cartesian, diag)
+import Proarrow.Limit.BinaryProduct ()
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
@@ -105,20 +104,6 @@ data family ExpRep :: (OPPOSITE k, k) +-> k
 instance (Closed k) => FunctorForRep (ExpRep :: (OPPOSITE k, k) +-> k) where
   type ExpRep @ '(OP a, b) = a ~~> b
   fmap (Op f :**: g) = g ^^^ f
-
-class (Cartesian k, Closed k) => CCC k
-instance (Cartesian k, Closed k) => CCC k
-
-class (CCC k, HasCoproducts k) => BiCCC k
-instance (CCC k, HasCoproducts k) => BiCCC k
-
-ap
-  :: forall {j} {k} y a x p
-   . (Closed j, Cartesian k, MonoidalProfunctor (p :: j +-> k), Ob y)
-  => p a (x ~~> y)
-  -> p a x
-  -> p a y
-ap pf px = dimap diag (apply @j @x @y) (pf ** px) \\ px
 
 data family Not (r :: k) :: OPPOSITE k +-> k
 instance (Closed k, Ob r) => FunctorForRep (Not (r :: k)) where

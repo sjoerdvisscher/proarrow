@@ -2,7 +2,7 @@
 --
 -- In @LINEAR@ the monoidal tensor @('**')@ is @(,)@ while the categorical product @('&&')@ is
 -- @With@ (linear logic's additive conjunction), so @tensor ≠ product@ and @LINEAR@ is /not/
--- 'Proarrow.Limit.BinaryProduct.Cartesian'. These optics therefore only build and run because the
+-- 'Proarrow.Category.Monoidal.Cartesian.Cartesian'. These optics therefore only build and run because the
 -- optic constraints were loosened off @Cartesian@: 'over' on a 'Setter' needs no @Bicartesian@,
 -- and a lens's @'Proarrow.Profunctor.Representable.Rep' ('Proarrow.Limit.BinaryProduct.Product' s)@
 -- witness needs only 'Proarrow.Limit.BinaryProduct.HasBinaryProducts', not @tensor = product@.

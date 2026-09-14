@@ -21,7 +21,9 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..))
+import Proarrow.Category.Monoidal.Cartesian (BiCCC)
+import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, type (+->))
@@ -29,6 +31,7 @@ import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
+  , diag
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
@@ -36,6 +39,7 @@ import Proarrow.Limit.BinaryProduct
   , swapProd
   )
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 
 -- | Object expressions of the free BiCCC on generators @p@: base objects (@OBJ@, carrying an
 -- actual object of @k@ — the category @p@'s generating morphisms are themselves between),
@@ -188,6 +192,16 @@ instance forall k (p :: k +-> k). (BiCCC k) => HasBinaryCoproducts (FBC p) where
 instance forall k (p :: k +-> k). (BiCCC k) => MonoidalProfunctor (Term :: CAT (FBC p)) where
   one = id
   (**) = (***)
+
+-- | The free bicartesian closed category is cartesian, so every object is a (natural) comonoid:
+-- the diagonal and the terminal map.
+instance forall k (p :: k +-> k) (a :: FBC p). (BiCCC k, Ob a) => Comonoid a where
+  counit = terminate
+  comult = diag
+
+instance forall k (p :: k +-> k) (a :: FBC p). (BiCCC k, Ob a) => CocommutativeComonoid a
+instance forall k (p :: k +-> k). (BiCCC k) => CopyDiscard (FBC p)
+
 instance forall k (p :: k +-> k). (BiCCC k) => Monoidal (FBC p) where
   type a ** b = a && b
   type Unit = TerminalObject

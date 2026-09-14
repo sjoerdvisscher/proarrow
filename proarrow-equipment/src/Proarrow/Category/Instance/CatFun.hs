@@ -15,6 +15,7 @@ import Proarrow.Category.Instance.Sub qualified as F
 import Proarrow.Category.Instance.Zero (Absurd, VOID)
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -24,12 +25,14 @@ import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
+  , diag
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
   , rightUnitorProdInv
   )
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withObRep)
@@ -86,6 +89,16 @@ data family Apply :: (F.FUN j k, j) +-> k
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (Apply :: (F.FUN j k, j) +-> k) where
   type Apply @ '(f, x) = UN F.SUB f % x
   fmap (n :**: f) = n F.! f
+
+-- | The category of categories is cartesian, so every category is a (natural) comonoid: the
+-- diagonal functor and the functor to the terminal category.
+instance (Ob (c :: BI FUNK)) => Comonoid c where
+  counit = terminate
+  comult = diag
+
+instance (Ob (c :: BI FUNK)) => CocommutativeComonoid c
+instance CopyDiscard (BI FUNK)
+
 instance Closed (BI FUNK) where
   type B j ~~> B k = B (F.FUN j k)
   withObExp r = r

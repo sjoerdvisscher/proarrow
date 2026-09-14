@@ -23,12 +23,12 @@ import Proarrow.Category.Monoidal
   , swapInner
   , unitObj
   )
+import Proarrow.Category.Monoidal.Cartesian (Cartesian)
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..))
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, src, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Limit.BinaryProduct (Cartesian)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition (compComp, (:.:) (..))

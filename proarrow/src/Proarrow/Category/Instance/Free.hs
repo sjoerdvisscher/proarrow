@@ -16,7 +16,7 @@
 -- expecting normal forms.
 --
 -- The same applies one level up: classes imposing structural /type equalities/ (like
--- 'Proarrow.Limit.BinaryProduct.Cartesian'\'s @tensor = product@) do not hold on the free category
+-- 'Proarrow.Category.Monoidal.Cartesian.Cartesian'\'s @tensor = product@) do not hold on the free category
 -- as currently encoded -- each class's carrier is fixed, e.g. @**@ is always the formal tensor --
 -- and cannot be listed in @cs@. Sometimes re-choosing structure with a kind wrapper recovers the
 -- instance: @'Proarrow.Limit.BinaryProduct.PROD' ('FREE' '[HasTerminalObject, HasBinaryProducts] p)@

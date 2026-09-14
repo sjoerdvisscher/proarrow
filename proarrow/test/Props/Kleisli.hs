@@ -47,6 +47,7 @@ test =
         , propTerminalObject @(KLEISLI (Cont Void))
         , propInitialObject @(KLEISLI (Cont Void))
         , propBinaryProducts @(KLEISLI (Cont Void)) (\r -> r)
+        , propCartesian @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
         , propBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
         , propClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
         ]
@@ -56,6 +57,7 @@ test =
         , propTerminalObject @(KLEISLI (Costar (Prelude Pair)))
         , propInitialObject @(KLEISLI (Costar (Prelude Pair)))
         , propBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
+        , propCartesian @(KLEISLI (Costar (Prelude Pair))) (\r -> r) (\r -> r)
         , propMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         ]
     ]

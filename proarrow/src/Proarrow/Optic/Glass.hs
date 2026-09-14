@@ -21,9 +21,12 @@ module Proarrow.Optic.Glass where
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), type (**))
-import Proarrow.Category.Monoidal.Closed (CCC, Closed (..), Exp, comp, mkExponential, swapClosed)
+import Proarrow.Category.Monoidal.Cartesian (CCC, productToTensor, tensorToProduct)
+import Proarrow.Category.Monoidal.Closed (Closed (..), Exp, comp, mkExponential, swapClosed)
+import Proarrow.Category.Monoidal.CopyDiscard (fst, snd, (&&&))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, type (+->))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (type (&&)), Product)
+import Proarrow.Limit.BinaryProduct qualified as P
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
@@ -59,9 +62,11 @@ instance (HasBinaryProducts k, Ob (c :: k)) => GlassFl (Rep (Product c)) (Corep 
     withObExp @k @s @a $
       withObExp @k @(s ~~> a) @b $
         i
-          . ( (fst @k @c @a . h . fst @k @s @((s ~~> a) ~~> b))
-                &&& (applySel @s @a @b (snd @k @c @a . h) . snd @k @s @((s ~~> a) ~~> b))
+          . tensorToProduct @c @b
+          . ( (P.fst @k @c @a . h . fst @s @((s ~~> a) ~~> b))
+                &&& (applySel @s @a @b (P.snd @k @c @a . h) . snd @s @((s ~~> a) ~~> b))
             )
+          . productToTensor @s @((s ~~> a) ~~> b)
 
 -- | The exponential pair, a grate witness: the source is ignored, and the consumer is fed the
 -- selector @\\s -> h s d@ for each point @d@ of the exponent.
@@ -71,13 +76,14 @@ instance (Closed k, Ob (d :: k)) => GlassFl (Rep (Exp d)) (Corep (Exp d)) where
       withObExp @k @(s ~~> a) @b $
         i
           . curry @k @((s ~~> a) ~~> b) @d (apply @k @(s ~~> a) @b . (obj @((s ~~> a) ~~> b) ** swapClosed @a @s @d h))
-          . snd @k @s @((s ~~> a) ~~> b)
+          . snd @s @((s ~~> a) ~~> b)
+          . productToTensor @s @((s ~~> a) ~~> b)
 
 instance (CategoryOf k) => GlassFl (Id :: k +-> k) (Id :: k +-> k) where
   glassP @s @a @b (Id l@Objs) (Id r@Objs) =
     withObExp @k @s @a $
       withObExp @k @(s ~~> a) @b $
-        r . applySel @s @a @b l . snd @k @s @((s ~~> a) ~~> b)
+        r . applySel @s @a @b l . snd @s @((s ~~> a) ~~> b) . productToTensor @s @((s ~~> a) ~~> b)
 
 -- | Composition threads the selector through: the outer glass is given the consumer
 -- @\\sel -> inner (sel s, \\sel' -> k (sel' . sel))@.
@@ -93,31 +99,35 @@ instance
           withObExp @k @(s ~~> x) @y $
             withObExp @k @x @a $
               withObExp @k @(x ~~> a) @b $
-                withObProd @k @s @((s ~~> a) ~~> b) $
-                  withOb2 @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x) $
-                    withOb2 @k @((s && ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a) $
+                withOb2 @k @s @((s ~~> a) ~~> b) $
+                  withOb2 @k @(s ** ((s ~~> a) ~~> b)) @(s ~~> x) $
+                    withOb2 @k @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a) $
                       let
-                        inner = glassP @f' @g' f' g'
+                        -- the inner glass, fed a product-typed pair
+                        inner = glassP @f' @g' f' g' . tensorToProduct @x @((x ~~> a) ~~> b)
                         -- the source of the inner glass: the outer selector applied to @s@
                         xpart =
                           apply @k @s @x
-                            . ( snd @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x)
-                                  &&& (fst @k @s @((s ~~> a) ~~> b) . fst @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x))
+                            . ( snd @(s ** ((s ~~> a) ~~> b)) @(s ~~> x)
+                                  &&& (fst @s @((s ~~> a) ~~> b) . fst @(s ** ((s ~~> a) ~~> b)) @(s ~~> x))
                               )
                         -- the inner consumer: compose the selectors, hand the result to @k@
                         kk =
-                          snd @k @s @((s ~~> a) ~~> b)
-                            . fst @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x)
-                            . fst @k @((s && ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a)
+                          snd @s @((s ~~> a) ~~> b)
+                            . fst @(s ** ((s ~~> a) ~~> b)) @(s ~~> x)
+                            . fst @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a)
                         sel =
                           comp @s @x @a
-                            . ( snd @k @((s && ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a)
-                                  &&& (snd @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x) . fst @k @((s && ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a))
+                            . ( snd @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a)
+                                  &&& (snd @(s ** ((s ~~> a) ~~> b)) @(s ~~> x) . fst @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a))
                               )
-                        kipart = curry @k @((s && ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a) (apply @k @(s ~~> a) @b . (kk &&& sel))
+                        kipart = curry @k @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a) (apply @k @(s ~~> a) @b . (kk &&& sel))
                         body = inner . (xpart &&& kipart)
                       in
-                        glassP @f @g f g . (fst @k @s @((s ~~> a) ~~> b) &&& curry @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x) body)
+                        glassP @f @g f g
+                          . tensorToProduct @s @((s ~~> x) ~~> y)
+                          . (fst @s @((s ~~> a) ~~> b) &&& curry @k @(s ** ((s ~~> a) ~~> b)) @(s ~~> x) body)
+                          . productToTensor @s @((s ~~> a) ~~> b)
 
 type Glass (s :: k) (t :: k) a b = Optic (Prostrong GlassFl) s t a b
 type Glass' s a = Glass s s a a
@@ -134,7 +144,7 @@ glass f =
       withObExp @k @(s ~~> a) @b $
         let ev = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
         in legs2prof @GlassFl
-             (Rep @((s ~~> a) ~~> a) @(Product s) (id &&& ev) :.: Rep @a @(Exp (s ~~> a)) (obj @((s ~~> a) ~~> a)))
+             (Rep @((s ~~> a) ~~> a) @(Product s) (id P.&&& ev) :.: Rep @a @(Exp (s ~~> a)) (obj @((s ~~> a) ~~> a)))
              (Corep @b @(Exp (s ~~> a)) (obj @((s ~~> a) ~~> b)) :.: Corep @((s ~~> a) ~~> b) @(Product s) f)
 
 -- | Eliminate any glass-flavored optic (a lens, a grate, or a composite of both, in either

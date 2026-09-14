@@ -21,6 +21,7 @@ import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Cartesian (Cartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
 import Proarrow.Colimit.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, (++))
@@ -37,7 +38,7 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)

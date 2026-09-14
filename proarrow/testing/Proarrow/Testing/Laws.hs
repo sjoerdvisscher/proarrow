@@ -22,6 +22,7 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.Cartesian qualified as Cartesian
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
@@ -483,6 +484,43 @@ propCopyDiscard_
   => TestTree
 propCopyDiscard_ =
   propCopyDiscard @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+
+-- | The coherence law tying 'Cartesian.Cartesian' to its 'CopyDiscard.CopyDiscard' superclass
+-- (Fox's theorem): the comonoid supplied on every object is the natural one, @copy = id &&& id@
+-- and @discard = terminate@.
+propCartesian
+  :: forall k
+   . (Testable k, Cartesian.Cartesian k, TestOb (M.Unit @k))
+  => (forall (a :: k) r. (TestOb a) => ((Ob a) => r) -> r)
+  -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> TestTree
+propCartesian withOb withTestOb2 = testProperty "Cartesian" $ do
+  Some @a <- genOb @k
+  withOb @a (withTestOb2 @a @a (propCartesianAt @a))
+
+-- Hoisted so that @a ** a ~ a && a@ is an ordinary given ('Cartesian.TensorIsProduct'), which the
+-- quantified superclass of 'Cartesian.Cartesian' can't supply as a rewrite on its own.
+propCartesianAt
+  :: forall {k} (a :: k)
+   . ( Testable k
+     , Cartesian.Cartesian k
+     , Cartesian.TensorIsProduct a a
+     , TestOb (M.Unit @k)
+     , TestOb a
+     , Ob a
+     , TestOb (a M.** a)
+     )
+  => Property ()
+propCartesianAt = do
+  testEq "copy" "copy" (CopyDiscard.copy @k @a) "id &&& id" (BinaryProduct.diag @a)
+  testEq "discard" "discard" (CopyDiscard.discard @k @a) "terminate" (Terminal.terminate @k @a)
+
+propCartesian_
+  :: forall k
+   . (Testable k, Cartesian.Cartesian k, TestObIsOb k, TestOb (M.Unit @k))
+  => TestTree
+propCartesian_ =
+  propCartesian @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
 
 propDistributive
   :: forall k

@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Distributivity of a tensor over coproducts: a 'Distributive' category has 'distL'\/'distR' and
 -- absorption by the initial object, and a 'DistributiveProfunctor' is monoidal for both tensor and
@@ -13,18 +14,29 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second)
 import Proarrow.Category.Monoidal.Action (CoprodAction)
-import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..), uncurry)
-import Proarrow.Category.Monoidal.Strength (MonStrong, Strong)
-import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, (++))
+import Proarrow.Category.Monoidal.Cartesian (BiCCC, Cartesian)
+import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
+import Proarrow.Category.Monoidal.Strength (MonStrong, Strong (..))
+import Proarrow.Colimit.BinaryCoproduct
+  ( COPROD (..)
+  , Coprod (..)
+  , HasBinaryCoproducts (..)
+  , HasCoproducts
+  , codiag
+  , (++)
+  )
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
+import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), coindex, corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
+import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representable (..), repUniv)
 import Prelude (($))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -102,6 +114,11 @@ class
 instance
   (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p)
   => StrongDistributiveProfunctor (p :: k +-> k)
+
+-- | The constant functor absorbs a coproduct action: the injected summand is discarded onto
+-- the monoid's unit, so this needs only copying\/discarding on the tensor side and coproducts.
+instance (CopyDiscard k, HasCoproducts k, Monoid r) => Strong CoprodAction (Rep (Constant r) :: k +-> k) where
+  act @(COPR a) (Rep @y p) = withObCoprod @k @a @y (Rep (mempty @r . discard @k @a ||| p))
 
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where

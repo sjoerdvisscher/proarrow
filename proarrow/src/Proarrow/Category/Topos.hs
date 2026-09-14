@@ -6,7 +6,7 @@
 -- logic ('false', 'and', 'or', 'implies').
 module Proarrow.Category.Topos where
 
-import Proarrow.Category.Monoidal.Closed (CCC)
+import Proarrow.Category.Monoidal.Cartesian (CCC)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))

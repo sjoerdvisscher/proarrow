@@ -13,11 +13,12 @@ import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), withOb2)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (Functor (..), Prelude (..))
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Functor (Functor (..), Prelude (..), withObF)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -62,7 +63,7 @@ composeCostar (Costar f :.: Costar g) = Costar (g . map f . getCompose)
 
 -- | Every functor between cartesian categories is a colax monoidal functor.
 instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor (Costar f) where
-  one = Costar terminate
+  one = withObF @f @(Unit :: j) (Costar terminate)
   Costar @a f ** Costar @b g = withOb2 @j @a @b (Costar (f . map (fst @j @a @b) &&& g . map (snd @j @a @b)))
 
 instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where

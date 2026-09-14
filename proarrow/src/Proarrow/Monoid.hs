@@ -24,8 +24,6 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Action (Act, ActionAt, CoprodAction, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
-import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
-import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Colimit.BinaryCoproduct
@@ -37,20 +35,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , codiag
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
-import Proarrow.Core
-  ( CAT
-  , CategoryOf (..)
-  , Kind
-  , Profunctor (..)
-  , Promonad (..)
-  , arr
-  , dimapDefault
-  , obj
-  , (//)
-  , type (+->)
-  )
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Core (CategoryOf (..), Kind, Promonad (..), obj, (//), type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -84,10 +69,10 @@ instance CommutativeMonoid ()
 
 newtype GenElt x m = GenElt (x ~> m)
 
-instance (Monoid m, Cartesian k) => P.Semigroup (GenElt x (m :: k)) where
-  GenElt f <> GenElt g = GenElt (mappend . (f &&& g))
-instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
-  mempty = GenElt (mempty . arr terminate)
+instance (Monoid m, Comonoid (x :: k)) => P.Semigroup (GenElt x (m :: k)) where
+  GenElt f <> GenElt g = GenElt (mappend . (f ** g) . comult)
+instance (Monoid m, Comonoid (x :: k)) => P.Monoid (GenElt x (m :: k)) where
+  mempty = GenElt (mempty . counit)
 
 instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
   mempty = Coprod initiate
@@ -148,11 +133,6 @@ instance Comonoid '() where
   comult = id
 instance CocommutativeComonoid '()
 
-instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
-  counit = Prod terminate
-  comult = Prod diag
-instance (HasProducts k, Ob a) => CocommutativeComonoid (PR (a :: k))
-
 counitAct :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> n
 counitAct = unitor @t . actHom @t (counit @a) (obj @n)
 
@@ -176,72 +156,6 @@ instance (forall (a :: k). (Ob a) => CocommutativeComonoid a) => Supplies Cocomm
 instance (forall (a :: k). (Ob a) => Monoid a) => Supplies Monoid k
 
 instance (forall (a :: k). (Ob a) => CommutativeMonoid a) => Supplies CommutativeMonoid k
-
-type data MONOIDK (m :: k) = M
-data Mon a b where
-  Mon :: Unit ~> m -> Mon (M :: MONOIDK m) M
-instance (Monoid m) => Profunctor (Mon :: CAT (MONOIDK m)) where
-  dimap = dimapDefault
-  r \\ Mon{} = r
-instance (Monoid m) => Promonad (Mon :: CAT (MONOIDK m)) where
-  id = Mon mempty
-  Mon f . Mon g = Mon (combine f g)
-
--- | A monoid as a one object category.
-instance (Monoid m) => CategoryOf (MONOIDK m) where
-  type (~>) = Mon
-  type Ob a = a P.~ M
-
-instance (Monoid m) => HasInitialObject (MONOIDK m) where
-  type InitialObject = M
-  initiate = Mon mempty
-instance (Monoid m) => HasTerminalObject (MONOIDK m) where
-  type TerminalObject = M
-  terminate = Mon mempty
-instance (Monoid m) => HasBinaryProducts (MONOIDK m) where
-  type a && b = M
-  withObProd @M @M r = r
-  fst @M @M = Mon mempty
-  snd @M @M = Mon mempty
-  Mon f &&& Mon g = Mon (combine f g)
-instance (Monoid m) => HasBinaryCoproducts (MONOIDK m) where
-  type a || b = M
-  withObCoprod @M @M r = r
-  lft @M @M = Mon mempty
-  rgt @M @M = Mon mempty
-  Mon f ||| Mon g = Mon (combine f g)
-
-instance (CommutativeMonoid m) => MonoidalProfunctor (Mon :: CAT (MONOIDK m)) where
-  one = Mon mempty
-  Mon f ** Mon g = Mon (combine f g)
-instance (CommutativeMonoid m) => Monoidal (MONOIDK m) where
-  type Unit = M
-  type M ** M = M
-  withOb2 r = r
-  leftUnitor = Mon mempty
-  leftUnitorInv = Mon mempty
-  rightUnitor = Mon mempty
-  rightUnitorInv = Mon mempty
-  associator = Mon mempty
-  associatorInv = Mon mempty
-instance (CommutativeMonoid m) => SymMonoidal (MONOIDK m) where
-  swap = Mon mempty
-
-instance (CommutativeMonoid m) => StarAutonomous (MONOIDK m) where
-  type Dual (M :: MONOIDK m) = M
-  withObDual r = r
-  dual f@Mon{} = f
-  dualInv f = f
-  linDist _ = id
-  linDistInv _ = id
-instance (CommutativeMonoid m) => CompactClosed (MONOIDK m) where
-  distribDual = Mon mempty
-  dualUnit = Mon mempty
-instance (CommutativeMonoid m) => Closed (MONOIDK m) where
-  type a ~~> b = M
-  withObExp r = r
-  curry (Mon m) = Mon m
-  apply = Mon mempty
 
 instance (Comonoid c) => Monoid (OP c) where
   mempty = Op counit
@@ -268,12 +182,6 @@ instance (HasCoproducts k, Ob r) => MonoidalProfunctor (Coprod (Rep (Constant r)
 instance (Monoidal k, Comonoid r) => MonoidalProfunctor (Corep (Constant r) :: k +-> k) where
   one = Corep counit
   Corep @x l ** Corep @y r = withOb2 @k @x @y (Corep ((l ** r) . comult))
-
-instance (Cartesian k, Ob r) => Strong Tensor (Rep (Constant r) :: k +-> k) where
-  act @a (Rep @y p) = withOb2 @k @a @y (Rep (p . snd @k @a)) \\ p
-
-instance (Cartesian k, HasCoproducts k, Monoid r) => Strong CoprodAction (Rep (Constant r) :: k +-> k) where
-  act @(COPR a) (Rep @y p) = withObCoprod @k @a @y (Rep (mempty @r . terminate @k @a ||| p))
 
 -- | Tensoring with a monoid, @m ** -@, is an applicative functor: the monoid's unit is @pure@ and
 -- its multiplication is @<*>@. Rendered on the representable profunctor @'Rep' ('ActionAt' 'Tensor' m)@

@@ -38,7 +38,8 @@ import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swapInner, type (**))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Action (CoprodAction)
-import Proarrow.Category.Monoidal.Closed (CCC, Closed (..), mkExponential)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian)
+import Proarrow.Category.Monoidal.Closed (Closed (..), mkExponential)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..), fst, snd, (&&&))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 import Proarrow.Category.Monoidal.Strength (Strong (..))
@@ -46,9 +47,6 @@ import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCopr
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), (\\), type (+->))
 import Proarrow.Functor (Functor)
-import Proarrow.Limit.BinaryProduct (Cartesian, TensorIsProduct, diag)
-import Proarrow.Limit.BinaryProduct qualified as P
-import Proarrow.Limit.Terminal (terminate)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
@@ -177,42 +175,6 @@ powCopy = natCase @n (discard @k @a) (\ @m -> (obj @a ** powCopy @m @k @a) . cop
 powUnit :: forall n k. (KnownNat n, Monoidal k) => Unit ~> Tensor n (Unit :: k)
 powUnit = natCase @n id (\ @m -> (obj @(Unit :: k) ** powUnit @m @k) . leftUnitorInv @k @Unit)
 
--- | Like 'powCopy', but the copies come from the /cartesian/ structure ('CCC') rather than a
--- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' comonoid. Using 'CCC' rather than
--- @CopyDiscard@ keeps the latter's quantified @CocommutativeComonoid@ constraint out of scope, so
--- this and 'splitPowC' can be applied at exponential objects without looping the solver -- which
--- is what lets a power grate be a 'Proarrow.Optic.Glass.Glass' ('glassP' below).
-powCopyC :: forall n k (a :: k). (KnownNat n, CCC k, Ob a) => a ~> Tensor n a
-powCopyC = natCase @n (terminate @k @a) (\ @m -> (obj @a ** powCopyC @m @k @a) . diag @a)
-
--- | Like 'splitPow', but with cartesian projections; see 'powCopyC'.
-splitPowC :: forall n k (x :: k) a. (KnownNat n, CCC k, Ob x, Ob a) => (x ~~> Tensor n a) ~> Tensor n (x ~~> a)
-splitPowC =
-  natCase @n
-    (withObExp @k @x @Unit (terminate @k @(x ~~> Unit)))
-    (\ @m -> withObTensor @m @k @a (withObExp @k @x @a (withObTensor @m @k @(x ~~> a) (splitPowCStep @m @k @x @a))))
-
--- | The @S@ step of 'splitPowC'. The cartesian projections produce @('&&')@ while 'Tensor' is
--- built from @('**')@; 'Cartesian' identifies the two through a quantified 'TensorIsProduct', but
--- GHC will not rewrite under the 'Tensor' family with only the quantified constraint in scope. So,
--- as for 'Proarrow.Limit.BinaryProduct.unparRepCartesian', the two instances needed are taken as
--- plain givens here and discharged at the call site, where they are just instances of the quantified one.
-splitPowCStep
-  :: forall n k (x :: k) a
-   . ( CCC k
-     , KnownNat n
-     , Ob x
-     , Ob a
-     , Ob (Tensor n a)
-     , Ob (x ~~> a)
-     , Ob (Tensor n (x ~~> a))
-     , TensorIsProduct a (Tensor n a)
-     , TensorIsProduct (x ~~> a) (Tensor n (x ~~> a))
-     )
-  => (x ~~> (a ** Tensor n a)) ~> ((x ~~> a) ** Tensor n (x ~~> a))
-splitPowCStep =
-  (P.fst @k @a @(Tensor n a) ^^^ obj @x) P.&&& (splitPowC @n @k @x @a . (P.snd @k @a @(Tensor n a) ^^^ obj @x))
-
 -- | The arity-@n@ aggregation witness: @s@ presents @n@ foci via the tensor power.
 type Pow :: forall {k}. Nat -> k +-> k
 data Pow n s a where
@@ -239,8 +201,10 @@ instance (Monoidal k, KnownNat n) => MonTravFl (Pow n :: k +-> k) (CoPow n :: k 
   monTravP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 
 -- | A power grate is a glass: ignore the source, and for each of the @n@ positions feed the
--- consumer the selector "project this focus". The selectors come from 'splitPowC' of @sl@, the
--- consumer is copied @n@ times with 'powCopyC', 'powZip' pairs them, and 'powDist' applies each.
+-- consumer the selector "project this focus". The selectors come from 'splitPow' of @sl@, the
+-- consumer is copied @n@ times with 'powCopy', 'powZip' pairs them, and 'powDist' applies each.
+-- Everything is stated with the 'CopyDiscard' structure that 'CCC' now provides, so the tensor
+-- and the product never have to be identified by hand.
 instance (Monoidal k, HasCoproducts k, KnownNat n) => GlassFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   glassP @s @a @b (Pow sl@Objs) (CoPow rt@Objs) =
     withObExp @k @s @a
@@ -249,8 +213,8 @@ instance (Monoidal k, HasCoproducts k, KnownNat n) => GlassFl (Pow n :: k +-> k)
               ( rt
                   . powDist @n (apply @k @(s ~~> a) @b)
                   . powZip @n @k @((s ~~> a) ~~> b) @(s ~~> a)
-                  . ( (powCopyC @n @k @((s ~~> a) ~~> b) . P.snd @k @s @((s ~~> a) ~~> b))
-                        P.&&& (splitPowC @n @k @s @a . mkExponential sl . terminate @k @(s ** ((s ~~> a) ~~> b)))
+                  . ( (powCopy @n @k @((s ~~> a) ~~> b) . snd @s @((s ~~> a) ~~> b))
+                        &&& (splitPow @n @k @s @a . mkExponential sl . discard @k @(s ** ((s ~~> a) ~~> b)))
                     )
               )
           )

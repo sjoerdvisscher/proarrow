@@ -12,6 +12,7 @@ import Data.Kind (Constraint, Type)
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
+import Proarrow.Category.Instance.Monoid (MONOID (..), Mon (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -20,7 +21,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), leftUnitorInvWith, rightUnitor
 import Proarrow.Category.Monoidal.Closed qualified as E
 import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor ((\\)), Promonad (..), type (+->))
 import Proarrow.Core qualified as P
-import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
+import Proarrow.Monoid (Monoid (..))
 
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,
@@ -58,8 +59,8 @@ compSelf = E.comp @a @b @c
 type Clone k = SUBCAT (Any :: k -> Constraint)
 
 -- | A monoid is a one object enriched category.
-instance (Monoid (m :: k)) => EnrichedProfunctor (Clone k) (Mon :: CAT (MONOIDK (m :: k))) where
-  type ProObj (Clone k) (Mon :: CAT (MONOIDK m)) M M = SUB m
+instance (Monoid (m :: k)) => EnrichedProfunctor (Clone k) (Mon :: CAT (MONOID (m :: k))) where
+  type ProObj (Clone k) (Mon :: CAT (MONOID m)) M M = SUB m
   withProObj r = r
   underlying (Mon f) = Sub f
   enriched (Sub f) = Mon f

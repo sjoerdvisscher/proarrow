@@ -14,7 +14,6 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Core (CategoryOf (..))
 
-import Proarrow.Testing.Laws
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -27,6 +26,7 @@ import Proarrow.Testing
   , optGen
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
 
 test :: TestTree
 test =
@@ -36,6 +36,7 @@ test =
     , propTerminalObject @FINSET
     , propInitialObject @FINSET
     , propBinaryProducts_ @FINSET
+    , propCartesian_ @FINSET
     , propBinaryCoproducts_ @FINSET
     , propDistributive_ @FINSET
     , propClosed_ @FINSET

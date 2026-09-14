@@ -12,8 +12,6 @@ import Prelude hiding (fst, id, snd, (.))
 import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb (fbcCase), Lower, Term (..), interp)
 import Proarrow.Core (CAT, CategoryOf (..))
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
 import Proarrow.Testing
   ( GenTotal (..)
   , MkSomeList (..)
@@ -26,6 +24,8 @@ import Proarrow.Testing
   , genSomeDef
   , oneOfTotal
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
 
 -- | The free BiCCC's only generator: a single primitive morphism, just enough to make the
 -- terms non-trivial.
@@ -43,6 +43,7 @@ test =
     , propTerminalObject @(FBC Prim)
     , propInitialObject @(FBC Prim)
     , propBinaryProducts @(FBC Prim) (\r -> r)
+    , propCartesian @(FBC Prim) (\r -> r) (\r -> r)
     , propBinaryCoproducts @(FBC Prim) (\r -> r)
     , propClosed @(FBC Prim) (\r -> r) (\r -> r)
     ]

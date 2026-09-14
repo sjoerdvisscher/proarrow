@@ -45,6 +45,7 @@ test =
     , propTerminalObject @Type
     , propInitialObject @Type
     , propBinaryProducts @Type (\r -> r)
+    , propCartesian @Type (\r -> r) (\r -> r)
     , propBinaryCoproducts @Type (\r -> r)
     , propDistributive @Type (\r -> r) (\r -> r)
     , propClosed @Type (\r -> r) (\r -> r)
