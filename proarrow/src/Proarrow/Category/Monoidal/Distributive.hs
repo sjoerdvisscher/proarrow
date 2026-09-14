@@ -15,7 +15,6 @@ import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second, type (**!))
 import Proarrow.Category.Monoidal.Action (CoprodAction)
-import Proarrow.Category.Monoidal.Cartesian (BiCCC, Cartesian)
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Strength (MonStrong, Strong (..))
@@ -30,7 +29,6 @@ import Proarrow.Colimit.BinaryCoproduct
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), coindex, corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -49,8 +47,6 @@ class (Monoidal k, HasCoproducts k) => Distributive k where
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
   absorbL :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
   absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
-
-type Bicartesian k = (Cartesian k, Distributive k)
 
 -- | The free-category structure for 'Distributive': formal distributors and absorbers,
 -- interpreted by 'foldStructure' through the target's own. Together with the coproduct and
@@ -112,12 +108,6 @@ instance Distributive () where
   absorbL = U.Unit
   absorbR = U.Unit
 
-instance (BiCCC k) => Distributive (PROD k) where
-  distL @(PR a) @(PR b) @(PR c) = Prod (distLProd @a @b @c)
-  distR @(PR a) @(PR b) @(PR c) = Prod (distRProd @a @b @c)
-  absorbL @(PR a) = Prod (snd @k @a)
-  absorbR @(PR a) = Prod (fst @k @_ @a)
-
 distLClosed
   :: forall {k} (a :: k) (b :: k) (c :: k)
    . (Closed k, SymMonoidal k, HasBinaryCoproducts k, Ob a, Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
@@ -131,16 +121,6 @@ distRClosed =
     withOb2 @k @b @c $
       withObCoprod @k @(a ** c) @(b ** c) $
         uncurry @c (curry @k @a @c (lft @k @(a ** c) @(b ** c)) ||| curry @k @b @c (rgt @k @(a ** c) @(b ** c)))
-
-distLProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => (a && (b || c)) ~> (a && b || a && c)
-distLProd = (swapProd @b @a +++ swapProd @c @a) . distRProd @b @c @a . withObCoprod @k @b @c (swapProd @a @(b || c))
-
-distRProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => ((a || b) && c) ~> (a && c || b && c)
-distRProd =
-  withObProd @k @a @c $
-    withObProd @k @b @c $
-      withObCoprod @k @(a && c) @(b && c) $
-        uncurry @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
 
 class
   (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p) =>
@@ -182,10 +162,6 @@ instance (Traversable p, Traversable q) => Traversable (p :.: q) where
   traverse ((p :.: q) :.: r) = case traverse (q :.: r) of
     r' :.: q' -> case traverse (p :.: r') of
       r'' :.: p' -> r'' :.: (p' :.: q')
-
-instance (Cartesian k, Traversable p, Traversable q) => Traversable ((p :: k +-> k) :*: q) where
-  traverse ((p :*: q) :.: r) = case (traverse (p :.: r), traverse (q :.: r)) of
-    ((:.:) @a r' p', (:.:) @b r'' q') -> lmap diag (r' ** r'') :.: (lmap (fst @k @a @b) p' :*: lmap (snd @k @a @b) q') \\ p \\ p' \\ q'
 
 instance (Traversable p, Traversable q) => Traversable (p :+: q) where
   traverse (InjL p :.: r) = case traverse (p :.: r) of r' :.: p' -> r' :.: InjL p'

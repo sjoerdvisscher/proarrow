@@ -16,7 +16,6 @@ import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
 import Props.FinSet qualified as FinSet
 import Props.Free qualified as Free
-import Props.FreeBiCCC qualified as FreeBiCCC
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
@@ -43,7 +42,6 @@ main =
           , FinRel.test
           , FinSet.test
           , Free.test
-          , FreeBiCCC.test
           , Hask.test
           , Kleisli.test
           , Mat.test

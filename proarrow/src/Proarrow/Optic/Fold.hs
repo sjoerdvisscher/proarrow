@@ -9,14 +9,9 @@
 module Proarrow.Optic.Fold where
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp)
+import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
-import Proarrow.Category.Monoidal.Distributive
-  ( Bicartesian
-  , Cotraversable (..)
-  , Traversable (..)
-  , corepTraverse
-  , repTraverse
-  )
+import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..), corepTraverse, repTraverse)
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, rgt, (|||))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)

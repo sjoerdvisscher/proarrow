@@ -11,8 +11,8 @@ module Proarrow.Optic.AffineFold where
 import Data.Kind (Type)
 import Prelude (Maybe (..), const, either)
 
+import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
-import Proarrow.Category.Monoidal.Distributive (Bicartesian)
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)

@@ -16,10 +16,10 @@ import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), MultRep, Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction, ProdAction)
+import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive
-  ( Bicartesian
-  , Cotraversable (..)
+  ( Cotraversable (..)
   , Distributive
   , StrongDistributiveProfunctor
   , Traversable (..)

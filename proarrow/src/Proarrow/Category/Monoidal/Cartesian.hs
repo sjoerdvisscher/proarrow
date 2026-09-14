@@ -2,23 +2,36 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Cartesian monoidal categories ('Cartesian': tensor = product, with 'CopyDiscard' as
--- superclass by Fox's theorem) and cartesian closed ones ('CCC', 'BiCCC'). Lives above
+-- superclass by Fox's theorem), cartesian closed ones ('CCC') and bicartesian closed ones
+-- ('BiCCC', which implies 'Distributive'): the meeting point of the monoidal and the product
+-- worlds, which never import each other. Lives above
 -- "Proarrow.Category.Monoidal.CopyDiscard" rather than with the products, because the superclass
 -- points that way.
 module Proarrow.Category.Monoidal.Cartesian where
 
-import Prelude (type (~))
+import Prelude (($), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, UnitF, type (**!))
-import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, type (*!))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..), Traversable (..))
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (||))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, type (+->))
+import Proarrow.Limit.BinaryProduct
+  ( HasBinaryProducts (..)
+  , HasProducts
+  , PROD (..)
+  , Prod (..)
+  , diag
+  , swapProd
+  , type (*!)
+  )
 import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian, TermF)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), withObRep)
 
 class (a ** b ~ a && b) => TensorIsProduct a b
@@ -84,8 +97,36 @@ unparRepCartesian f g = f . repMap @p (fst @j @a @b) &&& g . repMap @p (snd @j @
 class (Cartesian k, Closed k) => CCC k
 instance (Cartesian k, Closed k) => CCC k
 
-class (CCC k, HasCoproducts k) => BiCCC k
-instance (CCC k, HasCoproducts k) => BiCCC k
+type Bicartesian k = (Cartesian k, Distributive k)
+
+-- | Bicartesian closed: cartesian closed with coproducts. Every such category is distributive
+-- (@a &&@ is a left adjoint, so it preserves coproducts), and the class says so, so that
+-- 'Distributive' never has to be asked for separately.
+class (CCC k, Distributive k) => BiCCC k
+
+instance (CCC k, Distributive k) => BiCCC k
+
+-- | Distributivity of the /product/ over coproducts, derived from closedness: in any BiCCC the
+-- functor @a &&@ is a left adjoint and so preserves coproducts.
+distLProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => (a && (b || c)) ~> (a && b || a && c)
+distLProd = (swapProd @b @a +++ swapProd @c @a) . distRProd @b @c @a . withObCoprod @k @b @c (swapProd @a @(b || c))
+
+distRProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => ((a || b) && c) ~> (a && c || b && c)
+distRProd =
+  withObProd @k @a @c $
+    withObProd @k @b @c $
+      withObCoprod @k @(a && c) @(b && c) $
+        uncurry @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
+
+instance (BiCCC k) => Distributive (PROD k) where
+  distL @(PR a) @(PR b) @(PR c) = Prod (distLProd @a @b @c)
+  distR @(PR a) @(PR b) @(PR c) = Prod (distRProd @a @b @c)
+  absorbL @(PR a) = Prod (snd @k @a)
+  absorbR @(PR a) = Prod (fst @k @_ @a)
+
+instance (Cartesian k, Traversable p, Traversable q) => Traversable ((p :: k +-> k) :*: q) where
+  traverse ((p :*: q) :.: r) = case (traverse (p :.: r), traverse (q :.: r)) of
+    ((:.:) @a r' p', (:.:) @b r'' q') -> lmap diag (r' ** r'') :.: (lmap (fst @k @a @b) p' :*: lmap (snd @k @a @b) q') \\ p \\ p' \\ q'
 
 ap
   :: forall {j} {k} y a x p

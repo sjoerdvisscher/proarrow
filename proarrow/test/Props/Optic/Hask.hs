@@ -21,7 +21,8 @@ import Prelude
 import GHC.Generics qualified as G
 import Proarrow.Category.Monoidal (Monoidal)
 import Proarrow.Category.Monoidal.Action (ProdAction)
-import Proarrow.Category.Monoidal.Distributive (Bicartesian, StrongDistributiveProfunctor, baseTraverse)
+import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
+import Proarrow.Category.Monoidal.Distributive (StrongDistributiveProfunctor, baseTraverse)
 import Proarrow.Category.Monoidal.Strength (Strong)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts, type (||))
 import Proarrow.Core (CategoryOf (..), type (+->))

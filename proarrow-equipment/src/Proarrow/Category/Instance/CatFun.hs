@@ -14,9 +14,10 @@ import Proarrow.Category.Instance.Prof qualified as F
 import Proarrow.Category.Instance.Sub qualified as F
 import Proarrow.Category.Instance.Zero (Absurd, VOID)
 import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, type (+->))

@@ -11,9 +11,9 @@ module Proarrow.Optic.AffineTraversal where
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), first, second)
-import Proarrow.Category.Monoidal.Cartesian (productToTensor, tensorToProduct)
+import Proarrow.Category.Monoidal.Cartesian (Bicartesian, productToTensor, tensorToProduct)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..), fst, snd, (&&&))
-import Proarrow.Category.Monoidal.Distributive (Bicartesian, Distributive (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts, left)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (type (&&)), Product)
