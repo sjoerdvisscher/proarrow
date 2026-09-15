@@ -61,6 +61,11 @@ class (ThinProfunctor p) => DecidableProfunctor (p :: j +-> k) where
 fromHolds :: forall {j} {k} (p :: j +-> k) a b. (DecidableProfunctor p, Ob a, Ob b, Holds p a b ~ TRU) => p a b
 fromHolds = case decide @p @a @b of Yes x -> x
 
+-- | A thin category whose order is decidable at the type level.
+class (DecidableProfunctor (Hom k), CategoryOf k) => Decidable k
+
+instance (DecidableProfunctor (Hom k), CategoryOf k) => Decidable k
+
 instance DecidableProfunctor Zero where
   type Holds Zero a b = FLS
   decide = no

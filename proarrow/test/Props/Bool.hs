@@ -6,13 +6,15 @@ module Props.Bool where
 import Data.Type.Equality ((:~:) (Refl))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (discard, testProperty)
-import Prelude
+import Prelude hiding (id, (**), (.))
 
+import Proarrow.Category.Enriched qualified as E
 import Proarrow.Category.Enriched.Thin (HasArrow, Holds, ThinProfunctor (..))
 import Proarrow.Category.Enriched.Thin.Composition ()
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), NonTrivialProfunctor (..))
 import Proarrow.Category.Instance.Opposite (Op)
-import Proarrow.Core (Ob, obj, type (+->))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
+import Proarrow.Core (Ob, Promonad (..), obj, rmap, type (+->), type (~>))
 import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -23,12 +25,16 @@ import Proarrow.Profunctor.Representable (CorepStar, Rep)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Testing
   ( GenTotal (..)
+  , Some (..)
   , SomeProfunctorElt (..)
   , Testable (..)
   , TestableProfunctor (..)
   , TestableType (..)
   , TestingEqShow (..)
+  , genNamed
+  , genObSuchThat
   , genSomeDef
+  , isGenNonEmpty
   , oneElem
   , someElemNamed
   )
@@ -58,6 +64,17 @@ test =
     , testProperty "FF,FT decidable" $ propDecidable @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT decidable" $ propDecidable @(NonTrivialProfunctor '(FLS, TRU))
     , testProperty "Op Booleans decidable" $ propDecidable @(Op Booleans)
+    , testProperty "Booleans is BOOL-enriched" $ do
+        SomeP @a @b p <- genProfunctorElt @Booleans "p"
+        testEq "enriched . underlying" "enriched (underlying p)" (E.enriched @BOOL (E.underlying @BOOL p)) "p" p
+        Some @c <- genObSuchThat @BOOL \(Some @c) -> isGenNonEmpty @(b ~> c)
+        g <- genNamed @(b ~> c) "g"
+        testEq
+          "rmap"
+          "enriched (rmap . (underlying g ** underlying p))"
+          (E.enriched @BOOL @Booleans (E.rmap @BOOL @Booleans @a @b @c . (E.underlying @BOOL g ** E.underlying @BOOL p)))
+          "rmap g p"
+          (rmap g p)
     , testProperty "thin composition round trips through withArr" $
         withArr compLeft $
           withArr compRight $

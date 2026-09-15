@@ -10,7 +10,15 @@ module Proarrow.Category.Enriched where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin
+  ( CodiscreteProfunctor (..)
+  , Decidable
+  , DecidableProfunctor (..)
+  , Decision (..)
+  , Thin
+  , ThinProfunctor (..)
+  )
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
 import Proarrow.Category.Instance.Monoid (MONOID (..), Mon (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -90,6 +98,31 @@ instance (ThinProfunctor p, Thin j, Thin k) => EnrichedProfunctor CONSTRAINT (p 
   enriched (Entails f) = f arr
   rmap @a @b @c = Entails \r -> withArr @p (P.rmap (arr @(~>) @b @c) (arr @p @a @b)) r
   lmap @a @b @c = Entails \r -> withArr @p (P.lmap (arr @(~>) @c @a) (arr @p @a @b)) r
+
+-- | A decidable thin profunctor is a profunctor enriched in the walking arrow: its hom-object is the
+-- type-level 'Holds', an element of it is an arrow, and composition is conjunction.
+instance (DecidableProfunctor p, Decidable j, Decidable k) => EnrichedProfunctor BOOL (p :: j +-> k) where
+  type ProObj BOOL p a b = Holds p a b
+  withProObj @a @b r = case decide @p @a @b of
+    Yes _ -> r
+    No -> r
+  underlying p = toHolds p Tru
+  enriched @a @b f = case decide @p @a @b of
+    Yes x -> x
+    No -> case f of {}
+  rmap @a @b @c = case (decide @(Hom j) @b @c, decide @p @a @b) of
+    (Yes g, Yes x) -> toHolds (P.rmap g x) Tru
+    (No, _) -> fromFls (decide @p @a @c)
+    (Yes _, No) -> fromFls (decide @p @a @c)
+  lmap @a @b @c = case (decide @(Hom k) @c @a, decide @p @a @b) of
+    (Yes g, Yes x) -> toHolds (P.lmap g x) Tru
+    (No, _) -> fromFls (decide @p @c @b)
+    (Yes _, No) -> fromFls (decide @p @c @b)
+
+-- | @FLS@ is initial, and a decision tells us which object we are aiming at.
+fromFls :: Decision p a b h -> Booleans FLS h
+fromFls (Yes _) = F2T
+fromFls No = Fls
 
 instance (CodiscreteProfunctor p) => EnrichedProfunctor () p where
   type ProObj () p a b = '()
