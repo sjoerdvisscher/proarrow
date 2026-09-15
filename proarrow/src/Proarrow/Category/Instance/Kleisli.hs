@@ -19,6 +19,7 @@ module Proarrow.Category.Instance.Kleisli
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), mapDecision)
 import Proarrow.Category.Enriched.Thin qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Cartesian (Cartesian)
@@ -135,6 +136,11 @@ instance (T.ThinProfunctor p, Promonad p) => T.ThinProfunctor (Kleisli :: CAT (K
   type HasArrow (Kleisli :: CAT (KLEISLI p)) (KL a) (KL b) = T.HasArrow p a b
   arr = Kleisli T.arr
   withArr (Kleisli p) r = T.withArr p r
+
+instance (DecidableProfunctor p, Promonad p) => DecidableProfunctor (Kleisli :: CAT (KLEISLI p)) where
+  type Holds (Kleisli :: CAT (KLEISLI p)) (KL a) (KL b) = Holds p a b
+  decide @(KL a) @(KL b) = mapDecision Kleisli (decide @p @a @b)
+  toHolds (Kleisli p) r = toHolds p r
 
 -- | The free half of the Kleisli adjunction ('Proadjunction' below), embedding @k@ into the
 -- Kleisli category of @p@.

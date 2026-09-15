@@ -7,9 +7,11 @@ module Proarrow.Profunctor.Corepresentable where
 
 import Data.Kind (Constraint)
 
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
+import Proarrow.Category.Instance.Bool (Booleans (..))
 import Proarrow.Category.Instance.Unit ()
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->))
-import Proarrow.Functor (Copresheaf, FunctorForRep (..))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, rmap, type (+->))
+import Proarrow.Functor (Copresheaf, FunctorForRep (..), withMappedOb)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Optic (PIso, iso)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -36,6 +38,12 @@ instance Corepresentable (->) where
   cotabulate f = f
   corepMap f = f
   corepUniv = id
+
+instance Corepresentable Booleans where
+  type Booleans %% x = x
+  coindex = id
+  cotabulate = id
+  corepMap = id
 
 instance (CategoryOf k) => Corepresentable (Id :: k +-> k) where
   type Id %% a = a
@@ -83,6 +91,17 @@ instance (FunctorForRep f) => Corepresentable (Corep f) where
   coindex (Corep f) = f
   cotabulate = Corep
   corepMap = fmap @f
+
+-- | @'Corep' f a b@ holds in a thin category exactly when @f a ≤ b@.
+instance (FunctorForRep f, Thin j) => ThinProfunctor (Corep f :: j +-> k) where
+  type HasArrow (Corep f :: j +-> k) a b = HasArrow (Hom j) (f @ a) b
+  arr @a = withMappedOb @f @a (Corep arr)
+  withArr (Corep f) r = withArr f r
+
+instance (FunctorForRep f, DecidableProfunctor (Hom j)) => DecidableProfunctor (Corep f :: j +-> k) where
+  type Holds (Corep f :: j +-> k) a b = Holds (Hom j) (f @ a) b
+  decide @a @b = withMappedOb @f @a (mapDecision Corep (decide @(Hom j) @(f @ a) @b))
+  toHolds (Corep f) r = toHolds f r
 
 corep :: forall f a b a' b'. (FunctorForRep f, Ob a) => PIso (f @ a ~> b) (f @ a' ~> b') (Corep f a b) (Corep f a' b')
 corep = cotabulated

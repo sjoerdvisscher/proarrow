@@ -10,7 +10,7 @@ import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Category.Instance.Nat (ApplyAction, Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
@@ -21,7 +21,7 @@ import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, (++))
 import Proarrow.Colimit.Initial (initiate)
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
-import Proarrow.Functor (Functor (..), Prelude (..))
+import Proarrow.Functor (Functor (..), Prelude (..), withObF)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
@@ -134,3 +134,8 @@ instance (Functor f, Thin k) => ThinProfunctor (Star f :: j +-> k) where
   type HasArrow (Star f :: j +-> k) a b = HasArrow (Hom k) a (f b)
   arr = Star arr
   withArr (Star f) r = withArr f r
+
+instance (Functor f, DecidableProfunctor (Hom k)) => DecidableProfunctor (Star f :: j +-> k) where
+  type Holds (Star f :: j +-> k) a b = Holds (Hom k) a (f b)
+  decide @a @b = withObF @f @b (mapDecision Star (decide @(Hom k) @a @(f b)))
+  toHolds (Star f) r = toHolds f r

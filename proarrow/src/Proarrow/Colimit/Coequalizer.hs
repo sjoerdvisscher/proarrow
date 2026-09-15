@@ -7,6 +7,7 @@
 module Proarrow.Colimit.Coequalizer where
 
 import Proarrow.Category.Enriched.Thin (Thin)
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE, Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
@@ -15,6 +16,7 @@ import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Object (pattern Objs)
+import Prelude qualified as P
 
 -- | Coequalizers are an inherently dependently typed concept:
 -- The type of the apex object depends on the values of the given arrows.
@@ -29,6 +31,15 @@ class (CategoryOf k) => HasCoequalizers k where
 instance HasCoequalizers () where
   coequalize Unit Unit k = k Unit
   factorCoequalizer Unit Unit = Unit
+
+-- | Dual to the 'Proarrow.Limit.Equalizer.HasEqualizers' instance for 'BOOL'.
+instance HasCoequalizers BOOL where
+  coequalize = thinCoequalize
+  factorCoequalizer Fls Fls = Fls
+  factorCoequalizer Fls F2T = F2T
+  factorCoequalizer F2T F2T = Tru
+  factorCoequalizer Tru Tru = Tru
+  factorCoequalizer F2T Fls = P.error "factorCoequalizer: h must be constant on q's fibers"
 
 instance (HasCoequalizers k1, HasCoequalizers k2) => HasCoequalizers (k1, k2) where
   coequalize (l1 :**: l2) (r1 :**: r2) k = coequalize l1 r1 \f1 -> coequalize l2 r2 \f2 -> k (f1 :**: f2)

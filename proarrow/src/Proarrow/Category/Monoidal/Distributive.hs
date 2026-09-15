@@ -11,6 +11,7 @@ import Data.Bifunctor (bimap)
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second, type (**!))
@@ -28,7 +29,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , type (+)
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (//), (:~>), type (+->))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), coindex, corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -107,6 +108,16 @@ instance Distributive () where
   distR = U.Unit
   absorbL = U.Unit
   absorbR = U.Unit
+
+instance Distributive BOOL where
+  distL @a @b @c = case obj @a of
+    Fls -> Fls
+    Tru -> obj @b +++ obj @c
+  distR @a @b @c = case obj @c of
+    Fls -> Fls
+    Tru -> obj @a +++ obj @b
+  absorbL = Fls
+  absorbR = Fls
 
 distLClosed
   :: forall {k} (a :: k) (b :: k) (c :: k)

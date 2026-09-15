@@ -8,6 +8,7 @@ module Proarrow.Limit.Pullback where
 import Prelude (Bool, const, ($), (==))
 
 import Proarrow.Category.Enriched.Thin (Thin)
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Instance.Free (Eq2)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
@@ -37,6 +38,9 @@ class (CategoryOf k) => HasPullbacks k where
 instance HasPullbacks () where
   pullback Unit Unit k = k Unit Unit
   factorPullback Unit Unit Unit Unit = Unit
+
+instance HasPullbacks BOOL where
+  pullback = thinPullback
 
 instance (HasPullbacks k1, HasPullbacks k2) => HasPullbacks (k1, k2) where
   pullback (l1 :**: l2) (r1 :**: r2) k = pullback l1 r1 \f1 g1 -> pullback l2 r2 \f2 g2 -> k (f1 :**: f2) (g1 :**: g2)

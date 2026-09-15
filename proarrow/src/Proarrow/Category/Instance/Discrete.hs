@@ -8,6 +8,7 @@ import Data.Type.Equality (type (~~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin qualified as Thin
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
@@ -79,10 +80,12 @@ instance Promonad Codiscrete where
   id = Arr
   Arr . Arr = Arr
 
-instance Thin.ThinProfunctor Codiscrete where
-  type HasArrow Codiscrete a b = ()
-  arr = Arr
-  withArr Arr r = r
+instance Thin.ThinProfunctor Codiscrete
+
+instance Thin.DecidableProfunctor Codiscrete where
+  type Holds Codiscrete a b = TRU
+  decide = Thin.Yes Arr
+  toHolds Arr r = r
 
 anyArr :: Codiscrete a b
 anyArr = Thin.anyArr

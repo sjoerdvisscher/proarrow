@@ -12,6 +12,7 @@ import Data.Kind (Type)
 import Prelude (Show, ($), type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
   ( Elem (..)
   , FREE (..)
@@ -132,6 +133,24 @@ instance HasBinaryCoproducts () where
   lft = U.Unit
   rgt = U.Unit
   U.Unit ||| U.Unit = U.Unit
+
+instance HasBinaryCoproducts BOOL where
+  type FLS || b = b
+  type TRU || b = TRU
+  type a || FLS = a
+  type a || TRU = TRU
+  withObCoprod @a r = case obj @a of
+    Tru -> r
+    Fls -> r
+  lft @a @b = case obj @a of
+    Fls -> initiate @_ @b
+    Tru -> Tru
+  rgt @a @b = case obj @b of
+    Fls -> initiate @_ @a
+    Tru -> Tru
+  Fls ||| Fls = Fls
+  F2T ||| b = b
+  Tru ||| _ = Tru
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (j +-> k) where
   type p || q = p :+: q

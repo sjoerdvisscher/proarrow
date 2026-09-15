@@ -4,7 +4,7 @@ module Proarrow.Profunctor.Instance.Direp where
 
 import Prelude (($))
 
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..), withMappedOb)
 
@@ -21,3 +21,11 @@ instance (Thin k, FunctorForRep f, FunctorForRep g) => ThinProfunctor (Direp (f 
   type HasArrow (Direp (f :: j +-> k) g) a b = HasArrow (Hom k) (f @ a) (g @ b)
   arr @a @b = withMappedOb @f @a $ withMappedOb @g @b $ Direp (arr @(Hom k) @(f @ a) @(g @ b))
   withArr (Direp f) r = withArr f r
+
+instance
+  (DecidableProfunctor (Hom k), FunctorForRep f, FunctorForRep g)
+  => DecidableProfunctor (Direp (f :: j +-> k) (g :: i +-> k))
+  where
+  type Holds (Direp (f :: j +-> k) g) a b = Holds (Hom k) (f @ a) (g @ b)
+  decide @a @b = withMappedOb @f @a (withMappedOb @g @b (mapDecision Direp (decide @(Hom k) @(f @ a) @(g @ b))))
+  toHolds (Direp f) r = toHolds f r

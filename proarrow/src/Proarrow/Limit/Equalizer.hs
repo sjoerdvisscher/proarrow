@@ -6,12 +6,14 @@
 module Proarrow.Limit.Equalizer where
 
 import Proarrow.Category.Enriched.Thin (Thin)
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts)
 import Proarrow.Object (pattern Objs)
+import Prelude qualified as P
 
 -- | Equalizers are an inherently dependently typed concept:
 -- The type of the base object depends on the values of the given arrows.
@@ -26,6 +28,19 @@ class (CategoryOf k) => HasEqualizers k where
 instance HasEqualizers () where
   equalize Unit Unit k = k Unit
   factorEqualizer Unit Unit = Unit
+
+-- | @factorEqualizer incl h@ requires @h@'s image to lie within @incl@'s -- i.e. (since @BOOL@ is the
+-- 2-element total order @FLS <= TRU@) that @incl@'s domain is @<=@ @h@'s domain. That's always true
+-- when @incl@ actually came from 'equalize' (which only ever produces the identity), but 'BOOL' being
+-- totally ordered lets us just case on the (at most 5 reachable, since both share a codomain) shapes
+-- directly instead of appealing to that.
+instance HasEqualizers BOOL where
+  equalize = thinEqualize
+  factorEqualizer Fls Fls = Fls
+  factorEqualizer F2T F2T = Fls
+  factorEqualizer Tru F2T = F2T
+  factorEqualizer Tru Tru = Tru
+  factorEqualizer F2T Tru = P.error "factorEqualizer: h's image must lie within incl's image"
 
 instance (HasEqualizers k1, HasEqualizers k2) => HasEqualizers (k1, k2) where
   equalize (l1 :**: l2) (r1 :**: r2) k = equalize l1 r1 \f1 -> equalize l2 r2 \f2 -> k (f1 :**: f2)

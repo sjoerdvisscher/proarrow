@@ -9,6 +9,7 @@ import Data.Kind (Type)
 import Prelude (($))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..))
 import Proarrow.Category.Instance.Free
   ( Elem (..)
   , Elems
@@ -101,6 +102,32 @@ instance Closed () where
   curry U.Unit = U.Unit
   apply = U.Unit
   U.Unit ^^^ U.Unit = U.Unit
+
+-- | Implication is the internal hom of the walking arrow: @a ~~> b@ is @'BoolLeq' a b@.
+instance Closed BOOL where
+  type a ~~> b = BoolLeq a b
+  withObExp @a @b r = case (obj @a, obj @b) of
+    (Fls, Fls) -> r
+    (Fls, Tru) -> r
+    (Tru, Fls) -> r
+    (Tru, Tru) -> r
+  curry @a @b @c f =
+    ( case (obj @a, obj @b, obj @c) of
+        (Fls, Fls, Fls) -> F2T
+        (Fls, Fls, Tru) -> F2T
+        (Fls, Tru, Fls) -> Fls
+        (Fls, Tru, Tru) -> F2T
+        (Tru, Fls, Fls) -> Tru
+        (Tru, Fls, Tru) -> Tru
+        (Tru, Tru, Fls) -> case f of {}
+        (Tru, Tru, Tru) -> Tru
+    )
+      \\ f
+  apply @a @b = case (obj @a, obj @b) of
+    (Fls, Fls) -> Fls
+    (Fls, Tru) -> F2T
+    (Tru, Fls) -> Fls
+    (Tru, Tru) -> Tru
 
 instance (Closed j, Closed k) => Closed (j, k) where
   type '(a1, a2) ~~> '(b1, b2) = '(a1 ~~> b1, a2 ~~> b2)

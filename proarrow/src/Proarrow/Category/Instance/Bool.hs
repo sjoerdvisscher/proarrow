@@ -1,41 +1,12 @@
 -- | The thin category of booleans: objects 'FLS' and 'TRU' with one non-identity arrow
--- @'FLS' '~>' 'TRU'@ -- the poset @False <= True@, a.k.a. the walking arrow. Conjunction is the
--- categorical product (and tensor) and disjunction the coproduct, making @BOOL@ a miniature model
--- of much of the structure in this library: distributive closed monoidal, star-autonomous,
--- (co)equalizers, pullbacks\/pushouts, and a parameterized NNO.
+-- @'FLS' '~>' 'TRU'@ -- the poset @False <= True@, a.k.a. the walking arrow. It is a core type:
+-- thin categories are enriched in it ("Proarrow.Category.Enriched.Thin"), so this module depends
+-- on nothing but "Proarrow.Core", and @BOOL@'s further structure -- conjunction as product and
+-- tensor, disjunction as coproduct, closed, star-autonomous, (co)equalizers, pullbacks\/pushouts,
+-- a parameterized NNO -- is instantiated in the modules that define those classes.
 module Proarrow.Category.Instance.Bool where
 
-import Prelude (type (~))
-
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
-import Proarrow.Category.Instance.Sub (FUN, SUBCAT (..), (!))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Distributive (Distributive (..))
-import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA)
-import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
-import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Colimit.NaturalNumbers (HasParamNNO (..))
-import Proarrow.Colimit.Pushout (HasPushouts (..), thinPushout)
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
-import Proarrow.Limit.BinaryProduct
-  ( HasBinaryProducts (..)
-  , associatorProd
-  , associatorProdInv
-  , leftUnitorProd
-  , leftUnitorProdInv
-  , rightUnitorProd
-  , rightUnitorProdInv
-  , swapProd
-  )
-import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
-import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, type (+->))
 import Prelude qualified as P
 
 data BOOL = FLS | TRU
@@ -49,7 +20,12 @@ data Booleans a b where
 deriving instance P.Eq (Booleans a b)
 deriving instance P.Show (Booleans a b)
 
-class (IsBool (Dual b)) => IsBool (b :: BOOL) where boolId :: b ~> b
+-- | Negation; the 'Proarrow.Category.Monoidal.StarAutonomous.Dual' of @BOOL@.
+type family Not (b :: BOOL) :: BOOL where
+  Not FLS = TRU
+  Not TRU = FLS
+
+class (IsBool (Not b)) => IsBool (b :: BOOL) where boolId :: b ~> b
 instance IsBool FLS where boolId = Fls
 instance IsBool TRU where boolId = Tru
 
@@ -71,187 +47,11 @@ instance Profunctor Booleans where
   r \\ F2T = r
   r \\ Tru = r
 
-class IsBoolArr (a :: BOOL) b where boolArr :: a ~> b
-instance IsBoolArr FLS FLS where boolArr = Fls
-instance IsBoolArr FLS TRU where boolArr = F2T
-instance IsBoolArr TRU TRU where boolArr = Tru
-
-instance ThinProfunctor Booleans where
-  type HasArrow Booleans a b = IsBoolArr a b
-  arr = boolArr
-  withArr Fls r = r
-  withArr F2T r = r
-  withArr Tru r = r
-
-instance Representable Booleans where
-  type Booleans % x = x
-  index = id
-  tabulate = id
-  repMap = id
-
-instance Corepresentable Booleans where
-  type Booleans %% x = x
-  coindex = id
-  cotabulate = id
-  corepMap = id
-
-instance HasTerminalObject BOOL where
-  type TerminalObject = TRU
-  terminate @a = case obj @a of
-    Fls -> F2T
-    Tru -> Tru
-
-instance HasBinaryProducts BOOL where
-  type TRU && b = b
-  type FLS && b = FLS
-  type a && TRU = a
-  type a && FLS = FLS
-  withObProd @a r = case obj @a of
-    Tru -> r
-    Fls -> r
-  fst @a @b = case obj @a of
-    Fls -> Fls
-    Tru -> terminate @_ @b
-  snd @a @b = case obj @b of
-    Fls -> Fls
-    Tru -> terminate @_ @a
-  Fls &&& _ = Fls
-  F2T &&& b = b
-  Tru &&& Tru = Tru
-
--- | @factorEqualizer incl h@ requires @h@'s image to lie within @incl@'s -- i.e. (since @BOOL@ is the
--- 2-element total order @FLS <= TRU@) that @incl@'s domain is @<=@ @h@'s domain. That's always true
--- when @incl@ actually came from 'equalize' (which only ever produces the identity), but 'BOOL' being
--- totally ordered lets us just case on the (at most 5 reachable, since both share a codomain) shapes
--- directly instead of appealing to that.
-instance HasEqualizers BOOL where
-  equalize = thinEqualize
-  factorEqualizer Fls Fls = Fls
-  factorEqualizer F2T F2T = Fls
-  factorEqualizer Tru F2T = F2T
-  factorEqualizer Tru Tru = Tru
-  factorEqualizer F2T Tru = P.error "factorEqualizer: h's image must lie within incl's image"
-
--- | Dual to the 'HasEqualizers' instance above.
-instance HasCoequalizers BOOL where
-  coequalize = thinCoequalize
-  factorCoequalizer Fls Fls = Fls
-  factorCoequalizer Fls F2T = F2T
-  factorCoequalizer F2T F2T = Tru
-  factorCoequalizer Tru Tru = Tru
-  factorCoequalizer F2T Fls = P.error "factorCoequalizer: h must be constant on q's fibers"
-
-instance HasPullbacks BOOL where
-  pullback = thinPullback
-
-instance HasPushouts BOOL where
-  pushout = thinPushout
-
-instance HasInitialObject BOOL where
-  type InitialObject = FLS
-  initiate @a = case obj @a of
-    Fls -> Fls
-    Tru -> F2T
-
-instance HasBinaryCoproducts BOOL where
-  type FLS || b = b
-  type TRU || b = TRU
-  type a || FLS = a
-  type a || TRU = TRU
-  withObCoprod @a r = case obj @a of
-    Tru -> r
-    Fls -> r
-  lft @a @b = case obj @a of
-    Fls -> initiate @_ @b
-    Tru -> Tru
-  rgt @a @b = case obj @b of
-    Fls -> initiate @_ @a
-    Tru -> Tru
-  Fls ||| Fls = Fls
-  F2T ||| b = b
-  Tru ||| _ = Tru
-
-instance MonoidalProfunctor Booleans where
-  one = id
-  f ** g = f *** g
-
--- | Products as monoidal structure.
-instance Monoidal BOOL where
-  type Unit = TerminalObject
-  type a ** b = a && b
-  withOb2 @a @b = withObProd @BOOL @a @b
-  leftUnitor = leftUnitorProd
-  leftUnitorInv = leftUnitorProdInv
-  rightUnitor = rightUnitorProd
-  rightUnitorInv = rightUnitorProdInv
-  associator @a @b @c = associatorProd @a @b @c
-  associatorInv @a @b @c = associatorProdInv @a @b @c
-
-instance SymMonoidal BOOL where
-  swap @a @b = swapProd @a @b
-
-instance Distributive BOOL where
-  distL @a @b @c = case obj @a of
-    Fls -> Fls
-    Tru -> obj @b +++ obj @c
-  distR @a @b @c = case obj @c of
-    Fls -> Fls
-    Tru -> obj @a +++ obj @b
-  absorbL = Fls
-  absorbR = Fls
-
-instance Closed BOOL where
-  type a ~~> b = ExpSA a b
-  withObExp @a r = case obj @a of
-    Fls -> r
-    Tru -> r
-  curry @a @b = currySA @a @b
-  apply @b @c = applySA @b @c
-
-instance StarAutonomous BOOL where
-  type Dual FLS = TRU
-  type Dual TRU = FLS
-  withObDual r = r
-  dual Fls = Tru
-  dual F2T = F2T
-  dual Tru = Fls
-  dualInv @a @b f = case (obj @a, obj @b, f) of
-    (Fls, Fls, Tru) -> Fls
-    (Tru, Fls, F2T) -> F2T
-    (Tru, Tru, Fls) -> Tru
-    (Fls, Tru, f') -> case f' of {}
-  linDist @a @b f = case (obj @a, obj @b) of
-    (Fls, Fls) -> F2T
-    (Tru, Fls) -> Tru
-    (_, Tru) -> f
-  linDistInv @_ @b @c f = case (obj @b, obj @c) of
-    (Fls, Fls) -> F2T
-    (Fls, Tru) -> Fls
-    (Tru, _) -> f
-
--- BOOL is not CompactClosed
-
-instance HasParamNNO BOOL where
-  type NNO = TRU
-  zero = Tru
-  succ = Tru
-  nnoUniv z _ = z
-
-instance Monoid TRU where
-  mempty = Tru
-  mappend = Tru
-instance CommutativeMonoid TRU
-
-instance (Ob a) => Comonoid (a :: BOOL) where
-  counit = case obj @a of
-    Fls -> F2T
-    Tru -> Tru
-  comult = case obj @a of
-    Fls -> Fls
-    Tru -> Tru
-instance (Ob a) => CocommutativeComonoid (a :: BOOL)
-
-instance CopyDiscard BOOL
+-- | @a <= b@ on the walking arrow, as a 'BOOL' again: the hom of the walking arrow is its own
+-- internal hom.
+type family BoolLeq (a :: BOOL) (b :: BOOL) :: BOOL where
+  BoolLeq TRU FLS = FLS
+  BoolLeq a b = TRU
 
 -- | The four non-trivial profunctors @BOOL '+->' BOOL@, indexed by a pair of 'BOOL's selecting
 -- whether the @FLS->FLS@ and @TRU->TRU@ heteromorphisms are present; @FLS->TRU@ always is.
@@ -278,10 +78,9 @@ instance Profunctor (NonTrivialProfunctor ft) where
   r \\ FT = r
   r \\ TT = r
 
--- | The arrow category of @k@ as functor category from @2@ to @k@.
-type ARROW k = FUN BOOL k
-
-commSquare
-  :: forall {k} f g a b c d
-   . (a ~ f % FLS, b ~ f % TRU, c ~ g % FLS, d ~ g % TRU) => SUB f ~> (SUB g :: ARROW k) -> (a ~> b, b ~> d, a ~> c, c ~> d)
-commSquare n = (repMap @f F2T, n ! Tru, n ! Fls, repMap @g F2T) \\ n
+-- | Which heteromorphisms @'NonTrivialProfunctor' '(ff, tt)@ has.
+type family NonTrivialHolds (ff :: BOOL) (tt :: BOOL) (a :: BOOL) (b :: BOOL) :: BOOL where
+  NonTrivialHolds ff tt FLS FLS = ff
+  NonTrivialHolds ff tt FLS TRU = TRU
+  NonTrivialHolds ff tt TRU TRU = tt
+  NonTrivialHolds ff tt TRU FLS = FLS

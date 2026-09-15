@@ -9,6 +9,7 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free (Elems, FREE, HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -66,6 +67,11 @@ instance (P.Monoid m) => Monoid (m :: Type) where
   mempty () = P.mempty
   mappend = P.uncurry (P.<>)
 instance CommutativeMonoid ()
+
+instance Monoid TRU where
+  mempty = Tru
+  mappend = Tru
+instance CommutativeMonoid TRU
 
 newtype GenElt x m = GenElt (x ~> m)
 
@@ -132,6 +138,15 @@ instance Comonoid '() where
   counit = id
   comult = id
 instance CocommutativeComonoid '()
+
+instance (Ob a) => Comonoid (a :: BOOL) where
+  counit = case obj @a of
+    Fls -> F2T
+    Tru -> Tru
+  comult = case obj @a of
+    Fls -> Fls
+    Tru -> Tru
+instance (Ob a) => CocommutativeComonoid (a :: BOOL)
 
 counitAct :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> n
 counitAct = unitor @t . actHom @t (counit @a) (obj @n)

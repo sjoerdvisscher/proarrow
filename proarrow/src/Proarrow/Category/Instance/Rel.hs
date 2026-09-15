@@ -10,7 +10,7 @@ module Proarrow.Category.Instance.Rel where
 
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor)
-import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Discrete, ThinProfunctor (..), mapDecision, withEq)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), src, tgt, (:~>), type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -28,10 +28,17 @@ data Converse p a b where
 instance (Relation p) => Profunctor (Converse p) where
   dimap f g (Converse p) = withEq f (withEq g (Converse p))
   r \\ Converse p = r \\ p
+
 instance (Relation p) => ThinProfunctor (Converse p) where
   type HasArrow (Converse p) a b = HasArrow p b a
   arr = Converse arr
   withArr (Converse p) r = withArr p r
+
+instance (Relation p, DecidableProfunctor p) => DecidableProfunctor (Converse p) where
+  type Holds (Converse p) a b = Holds p b a
+  decide @a @b = mapDecision Converse (decide @p @b @a)
+  toHolds (Converse p) r = toHolds p r
+
 instance (Relation p, Representable p) => Corepresentable (Converse p) where
   type (Converse p) %% a = p % a
   coindex (Converse p) = withEq (index p) (src p)

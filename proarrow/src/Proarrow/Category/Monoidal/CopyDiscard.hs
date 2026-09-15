@@ -14,6 +14,7 @@ module Proarrow.Category.Monoidal.CopyDiscard where
 
 import Data.Kind (Type)
 
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..), SubMonoidal)
 import Proarrow.Category.Monoidal
@@ -50,6 +51,8 @@ discardS = Str discard
 
 instance CopyDiscard Type
 instance CopyDiscard ()
+
+instance CopyDiscard BOOL
 
 -- | The comonoid supply of a product category, a subcategory and a strictified category are
 -- inherited componentwise: each object's comonoid is the ambient 'copy'\/'discard'.

@@ -7,7 +7,15 @@ module Proarrow.Category.Instance.Unit where
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin
+  ( DecidableProfunctor (..)
+  , Decision (..)
+  , Enumerable (..)
+  , Member (..)
+  , ObjList (..)
+  , ThinProfunctor (..)
+  )
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type Unit :: CAT ()
@@ -34,3 +42,13 @@ instance ThinProfunctor Unit where
   type HasArrow Unit a b = (a ~ b)
   arr = Unit
   withArr Unit r = r
+
+instance DecidableProfunctor Unit where
+  type Holds Unit a b = TRU
+  decide = Yes Unit
+  toHolds Unit r = r
+
+instance Enumerable () where
+  type Objects () = '[ '()]
+  objects = OCons ONil
+  member = Here

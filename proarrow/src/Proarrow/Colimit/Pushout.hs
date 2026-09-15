@@ -8,6 +8,7 @@ module Proarrow.Colimit.Pushout where
 import Prelude (Bool, const, ($), (==))
 
 import Proarrow.Category.Enriched.Thin (Thin)
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Instance.Free (Eq2)
 import Proarrow.Category.Instance.Opposite (OPPOSITE, Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
@@ -39,6 +40,9 @@ class (CategoryOf k) => HasPushouts k where
 instance HasPushouts () where
   pushout Unit Unit k = k Unit Unit
   factorPushout Unit Unit Unit Unit = Unit
+
+instance HasPushouts BOOL where
+  pushout = thinPushout
 
 instance (HasPushouts k1, HasPushouts k2) => HasPushouts (k1, k2) where
   pushout (l1 :**: l2) (r1 :**: r2) k = pushout l1 r1 \f1 g1 -> pushout l2 r2 \f2 g2 -> k (f1 :**: f2) (g1 :**: g2)

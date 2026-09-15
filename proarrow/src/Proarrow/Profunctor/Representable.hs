@@ -9,7 +9,8 @@ module Proarrow.Profunctor.Representable where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
+import Proarrow.Category.Instance.Bool (Booleans (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -18,7 +19,7 @@ import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap
 import Proarrow.Functor (FunctorForRep (..), Presheaf, withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Optic (PIso, iso)
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, dimapCorep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, dimapCorep, withObCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
@@ -43,6 +44,12 @@ instance Representable (->) where
   tabulate f = f
   repMap f = f
   repUniv = id
+
+instance Representable Booleans where
+  type Booleans % x = x
+  index = id
+  tabulate = id
+  repMap = id
 
 instance (Representable p, Representable q) => Representable (p :**: q) where
   type (p :**: q) % '(a, b) = '(p % a, q % b)
@@ -134,6 +141,22 @@ instance (Representable p, Thin j) => ThinProfunctor (RepCostar p :: j +-> k) wh
   arr @a = withObRep @p @a (RepCostar arr)
   withArr (RepCostar f) r = withArr f r
 
+instance (Representable p, DecidableProfunctor (Hom j)) => DecidableProfunctor (RepCostar p :: j +-> k) where
+  type Holds (RepCostar p :: j +-> k) a b = Holds (Hom j) (p % a) b
+  decide @a @b = withObRep @p @a (mapDecision RepCostar (decide @(Hom j) @(p % a) @b))
+  toHolds (RepCostar f) r = toHolds f r
+
+-- | @'CorepStar' p a b@ holds in a thin category exactly when @a ≤ p %% b@.
+instance (Corepresentable p, Thin k) => ThinProfunctor (CorepStar p :: j +-> k) where
+  type HasArrow (CorepStar p :: j +-> k) a b = HasArrow (Hom k) a (p %% b)
+  arr @_ @b = withObCorep @p @b (CorepStar arr)
+  withArr (CorepStar f) r = withArr f r
+
+instance (Corepresentable p, DecidableProfunctor (Hom k)) => DecidableProfunctor (CorepStar p :: j +-> k) where
+  type Holds (CorepStar p :: j +-> k) a b = Holds (Hom k) a (p %% b)
+  decide @a @b = withObCorep @p @b (mapDecision CorepStar (decide @(Hom k) @a @(p %% b)))
+  toHolds (CorepStar f) r = toHolds f r
+
 mapRepCostar :: (Representable p, Representable q) => p ~> q -> RepCostar q ~> RepCostar p
 mapRepCostar (Prof n) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (repUniv @_ @a)))
 
@@ -168,6 +191,11 @@ instance (FunctorForRep f, Thin k) => ThinProfunctor (Rep f :: j +-> k) where
   type HasArrow (Rep f :: j +-> k) a b = HasArrow (Hom k) a (f @ b)
   arr @_ @b = withMappedOb @f @b (Rep arr)
   withArr (Rep f) r = withArr f r
+
+instance (FunctorForRep f, DecidableProfunctor (Hom k)) => DecidableProfunctor (Rep f :: j +-> k) where
+  type Holds (Rep f :: j +-> k) a b = Holds (Hom k) a (f @ b)
+  decide @a @b = withMappedOb @f @b (mapDecision Rep (decide @(Hom k) @a @(f @ b)))
+  toHolds (Rep f) r = toHolds f r
 
 rep :: forall f a b a' b'. (FunctorForRep f, Ob b) => PIso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
 rep = tabulated

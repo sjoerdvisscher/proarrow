@@ -11,6 +11,9 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Core (CAT, CategoryOf (..), OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Prelude (type (~))
+
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 
 type SUBCAT :: forall {k}. OB k -> Type
 type data SUBCAT (ob :: OB k) = SUB k
@@ -77,3 +80,11 @@ type FUN j k = SUBCAT (Representable :: OB (j +-> k))
 
 (!) :: forall {j} {k} f g a b. f ~> (g :: FUN j k) -> a ~> b -> UN SUB f % a ~> UN SUB g % b
 Sub (Prof n) ! ab = index @(UN SUB g) @_ @b (n (tabulate (repMap @(UN SUB f) ab))) \\ ab
+
+-- | The arrow category of @k@ as functor category from @2@ to @k@.
+type ARROW k = FUN BOOL k
+
+commSquare
+  :: forall {k} f g a b c d
+   . (a ~ f % FLS, b ~ f % TRU, c ~ g % FLS, d ~ g % TRU) => SUB f ~> (SUB g :: ARROW k) -> (a ~> b, b ~> d, a ~> c, c ~> d)
+commSquare n = (repMap @f F2T, n ! Tru, n ! Fls, repMap @g F2T) \\ n

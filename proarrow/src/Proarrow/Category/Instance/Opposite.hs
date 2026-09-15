@@ -4,7 +4,7 @@
 -- to give one collection of types a second category structure.
 module Proarrow.Category.Instance.Opposite where
 
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
@@ -41,6 +41,11 @@ instance (ThinProfunctor p) => ThinProfunctor (Op p) where
   arr = Op arr
   withArr (Op f) r = withArr f r
 
+instance (DecidableProfunctor p) => DecidableProfunctor (Op p) where
+  type Holds (Op p) (OP a) (OP b) = Holds p b a
+  decide @(OP a) @(OP b) = mapDecision Op (decide @p @b @a)
+  toHolds (Op f) r = toHolds f r
+
 -- | Inverse to 'Op': unwraps a profunctor between 'OPPOSITE' categories to one between the
 -- underlying kinds.
 type UnOp :: OPPOSITE k +-> OPPOSITE j -> j +-> k
@@ -55,3 +60,8 @@ instance (Thin j, Thin k, ThinProfunctor p) => ThinProfunctor (UnOp p :: j +-> k
   type HasArrow (UnOp p) a b = HasArrow p (OP b) (OP a)
   arr = unOp arr
   withArr f r = withArr (Op f) r
+
+instance (Thin j, Thin k, DecidableProfunctor p) => DecidableProfunctor (UnOp p :: j +-> k) where
+  type Holds (UnOp p) a b = Holds p (OP b) (OP a)
+  decide @a @b = mapDecision UnOp (decide @p @(OP b) @(OP a))
+  toHolds (UnOp f) r = toHolds f r

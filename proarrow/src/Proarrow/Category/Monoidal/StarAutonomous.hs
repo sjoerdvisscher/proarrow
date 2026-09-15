@@ -10,6 +10,7 @@ module Proarrow.Category.Monoidal.StarAutonomous where
 
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), Not)
 import Proarrow.Category.Instance.Free
   ( Elem (..)
   , Elems
@@ -86,6 +87,28 @@ instance StarAutonomous () where
   dualInv U.Unit = U.Unit
   linDist U.Unit = U.Unit
   linDistInv U.Unit = U.Unit
+
+instance StarAutonomous BOOL where
+  type Dual (a :: BOOL) = Not a
+  withObDual r = r
+  dual Fls = Tru
+  dual F2T = F2T
+  dual Tru = Fls
+  dualInv @a @b f = case (obj @a, obj @b, f) of
+    (Fls, Fls, Tru) -> Fls
+    (Tru, Fls, F2T) -> F2T
+    (Tru, Tru, Fls) -> Tru
+    (Fls, Tru, f') -> case f' of {}
+  linDist @a @b f = case (obj @a, obj @b) of
+    (Fls, Fls) -> F2T
+    (Tru, Fls) -> Tru
+    (_, Tru) -> f
+  linDistInv @_ @b @c f = case (obj @b, obj @c) of
+    (Fls, Fls) -> F2T
+    (Fls, Tru) -> Fls
+    (Tru, _) -> f
+
+-- BOOL is not CompactClosed
 
 instance (StarAutonomous j, StarAutonomous k) => StarAutonomous (j, k) where
   type Dual '(a, b) = '(Dual a, Dual b)

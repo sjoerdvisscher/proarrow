@@ -9,6 +9,7 @@ import Data.Void (Void, absurd)
 import Prelude (Show, type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
   ( Elem (..)
   , FREE (..)
@@ -22,7 +23,7 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
@@ -42,6 +43,12 @@ instance HasInitialObject Type where
 instance HasInitialObject () where
   type InitialObject = '()
   initiate = Unit
+
+instance HasInitialObject BOOL where
+  type InitialObject = FLS
+  initiate @a = case obj @a of
+    Fls -> Fls
+    Tru -> F2T
 
 instance (HasInitialObject j, HasInitialObject k) => HasInitialObject (j, k) where
   type InitialObject = '(InitialObject, InitialObject)

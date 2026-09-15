@@ -5,6 +5,7 @@ module Proarrow.Colimit.NaturalNumbers where
 import Data.Kind (Type)
 import Data.Nat qualified as N
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
@@ -37,3 +38,9 @@ instance HasParamNNO Type where
   zero () = N.Z
   succ = N.S
   nnoUniv z s (a, n) = N.cata (z a) s n
+
+instance HasParamNNO BOOL where
+  type NNO = TRU
+  zero = Tru
+  succ = Tru
+  nnoUniv z _ = z

@@ -14,12 +14,13 @@
 -- every object is a 'TestOb' -- typically a category that leaves 'TestOb' at its @'Ob'@ default.
 module Proarrow.Testing.Laws where
 
-import Control.Monad (unless)
+import Control.Monad (unless, when)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Adjunction (Adjunction)
+import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Cartesian qualified as Cartesian
@@ -887,6 +888,25 @@ propHypergraph_ = propHypergraph @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r
 
 testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
 testProfunctor = testProperty "Profunctor" (propProfunctor @p)
+
+-- | 'Thin.decide' agrees with the generator: an element of @p a b@ can be generated exactly
+-- when @'Thin.Holds' p a b@ decides to 'Proarrow.Category.Instance.Bool.TRU', and then (the
+-- profunctor being thin) it is the decided element.
+propDecidable
+  :: forall {j} {k} (p :: j +-> k)
+   . (Thin.DecidableProfunctor p, Testable j, Testable k, TestableTypeP p)
+  => Property ()
+propDecidable = do
+  Some @a <- genOb @k
+  Some @b <- genOb @j
+  obFromTestOb @a $
+    obFromTestOb @b $
+      case Thin.decide @p @a @b of
+        Thin.Yes x -> do
+          unless (isGenNonEmpty @(p a b)) $ testFailed "decide: TRU, but no element can be generated"
+          y <- genNamed @(p a b) "y"
+          testEq "decide" "decide" x "y" y
+        Thin.No -> when (isGenNonEmpty @(p a b)) $ testFailed "decide: FLS, but an element can be generated"
 
 propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => Property ()
 propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)

@@ -9,7 +9,7 @@ import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -73,3 +73,8 @@ instance (Functor f, Thin j) => ThinProfunctor (Costar f :: j +-> k) where
   type HasArrow (Costar f :: j +-> k) a b = HasArrow (Hom j) (f a) b
   arr = Costar arr
   withArr (Costar f) r = withArr f r
+
+instance (Functor f, DecidableProfunctor (Hom j)) => DecidableProfunctor (Costar f :: j +-> k) where
+  type Holds (Costar f :: j +-> k) a b = Holds (Hom j) (f a) b
+  decide @a @b = withObF @f @a (mapDecision Costar (decide @(Hom j) @(f a) @b))
+  toHolds (Costar f) r = toHolds f r

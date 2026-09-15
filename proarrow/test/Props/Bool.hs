@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Props.Bool where
@@ -7,8 +8,17 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (discard, testProperty)
 import Prelude
 
+import Proarrow.Category.Enriched.Thin (HasArrow, Holds, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin.Composition ()
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), NonTrivialProfunctor (..))
-import Proarrow.Core (Ob, obj)
+import Proarrow.Category.Instance.Opposite (Op)
+import Proarrow.Core (Ob, obj, type (+->))
+import Proarrow.Profunctor.Corepresentable (Corep)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Direp (Direp)
+import Proarrow.Profunctor.Instance.Product ((:*:))
+import Proarrow.Profunctor.Representable (CorepStar, Rep)
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Testing
@@ -44,7 +54,65 @@ test =
     , testProperty "FF,FT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(FLS, TRU))
     , testProperty "FF,FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, TRU))
+    , testProperty "Booleans decidable" $ propDecidable @Booleans
+    , testProperty "FF,FT decidable" $ propDecidable @(NonTrivialProfunctor '(TRU, FLS))
+    , testProperty "FT,TT decidable" $ propDecidable @(NonTrivialProfunctor '(FLS, TRU))
+    , testProperty "Op Booleans decidable" $ propDecidable @(Op Booleans)
+    , testProperty "thin composition round trips through withArr" $
+        withArr compLeft $
+          withArr compRight $
+            withArr compRightCorepStar $
+              withArr compSearch $
+                withArr compSearch3 (pure ())
     ]
+
+-- * Composition of thin profunctors, checked at the type level
+
+-- | Coherence law: a corepresented left leg followed by a represented right leg is 'Direp' --
+-- both constraints reduce to @f a ≤ g c@, so the identity typechecks in either direction.
+compIsDirep
+  :: forall {i} {j} {k} (f :: j +-> k) (g :: i +-> k) (a :: j) (c :: i) r
+   . ((HasArrow (Direp f g) a c) => r) -> ((HasArrow (Corep f :.: Rep g) a c) => r)
+compIsDirep r = r
+
+direpIsComp
+  :: forall {i} {j} {k} (f :: j +-> k) (g :: i +-> k) (a :: j) (c :: i) r
+   . ((HasArrow (Corep f :.: Rep g) a c) => r) -> ((HasArrow (Direp f g) a c) => r)
+direpIsComp r = r
+
+-- | On the walking arrow: a constant-@FLS@ left leg substitutes @FLS@ for the middle object,
+-- and @FLS ≤ FLS@ holds, so the composite arrow exists (this only typechecks because it does).
+compLeft :: (Corep (Constant FLS) :.: Booleans) TRU FLS
+compLeft = arr
+
+-- | Dually, a constant-@TRU@ right leg substitutes @TRU@: @FLS ≤ TRU@.
+compRight :: (Booleans :.: Rep (Constant TRU)) FLS FLS
+compRight = arr
+
+-- | The same substitution through a corepresentable profunctor's 'CorepStar'.
+compRightCorepStar :: (Booleans :.: CorepStar (Corep (Constant TRU))) FLS FLS
+compRightCorepStar = arr
+
+-- | Two non-representable legs: the middle object is found by searching @BOOL@. Here @FLS@ reaches
+-- @TRU@ through either middle object, and only the search can tell.
+compSearch :: (NonTrivialProfunctor '(TRU, FLS) :.: NonTrivialProfunctor '(FLS, TRU)) FLS TRU
+compSearch = arr
+
+-- | Searches nest: a composite is decidable again, so it can be the leg of a further search.
+compSearch3 :: ((NonTrivialProfunctor '(TRU, FLS) :.: NonTrivialProfunctor '(FLS, TRU)) :.: Booleans) FLS TRU
+compSearch3 = arr
+
+-- | A failed search is a type-level fact too: the first leg only leaves @TRU@ at @TRU@, where the
+-- second leg has nothing, so the composite has no arrow out of @TRU@.
+searchMisses :: Holds (NonTrivialProfunctor '(FLS, TRU) :.: NonTrivialProfunctor '(TRU, FLS)) TRU FLS :~: FLS
+searchMisses = Refl
+
+searchHits :: Holds (NonTrivialProfunctor '(TRU, FLS) :.: NonTrivialProfunctor '(FLS, TRU)) FLS TRU :~: TRU
+searchHits = Refl
+
+-- | Decidability is structural: a product of profunctors holds when both do.
+productMisses :: Holds (Booleans :*: NonTrivialProfunctor '(FLS, TRU)) FLS FLS :~: FLS
+productMisses = Refl
 
 instance Testable BOOL where
   showOb @a = case obj @a of
@@ -76,3 +144,11 @@ instance (Ob ft) => TestableProfunctor (NonTrivialProfunctor ft) where
     Fls :**: Tru -> someElemNamed nm [SomeP FT, SomeP TT]
     Fls :**: Fls -> discard
 instance (Ob ft, TestOb a, TestOb b) => TestingEqShow (NonTrivialProfunctor ft a b)
+instance (Ob ft, TestOb a, TestOb b) => TestableType (NonTrivialProfunctor ft a b) where
+  gen = case (obj @ft, obj @a, obj @b) of
+    (Tru :**: _, Fls, Fls) -> oneElem FF
+    (Fls :**: _, Fls, Fls) -> GenEmpty \case {}
+    (_, Fls, Tru) -> oneElem FT
+    (_ :**: Tru, Tru, Tru) -> oneElem TT
+    (_ :**: Fls, Tru, Tru) -> GenEmpty \case {}
+    (_, Tru, Fls) -> GenEmpty \case {}

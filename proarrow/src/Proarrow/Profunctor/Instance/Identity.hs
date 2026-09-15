@@ -3,7 +3,7 @@
 module Proarrow.Profunctor.Instance.Identity where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..))
 import Proarrow.Functor (FunctorForRep (..))
 
@@ -31,3 +31,8 @@ instance (Thin k) => ThinProfunctor (Id :: CAT k) where
   type HasArrow (Id :: CAT k) a b = HasArrow (Hom k) a b
   arr = Id arr
   withArr (Id f) r = withArr f r
+
+instance (DecidableProfunctor (Hom k)) => DecidableProfunctor (Id :: CAT k) where
+  type Holds (Id :: CAT k) a b = Holds (Hom k) a b
+  decide @a @b = mapDecision Id (decide @(Hom k) @a @b)
+  toHolds (Id f) r = toHolds f r

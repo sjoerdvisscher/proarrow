@@ -22,7 +22,11 @@ instance (FunctorForRep p, FunctorForRep q) => FunctorForRep (p :.: q) where
   type (p :.: q) @ b = p @ (q @ b)
   fmap = fmap @p . fmap @q
 
--- No instance for ThinProfunctor (p :.: q) because you can't do existentials in constraints.
+-- The 'Proarrow.Category.Enriched.Thin.ThinProfunctor' instance for composition lives in
+-- "Proarrow.Category.Enriched.Thin.Composition": in general it needs an existential over the
+-- middle objects, which constraints can't express directly, so it either substitutes a
+-- representable leg or, when both legs are decidable and the middle category enumerable,
+-- searches the middle objects at the type level.
 
 -- | Horizontal composition
 o

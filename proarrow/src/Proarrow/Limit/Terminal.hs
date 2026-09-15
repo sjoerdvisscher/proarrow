@@ -8,6 +8,7 @@ import Data.Kind (Type)
 import Prelude (Show, type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
   ( Elem (..)
   , FREE (..)
@@ -21,7 +22,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -42,6 +43,12 @@ instance HasTerminalObject Type where
 instance HasTerminalObject () where
   type TerminalObject = '()
   terminate = U.Unit
+
+instance HasTerminalObject BOOL where
+  type TerminalObject = TRU
+  terminate @a = case obj @a of
+    Fls -> F2T
+    Tru -> Tru
 
 instance (HasTerminalObject j, HasTerminalObject k) => HasTerminalObject (j, k) where
   type TerminalObject = '(TerminalObject, TerminalObject)

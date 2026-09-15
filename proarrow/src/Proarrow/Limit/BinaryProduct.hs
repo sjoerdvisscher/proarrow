@@ -11,6 +11,8 @@ import Data.Kind (Type)
 import Prelude (Show, type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..))
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
   ( Elem (..)
   , FREE (..)
@@ -86,6 +88,24 @@ instance HasBinaryProducts () where
   snd = U.Unit
   U.Unit &&& U.Unit = U.Unit
 
+instance HasBinaryProducts BOOL where
+  type TRU && b = b
+  type FLS && b = FLS
+  type a && TRU = a
+  type a && FLS = FLS
+  withObProd @a r = case obj @a of
+    Tru -> r
+    Fls -> r
+  fst @a @b = case obj @a of
+    Fls -> Fls
+    Tru -> terminate @_ @b
+  snd @a @b = case obj @b of
+    Fls -> Fls
+    Tru -> terminate @_ @a
+  Fls &&& _ = Fls
+  F2T &&& b = b
+  Tru &&& Tru = Tru
+
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
   type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
   withObProd @'(a1, a2) @'(b1, b2) r = withObProd @j @a1 @b1 (withObProd @k @a2 @b2 r)
@@ -106,6 +126,23 @@ instance (HasBinaryProducts k, Representable (p :: j +-> k), Representable q) =>
   tabulate @b f =
     withObRep @p @b (withObRep @q @b (tabulate (fst @_ @(p % b) @(q % b) . f) :*: tabulate (snd @_ @(p % b) @(q % b) . f)))
   repMap f = repMap @p f *** repMap @q f
+
+-- | A product holds when both components do: the type-level '&&' is 'BOOL'\'s categorical product.
+instance (DecidableProfunctor p, DecidableProfunctor q) => DecidableProfunctor (p :**: q) where
+  type Holds (p :**: q) '(a1, a2) '(b1, b2) = Holds p a1 b1 && Holds q a2 b2
+  decide @'(a1, a2) @'(b1, b2) = case (decide @p @a1 @b1, decide @q @a2 @b2) of
+    (Yes x, Yes y) -> Yes (x :**: y)
+    (No, _) -> No
+    (Yes _, No) -> No
+  toHolds (f :**: g) r = toHolds f (toHolds g r)
+
+instance (DecidableProfunctor p, DecidableProfunctor q) => DecidableProfunctor (p :*: q) where
+  type Holds (p :*: q) a b = Holds p a b && Holds q a b
+  decide @a @b = case (decide @p @a @b, decide @q @a @b) of
+    (Yes x, Yes y) -> Yes (x :*: y)
+    (No, _) -> No
+    (Yes _, No) -> No
+  toHolds (p :*: q) r = toHolds p (toHolds q r)
 
 leftUnitorProd :: forall {k} (a :: k). (HasProducts k, Ob a) => TerminalObject && a ~> a
 leftUnitorProd = snd @k @TerminalObject
@@ -215,6 +252,25 @@ instance Monoidal Type where
 
 instance SymMonoidal Type where
   swap = swapProd
+
+instance MonoidalProfunctor Booleans where
+  one = id
+  f ** g = f *** g
+
+-- | Products as monoidal structure.
+instance Monoidal BOOL where
+  type Unit = TerminalObject
+  type a ** b = a && b
+  withOb2 @a @b = withObProd @BOOL @a @b
+  leftUnitor = leftUnitorProd
+  leftUnitorInv = leftUnitorProdInv
+  rightUnitor = rightUnitorProd
+  rightUnitorInv = rightUnitorProdInv
+  associator @a @b @c = associatorProd @a @b @c
+  associatorInv @a @b @c = associatorProdInv @a @b @c
+
+instance SymMonoidal BOOL where
+  swap @a @b = swapProd @a @b
 
 data family (*!) (a :: k) (b :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, HasBinaryProducts `Elem` cs) => IsFreeOb (a *! b) where

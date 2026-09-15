@@ -3,7 +3,8 @@
 module Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (.., TerminalProfunctor)) where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..), ThinProfunctor (..))
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (pattern Obj, type Obj)
@@ -35,6 +36,9 @@ pattern TerminalProfunctor = TerminalProfunctor' Obj Obj
 
 {-# COMPLETE TerminalProfunctor #-}
 
-instance (CategoryOf j, CategoryOf k) => ThinProfunctor (TerminalProfunctor :: j +-> k) where
-  arr = TerminalProfunctor
-  withArr TerminalProfunctor r = r
+instance (CategoryOf j, CategoryOf k) => ThinProfunctor (TerminalProfunctor :: j +-> k)
+
+instance (CategoryOf j, CategoryOf k) => DecidableProfunctor (TerminalProfunctor :: j +-> k) where
+  type Holds TerminalProfunctor a b = TRU
+  decide = Yes TerminalProfunctor
+  toHolds TerminalProfunctor r = r
