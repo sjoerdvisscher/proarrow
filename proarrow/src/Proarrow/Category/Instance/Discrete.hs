@@ -1,3 +1,5 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
 -- | The __discrete__ category on an 'Thin.Indexed' kind @k@ (@'DISCRETE' k@): the numbered inhabitants
 -- of @k@ are the objects and the only arrows are identities ('Refl'). Numbering is what makes the
 -- category decidable, and a 'Thin.Finite' kind gives an enumerable one, so that reachability along
@@ -9,16 +11,21 @@ module Proarrow.Category.Instance.Discrete where
 import Data.Type.Equality (type (~~))
 import Data.Type.Equality qualified as Eq
 import Data.Type.Nat (SNat (..), snat)
-import Prelude (Maybe (..))
+import Prelude (Maybe (..), type (~))
 
+import Proarrow.Category.Enriched (EnrichedProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Quantale (Quantale (..), bottomTensor)
 import Proarrow.Category.Enriched.Thin qualified as Thin
-import Proarrow.Category.Instance.Bool (BOOL (..))
+import Proarrow.Category.Instance.Bool (BOOL (..), If)
+import Proarrow.Category.Instance.Cost (COST)
+import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
@@ -54,6 +61,43 @@ instance (Thin.Indexed k) => Thin.DecidableProfunctor (Discrete :: CAT (DISCRETE
   type Holds (Discrete :: CAT (DISCRETE k)) a b = Thin.Equal a b
   decide @a @b = Thin.mapDecision (\Eq.Refl -> Refl) (Thin.decideEq @a @b)
   toHolds @a Refl r = case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> r
+
+-- | The hom-object of the discrete category in a quantale: the unit on the diagonal, the bottom off
+-- it. Points are at distance @0@ from themselves and infinitely far from each other: the discrete
+-- category is a (discrete) Lawvere metric space, the base for shortest paths on a bare set of points.
+type Delta :: forall (v :: Kind) -> BOOL -> v
+type Delta v c = If c (Unit :: v) InitialObject
+
+-- | The action of the discrete base on a matrix over the points: on the diagonal the 'Delta' is the
+-- unit and the action is the unitor, off it the 'Delta' is the bottom and the action absorbs. The
+-- argument says how the matrix is reindexed on the diagonal.
+deltaAct
+  :: forall {k} {v} (x :: k) y (w :: v) w'
+   . (Quantale v, Thin.KnownIndex x, Thin.KnownIndex y, Ob w, Ob w')
+  => ((x ~ y) => w Eq.:~: w') -> (Delta v (Thin.Equal x y) ** w) ~> w'
+deltaAct eq = case Thin.decideEq @x @y of
+  Thin.Yes Eq.Refl -> case eq of Eq.Refl -> leftUnitor @v @w
+  Thin.No -> bottomTensor @w @w'
+
+instance (Thin.Indexed k) => EnrichedProfunctor COST (Discrete :: CAT (DISCRETE k)) where
+  type ProObj COST (Discrete :: CAT (DISCRETE k)) a b = Delta COST (Thin.Equal a b)
+  withProObj @a @b r = case Thin.decideEq @a @b of
+    Thin.Yes Eq.Refl -> r
+    Thin.No -> r
+  underlying @a Refl = case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> obj @(Unit :: COST)
+  enriched @a @b f = case Thin.decideEq @a @b of
+    Thin.Yes Eq.Refl -> Refl
+    Thin.No -> unitIsNotBottom @COST f
+  rmap @a @b @c =
+    withProObj @COST @(Discrete :: CAT (DISCRETE k)) @a @b
+      ( withProObj @COST @(Discrete :: CAT (DISCRETE k)) @a @c
+          (deltaAct @b @c @(Delta COST (Thin.Equal a b)) @(Delta COST (Thin.Equal a c)) Eq.Refl)
+      )
+  lmap @a @b @c =
+    withProObj @COST @(Discrete :: CAT (DISCRETE k)) @a @b
+      ( withProObj @COST @(Discrete :: CAT (DISCRETE k)) @c @b
+          (deltaAct @c @a @(Delta COST (Thin.Equal a b)) @(Delta COST (Thin.Equal c b)) Eq.Refl)
+      )
 
 type FmapD :: Maybe k -> Maybe (DISCRETE k)
 type family FmapD m where

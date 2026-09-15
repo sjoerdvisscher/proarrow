@@ -20,6 +20,12 @@ data Booleans a b where
 deriving instance P.Eq (Booleans a b)
 deriving instance P.Show (Booleans a b)
 
+-- | Type-level conditional on a 'BOOL'.
+type If :: BOOL -> k -> k -> k
+type family If c t e where
+  If TRU t e = t
+  If FLS t e = e
+
 -- | Negation; the 'Proarrow.Category.Monoidal.StarAutonomous.Dual' of @BOOL@.
 type family Not (b :: BOOL) :: BOOL where
   Not FLS = TRU

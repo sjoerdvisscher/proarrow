@@ -18,7 +18,7 @@ import Proarrow.Category.Enriched.Thin
   , KnownIndex
   , ThinProfunctor (..)
   )
-import Proarrow.Category.Enriched.Thin.Composition (Reachable)
+import Proarrow.Category.Enriched.Thin.Composition (Closure)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
 import Proarrow.Core (CAT, Profunctor (..), UN)
@@ -64,13 +64,13 @@ instance DecidableProfunctor Edge where
   toHolds FT r = r
 
 -- | The closure over the bare set: the edge is found, its reverse is not, and points reach themselves.
-reachEdge :: Reachable Edge (D FLS) (D TRU)
+reachEdge :: Closure Edge (D FLS) (D TRU)
 reachEdge = arr
 
-noWayBack :: Holds (Reachable Edge) (D TRU) (D FLS) :~: FLS
+noWayBack :: Holds (Closure Edge) (D TRU) (D FLS) :~: FLS
 noWayBack = Eq.Refl
 
-reachSelf :: Holds (Reachable Edge) (D TRU) (D TRU) :~: TRU
+reachSelf :: Holds (Closure Edge) (D TRU) (D TRU) :~: TRU
 reachSelf = Eq.Refl
 
 -- | The discrete category itself is decided by comparing indices.
