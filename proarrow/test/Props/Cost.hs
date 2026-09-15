@@ -18,15 +18,21 @@ module Props.Cost where
 import Control.Monad (unless)
 import Data.Proxy (Proxy (..))
 import Data.Type.Equality ((:~:) (Refl))
+import Data.Type.Nat (Nat (..), SNat (..), snat)
 import Data.Type.Ord (OrderingI (..))
 import GHC.TypeNats (cmpNat, natVal)
+import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude
 
-import Proarrow.Category.Enriched.Matrix (Closure, Diagonal, Entry)
+import Proarrow.Category.Enriched (EnrichedProfunctor (..))
+import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), IndexedList (..))
+import Proarrow.Category.Enriched.Thin.Composition (Closure, GradedWalk (..), Length, shortest)
 import Proarrow.Category.Instance.Cost (COST (..), GTE (..), IsCost (..), SCost (..))
+import Proarrow.Category.Instance.Discrete (DISCRETE (..))
 import Proarrow.Core (Ob)
+import Proarrow.Profunctor.Instance.Edges (Edges)
 
 import Proarrow.Testing
   ( GenTotal (..)
@@ -45,8 +51,15 @@ test =
     "Cost"
     [ propCategory @COST
     , testProperty "GTE decidable" $ propDecidable @GTE
-    , testProperty "shortest path P -> R is 7" $ case sing @(Closure COST Vs Diagonal G P R) of
-        SC @n -> unless (natVal (Proxy @n) == 7) (testFailed "distance mismatch")
+    , testProperty "shortest paths computed at the value level" $ do
+        unless (distance @(D P) @(D R) == Just 7) (testFailed "P -> R should be 7")
+        unless (distance @(D Q) @(D P) == Just 11) (testFailed "Q -> P should be 11")
+        unless (distance @(D P) @(D P) == Just 0) (testFailed "P -> P should be 0")
+        unless (distance @(D P) @(D Y) == Nothing) (testFailed "P -> Y should be unreachable")
+    , testProperty "shortest paths as witnesses" $ do
+        unless (steps (shortest @COST @N @G @(D P) @(D R)) == 2) (testFailed "P -> R should take the detour via Q")
+        unless (steps (shortest @COST @N @G @(D Q) @(D P)) == 3) (testFailed "Q -> P should go around the cycle")
+        unless (steps (shortest @COST @N @G @(D P) @(D P)) == 0) (testFailed "P -> P should stay put")
     , propTerminalObject @COST
     , propInitialObject @COST
     , propBinaryProducts_ @COST
@@ -92,37 +105,68 @@ instance (Ob a, Ob b) => TestingEqShow (GTE a b) where
 
 instance TestableProfunctor GTE
 
--- * Shortest paths as a type-level fixed point
+-- * Shortest paths as a fixed point, at the type level and at the value level
 
--- | A weighted graph: the direct edge @P -> R@ costs 9, the detour via @Q@ only 7; @T@ is isolated.
-data V = P | Q | R | S | T
+-- | Five points; the direct edge @P -> R@ costs 9, the detour via @Q@ only 7, and @Y@ is isolated.
+data V = P | Q | R | X | Y
 
-type family Weight (a :: V) (b :: V) :: COST where
-  Weight P Q = C 3
-  Weight Q R = C 4
-  Weight P R = C 9
-  Weight R S = C 2
-  Weight S P = C 5
-  Weight a b = INF
+instance Indexed V where
+  type Index P = 'Z
+  type Index Q = 'S 'Z
+  type Index R = 'S ('S 'Z)
+  type Index X = 'S ('S ('S 'Z))
+  type Index Y = 'S ('S ('S ('S 'Z)))
+  type At V 'Z = 'Just P
+  type At V ('S 'Z) = 'Just Q
+  type At V ('S ('S 'Z)) = 'Just R
+  type At V ('S ('S ('S 'Z))) = 'Just X
+  type At V ('S ('S ('S ('S 'Z)))) = 'Just Y
+  type At V ('S ('S ('S ('S ('S i))))) = 'Nothing
 
--- | The graph is not an enriched profunctor, only a matrix of weights: a tag with 'Entry's.
-data G
+instance Finite V where
+  type Objects V = '[P, Q, R, X, Y]
+  finite = FCons (FCons (FCons (FCons (FCons FNil))))
+  atLookup SZ = Refl
+  atLookup (SS @i1) = case snat @i1 of
+    SZ -> Refl
+    SS @i2 -> case snat @i2 of
+      SZ -> Refl
+      SS @i3 -> case snat @i3 of
+        SZ -> Refl
+        SS @i4 -> case snat @i4 of
+          SZ -> Refl
+          SS -> Refl
 
-type instance Entry COST G a b = Weight a b
-
-type Vs = '[P, Q, R, S, T]
+type G = Edges '[ '(P, Q, C 3), '(Q, R, C 4), '(P, R, C 9), '(R, X, C 2), '(X, P, C 5)]
 
 -- | The fixed point beats the direct edge.
-distancePR :: Closure COST Vs Diagonal G P R :~: C 7
+distancePR :: ProObj COST (Closure G) (D P) (D R) :~: C 7
 distancePR = Refl
 
--- | Around the cycle: @Q -> R -> S -> P@.
-distanceQP :: Closure COST Vs Diagonal G Q P :~: C 11
+-- | Around the cycle: @Q -> R -> X -> P@.
+distanceQP :: ProObj COST (Closure G) (D Q) (D P) :~: C 11
 distanceQP = Refl
 
 -- | Every point is at distance @0@ from itself, and an isolated point is infinitely far.
-distancePP :: Closure COST Vs Diagonal G P P :~: C 0
+distancePP :: ProObj COST (Closure G) (D P) (D P) :~: C 0
 distancePP = Refl
 
-distancePT :: Closure COST Vs Diagonal G P T :~: INF
-distancePT = Refl
+distancePY :: ProObj COST (Closure G) (D P) (D Y) :~: INF
+distancePY = Refl
+
+-- | The same computation at the value level: the points are abstract here, so the distance singleton
+-- can only come from 'withProObj' running the fixed point.
+distance :: forall (a :: DISCRETE V) (b :: DISCRETE V). (Ob a, Ob b) => Maybe Natural
+distance = withProObj @COST @(Closure G) @a @b case sing @(ProObj COST (Closure G) a b) of
+  SC @n -> Just (natVal (Proxy @n))
+  SINF -> Nothing
+
+type N = Length (Objects (DISCRETE V))
+
+-- | The shortest walk from @P@ to @R@ has grade @7@ by type, and two steps by value.
+shortestPR :: GradedWalk COST N G (C 7) (D P) (D R)
+shortestPR = shortest
+
+steps :: GradedWalk v n p d a b -> Int
+steps (DoneAt _) = 0
+steps (StepAt _ w) = 1 + steps w

@@ -11,9 +11,11 @@ import Data.Type.Equality qualified as Eq
 import Data.Type.Nat (SNat (..), snat)
 import Prelude (Maybe (..))
 
+import Proarrow.Category.Enriched (EnrichedProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Bool (BOOL (..))
+import Proarrow.Category.Instance.Cost (COST (..), GTE (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
@@ -54,6 +56,31 @@ instance (Thin.Indexed k) => Thin.DecidableProfunctor (Discrete :: CAT (DISCRETE
   type Holds (Discrete :: CAT (DISCRETE k)) a b = Thin.Equal a b
   decide @a @b = Thin.mapDecision (\Eq.Refl -> Refl) (Thin.decideEq @a @b)
   toHolds @a Refl r = case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> r
+
+-- | Points are at distance @0@ from themselves and infinitely far from each other: the discrete
+-- category is a (discrete) Lawvere metric space, the base for shortest paths on a bare set of points.
+type DeltaCost :: BOOL -> COST
+type family DeltaCost c where
+  DeltaCost TRU = C 0
+  DeltaCost FLS = INF
+
+instance (Thin.Indexed k) => EnrichedProfunctor COST (Discrete :: CAT (DISCRETE k)) where
+  type ProObj COST (Discrete :: CAT (DISCRETE k)) a b = DeltaCost (Thin.Equal a b)
+  withProObj @a @b r = case Thin.decideEq @a @b of
+    Thin.Yes Eq.Refl -> r
+    Thin.No -> r
+  underlying @a Refl = case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> id
+  enriched @a @b f = case Thin.decideEq @a @b of
+    Thin.Yes Eq.Refl -> Refl
+    Thin.No -> case f of {}
+  rmap @a @b @c = case (Thin.decideEq @b @c, Thin.decideEq @a @b) of
+    (Thin.Yes Eq.Refl, Thin.Yes Eq.Refl) -> case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> id
+    (Thin.No, _) -> withProObj @COST @(Discrete :: CAT (DISCRETE k)) @a @c Inf
+    (Thin.Yes _, Thin.No) -> withProObj @COST @(Discrete :: CAT (DISCRETE k)) @a @c Inf
+  lmap @a @b @c = case (Thin.decideEq @c @a, Thin.decideEq @a @b) of
+    (Thin.Yes Eq.Refl, Thin.Yes Eq.Refl) -> case Thin.natEqRefl (snat @(Thin.Index c)) of Eq.Refl -> id
+    (Thin.No, _) -> withProObj @COST @(Discrete :: CAT (DISCRETE k)) @c @b Inf
+    (Thin.Yes _, Thin.No) -> withProObj @COST @(Discrete :: CAT (DISCRETE k)) @c @b Inf
 
 type FmapD :: Maybe k -> Maybe (DISCRETE k)
 type family FmapD m where
