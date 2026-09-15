@@ -199,7 +199,7 @@ data NNOUniv z s a b where
   NNOS :: (s :.: NNOUniv z s) x '(a, D n) -> NNOUniv z s x '(a, D (S n))
 instance (Profunctor z, Profunctor s) => Profunctor (NNOUniv z s) where
   dimap l (ra :**: Refl) (NNOZ z) = NNOZ (dimap l ra z) \\ l
-  dimap l (ra :**: Refl) (NNOS s) = NNOS (dimap l (ra :**: Refl) s)
+  dimap l (ra :**: Refl) (NNOS s) = NNOS (dimap l (ra :**: Refl) s) \\ s
   r \\ NNOZ z = r \\ z
   r \\ NNOS s = r \\ s
 instance HasParamNNO KIND where

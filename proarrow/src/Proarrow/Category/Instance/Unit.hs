@@ -4,15 +4,18 @@
 -- identity arrow 'Unit'.
 module Proarrow.Category.Instance.Unit where
 
-import Prelude (type (~))
+import Data.Type.Equality (type (:~:) (..))
+import Data.Type.Nat (Nat (..), SNat (..), snat)
+import Prelude (Maybe (..), type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin
   ( DecidableProfunctor (..)
   , Decision (..)
   , Enumerable (..)
-  , Member (..)
-  , ObjList (..)
+  , Finite (..)
+  , Indexed (..)
+  , IndexedList (..)
   , ThinProfunctor (..)
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
@@ -48,7 +51,17 @@ instance DecidableProfunctor Unit where
   decide = Yes Unit
   toHolds Unit r = r
 
-instance Enumerable () where
+instance Indexed () where
+  type Index '() = 'Z
+  type At () 'Z = 'Just '()
+  type At () ('S i) = 'Nothing
+
+instance Finite () where
   type Objects () = '[ '()]
-  objects = OCons ONil
-  member = Here
+  finite = FCons FNil
+  atLookup SZ = Refl
+  atLookup SS = Refl
+
+instance Enumerable () where
+  withIndex r = r
+  withOb @a r = case snat @(Index a) of SZ -> r

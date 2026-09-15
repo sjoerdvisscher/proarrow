@@ -11,6 +11,7 @@ import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
+import Props.Discrete qualified as Discrete
 import Props.Dot qualified as Dot
 import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
@@ -35,6 +36,7 @@ main =
       [ testGroup
           "Proarrow"
           [ Bool.test
+          , Discrete.test
           , Cospan.test
           , Cost.test
           , Dot.test

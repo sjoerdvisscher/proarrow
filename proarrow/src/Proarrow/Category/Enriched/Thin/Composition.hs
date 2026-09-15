@@ -19,11 +19,13 @@ import Proarrow.Category.Enriched.Thin
   , DecidableProfunctor (..)
   , Decision (..)
   , Enumerable (..)
+  , Finite (..)
+  , IndexedList (..)
   , Member (..)
-  , ObjList (..)
   , Thin
   , ThinProfunctor (..)
   , mapDecision
+  , member
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Colimit.BinaryCoproduct (type (||))
@@ -100,17 +102,17 @@ instance
   => ComposeThin BySearch (p :: j +-> k) (q :: i +-> j)
   where
   type HasArrowComp BySearch (p :: j +-> k) q a c = Search (Objects j) p q a c ~ TRU
-  arrComp @a @c = case search @p @q @a @c (objects @j) of Yes x -> x
+  arrComp @a @c = case search @p @q @a @c (finite @j) of Yes x -> x
   withArrComp (p :.: q) r = found p q r
 
 -- | Walk the object list deciding both legs at each object; a hit is the composite, and a miss
 -- reduces the search to the tail of the list.
 search
   :: forall {i} {j} {k} (p :: j +-> k) (q :: i +-> j) (a :: k) (c :: i) (bs :: [j])
-   . (DecidableProfunctor p, DecidableProfunctor q, Ob a, Ob c)
-  => ObjList bs -> Decision (p :.: q) a c (Search bs p q a c)
-search ONil = No
-search (OCons @b bs) = case (decide @p @a @b, decide @q @b @c) of
+   . (DecidableProfunctor p, DecidableProfunctor q, Enumerable j, Ob a, Ob c)
+  => IndexedList bs -> Decision (p :.: q) a c (Search bs p q a c)
+search FNil = No
+search (FCons @b bs) = withOb @j @b case (decide @p @a @b, decide @q @b @c) of
   (Yes x, Yes y) -> Yes (x :.: y)
   (No, _) -> search @p @q @a @c bs
   (Yes _, No) -> search @p @q @a @c bs
@@ -121,7 +123,7 @@ found
   :: forall {i} {j} {k} (p :: j +-> k) (q :: i +-> j) (a :: k) (b :: j) (c :: i) r
    . (DecidableProfunctor p, DecidableProfunctor q, Enumerable j)
   => p a b -> q b c -> ((Search (Objects j) p q a c ~ TRU, Ob a, Ob c) => r) -> r
-found p q r = toHolds p (toHolds q (go (member @j @b) r))
+found p q r = toHolds p (toHolds q (go (member @b) r))
   where
     go
       :: forall bs
@@ -176,7 +178,7 @@ instance
   => DecideComp BySearch (p :: j +-> k) (q :: i +-> j)
   where
   type HoldsComp BySearch (p :: j +-> k) q a c = Search (Objects j) p q a c
-  decideComp @a @c = search @p @q @a @c (objects @j)
+  decideComp @a @c = search @p @q @a @c (finite @j)
   toHoldsComp = withArrComp @BySearch
 
 instance (DecideComp (ThinCompStrategy p q) p q) => DecidableProfunctor (p :.: q) where
@@ -214,7 +216,7 @@ instance (SNatI n, DecidableProfunctor p, Decidable k, Enumerable k) => Decidabl
     SZ -> mapDecision Done (decide @(Hom k) @a @b)
     SS @m -> case decide @(Hom k) @a @b of
       Yes f -> Yes (Done f)
-      No -> mapDecision (\(e :.: w) -> Step e w) (search @p @(Walk m p) @a @b (objects @k))
+      No -> mapDecision (\(e :.: w) -> Step e w) (search @p @(Walk m p) @a @b (finite @k))
   toHolds w r = case snat @n of
     SZ -> case w of Done f -> toHolds f r
     SS -> case w of
