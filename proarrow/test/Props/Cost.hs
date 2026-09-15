@@ -15,14 +15,16 @@
 -- @distL@ \/ @distR@, whose branches rely on monotonicity of @+@.
 module Props.Cost where
 
+import Control.Monad (unless)
 import Data.Proxy (Proxy (..))
 import Data.Type.Equality ((:~:) (Refl))
 import Data.Type.Ord (OrderingI (..))
 import GHC.TypeNats (cmpNat, natVal)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testProperty)
+import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude
 
+import Proarrow.Category.Enriched.Matrix (Closure, Diagonal, Entry)
 import Proarrow.Category.Instance.Cost (COST (..), GTE (..), IsCost (..), SCost (..))
 import Proarrow.Core (Ob)
 
@@ -43,6 +45,8 @@ test =
     "Cost"
     [ propCategory @COST
     , testProperty "GTE decidable" $ propDecidable @GTE
+    , testProperty "shortest path P -> R is 7" $ case sing @(Closure COST Vs Diagonal G P R) of
+        SC @n -> unless (natVal (Proxy @n) == 7) (testFailed "distance mismatch")
     , propTerminalObject @COST
     , propInitialObject @COST
     , propBinaryProducts_ @COST
@@ -87,3 +91,38 @@ instance (Ob a, Ob b) => TestingEqShow (GTE a b) where
   showP GTE = "GTE"
 
 instance TestableProfunctor GTE
+
+-- * Shortest paths as a type-level fixed point
+
+-- | A weighted graph: the direct edge @P -> R@ costs 9, the detour via @Q@ only 7; @T@ is isolated.
+data V = P | Q | R | S | T
+
+type family Weight (a :: V) (b :: V) :: COST where
+  Weight P Q = C 3
+  Weight Q R = C 4
+  Weight P R = C 9
+  Weight R S = C 2
+  Weight S P = C 5
+  Weight a b = INF
+
+-- | The graph is not an enriched profunctor, only a matrix of weights: a tag with 'Entry's.
+data G
+
+type instance Entry COST G a b = Weight a b
+
+type Vs = '[P, Q, R, S, T]
+
+-- | The fixed point beats the direct edge.
+distancePR :: Closure COST Vs Diagonal G P R :~: C 7
+distancePR = Refl
+
+-- | Around the cycle: @Q -> R -> S -> P@.
+distanceQP :: Closure COST Vs Diagonal G Q P :~: C 11
+distanceQP = Refl
+
+-- | Every point is at distance @0@ from itself, and an isolated point is infinitely far.
+distancePP :: Closure COST Vs Diagonal G P P :~: C 0
+distancePP = Refl
+
+distancePT :: Closure COST Vs Diagonal G P T :~: INF
+distancePT = Refl

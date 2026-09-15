@@ -4,13 +4,15 @@
 module Props.Bool where
 
 import Data.Type.Equality ((:~:) (Refl))
+import Data.Type.Nat (Nat (..))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (discard, testProperty)
 import Prelude hiding (id, (**), (.))
 
 import Proarrow.Category.Enriched qualified as E
+import Proarrow.Category.Enriched.Matrix (Closure, Diagonal, Pro)
 import Proarrow.Category.Enriched.Thin (HasArrow, Holds, ThinProfunctor (..))
-import Proarrow.Category.Enriched.Thin.Composition ()
+import Proarrow.Category.Enriched.Thin.Composition (Reachable, WalkHolds)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), NonTrivialProfunctor (..))
 import Proarrow.Category.Instance.Opposite (Op)
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
@@ -65,6 +67,7 @@ test =
     , testProperty "FF,FT decidable" $ propDecidable @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT decidable" $ propDecidable @(NonTrivialProfunctor '(FLS, TRU))
     , testProperty "Op Booleans decidable" $ propDecidable @(Op Booleans)
+    , testProperty "reachability finds a path" $ withArr reachPath (pure ())
     , testProperty "Booleans is BOOL-enriched" $ do
         SomeP @a @b p <- genProfunctorElt @Booleans "p"
         testEq "enriched . underlying" "enriched (underlying p)" (E.enriched @BOOL (E.underlying @BOOL p)) "p" p
@@ -178,3 +181,30 @@ instance (Ob ft, TestOb a, TestOb b) => TestableType (NonTrivialProfunctor ft a 
     (_ :**: Tru, Tru, Tru) -> oneElem TT
     (_ :**: Fls, Tru, Tru) -> GenEmpty \case {}
     (_, Tru, Fls) -> GenEmpty \case {}
+
+-- | The reflexive-transitive closure of the graph with the single edge @FLS -> TRU@ is the walking
+-- arrow itself, computed as a type-level fixed point over the two objects.
+type OneEdge = Pro (NonTrivialProfunctor '(FLS, FLS))
+
+reachAcross :: Closure BOOL '[FLS, TRU] Diagonal OneEdge FLS TRU :~: TRU
+reachAcross = Refl
+
+reachSelf :: Closure BOOL '[FLS, TRU] Diagonal OneEdge FLS FLS :~: TRU
+reachSelf = Refl
+
+reachBack :: Closure BOOL '[FLS, TRU] Diagonal OneEdge TRU FLS :~: FLS
+reachBack = Refl
+
+-- | The same closure at the value level: 'Reachable' is decidable, and 'arr' searches the path.
+reachPath :: Reachable (NonTrivialProfunctor '(FLS, FLS)) FLS TRU
+reachPath = arr
+
+reachNoPath :: Holds (Reachable (NonTrivialProfunctor '(FLS, FLS))) TRU FLS :~: FLS
+reachNoPath = Refl
+
+-- | Over the walking arrow as base rather than a bare set, walking back is still impossible, and the
+-- value-level recursion agrees with the type-level matrix closure.
+walkAgrees
+  :: WalkHolds ('S ('S 'Z)) (NonTrivialProfunctor '(FLS, FLS)) TRU FLS
+    :~: Closure BOOL '[FLS, TRU] (Pro Booleans) OneEdge TRU FLS
+walkAgrees = Refl

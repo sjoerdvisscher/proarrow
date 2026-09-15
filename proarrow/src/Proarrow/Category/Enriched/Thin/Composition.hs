@@ -10,10 +10,13 @@
 module Proarrow.Category.Enriched.Thin.Composition where
 
 import Data.Kind (Constraint)
+import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat)
 import Prelude (type (~))
 
+import Proarrow.Category.Enriched.Matrix (Length, MatMul, Pro)
 import Proarrow.Category.Enriched.Thin
-  ( DecidableProfunctor (..)
+  ( Decidable
+  , DecidableProfunctor (..)
   , Decision (..)
   , Enumerable (..)
   , Member (..)
@@ -24,9 +27,8 @@ import Proarrow.Category.Enriched.Thin
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Colimit.BinaryCoproduct (type (||))
-import Proarrow.Core (CategoryOf (..), Promonad (..), lmap, rmap, type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, rmap, type (+->))
 import Proarrow.Functor (FunctorForRep (..), withMappedOb)
-import Proarrow.Limit.BinaryProduct (type (&&))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..), withObRep)
@@ -87,13 +89,10 @@ instance (ComposeThin (ThinCompStrategy p q) p q) => ThinProfunctor (p :.: q) wh
   withArr = withArrComp @(ThinCompStrategy p q)
 
 -- | The arrows of a composite by search: is there an object @b@ among @bs@ with both @p a b@ and
--- @q b c@? Written with the product and coproduct of the enriching 'BOOL' itself, over the full
--- object list this is the join @⋁_b p(a,b) ∧ q(b,c)@ -- boolean matrix multiplication at the type
--- level, the twin of "Proarrow.Category.Instance.FinRel".
+-- @q b c@? Over the full object list this is the join @⋁_b p(a,b) ∧ q(b,c)@: matrix multiplication
+-- ('MatMul') in the enriching 'BOOL', the type-level twin of "Proarrow.Category.Instance.FinRel".
 type Search :: forall {i} {j} {k}. [j] -> (j +-> k) -> (i +-> j) -> k -> i -> BOOL
-type family Search bs p q a c where
-  Search '[] p q a c = FLS
-  Search (b ': bs) p q a c = (Holds p a b && Holds q b c) || Search bs p q a c
+type Search bs p q a c = MatMul BOOL bs (Pro p) (Pro q) a c
 
 -- | Neither leg representable: search the middle category for an object that both legs accept.
 instance
@@ -184,3 +183,45 @@ instance (DecideComp (ThinCompStrategy p q) p q) => DecidableProfunctor (p :.: q
   type Holds (p :.: q) a c = HoldsComp (ThinCompStrategy p q) p q a c
   decide @a @c = decideComp @(ThinCompStrategy p q) @p @q @a @c
   toHolds = toHoldsComp @(ThinCompStrategy p q)
+
+-- * Reachability: the closure of a decidable graph
+
+-- | A walk of at most @n@ steps along @p@, finished by an arrow of the base category. The truth of
+-- @'Walk' n p a b@ is the iterated search 'WalkHolds', the value-level twin of the type-level
+-- 'Proarrow.Category.Enriched.Matrix.Walks', and 'decide' produces the path.
+type Walk :: forall {k}. Nat -> (k +-> k) -> k +-> k
+data Walk n p a b where
+  Done :: (a ~> b) -> Walk n p a b
+  Step :: p a b -> Walk n p b c -> Walk ('S n) p a c
+
+instance (Profunctor p) => Profunctor (Walk n p) where
+  dimap l r (Done f) = Done (r . f . l)
+  dimap l r (Step e w) = Step (lmap l e) (rmap r w)
+  r \\ Done f = r \\ f
+  r \\ Step e w = r \\ e \\ w
+
+-- | An arrow of the base, or an edge followed by a shorter walk: one more matrix multiplication.
+type WalkHolds :: forall {k}. Nat -> (k +-> k) -> k -> k -> BOOL
+type family WalkHolds n p a b where
+  WalkHolds 'Z (p :: k +-> k) a b = Holds (Hom k) a b
+  WalkHolds ('S n) (p :: k +-> k) a b = Holds (Hom k) a b || Search (Objects k) p (Walk n p) a b
+
+instance (SNatI n, DecidableProfunctor p, Decidable k, Enumerable k) => ThinProfunctor (Walk n (p :: k +-> k))
+
+instance (SNatI n, DecidableProfunctor p, Decidable k, Enumerable k) => DecidableProfunctor (Walk n (p :: k +-> k)) where
+  type Holds (Walk n (p :: k +-> k)) a b = WalkHolds n p a b
+  decide @a @b = case snat @n of
+    SZ -> mapDecision Done (decide @(Hom k) @a @b)
+    SS @m -> case decide @(Hom k) @a @b of
+      Yes f -> Yes (Done f)
+      No -> mapDecision (\(e :.: w) -> Step e w) (search @p @(Walk m p) @a @b (objects @k))
+  toHolds w r = case snat @n of
+    SZ -> case w of Done f -> toHolds f r
+    SS -> case w of
+      Done f -> toHolds f r
+      Step e w' -> found e w' r
+
+-- | Reachability along @p@: a walk of at most as many steps as there are objects, which is all of
+-- reachability, since a shortest walk never revisits an object. The reflexive-transitive closure of
+-- a decidable relation, with the path as witness.
+type Reachable (p :: k +-> k) = Walk (Length (Objects k)) p
