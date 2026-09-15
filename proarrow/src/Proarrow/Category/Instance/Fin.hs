@@ -5,7 +5,8 @@ module Proarrow.Category.Instance.Fin where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..), ThinProfunctor (..), mapDecision)
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
@@ -75,20 +76,25 @@ instance CategoryOf (FIN n) where
   type (~>) = LTE
   type Ob a = IsFin a
 
-class IsLTE (a :: FIN n) (b :: FIN n) where
-  lte :: a ~> b
-instance IsLTE FZ FZ where
-  lte = ZEQ
-instance (IsLTE FZ b) => IsLTE FZ (FS b) where
-  lte = ZLT lte
-instance (IsLTE a b) => IsLTE (FS a) (FS b) where
-  lte = SLT lte
-instance ThinProfunctor LTE where
-  type HasArrow LTE a b = IsLTE a b
-  arr = lte
-  withArr ZEQ r = r
-  withArr (ZLT b) r = withArr b r
-  withArr (SLT ab) r = withArr ab r
+-- | @a <= b@ on the ordinal, as a 'BOOL'.
+type FinLeq :: forall {n :: NAT}. FIN n -> FIN n -> BOOL
+type family FinLeq a b where
+  FinLeq FZ b = TRU
+  FinLeq (FS a) FZ = FLS
+  FinLeq (FS a) (FS b) = FinLeq a b
+
+instance ThinProfunctor LTE
+
+instance DecidableProfunctor LTE where
+  type Holds LTE a b = FinLeq a b
+  decide @a @b = case (singFin @a, singFin @b) of
+    (SZ, SZ) -> Yes ZEQ
+    (SZ, SS @b') -> mapDecision ZLT (decide @LTE @FZ @b')
+    (SS, SZ) -> No
+    (SS @a', SS @b') -> mapDecision SLT (decide @LTE @a' @b')
+  toHolds ZEQ r = r
+  toHolds (ZLT b) r = toHolds b r
+  toHolds (SLT ab) r = toHolds ab r
 
 instance HasInitialObject (FIN (S n)) where
   type InitialObject = FZ

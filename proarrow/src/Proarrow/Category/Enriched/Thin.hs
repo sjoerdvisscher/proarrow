@@ -9,6 +9,7 @@
 module Proarrow.Category.Enriched.Thin where
 
 import Data.Kind (Constraint, Type)
+import Data.Type.Equality (type (:~:) (..))
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..), NonTrivialHolds, NonTrivialProfunctor (..))
@@ -60,6 +61,11 @@ class (ThinProfunctor p) => DecidableProfunctor (p :: j +-> k) where
 
 fromHolds :: forall {j} {k} (p :: j +-> k) a b. (DecidableProfunctor p, Ob a, Ob b, Holds p a b ~ TRU) => p a b
 fromHolds = case decide @p @a @b of Yes x -> x
+
+-- | An arrow is a proof that the profunctor holds. Against a given that it does not, the proof has
+-- no constructor, so @case 'holds' x of {}@ refutes an arrow of a profunctor that decides against it.
+holds :: forall {j} {k} (p :: j +-> k) a b. (DecidableProfunctor p) => p a b -> Holds p a b :~: TRU
+holds x = toHolds x Refl
 
 -- | A thin category whose order is decidable at the type level.
 class (DecidableProfunctor (Hom k), CategoryOf k) => Decidable k

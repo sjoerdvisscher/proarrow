@@ -8,12 +8,13 @@
 module Proarrow.Category.Instance.Cost where
 
 import Data.Proxy (Proxy (..))
-import Data.Type.Ord (OrderingI (..), type Max, type Min, type (<=))
+import Data.Type.Ord (OrderingI (..), type Max, type Min, type (<=), type (<=?))
 import GHC.TypeNats (KnownNat, Nat, cmpNat, natVal, withKnownNat, withSomeSNat, type SNat, type (+))
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude (Num ((+)), error, ($))
 
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..), ThinProfunctor (..))
+import Proarrow.Category.Instance.Bool (BOOL (..), FromBool)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
@@ -80,18 +81,24 @@ instance CategoryOf COST where
   type (~>) = GTE
   type Ob a = (IsCost a)
 
-class HasCostArrow (a :: COST) b where
-  costArr :: a ~> b
-instance (IsCost b) => HasCostArrow INF b where
-  costArr = Inf
-instance (KnownNat a, KnownNat b, b <= a) => HasCostArrow (C a) (C b) where
-  costArr = GTE
+instance ThinProfunctor GTE
 
-instance ThinProfunctor GTE where
-  type HasArrow GTE a b = (HasCostArrow a b)
-  arr = costArr
-  withArr Inf r = r
-  withArr GTE r = r
+-- | Decided by comparing the naturals; @INF@ is below everything.
+instance DecidableProfunctor GTE where
+  type Holds GTE INF b = TRU
+  type Holds GTE (C a) INF = FLS
+  type Holds GTE (C a) (C b) = FromBool (b <=? a)
+  decide @a @b = case (sing @a, sing @b) of
+    (SINF, _) -> Yes Inf
+    (SC, SINF) -> No
+    (SC @x, SC @y) -> case cmpNat (Proxy :: Proxy y) (Proxy :: Proxy x) of
+      LTI -> Yes GTE
+      EQI -> Yes GTE
+      GTI -> No
+  toHolds Inf r = r
+  toHolds (GTE @x @y) r = case cmpNat (Proxy :: Proxy y) (Proxy :: Proxy x) of
+    LTI -> r
+    EQI -> r
 
 instance HasTerminalObject COST where
   type TerminalObject = C 0

@@ -9,10 +9,14 @@ import Data.Kind (Constraint)
 
 import Proarrow.Category.Enriched.Thin
   ( CodiscreteProfunctor
+  , Decidable
+  , DecidableProfunctor (..)
+  , Decision (..)
   , DiscreteProfunctor (..)
   , Thin
   , ThinProfunctor (..)
   , anyArr
+  , mapDecision
   )
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Coproduct qualified as C
@@ -21,6 +25,7 @@ import Proarrow.Colimit.Initial (HasInitialObject (..), initiate')
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
+  , Hom
   , Kind
   , Obj
   , Profunctor (..)
@@ -98,6 +103,24 @@ instance (Thin j, Thin k, ThinProfunctor p) => ThinProfunctor (Collage :: CAT (C
   withArr (InL f) r = withArr f r \\ f
   withArr (L2R p) r = withArr p r \\ p
   withArr (InR f) r = withArr f r \\ f
+
+-- | Decided piecewise: within either side by that side's order, across by @p@, and never backwards.
+instance
+  (Decidable j, Decidable k, DecidableProfunctor p)
+  => DecidableProfunctor (Collage :: CAT (COLLAGE (p :: k +-> j)))
+  where
+  type Holds (Collage :: CAT (COLLAGE (p :: k +-> j))) (L a) (L b) = Holds (Hom j) a b
+  type Holds (Collage :: CAT (COLLAGE (p :: k +-> j))) (L a) (R b) = Holds p a b
+  type Holds (Collage :: CAT (COLLAGE (p :: k +-> j))) (R a) (L b) = FLS
+  type Holds (Collage :: CAT (COLLAGE (p :: k +-> j))) (R a) (R b) = Holds (Hom k) a b
+  decide @x @y = case (obj @x, obj @y) of
+    (InL @a f, InL @b g) -> mapDecision InL (decide @(Hom j) @a @b) \\ f \\ g
+    (InL @a f, InR @b g) -> mapDecision L2R (decide @p @a @b) \\ f \\ g
+    (InR _, InL _) -> No
+    (InR @a f, InR @b g) -> mapDecision InR (decide @(Hom k) @a @b) \\ f \\ g
+  toHolds (InL f) r = toHolds f r
+  toHolds (L2R p) r = toHolds p r
+  toHolds (InR f) r = toHolds f r
 
 data family InjL :: forall (p :: k +-> j) -> j +-> COLLAGE p
 instance (Profunctor p) => FunctorForRep (InjL p) where

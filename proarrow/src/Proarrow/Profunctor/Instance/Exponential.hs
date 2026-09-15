@@ -4,7 +4,15 @@
 -- @p c d -> q c d@ available at @a@\/@b@, making the category of profunctors @j +-> k@ 'Closed'.
 module Proarrow.Profunctor.Instance.Exponential where
 
-import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin
+  ( DecidableProfunctor (..)
+  , Decision (..)
+  , Discrete
+  , ThinProfunctor (..)
+  , holds
+  , withEq
+  )
+import Proarrow.Category.Instance.Bool (BoolLeq)
 import Proarrow.Category.Instance.Constraint (reifyExp, (:=>) (..), type (:-) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
@@ -30,3 +38,18 @@ instance (ThinProfunctor p, ThinProfunctor q, Discrete j, Discrete k) => ThinPro
   type HasArrow (p :~>: q) a b = (HasArrow p a b :=> HasArrow q a b)
   arr @a @b = Exp \ca bd p -> withEq ca (withEq bd (withArr p (unEntails (entails @(HasArrow p a b) @(HasArrow q a b)) arr)))
   withArr @a @b (Exp f) r = reifyExp (Entails @(HasArrow p a b) @(HasArrow q a b) (\r' -> withArr (f id id arr) r')) r
+
+-- | Implication, decided: the exponential holds unless @p@ holds and @q@ does not. Against @p@ an
+-- arrow of @p@ is refuted by 'holds'.
+instance
+  (DecidableProfunctor p, DecidableProfunctor q, Discrete j, Discrete k)
+  => DecidableProfunctor (p :~>: q :: j +-> k)
+  where
+  type Holds (p :~>: q) a b = BoolLeq (Holds p a b) (Holds q a b)
+  decide @a @b = case (decide @p @a @b, decide @q @a @b) of
+    (_, Yes y) -> Yes (Exp \ca bd _ -> withEq ca (withEq bd y))
+    (No, No) -> Yes (Exp \ca bd x -> withEq ca (withEq bd (case holds x of {})))
+    (Yes _, No) -> No
+  toHolds @a @b (Exp f) r = case decide @p @a @b of
+    Yes x -> toHolds (f id id x) r
+    No -> r

@@ -19,6 +19,7 @@ import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Direp (Direp)
+import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:))
 import Proarrow.Profunctor.Representable (CorepStar, Rep)
 
@@ -126,6 +127,14 @@ searchMisses = Refl
 
 searchHits :: Holds (NonTrivialProfunctor '(TRU, FLS) :.: NonTrivialProfunctor '(FLS, TRU)) FLS TRU :~: TRU
 searchHits = Refl
+
+-- | The exponential of profunctors is implication: it fails exactly where the antecedent holds and
+-- the consequent does not.
+exponentialMisses :: Holds (Booleans :~>: NonTrivialProfunctor '(FLS, TRU)) FLS FLS :~: FLS
+exponentialMisses = Refl
+
+exponentialHits :: Holds (NonTrivialProfunctor '(FLS, TRU) :~>: Booleans) FLS FLS :~: TRU
+exponentialHits = Refl
 
 -- | Decidability is structural: a product of profunctors holds when both do.
 productMisses :: Holds (Booleans :*: NonTrivialProfunctor '(FLS, TRU)) FLS FLS :~: FLS

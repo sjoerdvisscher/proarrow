@@ -20,12 +20,12 @@ import Data.Type.Equality ((:~:) (Refl))
 import Data.Type.Ord (OrderingI (..))
 import GHC.TypeNats (cmpNat, natVal)
 import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.Falsify (testProperty)
 import Prelude
 
 import Proarrow.Category.Instance.Cost (COST (..), GTE (..), IsCost (..), SCost (..))
 import Proarrow.Core (Ob)
 
-import Proarrow.Testing.Laws
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -35,12 +35,14 @@ import Proarrow.Testing
   , genSomeDef
   , oneElem
   )
+import Proarrow.Testing.Laws
 
 test :: TestTree
 test =
   testGroup
     "Cost"
     [ propCategory @COST
+    , testProperty "GTE decidable" $ propDecidable @GTE
     , propTerminalObject @COST
     , propInitialObject @COST
     , propBinaryProducts_ @COST

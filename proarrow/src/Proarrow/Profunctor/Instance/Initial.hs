@@ -5,7 +5,8 @@ module Proarrow.Profunctor.Instance.Initial where
 import Prelude (Eq, Show)
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..), Thin, ThinProfunctor (..))
+import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Instance.Zero (Bottom (..))
 import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
 
@@ -26,3 +27,8 @@ instance (Thin j, Thin k) => (ThinProfunctor (InitialProfunctor :: j +-> k)) whe
   type HasArrow (InitialProfunctor :: j +-> k) a b = Bottom
   arr = no
   withArr = \case {}
+
+instance (Thin j, Thin k) => DecidableProfunctor (InitialProfunctor :: j +-> k) where
+  type Holds (InitialProfunctor :: j +-> k) a b = FLS
+  decide = No
+  toHolds = \case {}

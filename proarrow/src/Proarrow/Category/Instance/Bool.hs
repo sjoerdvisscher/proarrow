@@ -25,6 +25,11 @@ type family Not (b :: BOOL) :: BOOL where
   Not FLS = TRU
   Not TRU = FLS
 
+-- | GHC's own type-level 'P.Bool' (as produced by e.g. @<=?@ on 'GHC.TypeNats.Nat'), as a 'BOOL'.
+type family FromBool (b :: P.Bool) :: BOOL where
+  FromBool 'P.True = TRU
+  FromBool 'P.False = FLS
+
 class (IsBool (Not b)) => IsBool (b :: BOOL) where boolId :: b ~> b
 instance IsBool FLS where boolId = Fls
 instance IsBool TRU where boolId = Tru
