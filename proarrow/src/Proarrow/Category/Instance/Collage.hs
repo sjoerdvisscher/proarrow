@@ -1,3 +1,5 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
 -- | The __collage__ (or cograph) of a profunctor @p@: a category on the disjoint union of @p@'s
 -- two base categories ('L'- and 'R'-tagged objects, via the kind @'COLLAGE' p@), whose
 -- cross-arrows @'L' a '~>' 'R' b@ are exactly the elements @p a b@ (the 'L2R' constructor).
@@ -6,17 +8,31 @@
 module Proarrow.Category.Instance.Collage where
 
 import Data.Kind (Constraint)
+import Data.Type.Nat (SNat (..), SNatI, snat, type Plus)
+import Prelude (Maybe (..), type (~))
 
 import Proarrow.Category.Enriched.Thin
-  ( CodiscreteProfunctor
+  ( AtOb (..)
+  , CodiscreteProfunctor
   , Decidable
   , DecidableProfunctor (..)
   , Decision (..)
   , DiscreteProfunctor (..)
+  , Enumerable (..)
+  , Finite (..)
+  , FmapWrap
+  , Indexed (..)
+  , IndexedList (..)
+  , KnownIndex
+  , Length
+  , Lookup
+  , MapWrap
   , Thin
   , ThinProfunctor (..)
   , anyArr
   , mapDecision
+  , withAtLookup
+  , withWrapAtLookup
   )
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Coproduct qualified as C
@@ -151,3 +167,75 @@ instance (Profunctor p) => FunctorForRep (ProjTo2 p) where
     InL _ -> Fls
     InR _ -> Tru
     L2R _ -> F2T
+
+-- * Numbering the collage
+
+-- | The collage numbers the left category's objects first and the right category's after them.
+type CollageObjects :: forall {j} {k}. forall (p :: k +-> j) -> [j] -> [COLLAGE p]
+type family CollageObjects p xs where
+  CollageObjects (p :: k +-> j) '[] = MapWrap R (Objects k)
+  CollageObjects p (x ': xs) = L x ': CollageObjects p xs
+
+instance (Finite j, Finite k) => Indexed (COLLAGE (p :: k +-> j)) where
+  type Index (L a) = Index a
+  type Index (R b :: COLLAGE (p :: k +-> j)) = Plus (Length (Objects j)) (Index b)
+
+-- | An object of the left category is an object of the collage, keeping its index; one of the right
+-- category is too, shifted past all the left ones. Both walk the left object list, and both hand the
+-- fact to a continuation, since at each step the statement about the tail is the statement about the
+-- whole list already reduced.
+withCollageL
+  :: forall {j} {k} (p :: k +-> j) (x :: j) r
+   . (Finite j, Finite k, KnownIndex x)
+  => ((KnownIndex (L x :: COLLAGE p)) => r) -> r
+withCollageL r = withAtLookup @j (snat @(Index x)) (go (finite @j) (snat @(Index x)) r)
+  where
+    go
+      :: forall xs i
+       . (Lookup xs i ~ 'Just x)
+      => IndexedList xs -> SNat i -> ((Lookup (CollageObjects p xs) i ~ 'Just (L x)) => r) -> r
+    go (FCons _) SZ k = k
+    go (FCons xs) (SS @i') k = go xs (snat @i') k
+
+withCollageR
+  :: forall {j} {k} (p :: k +-> j) (y :: k) r
+   . (Finite j, Finite k, KnownIndex y)
+  => ((KnownIndex (R y :: COLLAGE p)) => r) -> r
+withCollageR r = go (finite @j) r
+  where
+    go
+      :: forall xs
+       . IndexedList xs
+      -> ( ( SNatI (Plus (Length xs) (Index y))
+           , Lookup (CollageObjects p xs) (Plus (Length xs) (Index y)) ~ FmapWrap R (At k (Index y))
+           )
+           => r
+         )
+      -> r
+    go FNil k = withWrapAtLookup @(R :: k -> COLLAGE p) (snat @(Index y)) k
+    go (FCons xs) k = go xs k
+
+instance (Finite j, Finite k) => Finite (COLLAGE (p :: k +-> j)) where
+  type Objects (COLLAGE (p :: k +-> j)) = CollageObjects p (Objects j)
+  finite = goL (finite @j)
+    where
+      goL :: forall xs. IndexedList xs -> IndexedList (CollageObjects p xs)
+      goL FNil = goR (finite @k)
+      goL (FCons @x xs) = withCollageL @p @x (FCons @(L x) (goL xs))
+      goR :: forall ys. IndexedList ys -> IndexedList (MapWrap (R :: k -> COLLAGE p) ys)
+      goR FNil = FNil
+      goR (FCons @y ys) = withCollageR @p @y (FCons @(R y) (goR ys))
+
+instance (Enumerable j, Enumerable k, Profunctor p) => Enumerable (COLLAGE (p :: k +-> j)) where
+  withIndex @a r = case obj @a of
+    InL @x f -> withIndex @j @x (withCollageL @p @x r) \\ f
+    InR @y f -> withIndex @k @y (withCollageR @p @y r) \\ f
+  withOb @a r = case atOb @(COLLAGE p) (snat @(Index a)) of AtJust -> r
+  atOb = go (finite @j)
+    where
+      go :: forall xs i. IndexedList xs -> SNat i -> AtOb (COLLAGE p) (Lookup (CollageObjects p xs) i)
+      go FNil i = withWrapAtLookup @(R :: k -> COLLAGE p) i case atOb @k i of
+        AtJust @_ @y -> withCollageR @p @y AtJust
+        AtNothing -> AtNothing
+      go (FCons @x _) SZ = withOb @j @x (withCollageL @p @x AtJust)
+      go (FCons xs) (SS @i') = go xs (snat @i')

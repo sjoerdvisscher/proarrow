@@ -9,12 +9,13 @@ import Test.Tasty.Falsify (discard, testProperty)
 import Prelude hiding (id, (**), (.))
 
 import Proarrow.Category.Enriched qualified as E
-import Proarrow.Category.Enriched.Thin (HasArrow, Holds, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (HasArrow, Holds, Objects, ThinProfunctor (..))
 import Proarrow.Category.Enriched.Thin.Composition (Closure)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), NonTrivialProfunctor (..))
+import Proarrow.Category.Instance.Collage (COLLAGE (..), Collage)
 import Proarrow.Category.Instance.Opposite (Op)
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (Ob, Promonad (..), obj, rmap, type (+->), type (~>))
+import Proarrow.Core (CAT, Ob, Promonad (..), obj, rmap, type (+->), type (~>))
 import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -186,3 +187,24 @@ reachPath = arr
 
 reachNoPath :: Holds (Closure (NonTrivialProfunctor '(FLS, FLS))) TRU FLS :~: FLS
 reachNoPath = Refl
+
+-- * The collage of a profunctor is enumerable
+
+-- | Two copies of the walking arrow, glued by the profunctor that only relates @FLS@ to @TRU@.
+type Glued = COLLAGE (NonTrivialProfunctor '(FLS, FLS))
+
+-- | The left category's objects are numbered first, the right's after them.
+objectsGlued :: Objects Glued :~: '[L FLS, L TRU, R FLS, R TRU]
+objectsGlued = Refl
+
+-- | The closure reaches across the glue, by the one heteromorphism.
+gluedAcross :: Holds (Closure (Collage :: CAT Glued)) (L FLS) (R TRU) :~: TRU
+gluedAcross = Refl
+
+-- | It does not reach the right object the profunctor misses, even going the long way round.
+gluedMisses :: Holds (Closure (Collage :: CAT Glued)) (L FLS) (R FLS) :~: FLS
+gluedMisses = Refl
+
+-- | And never back across the glue.
+gluedNoWayBack :: Holds (Closure (Collage :: CAT Glued)) (R TRU) (L FLS) :~: FLS
+gluedNoWayBack = Refl
