@@ -52,10 +52,12 @@ test =
     , testProperty "GTE decidable" $ propDecidable @GTE
     , testProperty "shortest paths computed at the value level" $ do
         unless (distance @(D P) @(D R) == Just 7) (testFailed "P -> R should be 7")
+        unless (distance @(D Q) @(D P) == Just 11) (testFailed "Q -> P should be 11")
         unless (distance @(D P) @(D P) == Just 0) (testFailed "P -> P should be 0")
-        unless (distance @(D R) @(D P) == Nothing) (testFailed "R -> P should be unreachable")
+        unless (distance @(D P) @(D Y) == Nothing) (testFailed "P -> Y should be unreachable")
     , testProperty "shortest paths as witnesses" $ do
         unless (steps (shortest @COST @N @G @(D P) @(D R)) == 2) (testFailed "P -> R should take the detour via Q")
+        unless (steps (shortest @COST @N @G @(D Q) @(D P)) == 3) (testFailed "Q -> P should go around the cycle")
         unless (steps (shortest @COST @N @G @(D P) @(D P)) == 0) (testFailed "P -> P should stay put")
     , propTerminalObject @COST
     , propInitialObject @COST
@@ -104,29 +106,31 @@ instance TestableProfunctor GTE
 
 -- * Shortest paths as a fixed point, at the type level and at the value level
 
--- | Three points; the direct edge @P -> R@ costs 9, the detour via @Q@ only 7, and no edge leaves
--- @R@. Kept small on purpose: the fixed point is a join over every point at every step, so the work
--- GHC does here grows as the number of points to the power of the number of steps.
-data V = P | Q | R
+-- | Five points; the direct edge @P -> R@ costs 9, the detour via @Q@ only 7, and @Y@ is isolated.
+data V = P | Q | R | X | Y
 
 instance Indexed V
 
 instance Finite V where
-  type Objects V = '[P, Q, R]
-  finite = FCons (FCons (FCons FNil))
+  type Objects V = '[P, Q, R, X, Y]
+  finite = FCons (FCons (FCons (FCons (FCons FNil))))
 
-type G = Edges '[ '(P, Q, C 3), '(Q, R, C 4), '(P, R, C 9)]
+type G = Edges '[ '(P, Q, C 3), '(Q, R, C 4), '(P, R, C 9), '(R, X, C 2), '(X, P, C 5)]
 
 -- | The fixed point beats the direct edge.
 distancePR :: ProObj COST (Closure G) (D P) (D R) :~: C 7
 distancePR = Refl
 
--- | Every point is at distance @0@ from itself, and a point with no way back is infinitely far.
+-- | Around the cycle: @Q -> R -> X -> P@.
+distanceQP :: ProObj COST (Closure G) (D Q) (D P) :~: C 11
+distanceQP = Refl
+
+-- | Every point is at distance @0@ from itself, and an isolated point is infinitely far.
 distancePP :: ProObj COST (Closure G) (D P) (D P) :~: C 0
 distancePP = Refl
 
-distanceRP :: ProObj COST (Closure G) (D R) (D P) :~: INF
-distanceRP = Refl
+distancePY :: ProObj COST (Closure G) (D P) (D Y) :~: INF
+distancePY = Refl
 
 -- | The same computation at the value level: the points are abstract here, so the distance singleton
 -- can only come from 'withProObj' running the fixed point.

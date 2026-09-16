@@ -97,17 +97,34 @@ instance (ComposeThin (ThinCompStrategy p q) p q) => ThinProfunctor (p :.: q) wh
   arr = arrComp @(ThinCompStrategy p q)
   withArr = withArrComp @(ThinCompStrategy p q)
 
+-- | The join @⋁_b p(a,b) ⊗ w_b@ of an edge out of @a@ with whatever the vector holds for where
+-- that edge lands: one row of the matrix of @p@ against a vector, over the given middle objects.
+-- The objects and the vector are walked in step, so @ws@ is always the vector cut down to @bs@.
+--
+-- This is the module's one join. Composing two profunctors multiplies by a column read off the
+-- right-hand one ('MatMul'); the closure multiplies by the previous iterate ('Walks'), which is
+-- what lets that iterate be computed once instead of once per pair.
+type MatVec :: forall {j} {k}. forall (v :: Kind) -> [j] -> [v] -> (j +-> k) -> k -> v
+type family MatVec v bs ws p a where
+  MatVec v '[] ws p a = InitialObject
+  MatVec v (b ': bs) (w ': ws) p a = (ProObj v p a b ** w) || MatVec v bs ws p a
+
+-- | One column of the matrix of an enriched profunctor: its hom-objects into @c@, over the given
+-- objects.
+type MatCol :: forall {i} {j}. forall (v :: Kind) -> [j] -> (i +-> j) -> i -> [v]
+type family MatCol v bs q c where
+  MatCol v '[] q c = '[]
+  MatCol v (b ': bs) q c = ProObj v q b c ': MatCol v bs q c
+
 -- | Matrix multiplication over a list of middle objects, @⋁_b p(a,b) ⊗ q(b,c)@: the hom-object of
 -- the composite of two enriched profunctors when the middle category is enumerable. The type-level
 -- twin of "Proarrow.Category.Instance.FinRel".
 type MatMul :: forall {i} {j} {k}. forall (v :: Kind) -> [j] -> (j +-> k) -> (i +-> j) -> k -> i -> v
-type family MatMul v bs p q a c where
-  MatMul v '[] p q a c = InitialObject
-  MatMul v (b ': bs) p q a c = (ProObj v p a b ** ProObj v q b c) || MatMul v bs p q a c
+type MatMul v bs p q a c = MatVec v bs (MatCol v bs q c) p a
 
 -- | The arrows of a composite by search: is there an object @b@ among @bs@ with both @p a b@ and
--- @q b c@? Over the full object list this is the join @⋁_b p(a,b) ∧ q(b,c)@: matrix multiplication
--- ('MatMul') in the enriching 'BOOL', the type-level twin of "Proarrow.Category.Instance.FinRel".
+-- @q b c@? Over the full object list this is the join @⋁_b p(a,b) ∧ q(b,c)@, which is 'MatMul' in
+-- the enriching 'BOOL'.
 type Search :: forall {i} {j} {k}. [j] -> (j +-> k) -> (i +-> j) -> k -> i -> BOOL
 type Search bs p q a c = MatMul BOOL bs p q a c
 
@@ -218,20 +235,35 @@ instance (Profunctor p) => Profunctor (Walk n p) where
   r \\ Step e w = r \\ e \\ w
 
 -- | The hom-object of a walk of at most @n@ steps, in any enriching category @v@: an arrow of the
--- base, or an edge followed by a shorter walk, the latter being the join over all the objects
--- ('Steps'), one matrix multiplication with the previous iterate. At 'BOOL' this is the truth of
--- 'Walk', at 'COST' the shortest distance, and both are computed by GHC at the type level and by
--- 'withObWalks' at the value level.
+-- base, or an edge followed by one entry of the previous iterate ('WalkRow'). Naming the whole
+-- iterate rather than a shorter walk per pair is what keeps this affordable. At 'BOOL' it is the
+-- truth of 'Walk', at 'COST' the shortest distance, computed by GHC at the type level and by 'row'
+-- at the value level.
 type Walks :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> k -> k -> v
 type family Walks v n p a b where
   Walks v 'Z (p :: k +-> k) a b = HomObj v a b
-  Walks v ('S n) (p :: k +-> k) a b = HomObj v a b || Steps v (Objects k) n p a b
+  Walks v ('S n) (p :: k +-> k) a b = HomObj v a b || MatVec v (Objects k) (WalkRow v n p b) p a
 
--- | The join over the given middle objects of an edge followed by a shorter walk.
-type Steps :: forall {k}. forall (v :: Kind) -> [k] -> Nat -> (k +-> k) -> k -> k -> v
-type family Steps v cs n p a b where
-  Steps v '[] n p a b = InitialObject
-  Steps v (c ': cs) n p a b = (ProObj v p a c ** Walks v n p c b) || Steps v cs n p a b
+-- | The @n@-th iterate of the fixed point for a fixed target @b@: the hom-object of the walks of at
+-- most @n@ steps into @b@, one entry per object, in the order of 'Objects'. It starts as the column
+-- of the base hom-objects, there being no step to take yet, and grows by 'NextRow'.
+--
+-- Each iterate is written in terms of the whole previous one, so it is computed once and read by
+-- every object. That sharing is what makes the fixed point affordable: the work is the number of
+-- steps times the square of the number of objects, where a recursion per pair of objects would
+-- instead cost the number of objects to the power of the number of steps.
+type WalkRow :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> k -> [v]
+type family WalkRow v n p b where
+  WalkRow v 'Z (p :: k +-> k) b = MatCol v (Objects k) (Hom k) b
+  WalkRow v ('S n) (p :: k +-> k) b = NextRow v (Objects k) (WalkRow v n p b) p b
+
+-- | One more step, taken for every object at once: an arrow of the base, or an edge into the
+-- previous iterate ('MatVec').
+type NextRow :: forall {k}. forall (v :: Kind) -> [k] -> [v] -> (k +-> k) -> k -> [v]
+type family NextRow v as row p b where
+  NextRow v '[] row p b = '[]
+  NextRow v (a ': as) row (p :: k +-> k) b =
+    (HomObj v a b || MatVec v (Objects k) row p a) ': NextRow v as row p b
 
 -- | The Kleene closure of @p@: walks of at most as many steps as there are objects, which is all
 -- of them, since a shortest walk never revisits an object. It is the free category on the graph
@@ -259,35 +291,73 @@ data GradedWalk v n p d a b where
      . (Ob a, Ob b, Ob c, Ob e, Ob d)
     => (e ~> ProObj v p a c) -> GradedWalk v n p d c b -> GradedWalk v ('S n) p (e ** d) a b
 
--- | Object evidence for the hom-object of a walk: the fixed point, run at the value level.
+-- | The @n@-th iterate reflected to the value level: every object paired with its own entry, which
+-- is exactly the hom-object of the walks from it. 'row' builds one and everything that needs a
+-- shorter walk reads it, so the value level shares its work the same way the type level does.
+type Row :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> k -> [k] -> [v] -> Type
+data Row v n p b as ws where
+  RNil :: Row v n p b '[] '[]
+  RCons
+    :: forall {k} a as v ws n (p :: k +-> k) b
+     . (Ob a, Ob (Walks v n p a b))
+    => Row v n p b as ws -> Row v n p b (a ': as) (Walks v n p a b ': ws)
+
+-- | The @n@-th iterate: the base hom-objects, then one more step for every object at a time.
+row :: forall {k} v n (p :: k +-> k) b. (Closing v n p, Ob b) => Row v n p b (Objects k) (WalkRow v n p b)
+row = case snat @n of
+  SZ ->
+    let homRow :: forall as. IndexedList as -> Row v 'Z p b as (MatCol v as (Hom k) b)
+        homRow FNil = RNil
+        homRow (FCons @a as) = withOb @k @a (withProObj @v @(Hom k) @a @b (RCons (homRow as)))
+    in homRow (finite @k)
+  SS @n' ->
+    let prev = row @v @n' @p @b
+        nextRow :: forall as. IndexedList as -> Row v ('S n') p b as (NextRow v as (WalkRow v n' p b) p b)
+        nextRow FNil = RNil
+        nextRow (FCons @a as) =
+          withOb @k @a
+            ( withProObj @v @(Hom k) @a @b
+                ( withObMatVec @a
+                    prev
+                    ( withObCoprod @v @(HomObj v a b) @(MatVec v (Objects k) (WalkRow v n' p b) p a)
+                        (RCons (nextRow as))
+                    )
+                )
+            )
+    in nextRow (finite @k)
+
+-- | Object evidence for the hom-object of a walk: read the object's own entry out of an iterate.
+withObRow
+  :: forall {k} (a :: k) v n (p :: k +-> k) b cs ws r
+   . Member a cs -> Row v n p b cs ws -> ((Ob (Walks v n p a b)) => r) -> r
+withObRow Here (RCons _) r = r
+withObRow (There m) (RCons rest) r = withObRow m rest r
+
+-- | The same, for a caller that is not already holding the iterate.
 withObWalks
   :: forall {k} v n (p :: k +-> k) a b r
    . (Closing v n p, Ob a, Ob b)
   => ((Ob (Walks v n p a b)) => r) -> r
-withObWalks r = case snat @n of
-  SZ -> withProObj @v @(Hom k) @a @b r
-  SS @n' ->
-    withProObj @v @(Hom k) @a @b
-      (withObSteps @v @n' @p @a @b (finite @k) (withObCoprod @v @(HomObj v a b) @(Steps v (Objects k) n' p a b) r))
+withObWalks = withObRow (member @a) (row @v @n @p @b)
 
--- | Object evidence for one summand of 'Steps': an edge, the shorter walk after it, and their tensor.
+-- | Object evidence for one summand of 'MatVec': an edge and its tensor with the entry after it.
 withObStep
   :: forall {k} v n (p :: k +-> k) a c b r
-   . (Closing v n p, Ob a, Ob b, Ob c)
-  => ((Ob (ProObj v p a c), Ob (Walks v n p c b), Ob (ProObj v p a c ** Walks v n p c b)) => r) -> r
-withObStep r =
-  withProObj @v @p @a @c (withObWalks @v @n @p @c @b (withOb2 @v @(ProObj v p a c) @(Walks v n p c b) r))
+   . (Closing v n p, Ob a, Ob c, Ob (Walks v n p c b))
+  => ((Ob (ProObj v p a c), Ob (ProObj v p a c ** Walks v n p c b)) => r) -> r
+withObStep r = withProObj @v @p @a @c (withOb2 @v @(ProObj v p a c) @(Walks v n p c b) r)
 
 -- | Object evidence for the join over the given middle objects.
-withObSteps
-  :: forall {k} v n (p :: k +-> k) a b bs r
-   . (Closing v n p, Ob a, Ob b)
-  => IndexedList bs -> ((Ob (Steps v bs n p a b)) => r) -> r
-withObSteps FNil r = r
-withObSteps (FCons @c @cs cs) r =
-  withOb @k @c
-    ( withObStep @v @n @p @a @c @b
-        (withObSteps @v @n @p @a @b cs (withObCoprod @v @(ProObj v p a c ** Walks v n p c b) @(Steps v cs n p a b) r))
+withObMatVec
+  :: forall {k} a v n (p :: k +-> k) b cs ws r
+   . (Closing v n p, Ob a)
+  => Row v n p b cs ws -> ((Ob (MatVec v cs ws p a)) => r) -> r
+withObMatVec RNil r = r
+withObMatVec (RCons @c @cs' @_ @ws' rest) r =
+  withObStep @v @n @p @a @c @b
+    ( withObMatVec @a
+        rest
+        (withObCoprod @v @(ProObj v p a c ** Walks v n p c b) @(MatVec v cs' ws' p a) r)
     )
 
 -- | A graded walk is a generalised element of the closure: inject it into the join at its middle
@@ -300,7 +370,10 @@ underlyingAt (DoneAt g) = case snat @n of
   SZ -> g
   SS @n' ->
     withProObj @v @(Hom k) @a @b
-      (withObSteps @v @n' @p @a @b (finite @k) (lft @v @(HomObj v a b) @(Steps v (Objects k) n' p a b)))
+      ( withObMatVec @a
+          (row @v @n' @p @b)
+          (lft @v @(HomObj v a b) @(MatVec v (Objects k) (WalkRow v n' p b) p a))
+      )
       . g
 underlyingAt (StepAt @_ @_ @_ @_ @c ee w) = case snat @n of
   SS @n' -> stepAt @v @n' @p @a @c @b ee (underlyingAt w)
@@ -312,30 +385,38 @@ stepAt
   => (e ~> ProObj v p a c) -> (d ~> Walks v n p c b) -> (e ** d) ~> Walks v ('S n) p a b
 stepAt ee uw = case ee ** uw of
   step@Objs ->
-    withProObj @v @(Hom k) @a @b
-      ( withObSteps @v @n @p @a @b
-          (finite @k)
-          ( rgt @v @(HomObj v a b) @(Steps v (Objects k) n p a b)
-              . inject @v @n @p @a @b @c (finite @k) (member @c)
-              . step
-          )
-      )
+    let rw = row @v @n @p @b
+    in withProObj @v @(Hom k) @a @b
+         ( withObMatVec @a
+             rw
+             ( withObRow
+                 (member @c)
+                 rw
+                 ( rgt @v @(HomObj v a b) @(MatVec v (Objects k) (WalkRow v n p b) p a)
+                     . inject @a rw (member @c)
+                     . step
+                 )
+             )
+         )
 
 -- | The injection of one summand into the join over the middle objects.
 inject
-  :: forall {k} v n (p :: k +-> k) a b c bs
-   . (Closing v n p, Ob a, Ob b, Ob c)
-  => IndexedList bs -> Member c bs -> (ProObj v p a c ** Walks v n p c b) ~> Steps v bs n p a b
-inject FNil m = case m of {}
-inject (FCons @_ @cs cs) Here =
+  :: forall {k} a v n (p :: k +-> k) b c cs ws
+   . (Closing v n p, Ob a, Ob c, Ob (Walks v n p c b))
+  => Row v n p b cs ws -> Member c cs -> (ProObj v p a c ** Walks v n p c b) ~> MatVec v cs ws p a
+inject RNil m = case m of {}
+inject (RCons @_ @cs' @_ @ws' rest) Here =
   withObStep @v @n @p @a @c @b
-    (withObSteps @v @n @p @a @b cs (lft @v @(ProObj v p a c ** Walks v n p c b) @(Steps v cs n p a b)))
-inject (FCons @c' @cs cs) (There m) =
-  withOb @k @c'
-    ( withObStep @v @n @p @a @c' @b
-        ( withObSteps @v @n @p @a @b
-            cs
-            (rgt @v @(ProObj v p a c' ** Walks v n p c' b) @(Steps v cs n p a b) . inject @v @n @p @a @b @c cs m)
+    ( withObMatVec @a
+        rest
+        (lft @v @(ProObj v p a c ** Walks v n p c b) @(MatVec v cs' ws' p a))
+    )
+inject (RCons @c' @cs' @_ @ws' rest) (There m) =
+  withObStep @v @n @p @a @c' @b
+    ( withObMatVec @a
+        rest
+        ( rgt @v @(ProObj v p a c' ** Walks v n p c' b) @(MatVec v cs' ws' p a)
+            . inject @a rest m
         )
     )
 
@@ -358,25 +439,24 @@ shortest
 shortest = case snat @n of
   SZ -> withProObj @v @(Hom k) @a @b (DoneAt @v @n @p (obj @(HomObj v a b)))
   SS @n' ->
-    withProObj @v @(Hom k) @a @b
-      ( withObSteps @v @n' @p @a @b (finite @k) case minIs @v @(HomObj v a b) @(Steps v (Objects k) n' p a b) of
-          MinLeft -> DoneAt @v @n @p (obj @(HomObj v a b))
-          MinRight -> best @v @n' @p @a @b (finite @k)
-      )
+    let rw = row @v @n' @p @b
+    in withProObj @v @(Hom k) @a @b
+         ( withObMatVec @a rw case minIs @v @(HomObj v a b) @(MatVec v (Objects k) (WalkRow v n' p b) p a) of
+             MinLeft -> DoneAt @v @n @p (obj @(HomObj v a b))
+             MinRight -> best @a rw
+         )
 
 -- | The best walk through one of the given middle objects.
 best
-  :: forall {k} v n (p :: k +-> k) a b bs
+  :: forall {k} a v n (p :: k +-> k) b cs ws
    . (Closing v n p, Ob a, Ob b)
-  => IndexedList bs -> GradedWalk v ('S n) p (Steps v bs n p a b) a b
-best FNil = withProObj @v @(Hom k) @a @b (DoneAt @v @('S n) @p (initiate @v @(HomObj v a b)))
-best (FCons @c @cs cs) =
-  withOb @k @c
-    ( withObStep @v @n @p @a @c @b
-        ( withObSteps @v @n @p @a @b cs case minIs @v @(ProObj v p a c ** Walks v n p c b) @(Steps v cs n p a b) of
-            MinLeft -> StepAt (obj @(ProObj v p a c)) (shortest @v @n @p @c @b)
-            MinRight -> best @v @n @p @a @b cs
-        )
+  => Row v n p b cs ws -> GradedWalk v ('S n) p (MatVec v cs ws p a) a b
+best RNil = withProObj @v @(Hom k) @a @b (DoneAt @v @('S n) @p (initiate @v @(HomObj v a b)))
+best (RCons @c @cs' @_ @ws' rest) =
+  withObStep @v @n @p @a @c @b
+    ( withObMatVec @a rest case minIs @v @(ProObj v p a c ** Walks v n p c b) @(MatVec v cs' ws' p a) of
+        MinLeft -> StepAt (obj @(ProObj v p a c)) (shortest @v @n @p @c @b)
+        MinRight -> best @a rest
     )
 
 -- | A graded walk together with a unit into its grade is a walk of pieces at the unit: the budget
