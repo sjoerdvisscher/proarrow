@@ -4,8 +4,10 @@
 -- closed all at once.
 module Proarrow.Category.Instance.Monoid where
 
+import Data.Type.Nat (Nat (..))
 import Prelude qualified as P
 
+import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..), IndexedList (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
@@ -89,3 +91,17 @@ instance (CommutativeMonoid m) => Comonoid (M :: MONOID m) where
   comult = Mon mempty
 instance (CommutativeMonoid m) => CocommutativeComonoid (M :: MONOID m)
 instance (CommutativeMonoid m) => CopyDiscard (MONOID m)
+
+-- | A monoid is a one-object category, so its kind has one inhabitant, at index zero. Said directly
+-- rather than left to the 'Objects' default, so that it reduces for a not-yet-known inhabitant --
+-- which is how 'withOb' learns there is only @'M'@.
+instance Indexed (MONOID m) where
+  type Index (a :: MONOID m) = 'Z
+
+instance Finite (MONOID m) where
+  type Objects (MONOID m) = '[M]
+  finite = FCons FNil
+
+instance (Monoid m) => Enumerable (MONOID m) where
+  withIndex r = r
+  withOb r = r

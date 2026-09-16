@@ -4,9 +4,25 @@
 -- to give one collection of types a second category structure.
 module Proarrow.Category.Instance.Opposite where
 
-import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
+import Data.Type.Nat (snat)
+
+import Proarrow.Category.Enriched.Thin
+  ( AtOb (..)
+  , DecidableProfunctor (..)
+  , Enumerable (..)
+  , Finite (..)
+  , FmapWrap
+  , Indexed (..)
+  , MapWrap
+  , Thin
+  , ThinProfunctor (..)
+  , atOb
+  , mapDecision
+  , withWrapAtLookup
+  , wrapFinite
+  )
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, lmap, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 
 newtype OPPOSITE k = OP k
@@ -65,3 +81,20 @@ instance (Thin j, Thin k, DecidableProfunctor p) => DecidableProfunctor (UnOp p 
   type Holds (UnOp p) a b = Holds p (OP b) (OP a)
   decide @a @b = mapDecision UnOp (decide @p @(OP b) @(OP a))
   toHolds (UnOp f) r = toHolds f r
+
+-- | The opposite category has the same objects, numbered the same way.
+instance (Indexed k) => Indexed (OPPOSITE k) where
+  type Index (a :: OPPOSITE k) = Index (UN OP a)
+  type At (OPPOSITE k) i = FmapWrap OP (At k i)
+
+instance (Finite k) => Finite (OPPOSITE k) where
+  type Objects (OPPOSITE k) = MapWrap OP (Objects k)
+  finite = wrapFinite @OP
+  withAtLookup = withWrapAtLookup @OP
+
+instance (Enumerable k) => Enumerable (OPPOSITE k) where
+  withIndex @(OP a) r = withIndex @k @a r
+  withOb @a r = case atOb @k (snat @(Index a)) of AtJust -> r
+  atOb i = case atOb @k i of
+    AtJust -> AtJust
+    AtNothing -> AtNothing

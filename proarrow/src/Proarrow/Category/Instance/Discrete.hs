@@ -10,8 +10,8 @@ module Proarrow.Category.Instance.Discrete where
 
 import Data.Type.Equality (type (~~))
 import Data.Type.Equality qualified as Eq
-import Data.Type.Nat (SNat (..), snat)
-import Prelude (Maybe (..), type (~))
+import Data.Type.Nat (snat)
+import Prelude (type (~))
 
 import Proarrow.Category.Enriched (EnrichedProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
@@ -53,6 +53,8 @@ instance (Thin.Indexed k) => Thin.ThinProfunctor (Discrete :: CAT (DISCRETE k)) 
   arr = Refl
   withArr Refl r = r
 
+-- | An arrow of @'DISCRETE' k@ is an equality. This also witnesses that the category is discrete:
+-- it only typechecks because 'Thin.withEq' demands it.
 withEq :: forall {k} (a :: DISCRETE k) b r. (Thin.Indexed k) => Discrete a b -> ((a ~~ b) => r) -> r
 withEq p r = Thin.withEq p r
 
@@ -60,7 +62,7 @@ withEq p r = Thin.withEq p r
 instance (Thin.Indexed k) => Thin.DecidableProfunctor (Discrete :: CAT (DISCRETE k)) where
   type Holds (Discrete :: CAT (DISCRETE k)) a b = Thin.Equal a b
   decide @a @b = Thin.mapDecision (\Eq.Refl -> Refl) (Thin.decideEq @a @b)
-  toHolds @a Refl r = case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> r
+  toHolds @a Refl r = Thin.withNatEqRefl (snat @(Thin.Index a)) r
 
 -- | The hom-object of the discrete category in a quantale: the unit on the diagonal, the bottom off
 -- it. Points are at distance @0@ from themselves and infinitely far from each other: the discrete
@@ -84,7 +86,7 @@ instance (Thin.Indexed k) => EnrichedProfunctor COST (Discrete :: CAT (DISCRETE 
   withProObj @a @b r = case Thin.decideEq @a @b of
     Thin.Yes Eq.Refl -> r
     Thin.No -> r
-  underlying @a Refl = case Thin.natEqRefl (snat @(Thin.Index a)) of Eq.Refl -> obj @(Unit :: COST)
+  underlying @a Refl = Thin.withNatEqRefl (snat @(Thin.Index a)) (obj @(Unit :: COST))
   enriched @a @b f = case Thin.decideEq @a @b of
     Thin.Yes Eq.Refl -> Refl
     Thin.No -> unitIsNotBottom @COST f
@@ -99,33 +101,14 @@ instance (Thin.Indexed k) => EnrichedProfunctor COST (Discrete :: CAT (DISCRETE 
           (deltaAct @c @a @(Delta COST (Thin.Equal a b)) @(Delta COST (Thin.Equal c b)) Eq.Refl)
       )
 
-type FmapD :: Maybe k -> Maybe (DISCRETE k)
-type family FmapD m where
-  FmapD 'Nothing = 'Nothing
-  FmapD ('Just a) = 'Just (D a)
-
-type MapD :: [k] -> [DISCRETE k]
-type family MapD xs where
-  MapD '[] = '[]
-  MapD (x ': xs) = D x ': MapD xs
-
 instance (Thin.Indexed k) => Thin.Indexed (DISCRETE k) where
   type Index (a :: DISCRETE k) = Thin.Index (UN D a)
-  type At (DISCRETE k) i = FmapD (Thin.At k i)
+  type At (DISCRETE k) i = Thin.FmapWrap D (Thin.At k i)
 
 instance (Thin.Finite k) => Thin.Finite (DISCRETE k) where
-  type Objects (DISCRETE k) = MapD (Thin.Objects k)
-  finite = mapD (Thin.finite @k)
-  atLookup i = case Thin.atLookup @k i of Eq.Refl -> lookupMapD i (Thin.finite @k)
-
-mapD :: Thin.IndexedList xs -> Thin.IndexedList (MapD xs)
-mapD Thin.FNil = Thin.FNil
-mapD (Thin.FCons xs) = Thin.FCons (mapD xs)
-
-lookupMapD :: SNat i -> Thin.IndexedList xs -> Thin.Lookup (MapD xs) i Eq.:~: FmapD (Thin.Lookup xs i)
-lookupMapD _ Thin.FNil = Eq.Refl
-lookupMapD SZ (Thin.FCons _) = Eq.Refl
-lookupMapD (SS @i) (Thin.FCons xs) = lookupMapD (snat @i) xs
+  type Objects (DISCRETE k) = Thin.MapWrap D (Thin.Objects k)
+  finite = Thin.wrapFinite @D
+  withAtLookup = Thin.withWrapAtLookup @D
 
 instance (Thin.Finite k) => Thin.Enumerable (DISCRETE k) where
   withIndex r = r
@@ -157,62 +140,80 @@ newtype CODISCRETE k = CD k
 
 type Codiscrete :: CAT (CODISCRETE k)
 data Codiscrete a b where
-  Arr :: Codiscrete a b
+  Arr :: (Ob a, Ob b) => Codiscrete a b
 
--- | The codiscrete category has exactly one arrow between every object, every type of kind @k@ is an object.
-instance CategoryOf (CODISCRETE k) where
+-- | The codiscrete category has exactly one arrow between any two objects, the numbered inhabitants
+-- of @k@. Numbering them is what makes it enumerable, so that its closure can be computed.
+instance (Thin.Indexed k) => CategoryOf (CODISCRETE k) where
   type (~>) = Codiscrete
+  type Ob (a :: CODISCRETE k) = Thin.KnownIndex a
 
-instance Profunctor Codiscrete where
+instance (Thin.Indexed k) => Profunctor (Codiscrete :: CAT (CODISCRETE k)) where
   dimap = dimapDefault
-instance Promonad Codiscrete where
+  r \\ Arr = r
+instance (Thin.Indexed k) => Promonad (Codiscrete :: CAT (CODISCRETE k)) where
   id = Arr
   Arr . Arr = Arr
 
-instance Thin.ThinProfunctor Codiscrete
+instance (Thin.Indexed k) => Thin.ThinProfunctor (Codiscrete :: CAT (CODISCRETE k))
 
-instance Thin.DecidableProfunctor Codiscrete where
+instance (Thin.Indexed k) => Thin.DecidableProfunctor (Codiscrete :: CAT (CODISCRETE k)) where
   type Holds Codiscrete a b = TRU
   decide = Thin.Yes Arr
   toHolds Arr r = r
 
-anyArr :: Codiscrete a b
+-- | Witnesses that @'CODISCRETE' k@ really is codiscrete: this only typechecks if 'Codiscrete' is a
+-- 'Thin.CodiscreteProfunctor', so the definition is the check.
+anyArr :: forall {k} (a :: CODISCRETE k) b. (Thin.Indexed k, Ob a, Ob b) => Codiscrete a b
 anyArr = Thin.anyArr
 
-instance DaggerProfunctor Codiscrete where
+instance (Thin.Indexed k) => Thin.Indexed (CODISCRETE k) where
+  type Index (a :: CODISCRETE k) = Thin.Index (UN CD a)
+  type At (CODISCRETE k) i = Thin.FmapWrap CD (Thin.At k i)
+
+instance (Thin.Finite k) => Thin.Finite (CODISCRETE k) where
+  type Objects (CODISCRETE k) = Thin.MapWrap CD (Thin.Objects k)
+  finite = Thin.wrapFinite @CD
+  withAtLookup = Thin.withWrapAtLookup @CD
+
+instance (Thin.Finite k) => Thin.Enumerable (CODISCRETE k) where
+  withIndex r = r
+  withOb r = r
+
+instance (Thin.Indexed k) => DaggerProfunctor (Codiscrete :: CAT (CODISCRETE k)) where
   dagger Arr = Arr
 
-instance HasEqualizers (CODISCRETE k) where
+instance (Thin.Indexed k) => HasEqualizers (CODISCRETE k) where
   equalize = thinEqualize
-  factorEqualizer _ _ = Arr
+  factorEqualizer Arr Arr = Arr
 
-instance HasCoequalizers (CODISCRETE k) where
+instance (Thin.Indexed k) => HasCoequalizers (CODISCRETE k) where
   coequalize = thinCoequalize
-  factorCoequalizer _ _ = Arr
+  factorCoequalizer Arr Arr = Arr
 
-instance HasPullbacks (CODISCRETE k) where
-  pullback @o _ _ k = k @o Arr Arr
-  factorPullback _ _ _ _ = Arr
+instance (Thin.Indexed k) => HasPullbacks (CODISCRETE k) where
+  pullback @o Arr Arr k = k @o Arr Arr
+  factorPullback Arr Arr Arr Arr = Arr
 
-instance HasPushouts (CODISCRETE k) where
-  pushout @o _ _ k = k @o Arr Arr
-  factorPushout _ _ _ _ = Arr
+instance (Thin.Indexed k) => HasPushouts (CODISCRETE k) where
+  pushout @o Arr Arr k = k @o Arr Arr
+  factorPushout Arr Arr Arr Arr = Arr
 
-instance HasEpiMonoFactorization (CODISCRETE k) where
+instance (Thin.Indexed k) => HasEpiMonoFactorization (CODISCRETE k) where
   factorize = defaultFactorize
 
 -- | Any object works as the product of any two objects here, since every hom-set is a singleton.
-instance HasBinaryProducts (CODISCRETE k) where
+instance (Thin.Indexed k) => HasBinaryProducts (CODISCRETE k) where
   type a && b = a
   withObProd r = r
   fst = Arr
   snd = Arr
-  _ &&& _ = Arr
+  Arr &&& Arr = Arr
 
 -- | Dual to the 'HasBinaryProducts' instance above.
-instance HasBinaryCoproducts (CODISCRETE k) where
+instance (Thin.Indexed k) => HasBinaryCoproducts (CODISCRETE k) where
   type a || b = a
   withObCoprod r = r
   lft = Arr
   rgt = Arr
-  _ ||| _ = Arr
+  Arr ||| Arr = Arr

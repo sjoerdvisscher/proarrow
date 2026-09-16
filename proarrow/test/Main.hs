@@ -23,6 +23,7 @@ import Props.Mat qualified as Mat
 import Props.Optic.FinRel qualified as OpticFinRel
 import Props.Optic.Hask qualified as Optic
 import Props.Optic.Linear qualified as OpticLinear
+import Props.Ordinal qualified as Ordinal
 import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
@@ -50,6 +51,7 @@ main =
           , Optic.test
           , OpticLinear.test
           , OpticFinRel.test
+          , Ordinal.test
           , PointedHask.test
           , Simplex.test
           , Span.test

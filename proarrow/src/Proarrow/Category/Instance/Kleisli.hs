@@ -16,6 +16,8 @@ module Proarrow.Category.Instance.Kleisli
   , pattern LiftF
   ) where
 
+import Data.Type.Nat (snat)
+
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
@@ -141,6 +143,25 @@ instance (DecidableProfunctor p, Promonad p) => DecidableProfunctor (Kleisli :: 
   type Holds (Kleisli :: CAT (KLEISLI p)) (KL a) (KL b) = Holds p a b
   decide @(KL a) @(KL b) = mapDecision Kleisli (decide @p @a @b)
   toHolds (Kleisli p) r = toHolds p r
+
+-- | The Kleisli category has the objects of @k@, numbered the same way, so a Kleisli category of a
+-- decidable promonad on an enumerable category is itself enumerable -- and so can be searched, or
+-- closed ("Proarrow.Category.Enriched.Thin.Composition").
+instance (T.Indexed k) => T.Indexed (KLEISLI (p :: CAT k)) where
+  type Index (a :: KLEISLI p) = T.Index (UN KL a)
+  type At (KLEISLI (p :: CAT k)) i = T.FmapWrap KL (T.At k i)
+
+instance (T.Finite k) => T.Finite (KLEISLI (p :: CAT k)) where
+  type Objects (KLEISLI (p :: CAT k)) = T.MapWrap KL (T.Objects k)
+  finite = T.wrapFinite @KL
+  withAtLookup = T.withWrapAtLookup @KL
+
+instance (T.Enumerable k, Promonad p) => T.Enumerable (KLEISLI (p :: CAT k)) where
+  withIndex @(KL a) r = T.withIndex @k @a r
+  withOb @a r = case T.atOb @k (snat @(T.Index a)) of T.AtJust -> r
+  atOb i = case T.atOb @k i of
+    T.AtJust -> T.AtJust
+    T.AtNothing -> T.AtNothing
 
 -- | The free half of the Kleisli adjunction ('Proadjunction' below), embedding @k@ into the
 -- Kleisli category of @p@.

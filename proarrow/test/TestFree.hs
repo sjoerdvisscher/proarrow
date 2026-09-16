@@ -5,9 +5,7 @@ module TestFree where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Data.Type.Nat (Nat (..))
-
-import Proarrow.Category.Enriched.Thin (Indexed (..))
+import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), IndexedList (..))
 import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
 import Proarrow.Category.Instance.Free (FREE (..), Free (..), fold)
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), UnitF, (**), type (**!))
@@ -20,12 +18,11 @@ import Unsafe.Coerce (unsafeCoerce)
 
 type data TestTy = IntTy' | StringTy'
 
-instance Indexed TestTy where
-  type Index IntTy' = 'Z
-  type Index StringTy' = 'S 'Z
-  type At TestTy 'Z = 'P.Just IntTy'
-  type At TestTy ('S 'Z) = 'P.Just StringTy'
-  type At TestTy ('S ('S i)) = 'P.Nothing
+instance Indexed TestTy
+
+instance Finite TestTy where
+  type Objects TestTy = '[IntTy', StringTy']
+  finite = FCons (FCons FNil)
 type IntTy = D IntTy'
 type StringTy = D StringTy'
 data Test a b where

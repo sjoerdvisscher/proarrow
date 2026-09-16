@@ -10,6 +10,9 @@ import Test.Falsify.Generator (Function (..))
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
 
+import Proarrow.Category.Enriched.Thin (Holds, Objects)
+import Proarrow.Category.Enriched.Thin.Composition (Closure)
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans)
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
@@ -100,3 +103,17 @@ instance (TestOb a, TestOb b) => TestingEqShow (Cont Void a b) where
   eqP (Cont l) (Cont r) = eqP l r
   showP (Cont f) = "Cont (" ++ showP f ++ ")"
 instance TestableProfunctor (Cont Void)
+
+-- * The Kleisli category of a decidable promonad is enumerable
+
+-- | Its objects are those of the base, numbered the same way.
+objectsKleisli :: Objects (KLEISLI Booleans) :~: '[KL FLS, KL TRU]
+objectsKleisli = Refl
+
+-- | So it can be searched: the closure of the walking arrow's own hom still only goes upwards.
+-- This only typechecks because the Kleisli category is enumerable.
+kleisliReaches :: Holds (Closure (Kleisli :: CAT (KLEISLI Booleans))) (KL FLS) (KL TRU) :~: TRU
+kleisliReaches = Refl
+
+kleisliNoWayBack :: Holds (Closure (Kleisli :: CAT (KLEISLI Booleans))) (KL TRU) (KL FLS) :~: FLS
+kleisliNoWayBack = Refl

@@ -22,6 +22,7 @@ import Proarrow.Category.Enriched.Thin
   , Enumerable (..)
   , Finite (..)
   , IndexedList (..)
+  , Length
   , Member (..)
   , Thin
   , ThinProfunctor (..)
@@ -238,11 +239,6 @@ type family Steps v cs n p a b where
 -- the path as witness ('decide'); at 'COST' the free Lawvere metric space, with the shortest
 -- distances ('withProObj') and the shortest paths ('shortest').
 type Closure (p :: k +-> k) = Walk (Length (Objects k)) p
-
-type Length :: [k] -> Nat
-type family Length xs where
-  Length '[] = 'Z
-  Length (x ': xs) = 'S (Length xs)
 
 -- * Graded walks
 

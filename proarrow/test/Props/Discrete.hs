@@ -16,11 +16,12 @@ import Proarrow.Category.Enriched.Thin
   , Holds
   , Indexed (..)
   , KnownIndex
+  , Objects
   , ThinProfunctor (..)
   )
 import Proarrow.Category.Enriched.Thin.Composition (Closure)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
-import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
+import Proarrow.Category.Instance.Discrete (CODISCRETE (..), Codiscrete, DISCRETE (..), Discrete (..))
 import Proarrow.Core (CAT, Profunctor (..), UN)
 
 test :: TestTree
@@ -79,3 +80,14 @@ samePoint = Eq.Refl
 
 otherPoint :: Holds (Discrete :: CAT (DISCRETE BOOL)) (D FLS) (D TRU) :~: FLS
 otherPoint = Eq.Refl
+
+-- * The codiscrete category on the same points
+
+-- | Its objects are the points of @k@, in the same order.
+objectsCodiscrete :: Objects (CODISCRETE BOOL) :~: '[CD FLS, CD TRU]
+objectsCodiscrete = Eq.Refl
+
+-- | Every point reaches every other, and the closure computes that by searching the points -- which
+-- only typechecks because the codiscrete category is enumerable.
+codiscreteReaches :: Holds (Closure (Codiscrete :: CAT (CODISCRETE BOOL))) (CD TRU) (CD FLS) :~: TRU
+codiscreteReaches = Eq.Refl
