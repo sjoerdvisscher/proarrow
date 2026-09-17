@@ -5,6 +5,7 @@ module Main where
 import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
+import Examples.Database qualified as Database
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
@@ -24,6 +25,7 @@ import Props.Optic.FinRel qualified as OpticFinRel
 import Props.Optic.Hask qualified as Optic
 import Props.Optic.Linear qualified as OpticLinear
 import Props.Ordinal qualified as Ordinal
+import Props.Paths qualified as Paths
 import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
@@ -52,6 +54,7 @@ main =
           , OpticLinear.test
           , OpticFinRel.test
           , Ordinal.test
+          , Paths.test
           , PointedHask.test
           , Simplex.test
           , Span.test
@@ -59,7 +62,8 @@ main =
           ]
       , testGroup
           "Examples"
-          [ STLC.test
+          [ Database.test
+          , STLC.test
           , ULC.test
           , Vitrea.test
           ]

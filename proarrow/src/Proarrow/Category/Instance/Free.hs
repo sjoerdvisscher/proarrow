@@ -8,6 +8,10 @@
 -- interprets such an arrow in any category supporting the same structures, making this the basis
 -- for deeply embedded categorical DSLs.
 --
+-- For a quiver with no structures at all, "Proarrow.Category.Instance.Paths" is the better fit: its
+-- objects are the vertices themselves, so they keep the base kind's 'Ob' and can still be taken
+-- apart, which an 'IsFreeOb' shape cannot.
+--
 -- __No equations__: only the category laws hold structurally (composition is a normalized spine);
 -- the /structure/ laws do not — @'Proarrow.Limit.BinaryProduct.fst' . (f
 -- 'Proarrow.Limit.BinaryProduct.&&&' g)@ and @f@ are different 'Free' values. Equality of 'Free'
@@ -29,7 +33,7 @@
 module Proarrow.Category.Instance.Free where
 
 import Data.Kind (Constraint)
-import Prelude (Eq, Show (..))
+import Prelude (Show (..))
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Discrete (..))
@@ -40,6 +44,7 @@ import Proarrow.Core
   , Kind
   , Profunctor (..)
   , Promonad (..)
+  , Show2
   , dimapDefault
   , (//)
   , type (+->)
@@ -92,12 +97,6 @@ data Free a b where
 
 emb :: (Ob a, Ob b) => p a b %1 -> Free (EMB a :: FREE cs p) (EMB b)
 emb p = Emb p Nil
-
-class (forall x y. Eq (p x y)) => Eq2 p
-instance (forall x y. Eq (p x y)) => Eq2 p
-
-class (forall x y. P.Show (p x y)) => Show2 p
-instance (forall x y. P.Show (p x y)) => Show2 p
 
 class (Show2 p) => WithShow (a :: FREE c (p :: CAT j))
 instance (Show2 p) => WithShow (a :: FREE c (p :: CAT j))

@@ -58,6 +58,10 @@ module Proarrow.Core
   , Any
   , VacuusOb
 
+    -- * Lifted Type Classes
+  , Eq2
+  , Show2
+
     -- * Type Family Utilities
 
     -- ** Kind Unwrapping
@@ -68,7 +72,7 @@ module Proarrow.Core
 
 import Data.Kind (Constraint, Type)
 import Data.Type.Equality ((:~:) (Refl))
-import Prelude (type (~))
+import Prelude (Eq, Show, type (~))
 
 infixr 0 ~>, :~>, +->
 infixl 1 \\
@@ -242,6 +246,16 @@ instance Any a
 class (CategoryOf k, forall a. Ob' (a :: k)) => VacuusOb k
 
 instance (CategoryOf k, forall a. Ob' (a :: k)) => VacuusOb k
+
+-- | A profunctor (or something of that kind) whose elements can be compared.
+class (forall x y. Eq (p x y)) => Eq2 p
+
+instance (forall x y. Eq (p x y)) => Eq2 p
+
+-- | A profunctor (or something of that kind) whose elements can be shown.
+class (forall x y. Show (p x y)) => Show2 p
+
+instance (forall x y. Show (p x y)) => Show2 p
 
 -- * Type Family Utilities
 
