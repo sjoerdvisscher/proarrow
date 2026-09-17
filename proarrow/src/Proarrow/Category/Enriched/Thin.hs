@@ -16,7 +16,7 @@ import Prelude (Maybe (..), type (~))
 
 import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..), NonTrivialHolds, NonTrivialProfunctor (..))
 import Proarrow.Category.Instance.Zero (Bottom (..), VOID, Zero)
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), VacuusOb, obj, type (+->))
 
 -- | The defaults take everything from a 'DecidableProfunctor' instance: the arrow exists when
 -- @'Holds' p a b@ computes to 'TRU'.
@@ -35,6 +35,11 @@ class (Profunctor p) => ThinProfunctor (p :: j +-> k) where
 instance ThinProfunctor Zero
 instance ThinProfunctor Booleans
 instance (Ob ff, Ob tt) => ThinProfunctor (NonTrivialProfunctor '(ff, tt))
+
+instance (VacuusOb k, Hom k ~ (:~:)) => ThinProfunctor ((:~:) :: CAT k) where
+  type HasArrow ((:~:) :: CAT k) a b = a ~ b
+  arr = Refl
+  withArr Refl r = r
 
 -- * Decidable thin profunctors
 

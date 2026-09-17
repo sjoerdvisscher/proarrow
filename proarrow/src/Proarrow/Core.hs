@@ -19,14 +19,12 @@ module Proarrow.Core
   , OB
   , Kind
 
-    -- ** Universal Constraint
-  , Any
-
     -- * Category Infrastructure
 
     -- ** CategoryOf Class
   , CategoryOf (..)
   , Hom
+  , Ob'
 
     -- * Profunctors
 
@@ -56,6 +54,10 @@ module Proarrow.Core
   , src
   , tgt
 
+    -- * Universal Constraint
+  , Any
+  , VacuusOb
+
     -- * Type Family Utilities
 
     -- ** Kind Unwrapping
@@ -65,6 +67,7 @@ module Proarrow.Core
   ) where
 
 import Data.Kind (Constraint, Type)
+import Data.Type.Equality ((:~:) (Refl))
 import Prelude (type (~))
 
 infixr 0 ~>, :~>, +->
@@ -90,14 +93,6 @@ type OB k = k -> Constraint
 -- | Alias for 'Type' for clarity in kind signatures.
 type Kind = Type
 
--- ** Universal Constraint
-
--- | A constraint that's always satisfied, used as a default when no specific
--- object constraints are needed.
-class Any (a :: k)
-
-instance Any a
-
 -- * Category Infrastructure
 
 -- ** CategoryOf Class
@@ -112,10 +107,14 @@ class (Promonad ((~>) :: CAT k)) => CategoryOf k where
 
   type Ob a = Any a
 
--- \^ Default: no constraints
-
 -- | A type synonym for @(~>) :: CAT k@, the type of morphisms in the category of kind @k@.
 type Hom k = ((~>) :: CAT k)
+
+-- | 'Ob' as a proper class, for the positions where the type family 'Ob' itself cannot appear,
+-- such as the head of a quantified constraint.
+class (Ob a, CategoryOf k) => Ob' (a :: k)
+
+instance (Ob a, CategoryOf k) => Ob' (a :: k)
 
 -- * Profunctors
 
@@ -223,6 +222,26 @@ instance Promonad (->) where
 -- | The category of Haskell types (a.k.a @Hask@), where the arrows are functions.
 instance CategoryOf Type where
   type (~>) = (->)
+
+instance (VacuusOb k, Hom k ~ (:~:)) => Profunctor ((:~:) :: CAT k) where
+  dimap Refl Refl Refl = Refl
+
+instance (VacuusOb k, Hom k ~ (:~:)) => Promonad ((:~:) :: CAT k) where
+  id = Refl
+  Refl . Refl = Refl
+
+-- * Universal Constraint
+
+-- | A constraint that's always satisfied, used as a default when no specific
+-- object constraints are needed.
+class Any (a :: k)
+
+instance Any a
+
+-- | A category without constraints on its objects.
+class (CategoryOf k, forall a. Ob' (a :: k)) => VacuusOb k
+
+instance (CategoryOf k, forall a. Ob' (a :: k)) => VacuusOb k
 
 -- * Type Family Utilities
 

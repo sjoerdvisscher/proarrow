@@ -16,14 +16,7 @@ module Proarrow.Object
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CategoryOf (..), Obj, Profunctor, obj, src, tgt, (\\))
-
--- | 'Ob' as a proper class, for the positions where the type family 'Ob' itself cannot appear,
--- such as the head of a quantified constraint.
-class (Ob a, CategoryOf k) => Ob' (a :: k)
-
-instance (Ob a, CategoryOf k) => Ob' (a :: k)
-type VacuusOb k = forall a. Ob' (a :: k)
+import Proarrow.Core (CategoryOf (..), Ob', Obj, Profunctor, VacuusOb, obj, src, tgt, (\\))
 
 type ObjDict :: forall {k}. k -> Type
 data ObjDict a where
