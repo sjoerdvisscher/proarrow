@@ -9,11 +9,13 @@ import Data.Kind (Type)
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched (Enriched, GenArrow (..), HomObj, comp, underlying)
+import Proarrow.Category.Enriched.Finitary (Elt (..))
+import Proarrow.Category.Instance.FinHask (FINHASK, arr)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Monoidal (SymMonoidal, rightUnitorInvWith, type (**))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, rightUnitorInvWith, type (**))
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (dimap, (\\)), Promonad (..), obj, (//), type (+->))
 import Proarrow.Limit.Power (Powered (..))
@@ -71,6 +73,13 @@ instance (CategoryOf j, CategoryOf k) => Copowered Type (j +-> k) where
   withObCopower r = r
   copower f = Prof \(Copower n p) -> unProf (f n) p
   uncopower (Prof f) n = Prof \p -> f (Copower n p)
+
+-- | Kept with the class, for the same reason as 'Powered' 'FINHASK' 'FINHASK'.
+instance Copowered FINHASK FINHASK where
+  type n *. a = n ** a
+  withObCopower @a @n r = withOb2 @_ @a @n r
+  copower @a @b f = selfCopowered @a @b (arr unElt . f)
+  uncopower f = (\g -> arr Elt . g) (selfUncopowered f) \\ f
 
 class (HomObj v (OP a) (OP b) ~ HomObj v b a) => HomObjOp v a b
 instance (HomObj v (OP a) (OP b) ~ HomObj v b a) => HomObjOp v a b

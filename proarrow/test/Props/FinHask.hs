@@ -4,6 +4,7 @@
 
 module Props.FinHask where
 
+import Control.Monad (unless)
 import Data.Map.Strict qualified as M
 import Data.Type.Equality ((:~:) (..))
 import Data.Universe.Class (Finite (..))
@@ -13,17 +14,21 @@ import GHC.TypeNats (KnownNat, withKnownNat, withSomeSNat)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Unsafe.Coerce (unsafeCoerce)
+import Prelude (($), (==))
 import Prelude qualified as P
 
+import Proarrow.Category.Enriched.Finitary (elements)
 import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..))
 import Proarrow.Core (CategoryOf (..), UN)
 
 import Proarrow.Testing
   ( GenTotal (..)
+  , Some (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , genOb
   , genSomeDef
   , oneElem
   , optGen
@@ -32,6 +37,7 @@ import Proarrow.Testing
 import Proarrow.Testing.Laws
 import Props.Hask ()
 import Test.Falsify.Generator (minimalValue)
+import Test.Tasty.Falsify (testFailed, testProperty)
 
 test :: TestTree
 test =
@@ -49,6 +55,13 @@ test =
     , propCoequalizers @FINHASK withTestObFinHaskViaFin
     , propPullbacks @FINHASK withTestObFinHaskViaFin
     , propPushouts @FINHASK withTestObFinHaskViaFin
+    , propFinitary @FinHask "FinHask"
+    , testProperty "the numbering agrees with the universe" $ do
+        -- 'propFinitary'\'s laws are all order-agnostic, so they would accept a numbering that
+        -- disagreed with 'universe'; this is what pins the digit order.
+        Some @a <- genOb @FINHASK
+        Some @b <- genOb @FINHASK
+        unless (elements @FinHask @a @b == universeF) (testFailed "elements should be universe, in order")
     ]
 
 -- | Only ever pass this to 'propEqualizers', 'propCoequalizers', 'propPullbacks', or 'propPushouts':

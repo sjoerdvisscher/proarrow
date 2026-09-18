@@ -10,6 +10,7 @@ module Proarrow.Category.Enriched where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Finitary (Elt (..), Finitary, LocallyFinite)
 import Proarrow.Category.Enriched.Thin
   ( CodiscreteProfunctor (..)
   , Decidable
@@ -20,16 +21,21 @@ import Proarrow.Category.Enriched.Thin
   )
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
+import Proarrow.Category.Instance.FinHask (FINHASK (..))
+import Proarrow.Category.Instance.FinHask qualified as F
 import Proarrow.Category.Instance.Monoid (MONOID (..), Mon (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), leftUnitorInvWith, rightUnitorInvWith)
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), leftUnitorInvWith, rightUnitorInvWith)
 import Proarrow.Category.Monoidal.Closed qualified as E
 import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor ((\\)), Promonad (..), type (+->))
 import Proarrow.Core qualified as P
+import Proarrow.Limit.BinaryProduct (PROD, Prod)
 import Proarrow.Monoid (Monoid (..))
+import Proarrow.Profunctor.Instance.Exponential ()
 
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,
@@ -123,6 +129,32 @@ instance (DecidableProfunctor p, Decidable j, Decidable k) => EnrichedProfunctor
 fromFls :: Decision p a b h -> Booleans FLS h
 fromFls (Yes _) = F2T
 fromFls No = Fls
+
+-- | __A finitary profunctor is a profunctor enriched in finite sets.__ The hom-object is the
+-- hom-set itself, which 'Elt' makes an object of 'FINHASK' out of nothing but the numbering, and the
+-- whiskerings are the two 'dimap's.
+instance (Finitary p, LocallyFinite j, LocallyFinite k) => EnrichedProfunctor FINHASK (p :: j +-> k) where
+  type ProObj FINHASK p a b = FH (Elt p a b)
+  withProObj r = r
+  underlying x = F.arr (\() -> Elt x) \\ x
+  enriched f = unElt (f F.! ())
+  rmap @a = F.arr \(Elt g, Elt x) -> Elt (P.dimap (id @_ @a) g x)
+  lmap @_ @b = F.arr \(Elt g, Elt x) -> Elt (P.dimap g (id @_ @b) x)
+
+-- | The category of profunctors is enriched in itself: the hom-object is the internal hom
+-- @p ':~>:' q@, an element of it is a natural transformation, and composition is the internal one.
+-- Cartesian closed, hence the 'PROD' wrapper -- @j '+->' k@\'s own tensor is Day convolution.
+--
+-- This is a self-enrichment written the generic way, from 'HomSelf' and friends, which is what those
+-- are for: they apply to any 'Closed' 'SymMonoidal' kind that has no enrichment instance of its own
+-- covering its hom-profunctor.
+instance (CategoryOf j, CategoryOf k) => EnrichedProfunctor (PROD (j +-> k)) (Prod (Prof :: CAT (j +-> k))) where
+  type ProObj (PROD (j +-> k)) (Prod (Prof :: CAT (j +-> k))) p q = HomSelf p q
+  withProObj r = r
+  underlying = underlyingSelf
+  enriched = enrichedSelf
+  rmap = compSelf
+  lmap = compSelf . swap
 
 instance (CodiscreteProfunctor p) => EnrichedProfunctor () p where
   type ProObj () p a b = '()

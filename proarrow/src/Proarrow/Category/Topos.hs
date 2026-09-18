@@ -12,7 +12,7 @@ import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..), cokernelPair)
 import Proarrow.Core (CategoryOf (..), Hom, Promonad (..), obj)
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
@@ -47,6 +47,10 @@ defaultFactorize f = pushout f f \q1 q2 -> equalize q1 q2 \incl -> factorEqualiz
 
 defaultFactorizeDual :: (HasPullbacks k, HasCoequalizers k) => a ~> b -> (Hom k :.: Hom k) a b
 defaultFactorizeDual f = pullback f f \p1 p2 -> coequalize p1 p2 \incl -> incl :.: factorCoequalizer incl f
+
+-- | Image factorization is unchanged by making the tensor the product.
+instance (HasEpiMonoFactorization k) => HasEpiMonoFactorization (PROD k) where
+  factorize (Prod f) = case factorize f of e :.: m -> Prod e :.: Prod m
 
 type HasFiniteLimits k = (HasProducts k, HasPullbacks k, HasEqualizers k)
 type HasFiniteColimits k = (HasCoproducts k, HasPushouts k, HasCoequalizers k)

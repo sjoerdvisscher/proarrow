@@ -17,6 +17,7 @@ import Props.Dot qualified as Dot
 import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
 import Props.FinSet qualified as FinSet
+import Props.Finitary qualified as Finitary
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
@@ -46,6 +47,7 @@ main =
           , FinHask.test
           , FinRel.test
           , FinSet.test
+          , Finitary.test
           , Free.test
           , Hask.test
           , Kleisli.test

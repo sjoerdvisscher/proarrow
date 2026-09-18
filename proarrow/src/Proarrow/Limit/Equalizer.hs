@@ -11,7 +11,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Object (pattern Objs)
 import Prelude qualified as P
 
@@ -45,6 +45,11 @@ instance HasEqualizers BOOL where
 instance (HasEqualizers k1, HasEqualizers k2) => HasEqualizers (k1, k2) where
   equalize (l1 :**: l2) (r1 :**: r2) k = equalize l1 r1 \f1 -> equalize l2 r2 \f2 -> k (f1 :**: f2)
   factorEqualizer (i1 :**: i2) (h1 :**: h2) = factorEqualizer i1 h1 :**: factorEqualizer i2 h2
+
+-- | Equalizers are unchanged by making the tensor the product.
+instance (HasEqualizers k) => HasEqualizers (PROD k) where
+  equalize (Prod f) (Prod g) k = equalize f g \e -> k (Prod e)
+  factorEqualizer (Prod incl) (Prod h) = Prod (factorEqualizer incl h)
 
 -- | In a thin category, arrows don't carry information, so equalizers are just identities.
 thinEqualize :: forall {k} (a :: k) b r. (Thin k) => a ~> b -> a ~> b -> (forall e. e ~> a -> r) -> r

@@ -15,11 +15,14 @@
 module Proarrow.Testing.Laws where
 
 import Control.Monad (unless, when)
+import Data.List (genericLength)
+import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Adjunction (Adjunction)
+import Proarrow.Category.Enriched.Finitary qualified as Finitary
 import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
@@ -85,6 +88,35 @@ testEq nm sl l sr r = do
         ++ sr
         ++ " = "
         ++ showP r
+
+-- | The numbering laws of a 'Finitary.Finitary' profunctor: 'Finitary.elements' has
+-- 'Finitary.size' entries and is numbered in order, and 'Finitary.fromIndex' recovers any element
+-- from its index -- including elements the instance did not itself produce, which is what makes
+-- 'Finitary.size' honest rather than merely self-consistent -- but only as far as the 'TestableType'
+-- generator is independent of the instance: one defined as @optGen 'Finitary.elements'@ makes the
+-- last law vacuous. The label names the profunctor, which nothing in its type can supply.
+propFinitary
+  :: forall {j} {k} (p :: j +-> k)
+   . (Testable j, Testable k, Finitary.Finitary p, TestableTypeP p)
+  => String
+  -> TestTree
+propFinitary nm = testProperty ("Finitary " ++ nm) $ do
+  Some @a <- genOb @k
+  Some @b <- genOb @j
+  let n = Finitary.size @p @a @b
+      es = Finitary.elements @p @a @b
+  unless (genericLength es == n) $
+    testFailed ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
+  unless (map (Finitary.toIndex @p @a @b) es == Finitary.indices n) $
+    testFailed ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
+  x <- genNamed @(p a b) "x"
+  -- That every index is below 'Finitary.size' is what the numbering claims and what a @Fin@-typed
+  -- index would have given for free; without it an undersized 'Finitary.size' goes unnoticed, since
+  -- the other laws only ever look at the elements it admits.
+  unless (Finitary.toIndex x < n) $
+    testFailed ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
+  roundTrips <- eqP (Finitary.fromIndex @p @a @b (Finitary.toIndex x)) x
+  unless roundTrips $ testFailed ("fromIndex (toIndex x) /= x for x = " ++ showP x)
 
 propCategory :: forall k. (Testable k) => TestTree
 propCategory = testProperty "Category" $ do

@@ -19,10 +19,11 @@ import Data.Universe.Class (Finite (..), Universe (..))
 import Data.Universe.Helpers (Tagged (..), retag)
 import Data.Void (Void)
 import GHC.TypeNats (KnownNat, Nat, natVal, withKnownNat, withSomeSNat)
+import Numeric.Natural (Natural)
 import Prelude (Bool (..), ($))
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched (EnrichedProfunctor (..), HomSelf, compSelf, enrichedSelf, underlyingSelf)
+import Proarrow.Category.Enriched.Finitary (Finitary (..), finiteSize)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
@@ -31,7 +32,6 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
-import Proarrow.Colimit.Copower (Copowered (..), selfCopowered, selfUncopowered)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
@@ -47,7 +47,6 @@ import Proarrow.Limit.BinaryProduct
   , swapProd
   )
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
-import Proarrow.Limit.Power (Powered (..), selfPowered, selfUnpowered)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
@@ -165,25 +164,33 @@ instance Closed FINHASK where
   curry f@FinHask{} = arr \a -> arr \b -> f ! (a, b)
   apply = arr \(m, x) -> m ! x
 
-instance EnrichedProfunctor FINHASK FinHask where
-  type ProObj FINHASK FinHask a b = HomSelf a b
-  withProObj r = r
-  underlying = underlyingSelf
-  enriched = enrichedSelf
-  rmap = compSelf
-  lmap = compSelf . swap
+-- | Where a value sits in its own type's 'universe'.
+position :: forall x. (Finite x, P.Eq x) => x -> Natural
+position x = case P.elemIndex x universeF of
+  P.Just i -> P.fromIntegral i
+  P.Nothing -> P.error "position: not in the universe of its type"
 
-instance Powered FINHASK FINHASK where
-  type a ^ n = n ~~> a
-  withObPower @a @n r = withObExp @_ @a @n r
-  power = selfPowered
-  unpower = selfUnpowered
+-- | The hom-sets of 'FINHASK' are finite, so its hom-profunctor is finitary, and it is numbered by
+-- the same 'universe' the 'Finite' instance above enumerates -- but arithmetically rather than by
+-- searching it. A morphism is a table of values indexed by @'universeF' \@a@, so reading that table
+-- as a numeral in base @|b|@, most significant digit first, gives exactly @universe@\'s own order:
+-- @universe@ is @'P.traverse' (\a -> (a,) '<$>' universe) universe@, and for lists @'<*>'@ varies
+-- its right operand fastest, so it is the /last/ element of @a@ that varies fastest.
+instance Finitary FinHask where
+  size @a @b = finiteSize @FinHask @a @b
+  toIndex @(FH a) @(FH b) f = P.foldl (\acc x -> acc P.* card @b P.+ position (f ! x)) 0 (universeF @a)
+  fromIndex @(FH a) @(FH b) i = fromList (P.zip xs (digits (P.length xs) i))
+    where
+      xs = universeF @a
+      digits :: P.Int -> Natural -> [b]
+      digits 0 _ = []
+      digits n m = case card @b of
+        0 -> P.error "fromIndex: the source is inhabited and the target is empty, so there are no morphisms"
+        c -> let (q, r) = m `P.divMod` c in digits (n P.- 1) q P.++ [universeF @b `P.genericIndex` r]
 
-instance Copowered FINHASK FINHASK where
-  type n *. a = n ** a
-  withObCopower @a @n r = withOb2 @_ @a @n r
-  copower = selfCopowered
-  uncopower = selfUncopowered
+-- | How many inhabitants a type has.
+card :: forall x. (Finite x) => Natural
+card = unTagged (cardinality @x)
 
 instance Distributive FINHASK where
   distL @a @b @c = distLProd @a @b @c

@@ -12,7 +12,7 @@ import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Eq2, Hom, obj, (//))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers, factorPullbackDefault, pullbackDefault)
 import Proarrow.Object (pattern Objs)
 
@@ -45,6 +45,11 @@ instance (HasPullbacks k1, HasPullbacks k2) => HasPullbacks (k1, k2) where
   pullback (l1 :**: l2) (r1 :**: r2) k = pullback l1 r1 \f1 g1 -> pullback l2 r2 \f2 g2 -> k (f1 :**: f2) (g1 :**: g2)
   factorPullback (p1a :**: p1b) (p2a :**: p2b) (k1a :**: k1b) (k2a :**: k2b) =
     factorPullback p1a p2a k1a k2a :**: factorPullback p1b p2b k1b k2b
+
+-- | Pullbacks are unchanged by making the tensor the product.
+instance (HasPullbacks k) => HasPullbacks (PROD k) where
+  pullback (Prod f) (Prod g) k = pullback f g \p1 p2 -> k (Prod p1) (Prod p2)
+  factorPullback (Prod p1) (Prod p2) (Prod k1) (Prod k2) = Prod (factorPullback p1 p2 k1 k2)
 
 -- | In a thin category, arrows don't carry information, so pullbacks are just products.
 thinPullback

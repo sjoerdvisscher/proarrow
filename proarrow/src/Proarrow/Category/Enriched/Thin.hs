@@ -218,6 +218,27 @@ type family Lookup xs i where
   Lookup (x ': xs) 'Z = 'Just x
   Lookup (x ': xs) ('S i) = Lookup xs i
 
+-- | The inhabitant at an index in a type-level list known to be long enough: 'Lookup' without the
+-- 'Maybe', for tables indexed by 'Index'. Out of range it is stuck rather than 'Nothing'.
+type Entry :: [k] -> Nat -> k
+type family Entry xs i where
+  Entry (x ': xs) 'Z = x
+  Entry (x ': xs) ('S i) = Entry xs i
+
+-- | Every entry of @xs@ satisfies @c@. The list is shaped like @shape@, a list of objects, so that
+-- an index into @shape@ selects an entry of @xs@. The equality argument ties the index to @shape@,
+-- so that walking off the end is refutable rather than an error.
+type KnownList :: forall {x} {y}. (x -> Constraint) -> [y] -> [x] -> Constraint
+class KnownList c shape xs where
+  withEntry :: forall s i r. SNat i -> Lookup shape i :~: 'Just s -> ((c (Entry xs i)) => r) -> r
+
+instance KnownList c '[] '[] where
+  withEntry _ eq _ = case eq of {}
+
+instance (c x, KnownList c shape xs) => KnownList c (s ': shape) (x ': xs) where
+  withEntry SZ Refl r = r
+  withEntry (SS @i') eq r = withEntry @c @shape @xs (snat @i') eq r
+
 -- | Where an inhabitant sits in a type-level list, the inverse of 'Lookup'. An inhabitant that does
 -- not occur has no index, so the family is stuck rather than total.
 type IndexOf :: forall k. k -> [k] -> Nat

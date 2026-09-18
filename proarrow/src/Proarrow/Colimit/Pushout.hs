@@ -15,6 +15,7 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Colimit.Coequalizer (HasCoequalizers, factorPushoutDefault, pushoutDefault)
 import Proarrow.Core (CategoryOf (..), Eq2, Hom, obj, (//))
+import Proarrow.Limit.BinaryProduct (PROD, Prod (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Object (pattern Objs)
 
@@ -47,6 +48,11 @@ instance (HasPushouts k1, HasPushouts k2) => HasPushouts (k1, k2) where
   pushout (l1 :**: l2) (r1 :**: r2) k = pushout l1 r1 \f1 g1 -> pushout l2 r2 \f2 g2 -> k (f1 :**: f2) (g1 :**: g2)
   factorPushout (p1a :**: p1b) (p2a :**: p2b) (k1a :**: k1b) (k2a :**: k2b) =
     factorPushout p1a p2a k1a k2a :**: factorPushout p1b p2b k1b k2b
+
+-- | Pushouts are unchanged by making the tensor the product.
+instance (HasPushouts k) => HasPushouts (PROD k) where
+  pushout (Prod f) (Prod g) k = pushout f g \p1 p2 -> k (Prod p1) (Prod p2)
+  factorPushout (Prod p1) (Prod p2) (Prod k1) (Prod k2) = Prod (factorPushout p1 p2 k1 k2)
 
 -- | In a thin category, arrows don't carry information, so pushouts are just coproducts.
 thinPushout

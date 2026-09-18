@@ -9,6 +9,8 @@ import Data.Kind (Type)
 import Prelude (($), type (~))
 
 import Proarrow.Category.Enriched (Enriched, EnrichedProfunctor (..), GenArrow (..), HomObj, comp)
+import Proarrow.Category.Enriched.Finitary (Elt (..))
+import Proarrow.Category.Instance.FinHask (FINHASK, arr)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -88,6 +90,13 @@ instance (CategoryOf j, CategoryOf k) => Powered Type (j +-> k) where
   withObPower r = r
   power f = Prof \p -> p // Power \n -> unProf (f n) p
   unpower (Prof f) n = Prof \p -> unPower (f p) n
+
+-- | Kept with the class: 'FINHASK' is above "Proarrow.Category.Enriched", which this module needs.
+instance Powered FINHASK FINHASK where
+  type a ^ n = n ~~> a
+  withObPower @a @n r = withObExp @_ @a @n r
+  power @a @b f = selfPowered @a @b (arr unElt . f)
+  unpower f = (\g -> arr Elt . g) (selfUnpowered f) \\ f
 
 instance (Powered v k, Ob (n :: v)) => Representable (GenArrow (OP (n :: v)) :: k +-> k) where
   type GenArrow (OP n) % a = a ^ n

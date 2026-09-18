@@ -14,6 +14,7 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
+import Proarrow.Limit.BinaryProduct (PROD, Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Object (pattern Objs)
 import Prelude qualified as P
@@ -44,6 +45,11 @@ instance HasCoequalizers BOOL where
 instance (HasCoequalizers k1, HasCoequalizers k2) => HasCoequalizers (k1, k2) where
   coequalize (l1 :**: l2) (r1 :**: r2) k = coequalize l1 r1 \f1 -> coequalize l2 r2 \f2 -> k (f1 :**: f2)
   factorCoequalizer (q1 :**: q2) (h1 :**: h2) = factorCoequalizer q1 h1 :**: factorCoequalizer q2 h2
+
+-- | Coequalizers are unchanged by making the tensor the product.
+instance (HasCoequalizers k) => HasCoequalizers (PROD k) where
+  coequalize (Prod f) (Prod g) k = coequalize f g \c -> k (Prod c)
+  factorCoequalizer (Prod proj) (Prod h) = Prod (factorCoequalizer proj h)
 
 -- | In a thin category, arrows don't carry information, so coequalizers are just coproducts.
 thinCoequalize :: forall {k} (a :: k) b r. (Thin k) => a ~> b -> a ~> b -> (forall c. b ~> c -> r) -> r
