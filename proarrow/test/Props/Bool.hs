@@ -39,6 +39,7 @@ import Proarrow.Testing
   , isGenNonEmpty
   , oneElem
   , someElemNamed
+  , testEq
   )
 import Proarrow.Testing.Laws
 

@@ -56,7 +56,7 @@ import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts)
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, (//), type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, lmap, rmap, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks)
@@ -348,6 +348,44 @@ instance
       case genericIndex (fibresVal @(Cell fs a b)) i of
         rep : _ -> Reindex (fromIndex @p rep)
         [] -> P.error "Reindex: empty fibre"
+
+-- | Whether a predicate on @p@\'s elements picks out a /subprofunctor/: the elements it keeps must
+-- be closed under the action, since @'Reindex'@ inherits its 'dimap' from @p@ and so can only carve
+-- out a set that is.
+--
+-- @'dimap' l r@ is @'lmap' l . 'rmap' r@, so closure under the two whiskerings separately is closure
+-- under the action: two walks over three objects rather than one over four.
+closedUnder
+  :: forall {j} {k} (p :: j +-> k)
+   . (Finitary p, FiniteCat j, FiniteCat k)
+  => (forall a b. (Ob a, Ob b) => p a b -> P.Bool)
+  -> P.Bool
+closedUnder keep =
+  P.and
+    ( foreachOb @k \ @a -> foreachOb @j \ @b ->
+        let kept = [z | z <- elements @p @a @b, keep z]
+        in foreachOb @k @P.Bool (\ @c -> [keep (lmap g z) | g <- elements @(Hom k) @c @a, z <- kept])
+             P.++ foreachOb @j @P.Bool (\ @d -> [keep (rmap h z) | h <- elements @(Hom j) @b @d, z <- kept])
+    )
+
+-- | Carve a subprofunctor out of @p@, the caller choosing which elements to keep, and receiving the
+-- new object\'s inclusion. This is what 'equalize' does with the elements two transformations agree
+-- on, exposed so that a caller can pick out a subobject of its own: it is how a value -- a graph read
+-- off a file, say -- becomes an object of @'FINITARY' j k@, as a subobject of a big enough ambient
+-- one. The failure continuation is taken when the kept set is not 'closedUnder' the action, and so
+-- is no subobject.
+withSubobject
+  :: forall {j} {k} (p :: j +-> k) r
+   . (Finitary p, FiniteCat j, FiniteCat k)
+  => (forall a b. (Ob a, Ob b) => p a b -> P.Bool)
+  -> (forall q. (Finitary q) => FIN q ~> FIN p -> r)
+  -> r
+  -> r
+withSubobject keep ok notClosed =
+  if closedUnder @p keep
+    then buildTable @j @k (\ @a @b -> [[toIndex x] | x <- elements @p @a @b, keep x]) \ @fs ->
+      ok @(Reindex p fs) (Sub (Prof \(Reindex x) -> x))
+    else notClosed
 
 -- * Equalizers and coequalizers
 

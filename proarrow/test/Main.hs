@@ -12,6 +12,7 @@ import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
+import Props.DPO qualified as DPO
 import Props.Discrete qualified as Discrete
 import Props.Dot qualified as Dot
 import Props.FinHask qualified as FinHask
@@ -43,6 +44,7 @@ main =
           , Discrete.test
           , Cospan.test
           , Cost.test
+          , DPO.test
           , Dot.test
           , FinHask.test
           , FinRel.test

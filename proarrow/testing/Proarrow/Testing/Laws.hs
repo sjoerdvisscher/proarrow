@@ -71,23 +71,8 @@ import Proarrow.Testing
   , genSuchThat
   , isGenNonEmpty
   , obFromTestOb
+  , testEq
   )
-
-testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
-testEq nm sl l sr r = do
-  isEq <- eqP l r
-  unless isEq $
-    testFailed $
-      "Failed "
-        ++ nm
-        ++ ":\n"
-        ++ sl
-        ++ " = "
-        ++ showP l
-        ++ "\n"
-        ++ sr
-        ++ " = "
-        ++ showP r
 
 -- | The numbering laws of a 'Finitary.Finitary' profunctor: 'Finitary.elements' has
 -- 'Finitary.size' entries and is numbered in order, and 'Finitary.fromIndex' recovers any element

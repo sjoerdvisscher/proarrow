@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | (Co)equalizers, pullbacks and pushouts of finitary profunctors, on a small copresheaf over the
 -- walking arrow: three rows at 'FLS', two at 'TRU', and 'F2T' carrying the first to the second.
@@ -10,20 +9,20 @@
 -- too, which is what makes this an elementary topos.
 module Props.Finitary (test) where
 
-import Control.Monad (unless)
-import Data.List (sort)
+import Data.List (genericIndex, genericLength, sort)
 import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, testFailed, testProperty)
+import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (id, (.))
 
-import Proarrow.Category.Enriched.Finitary (FIN, FINITARY, Finitary (..), elements, size)
+import Proarrow.Category.Enriched.Finitary (FIN, FINITARY, Finitary (..))
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), isEq)
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Functor (Copresheaf)
@@ -35,8 +34,9 @@ import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
-import Proarrow.Testing (TestableType (..), TestingEqShow (..), optGen)
+import Proarrow.Testing (TestableType (..), TestingEqShow (..), expect, optGen)
 import Proarrow.Testing.Laws (propFinitary)
+import Proarrow.Tools.DPO (Rule (..), dpoStep)
 import Props.Bool ()
 
 -- | The kind of finitary copresheaves on the walking arrow.
@@ -64,18 +64,21 @@ instance Profunctor Rows where
     S1 -> r
     S2 -> r
 
+-- | The rows at one object, in the order the numbering below uses.
+rows :: forall b. (IsBool b) => [Rows '() b]
+rows = case boolId @b of
+  Fls -> [R1, R2, R3]
+  Tru -> [S1, S2]
+
 instance Finitary Rows where
-  size @_ @b = case boolId @b of
-    Fls -> 3
-    Tru -> 2
+  size @_ @b = genericLength (rows @b)
   toIndex R1 = 0
   toIndex R2 = 1
   toIndex R3 = 2
   toIndex S1 = 0
   toIndex S2 = 1
-  fromIndex @_ @b i = case boolId @b of
-    Fls -> [R1, R2, R3] !! fromIntegral i
-    Tru -> [S1, S2] !! fromIntegral i
+  fromIndex @_ @b i = rows @b `genericIndex` i
+  elements @_ @b = rows @b
 
 instance (Ob u, Ob b) => TestingEqShow (Rows u b)
 
@@ -86,6 +89,106 @@ instance (Ob u, IsBool b) => TestableType (Rows u b) where
   gen = case boolId @b of
     Fls -> optGen [R1, R2, R3]
     Tru -> optGen [S1, S2]
+
+-- | The copresheaf with one element at 'TRU' and none at 'FLS' -- a lone \"vertex\" for the
+-- double-pushout tests. It is a subprofunctor of 'Rows' (nothing at 'FLS' can dangle off it).
+type Point :: Copresheaf BOOL
+data Point u b where
+  Pt :: Point '() TRU
+
+deriving instance Eq (Point u b)
+deriving instance Show (Point u b)
+
+instance Profunctor Point where
+  dimap Unit Fls x = x
+  dimap Unit Tru Pt = Pt
+  dimap Unit F2T x = case x of {}
+  r \\ Pt = r
+
+instance Finitary Point where
+  size @_ @b = genericLength (points @b)
+  toIndex Pt = 0
+  fromIndex @_ @b i = points @b `genericIndex` i
+  elements @_ @b = points @b
+
+points :: forall b. (IsBool b) => [Point '() b]
+points = case boolId @b of
+  Fls -> []
+  Tru -> [Pt]
+
+-- | One element at each object, the one at 'FLS' mapping to the one at 'TRU' -- the representable at
+-- 'FLS', and the analogue of an edge together with its endpoint.
+type Edge :: Copresheaf BOOL
+data Edge u b where
+  Src :: Edge '() FLS
+  Tgt :: Edge '() TRU
+
+deriving instance Eq (Edge u b)
+deriving instance Show (Edge u b)
+
+instance Profunctor Edge where
+  dimap Unit Fls Src = Src
+  dimap Unit Tru Tgt = Tgt
+  dimap Unit F2T Src = Tgt
+  r \\ x = case x of Src -> r; Tgt -> r
+
+instance Finitary Edge where
+  size = 1
+  toIndex _ = 0
+  fromIndex @_ @b i = case boolId @b of
+    Fls -> [Src] !! fromIntegral i
+    Tru -> [Tgt] !! fromIntegral i
+
+-- | Two elements at 'FLS' sharing the one at 'TRU' -- two edges with a common endpoint.
+type TwoEdges :: Copresheaf BOOL
+data TwoEdges u b where
+  A1, A2 :: TwoEdges '() FLS
+  T :: TwoEdges '() TRU
+
+deriving instance Eq (TwoEdges u b)
+deriving instance Show (TwoEdges u b)
+
+instance Profunctor TwoEdges where
+  dimap Unit Fls x = x
+  dimap Unit Tru x = x
+  dimap Unit F2T A1 = T
+  dimap Unit F2T A2 = T
+  r \\ x = case x of A1 -> r; A2 -> r; T -> r
+
+instance Finitary TwoEdges where
+  size @_ @b = genericLength (twoEdges @b)
+  toIndex A1 = 0
+  toIndex A2 = 1
+  toIndex T = 0
+  fromIndex @_ @b i = twoEdges @b `genericIndex` i
+  elements @_ @b = twoEdges @b
+
+twoEdges :: forall b. (IsBool b) => [TwoEdges '() b]
+twoEdges = case boolId @b of
+  Fls -> [A1, A2]
+  Tru -> [T]
+
+-- | Both edges matched onto 'R3', which is an identification conflict: two elements the rule deletes
+-- share an image, so no pushout complement exists.
+bothOnR3 :: Prof TwoEdges Rows
+bothOnR3 = Prof \case
+  A1 -> R3
+  A2 -> R3
+  T -> S2
+
+-- | The interface of 'Edge' that keeps only its endpoint.
+tgtOnly :: Prof Point Edge
+tgtOnly = Prof \Pt -> Tgt
+
+-- | 'Edge' sitting on 'R3' and the 'S2' it maps to: deleting both leaves nothing dangling.
+atR3 :: Prof Edge Rows
+atR3 = Prof \case
+  Src -> R3
+  Tgt -> S2
+
+-- | 'Point' sitting on the second element at 'TRU', which 'R3' maps onto.
+atS2 :: Prof Point Rows
+atS2 = Prof \Pt -> S2
 
 -- | Swap the first two rows at 'FLS'. 'F2T' is onto, so naturality leaves no choice about the
 -- component at 'TRU'; and the swap stays inside 'F2T'\'s fibres, so the component it forces is the
@@ -104,10 +207,6 @@ mergeRows :: Prof Rows Rows
 mergeRows = Prof \case
   R2 -> R1
   x -> x
-
--- | Check a measured value against the expected one, showing what was found.
-expect :: (Eq a, Show a) => String -> a -> a -> Property ()
-expect what want got = unless (got == want) (testFailed (what ++ ", found " ++ show got))
 
 -- | The sizes of @1 ~~> Rows@ and of @Rows@ at one object, which Yoneda says must agree.
 yoneda :: forall (b :: BOOL). (IsBool b) => (Natural, Natural)
@@ -157,6 +256,45 @@ test =
             expect "two rows in the image at TRU" 2 (size @im @'() @TRU)
             expect "mono after epi is the merge" [R1, R1, R3] (map (mono . epi) (elements @Rows @'() @FLS))
             expect "the epi part identifies R1 and R2" [0, 0, 1] (map (toIndex . epi) (elements @Rows @'() @FLS))
+    , testProperty "deleting a row together with what it maps to has a pushout complement" $
+        -- R3 and the S2 it maps to both go, so nothing is left dangling
+        dpoStep
+          (Rule (initiate @_ @(FIN Edge)) (initiate @_ @(FIN Edge)))
+          (Sub atR3)
+          ( \(Sub (Prof @d _)) _ _ -> do
+              expect "R1 and R2 survive at FLS" 2 (size @d @'() @FLS)
+              expect "only S1 survives at TRU" 1 (size @d @'() @TRU)
+          )
+          (testFailed "should have been glueable")
+    , testProperty "a rule may delete a row and keep what it maps to" $
+        -- the interface is the endpoint, so only R3 goes and both rows at TRU survive
+        dpoStep
+          (Rule (Sub tgtOnly) (id :: FIN Point ~> FIN Point))
+          (Sub atR3)
+          ( \(Sub (Prof @d _)) _ (Sub (Prof @_ @h _)) -> do
+              expect "R1 and R2 survive at FLS" 2 (size @d @'() @FLS)
+              expect "both rows survive at TRU" 2 (size @d @'() @TRU)
+              -- gluing the kept endpoint back on is along an isomorphism, so the result matches
+              expect "the result keeps two rows at FLS" 2 (size @h @'() @FLS)
+              expect "the result keeps two rows at TRU" 2 (size @h @'() @TRU)
+          )
+          (testFailed "should have been glueable")
+    , testProperty "an identification conflict between two deleted rows is refused" $
+        -- both edges match onto R3, so the match identifies two elements the rule deletes
+        dpoStep
+          (Rule (initiate @_ @(FIN TwoEdges)) (initiate @_ @(FIN TwoEdges)))
+          (Sub bothOnR3)
+          (\_ _ _ -> testFailed "should not have been glueable")
+          (pure ())
+    , testProperty "the dangling condition fails when a surviving row points at a deleted one" $
+        -- delete S2, which R3 maps onto: R3 would be left dangling
+        dpoStep
+          (Rule (initiate @_ @(FIN Point)) (initiate @_ @(FIN Point)))
+          (Sub atS2)
+          ( \_ _ _ ->
+              testFailed "should not have been glueable"
+          )
+          (pure ())
     , testProperty "the exponential by the terminal object is the profunctor itself" $ do
         -- Yoneda: @1 ~~> q@ is @Nat(y(a,b), q)@, which is @q@ at that point.
         expect "1 ~~> Rows should be Rows at FLS" (3, 3) (yoneda @FLS)

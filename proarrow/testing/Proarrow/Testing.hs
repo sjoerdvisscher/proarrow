@@ -14,11 +14,11 @@ import Data.Maybe (mapMaybe)
 import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
 import Test.Falsify.Generator (Fun, Function (..), Gen, applyFun, elem, fun, functionMap, minimalValue, oneof)
-import Test.Tasty.Falsify (Property, discard, genWith)
+import Test.Tasty.Falsify (Property, discard, genWith, testFailed)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Control.Applicative (Alternative (..))
-import Control.Monad (ap)
+import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
@@ -131,6 +131,29 @@ genNamed nm = case gen of
   GenNENonFun g -> genWithNamed nm (Just . showP) g
   GenFun f g -> f . applyFunP <$> genWithNamed nm (Just . show) g
   GenEmpty _ -> discard
+
+-- | Check a measured value against the expected one, showing what was found. For the assertions a
+-- worked example makes, which no generic law-checking property covers.
+expect :: (Eq a, Show a) => String -> a -> a -> Property ()
+expect what want got = unless (got == want) (testFailed (what ++ ", found " ++ show got))
+
+-- | Check that two values are semantically equal, naming both sides so a failure says which law
+-- broke and what the two sides came out as.
+testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
+testEq nm sl l sr r = do
+  isEq <- eqP l r
+  unless isEq $
+    testFailed $
+      "Failed "
+        ++ nm
+        ++ ":\n"
+        ++ sl
+        ++ " = "
+        ++ showP l
+        ++ "\n"
+        ++ sr
+        ++ " = "
+        ++ showP r
 
 genWithNamed :: String -> (a -> Maybe String) -> Gen a -> Property a
 genWithNamed nm f = genWith (fmap named . f)

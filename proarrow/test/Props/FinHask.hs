@@ -4,7 +4,6 @@
 
 module Props.FinHask where
 
-import Control.Monad (unless)
 import Data.Map.Strict qualified as M
 import Data.Type.Equality ((:~:) (..))
 import Data.Universe.Class (Finite (..))
@@ -14,11 +13,11 @@ import GHC.TypeNats (KnownNat, withKnownNat, withSomeSNat)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Unsafe.Coerce (unsafeCoerce)
-import Prelude (($), (==))
+import Prelude (pure, ($))
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Finitary (elements)
-import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..))
+import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..), fromList)
 import Proarrow.Core (CategoryOf (..), UN)
 
 import Proarrow.Testing
@@ -28,6 +27,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , expect
   , genOb
   , genSomeDef
   , oneElem
@@ -35,6 +35,7 @@ import Proarrow.Testing
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
+import Proarrow.Tools.DPO (pushoutComplement)
 import Props.Hask ()
 import Test.Falsify.Generator (minimalValue)
 import Test.Tasty.Falsify (testFailed, testProperty)
@@ -56,12 +57,34 @@ test =
     , propPullbacks @FINHASK withTestObFinHaskViaFin
     , propPushouts @FINHASK withTestObFinHaskViaFin
     , propFinitary @FinHask "FinHask"
+    , testProperty "a pushout complement deletes what the rule does not keep" $
+        -- a : Fin 1 -> l : Fin 2 keeps one of two elements; the match is the identity on Fin 2, so
+        -- the complement is the one kept element
+        pushoutComplement
+          (fromList [(0 :: Fin 1, 0 :: Fin 2)])
+          (fromList [(0 :: Fin 2, 0 :: Fin 2), (1, 1)])
+          (\_ (FinHask d) -> expect "the complement is the kept element" [0 :: Fin 2] (M.elems d))
+          (testFailed "should have been glueable")
+    , testProperty "a match identifying a kept element with a deleted one is refused" $
+        -- both elements of l map to 0, but the rule keeps only one of them
+        pushoutComplement
+          (fromList [(0 :: Fin 1, 0 :: Fin 2)])
+          (fromList [(0 :: Fin 2, 0 :: Fin 1), (1, 0)])
+          (\_ _ -> testFailed "should not have been glueable")
+          (pure ())
+    , testProperty "a match identifying two deleted elements is refused" $
+        -- neither element of l is kept, and both map to 0, so no pushout complement exists
+        pushoutComplement
+          (fromList [] :: FinHask (FH (Fin 0)) (FH (Fin 2)))
+          (fromList [(0 :: Fin 2, 0 :: Fin 1), (1, 0)])
+          (\_ _ -> testFailed "should not have been glueable")
+          (pure ())
     , testProperty "the numbering agrees with the universe" $ do
         -- 'propFinitary'\'s laws are all order-agnostic, so they would accept a numbering that
         -- disagreed with 'universe'; this is what pins the digit order.
         Some @a <- genOb @FINHASK
         Some @b <- genOb @FINHASK
-        unless (elements @FinHask @a @b == universeF) (testFailed "elements should be universe, in order")
+        expect "elements should be the universe, in order" universeF (elements @FinHask @a @b)
     ]
 
 -- | Only ever pass this to 'propEqualizers', 'propCoequalizers', 'propPullbacks', or 'propPushouts':
