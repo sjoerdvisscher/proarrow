@@ -35,6 +35,7 @@ test =
     , propBinaryCoproducts @POINTED (\r -> r)
     , propMonoidal @POINTED (\r -> r)
     , propSymMonoidal @POINTED (\r -> r)
+    , propCopyDiscard @POINTED (\r -> r) (\r -> r)
     , testMonoid @(P Void) (\r -> r)
     , testMonoid @(P ()) (\r -> r)
     , testMonoid @(P [()]) (\r -> r)

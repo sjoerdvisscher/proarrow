@@ -10,7 +10,7 @@
 -- Note this is a genuinely different monoidal structure on @k +-> k@ than
 -- "Proarrow.Profunctor.Instance.Day"\'s @Monoidal (j +-> k)@ instance (Day convolution) --
 -- hence the need for a fresh wrapper type rather than another instance for the same kind.
-module Proarrow.Category.Monoidal.Endo where
+module Proarrow.Category.Monoidal.EndoProf where
 
 import Data.Kind (Constraint, Type)
 

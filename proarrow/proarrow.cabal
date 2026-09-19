@@ -111,7 +111,7 @@ library
         Proarrow.Category.Monoidal.CompactClosed
         Proarrow.Category.Monoidal.CopyDiscard
         Proarrow.Category.Monoidal.Distributive
-        Proarrow.Category.Monoidal.Endo
+        Proarrow.Category.Monoidal.EndoProf
         Proarrow.Category.Monoidal.Hypergraph
         Proarrow.Category.Monoidal.Rev
         Proarrow.Category.Monoidal.StarAutonomous
@@ -235,7 +235,10 @@ test-suite test
     hs-source-dirs:   test
     main-is:          Main.hs
     other-modules:
+        Examples.Cofree
         Examples.Database
+        Examples.Free
+        Examples.FrontDoor
         Examples.Graph
         Examples.UntypedLambdaCalculus
         Examples.SimplyTypedLambdaCalculus
@@ -264,7 +267,6 @@ test-suite test
         Props.Simplex
         Props.Span
         Props.ZX
-        TestFree
     build-depends: proarrow, proarrow:testing
     build-depends:
         , base >=4.20 && <5

@@ -37,6 +37,9 @@ test =
     , propInitialObject @FINSET
     , propBinaryProducts_ @FINSET
     , propCartesian_ @FINSET
+    , propMonoidal_ @FINSET
+    , propSymMonoidal_ @FINSET
+    , propCopyDiscard_ @FINSET
     , propBinaryCoproducts_ @FINSET
     , propDistributive_ @FINSET
     , propClosed_ @FINSET

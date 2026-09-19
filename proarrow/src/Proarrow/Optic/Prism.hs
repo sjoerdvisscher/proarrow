@@ -83,9 +83,10 @@ withPrism o k = withLegs @PrismFl o \ @p @q p q -> k (getP @q @p q) (matchingP @
 
 -- | A 'Prism' and its op-lens encoding ('Proarrow.Optic.Lens.Prism', a 'Proarrow.Optic.Lens.Lens'
 -- over the opposite category) carry the same data -- the two legs @(b '~>' t, s '~>' t '||' a)@ --
--- so they are equivalent. 'toOpLens' eliminates a 'PrismFl' prism to its legs (via 'Market') and
+-- so they are equivalent. 'toOpLens' eliminates a 'PrismFl' prism to its legs (via 'withPrism') and
 -- rebuilds the op-lens; 'fromOpLens' eliminates the op-lens (via 'Proarrow.Optic.Lens.withLens' on
 -- 'opOptic', i.e. as a lens over 'Proarrow.Category.Instance.Opposite.OPPOSITE') and rebuilds the 'PrismFl' prism.
+
 -- | The __op-lens__ encoding of a prism: a 'Proarrow.Optic.Lens.Lens' over the opposite category.
 type OpLens (s :: k) t a b = Optic (OpConstraint (Prostrong LensFl)) s t a b
 

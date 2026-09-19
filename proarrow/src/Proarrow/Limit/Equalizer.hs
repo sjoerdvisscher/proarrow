@@ -30,7 +30,7 @@ instance HasEqualizers () where
   factorEqualizer Unit Unit = Unit
 
 -- | @factorEqualizer incl h@ requires @h@'s image to lie within @incl@'s -- i.e. (since @BOOL@ is the
--- 2-element total order @FLS <= TRU@) that @incl@'s domain is @<=@ @h@'s domain. That's always true
+-- 2-element total order @FLS <= TRU@) that @h@'s domain is @<=@ @incl@'s domain. That's always true
 -- when @incl@ actually came from 'equalize' (which only ever produces the identity), but 'BOOL' being
 -- totally ordered lets us just case on the (at most 5 reachable, since both share a codomain) shapes
 -- directly instead of appealing to that.

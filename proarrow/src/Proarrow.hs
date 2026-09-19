@@ -2,7 +2,7 @@
 -- categories, profunctors, functors, promonads, objects, monoids, universal properties and
 -- optics. Several @Prelude@ names are redefined here, so import it with
 --
--- > import Prelude hiding (id, (.), Functor, Monad, Monoid, map, return)
+-- > import Prelude hiding (id, (.), Functor, fmap, Monad, return, Monoid, mempty, mappend, map)
 -- > import Proarrow
 --
 -- There is much more under @Proarrow.*@ than this module exports: concrete categories (the

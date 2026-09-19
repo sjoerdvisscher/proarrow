@@ -49,6 +49,9 @@ test =
     , propInitialObject @FINHASK
     , propBinaryProducts @FINHASK (\r -> r)
     , propCartesian @FINHASK (\r -> r) (\r -> r)
+    , propMonoidal @FINHASK (\r -> r)
+    , propSymMonoidal @FINHASK (\r -> r)
+    , propCopyDiscard @FINHASK (\r -> r) (\r -> r)
     , propBinaryCoproducts @FINHASK (\r -> r)
     , propDistributive @FINHASK (\r -> r) (\r -> r)
     , propClosed @FINHASK (\r -> r) (\r -> r)

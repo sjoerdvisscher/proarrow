@@ -6,6 +6,7 @@ import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
 import Examples.Database qualified as Database
+import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.UntypedLambdaCalculus qualified as ULC
@@ -70,6 +71,7 @@ main =
       , testGroup
           "Examples"
           [ Database.test
+          , FreeExample.test
           , Graph.test
           , STLC.test
           , ULC.test

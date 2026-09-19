@@ -18,9 +18,7 @@ import Proarrow.Category.Monoidal
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
   , UnitF
-  , associator
   , leftUnitorWith
-  , rightUnitorWith
   , swap
   , unitObj
   , type (**!)
@@ -36,19 +34,11 @@ import Proarrow.Category.Monoidal.StarAutonomous
   , dualityUnitSA
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 
 class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
   dualUnit :: Dual (Unit :: k) ~> Unit
-
-distribDualInv :: forall {k} (a :: k) b. (CompactClosed k, Ob a, Ob b) => Dual a ** Dual b ~> Dual (a ** b)
-distribDualInv =
-  dualObj @a //
-    dualObj @b //
-      let sw = swap @k @(Dual a) @(Dual b)
-      in linDist @k @(Dual b ** Dual a) @a @b (rightUnitorWith (dualityCounit @a) . associator @k @(Dual b) @(Dual a) @a) . sw
-           \\ sw
 
 dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
 dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit \\ dualObj @(Unit :: k)
@@ -79,8 +69,9 @@ combineDualS :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => '[Dual a
 combineDualS =
   withObDual @k @a (withObDual @k @b (withOb2 @k @a @b (withObDual @k @(a ** b) (Str (combineDual @a @b)))))
 
+-- | The dimension of @a@: the trace of its identity, as a scalar.
 dimension :: forall {k} (a :: k). (CompactClosed k, Ob a) => (Unit :: k) ~> Unit
-dimension = traceCC @Unit (unitObj ** unitObj)
+dimension = traceCC @a (unitObj ** obj @a)
 
 traceCCS :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => [x, u] ~> [y, u] -> '[x] ~> '[y]
 traceCCS f =

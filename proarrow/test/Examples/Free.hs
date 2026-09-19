@@ -1,8 +1,13 @@
 {-# LANGUAGE LinearTypes #-}
 
-module TestFree where
+-- | A small free category on a two-object quiver, folded through an interpretation, plus a lambda
+-- term built in the free cartesian closed category. Most of this is checked by compiling it -- the
+-- types are the point -- but the fold does produce a value, so that much is asserted at the end.
+module Examples.Free where
 
 import Data.Kind (Constraint, Type)
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.Falsify (testProperty)
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..))
@@ -14,6 +19,7 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, (&&&), type (*!))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
+import Proarrow.Testing (expect)
 import Unsafe.Coerce (unsafeCoerce)
 
 type data TestTy = IntTy' | StringTy'
@@ -41,12 +47,12 @@ succ = Emb Succ
 dup :: (i :: FREE cs Test) ~> EMB StringTy %1 -> i ~> EMB StringTy
 dup = Emb Dup
 
-test :: (i :: FREE cs Test) ~> EMB StringTy %1 -> i ~> EMB StringTy
-test x = dup (shw (succ (read x)))
+pipeline :: (i :: FREE cs Test) ~> EMB StringTy %1 -> i ~> EMB StringTy
+pipeline x = dup (shw (succ (read x)))
 
-test2
+pipelineWithInput
   :: (HasBinaryProducts (FREE cs Test)) => (i :: FREE cs Test) ~> EMB StringTy -> i ~> (EMB StringTy *! EMB StringTy)
-test2 x = x &&& test x
+pipelineWithInput x = x &&& pipeline x
 
 data family Interp :: DISCRETE TestTy +-> Type
 instance FunctorForRep Interp where
@@ -54,10 +60,9 @@ instance FunctorForRep Interp where
   type Interp @ StringTy = P.String
   fmap Refl = id
 
--- >>> testFold "123"
--- ("123","124124")
+-- | Read the string as an int, increment, show it, and duplicate -- alongside the untouched input.
 testFold :: P.String -> (P.String, P.String)
-testFold = fold @'[HasBinaryProducts] @(Rep Interp) interp (test2 Nil)
+testFold = fold @'[HasBinaryProducts] @(Rep Interp) interp (pipelineWithInput Nil)
   where
     interp :: Test x y -> Rep Interp % x ~> Rep Interp % y
     interp Show = P.show
@@ -93,3 +98,12 @@ testLam = lam \f -> lam \x -> f $ x
 
 unsafeLinear :: (a -> b) -> (a %1 -> b)
 unsafeLinear = unsafeCoerce
+
+test :: TestTree
+test =
+  testGroup
+    "Free"
+    [ testProperty
+        "the pipeline folds through the interpretation"
+        (expect "input paired with succ-then-duplicate" ("123", "124124") (testFold "123"))
+    ]

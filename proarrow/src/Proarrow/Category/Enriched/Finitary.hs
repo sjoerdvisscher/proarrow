@@ -75,6 +75,7 @@ class (Profunctor p) => Finitary (p :: j +-> k) where
   elements :: (Ob (a :: k), Ob (b :: j)) => [p a b]
   elements @a @b = P.map (fromIndex @p) (indices (size @p @a @b))
 
+-- | @[0 .. n-1]@, which @n@ being a 'Natural' rules out writing directly.
 indices :: Natural -> [Natural]
 indices n = genericTake n [0 ..]
 

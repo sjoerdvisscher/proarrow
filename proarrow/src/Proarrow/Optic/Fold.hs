@@ -71,7 +71,7 @@ foldMapOf o am = withLegs @FoldFl o \ @p @q p _ -> foldMapP @p @q p am
 
 -- | Unfold @t@ from a 'Comonoid' seed @cm@ through the @b@-foci. It is
 -- 'foldMapOf' run in @'OPPOSITE' k@, where 'Monoid' becomes 'Comonoid' and consumption becomes
--- construction. (Inhabitable once the flavor's 'Prostrong' transports through 'OP'.)
+-- construction.
 unfold
   :: forall {k} c (cm :: k) (s :: k) t a b
    . (Comonoid cm, Ob cm, forall p. (c p) => c (Op (UnOp p)), (Ob a, Ob b) => c (ExOptic FoldFl (OP b) (OP a)))

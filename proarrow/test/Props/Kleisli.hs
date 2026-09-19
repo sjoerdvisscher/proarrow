@@ -42,6 +42,8 @@ test =
         [ propCategory @(KLEISLI (Star (Prelude Maybe)))
         , propInitialObject @(KLEISLI (Star (Prelude Maybe)))
         , propMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        , propSymMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        , propCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r) (\r -> r)
         , propBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         ]
     , testGroup

@@ -22,7 +22,7 @@ import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Instance.Prof qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), type (**))
 import Proarrow.Category.Monoidal.Action (Act, ActionAt, MonoidalAction (..), actHom)
-import Proarrow.Category.Monoidal.Endo (ENDO (..), Precomp)
+import Proarrow.Category.Monoidal.EndoProf (ENDO (..), Precomp)
 import Proarrow.Category.Monoidal.Rev (REV (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), (\\), type (+->))
 import Proarrow.Functor (FunctorForRep (..))

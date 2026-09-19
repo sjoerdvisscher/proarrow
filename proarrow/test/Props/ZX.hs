@@ -32,6 +32,9 @@ test =
     , propHypergraph_ @Nat
     , propSymMonoidal_ @Nat
     , propClosed_ @Nat
+    , propCompactClosed_ @Nat
+    , propStarAutonomous_ @Nat
+    , propCopyDiscard_ @Nat
     , testCommutativeMonoid_ @0
     , testCommutativeMonoid_ @1
     , testCommutativeMonoid_ @2

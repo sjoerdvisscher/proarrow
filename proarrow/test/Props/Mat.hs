@@ -12,6 +12,7 @@ import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.Mat (App, Mat (..), MatK (..))
+import Proarrow.Category.Monoidal.CompactClosed (dimension)
 import Proarrow.Core (CAT, type (+->))
 import Proarrow.Profunctor.Representable (Rep)
 
@@ -21,6 +22,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , expect
   , genSomeDef
   , invmap
   , oneElem
@@ -28,6 +30,10 @@ import Proarrow.Testing
   )
 import Proarrow.Testing.Laws
 import Props.Hask ()
+
+-- | The one entry of a @1x1@ matrix, which is what an endo-arrow on 'Unit' is.
+scalar :: Mat (M Nat1 :: MatK Int) (M Nat1) -> Int
+scalar (Mat ((x ::: VNil) ::: VNil)) = x
 
 test :: TestTree
 test =
@@ -55,6 +61,9 @@ test =
     , testComonoid_ @(M Nat2 :: MatK Int)
     , testComonoid_ @(M Nat3 :: MatK Int)
     , testProperty "App functor" $ propProfunctor @(Rep App :: MatK Int +-> Type)
+    , -- the trace of an identity, and the one place the traced object could silently be dropped
+      testProperty "dimension counts the object" $
+        expect "dimensions 0, 1, 3" [0, 1, 3] (map scalar [dimension @(M Nat0), dimension @(M Nat1), dimension @(M Nat3)])
     , propEqualizers_ @(MatK Rational)
     , propCoequalizers_ @(MatK Rational)
     , propPullbacks_ @(MatK Rational)

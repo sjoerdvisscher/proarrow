@@ -199,7 +199,7 @@ instance StarAutonomous Nat where
 
 instance CompactClosed Nat where
   distribDual @a @b = withOb2 @_ @a @b id
-  dualUnit = ZX Map.empty
+  dualUnit = id
 
 instance (MonoidalAction (t :: (Nat, Nat) +-> Nat)) => Costrong t ZX where
   coact @x = coactCC @t @x

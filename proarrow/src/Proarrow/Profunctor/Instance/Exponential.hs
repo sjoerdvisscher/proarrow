@@ -1,7 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | The internal hom of the category of profunctors: a @(p ':~>:' q) a b@ is a natural family of maps
--- @p c d -> q c d@ available at @a@\/@b@, making the category of profunctors @j +-> k@ 'Closed'.
+-- | The internal hom of the category of profunctors under the /product/: a @(p ':~>:' q) a b@ is a
+-- natural family of maps @p c d -> q c d@ available at @a@\/@b@, making @'PROD' (j +-> k)@ 'Closed'.
+-- @j +-> k@ itself is 'Closed' too, but for Day convolution and with a different hom -- see
+-- "Proarrow.Profunctor.Instance.Day". The 'PROD' wrapper is what keeps the two apart.
 module Proarrow.Profunctor.Instance.Exponential where
 
 import Proarrow.Category.Enriched.Thin

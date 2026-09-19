@@ -86,7 +86,6 @@ type FINITARY j k = SUBCAT (Finitary :: (j +-> k) -> Constraint)
 
 type FIN (p :: j +-> k) = SUB p :: FINITARY j k
 
--- | @[0 .. n-1]@, which @n@ being a 'Natural' rules out writing directly.
 instance (CategoryOf j, CategoryOf k) => HasTerminalObject (FINITARY j k) where
   type TerminalObject = FIN TerminalProfunctor
   terminate = Sub terminate

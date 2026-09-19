@@ -56,7 +56,7 @@ module Proarrow.Core
 
     -- * Universal Constraint
   , Any
-  , VacuusOb
+  , VacuousOb
 
     -- * Lifted Type Classes
   , Eq2
@@ -227,10 +227,10 @@ instance Promonad (->) where
 instance CategoryOf Type where
   type (~>) = (->)
 
-instance (VacuusOb k, Hom k ~ (:~:)) => Profunctor ((:~:) :: CAT k) where
+instance (VacuousOb k, Hom k ~ (:~:)) => Profunctor ((:~:) :: CAT k) where
   dimap Refl Refl Refl = Refl
 
-instance (VacuusOb k, Hom k ~ (:~:)) => Promonad ((:~:) :: CAT k) where
+instance (VacuousOb k, Hom k ~ (:~:)) => Promonad ((:~:) :: CAT k) where
   id = Refl
   Refl . Refl = Refl
 
@@ -243,9 +243,9 @@ class Any (a :: k)
 instance Any a
 
 -- | A category without constraints on its objects.
-class (CategoryOf k, forall a. Ob' (a :: k)) => VacuusOb k
+class (CategoryOf k, forall a. Ob' (a :: k)) => VacuousOb k
 
-instance (CategoryOf k, forall a. Ob' (a :: k)) => VacuusOb k
+instance (CategoryOf k, forall a. Ob' (a :: k)) => VacuousOb k
 
 -- | A profunctor (or something of that kind) whose elements can be compared.
 class (forall x y. Eq (p x y)) => Eq2 p

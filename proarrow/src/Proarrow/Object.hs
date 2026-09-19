@@ -9,14 +9,14 @@ module Proarrow.Object
   , src
   , tgt
   , Ob'
-  , VacuusOb
+  , VacuousOb
   , objDicts
   , ObjDict (..)
   ) where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CategoryOf (..), Ob', Obj, Profunctor, VacuusOb, obj, src, tgt, (\\))
+import Proarrow.Core (CategoryOf (..), Ob', Obj, Profunctor, VacuousOb, obj, src, tgt, (\\))
 
 type ObjDict :: forall {k}. k -> Type
 data ObjDict a where

@@ -52,6 +52,10 @@ test =
     , propInitialObject @BOOL
     , propBinaryProducts_ @BOOL
     , propCartesian_ @BOOL
+    , propMonoidal_ @BOOL
+    , propSymMonoidal_ @BOOL
+    , propCopyDiscard_ @BOOL
+    , propStarAutonomous_ @BOOL
     , propBinaryCoproducts_ @BOOL
     , propDistributive_ @BOOL
     , propClosed_ @BOOL

@@ -76,10 +76,11 @@ instance (Bicartesian k, Traversable t, Representable t) => TravFl (t :: k +-> k
 instance (Bicartesian k, Traversable t, Representable t) => MonTravFl (t :: k +-> k) (RepCostar t) where
   monTravP l (RepCostar r) = dimap (index l) r . repTraverse @t
 
--- | The former cotraversal witness: a corepresentable 'Cotraversable' functor builds @s@ from a
--- shape of @a@'s. Its 'travP' distributes an SDP exactly as the old @cotravP@ did -- for these
--- (representable) witnesses a cotraversal /is/ a traversal, which is why there is no separate
--- @Cotraversal@ optic.
+-- | A corepresentable 'Cotraversable' functor builds @s@ from a shape of @a@'s, and its 'travP'
+-- distributes an SDP exactly as a cotraversal's would -- so at /this/ witness a cotraversal is a
+-- traversal, and it needs no flavor of its own.
+-- ("Proarrow.Optic.Kaleidoscope" does define a @Cotraversal@, over 'Cotraversable' witnesses that
+-- are not representable; it sits below 'Traversal' in the lattice rather than beside it.)
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravFl (CorepStar t) (t :: k +-> k)
 
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravFl (CorepStar t) (t :: k +-> k) where
