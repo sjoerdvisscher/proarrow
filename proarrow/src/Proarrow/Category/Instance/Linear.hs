@@ -1,7 +1,6 @@
 {-# LANGUAGE LinearTypes #-}
 
 {- HLINT ignore "Avoid lambda using `infix`" -}
-
 {- HLINT ignore "Use curry" -}
 {- HLINT ignore "Use bimap" -}
 {- HLINT ignore "Use tuple-section" -}

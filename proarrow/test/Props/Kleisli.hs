@@ -42,6 +42,7 @@ test =
         [ propCategory @(KLEISLI (Star (Prelude Maybe)))
         , propInitialObject @(KLEISLI (Star (Prelude Maybe)))
         , propMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        , propMonoidalHom @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , propSymMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , propCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r) (\r -> r)
         , propBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
@@ -55,6 +56,11 @@ test =
         , propCartesian @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
         , propBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
         , propClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
+        , -- Note this group is close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
+          -- and every object in the palette is inhabited, so every hom-set here is a singleton and
+          -- every law holds trivially. A non-empty answer type would make it meaningful, but the
+          -- generator for @(b -> r) -> (a -> r)@ does not currently support one.
+          propMonoidalHom @(KLEISLI (Cont Void)) (\r -> r)
         ]
     , testGroup
         "Pair comonad"
@@ -64,6 +70,7 @@ test =
         , propBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         , propCartesian @(KLEISLI (Costar (Prelude Pair))) (\r -> r) (\r -> r)
         , propMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
+        , propMonoidalHom @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         ]
     ]
 

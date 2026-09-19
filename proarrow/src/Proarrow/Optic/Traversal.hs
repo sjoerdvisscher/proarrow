@@ -80,7 +80,8 @@ instance (Bicartesian k, Traversable t, Representable t) => MonTravFl (t :: k +-
 -- distributes an SDP exactly as a cotraversal's would -- so at /this/ witness a cotraversal is a
 -- traversal, and it needs no flavor of its own.
 -- ("Proarrow.Optic.Kaleidoscope" does define a @Cotraversal@, over 'Cotraversable' witnesses that
--- are not representable; it sits below 'Traversal' in the lattice rather than beside it.)
+-- are not representable. In the lattice it is a sibling of 'Traversal', not a descendant: both are
+-- children of @Setter@, and @Cotraversal@\'s own child is @Kaleidoscope@.)
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravFl (CorepStar t) (t :: k +-> k)
 
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravFl (CorepStar t) (t :: k +-> k) where

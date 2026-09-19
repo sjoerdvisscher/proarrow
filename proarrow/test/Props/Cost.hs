@@ -64,6 +64,7 @@ test =
     , propBinaryProducts_ @COST
     , propBinaryCoproducts_ @COST
     , propMonoidal_ @COST
+    , propMonoidalHom_ @COST
     , propSymMonoidal_ @COST
     , propDistributive_ @COST
     , propEqualizers_ @COST

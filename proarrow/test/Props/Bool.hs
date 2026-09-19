@@ -53,6 +53,7 @@ test =
     , propBinaryProducts_ @BOOL
     , propCartesian_ @BOOL
     , propMonoidal_ @BOOL
+    , propMonoidalHom_ @BOOL
     , propSymMonoidal_ @BOOL
     , propCopyDiscard_ @BOOL
     , propStarAutonomous_ @BOOL

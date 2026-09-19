@@ -38,6 +38,7 @@ test =
     , propBinaryProducts_ @FINSET
     , propCartesian_ @FINSET
     , propMonoidal_ @FINSET
+    , propMonoidalHom_ @FINSET
     , propSymMonoidal_ @FINSET
     , propCopyDiscard_ @FINSET
     , propBinaryCoproducts_ @FINSET

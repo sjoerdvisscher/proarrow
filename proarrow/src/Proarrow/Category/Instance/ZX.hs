@@ -31,9 +31,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
-import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 
 newtype Bitstring (n :: Nat) = BS Int
@@ -204,13 +202,11 @@ instance CompactClosed Nat where
 instance (MonoidalAction (t :: (Nat, Nat) +-> Nat)) => Costrong t ZX where
   coact @x = coactCC @t @x
 
-instance HasTerminalObject Nat where
-  type TerminalObject = 0
-  terminate = ZX Map.empty
-
-instance HasInitialObject Nat where
-  type InitialObject = 0
-  initiate = ZX Map.empty
+-- No terminal or initial object: @hom(n, m)@ is the space of @2^m x 2^n@ complex matrices, which
+-- is a singleton for no @n@ and @m@ at all. @0@ came close enough to look like one -- it is the
+-- monoidal unit -- but the arrow into it was the zero matrix, and @zSpider 0 :: ZX 1 0@ is a
+-- second, different arrow @1 ~> 0@. What the zero matrix actually gives is a zero /morphism/,
+-- which wants a class of its own rather than a fake zero object.
 
 -- No binary(co)products, since that would need 2^n + 2^m = 2^(x :: nat)
 

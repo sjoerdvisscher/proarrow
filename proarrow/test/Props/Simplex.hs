@@ -16,8 +16,6 @@ import Proarrow.Category.Instance.Simplex (Forget, IsNat (..), Nat (..), Pick, S
 import Proarrow.Core (Ob)
 
 import Proarrow.Profunctor.Representable (Rep)
-import Proarrow.Testing.Laws
-import Props.Hask ()
 import Proarrow.Testing
   ( GenTotal (..)
   , ShowP (..)
@@ -30,6 +28,8 @@ import Proarrow.Testing
   , optGen
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
 
 test :: TestTree
 test =
@@ -39,6 +39,7 @@ test =
     , propInitialObject @Nat
     , propTerminalObject @Nat
     , propMonoidal_ @Nat
+    , propMonoidalHom_ @Nat
     , testMonoid_ @Z
     , testMonoid_ @(S Z)
     , testProfunctor @(Rep Forget)

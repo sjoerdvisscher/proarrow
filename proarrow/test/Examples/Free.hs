@@ -1,3 +1,4 @@
+{- HLINT ignore "Redundant $" -}
 {-# LANGUAGE LinearTypes #-}
 
 -- | A small free category on a two-object quiver, folded through an interpretation, plus a lambda

@@ -2,6 +2,8 @@
 {-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+{- HLINT ignore "Use const" -}
+
 module Props.FinHask where
 
 import Data.Map.Strict qualified as M
@@ -50,6 +52,7 @@ test =
     , propBinaryProducts @FINHASK (\r -> r)
     , propCartesian @FINHASK (\r -> r) (\r -> r)
     , propMonoidal @FINHASK (\r -> r)
+    , propMonoidalHom @FINHASK (\r -> r)
     , propSymMonoidal @FINHASK (\r -> r)
     , propCopyDiscard @FINHASK (\r -> r) (\r -> r)
     , propBinaryCoproducts @FINHASK (\r -> r)

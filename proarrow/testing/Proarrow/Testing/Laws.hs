@@ -37,7 +37,7 @@ import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Colimit.Coequalizer qualified as Coequalizer
 import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Colimit.Pushout qualified as Pushout
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
 import Proarrow.Functor qualified as Functor
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Limit.Equalizer qualified as Equalizer
@@ -74,35 +74,6 @@ import Proarrow.Testing
   , testEq
   )
 
--- | The numbering laws of a 'Finitary.Finitary' profunctor: 'Finitary.elements' has
--- 'Finitary.size' entries and is numbered in order, and 'Finitary.fromIndex' recovers any element
--- from its index -- including elements the instance did not itself produce, which is what makes
--- 'Finitary.size' honest rather than merely self-consistent -- but only as far as the 'TestableType'
--- generator is independent of the instance: one defined as @optGen 'Finitary.elements'@ makes the
--- last law vacuous. The label names the profunctor, which nothing in its type can supply.
-propFinitary
-  :: forall {j} {k} (p :: j +-> k)
-   . (Testable j, Testable k, Finitary.Finitary p, TestableTypeP p)
-  => String
-  -> TestTree
-propFinitary nm = testProperty ("Finitary " ++ nm) $ do
-  Some @a <- genOb @k
-  Some @b <- genOb @j
-  let n = Finitary.size @p @a @b
-      es = Finitary.elements @p @a @b
-  unless (genericLength es == n) $
-    testFailed ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
-  unless (map (Finitary.toIndex @p @a @b) es == Finitary.indices n) $
-    testFailed ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
-  x <- genNamed @(p a b) "x"
-  -- That every index is below 'Finitary.size' is what the numbering claims and what a @Fin@-typed
-  -- index would have given for free; without it an undersized 'Finitary.size' goes unnoticed, since
-  -- the other laws only ever look at the elements it admits.
-  unless (Finitary.toIndex x < n) $
-    testFailed ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
-  roundTrips <- eqP (Finitary.fromIndex @p @a @b (Finitary.toIndex x)) x
-  unless roundTrips $ testFailed ("fromIndex (toIndex x) /= x for x = " ++ showP x)
-
 propCategory :: forall k. (Testable k) => TestTree
 propCategory = testProperty "Category" $ do
   Some @a <- genOb @k
@@ -122,9 +93,8 @@ propTerminalObject
   => TestTree
 propTerminalObject = testProperty "Terminal object" $ do
   Some @a <- genOb @k
-  Some @b <- genOb
-  f <- genNamed @(a ~> b) "f"
-  testEq "uniqueness" "terminate . f" (Terminal.terminate . f) "terminate" Terminal.terminate
+  g <- genNamed @(a ~> Terminal.TerminalObject) "g"
+  testEq "uniqueness" "g" g "terminate" Terminal.terminate
 
 propInitialObject
   :: forall k
@@ -132,9 +102,8 @@ propInitialObject
   => TestTree
 propInitialObject = testProperty "Initial object" $ do
   Some @a <- genOb @k
-  Some @b <- genOb
-  f <- genNamed @(a ~> b) "f"
-  testEq "uniqueness" "f . initiate" (f . Initial.initiate) "initiate" Initial.initiate
+  g <- genNamed @(Initial.InitialObject ~> a) "g"
+  testEq "uniqueness" "g" g "initiate" Initial.initiate
 
 propBinaryProducts
   :: forall k
@@ -219,6 +188,13 @@ propEqualizers withTestOb = testProperty "Equalizers" $ do
     let h = ee . p
         factored = Equalizer.factorEqualizer ee h
     testEq "factorization" "e . factored" (ee . factored) "h" h
+    -- The half the constructed @h@ cannot reach: an /arbitrary/ arrow that happens to equalize
+    -- must factor too. Without it an undersized equalizer -- one keeping too few elements --
+    -- satisfies everything above, since every arrow it is ever handed was built through it.
+    m <- genNamed @(z ~> a) "m"
+    equalizes <- eqP (f . m) (g . m)
+    when equalizes $
+      testEq "existence" "e . factorEqualizer e m" (ee . Equalizer.factorEqualizer ee m) "m" m
     k1 <- genNamed @(z ~> e) "k1"
     k2 <- genNamed @(z ~> e) "k2"
     eqComposed <- eqP (ee . k1) (ee . k2)
@@ -257,6 +233,12 @@ propCoequalizers withTestOb = testProperty "Coequalizers" $ do
     let h = p . cq
         factored = Coequalizer.factorCoequalizer cq h
     testEq "factorization" "factored . c" (factored . cq) "h" h
+    -- As in 'propEqualizers': an arbitrary arrow that coequalizes must factor, not only one
+    -- built by composing through @cq@.
+    m <- genNamed @(b ~> z) "m"
+    coequalizes <- eqP (m . f) (m . g)
+    when coequalizes $
+      testEq "existence" "factorCoequalizer c m . c" (Coequalizer.factorCoequalizer cq m . cq) "m" m
     k1 <- genNamed @(c ~> z) "k1"
     k2 <- genNamed @(c ~> z) "k2"
     eqComposed <- eqP (k1 . cq) (k2 . cq)
@@ -310,6 +292,14 @@ propPullbacks withTestOb = testProperty "Pullbacks" $ do
         factored = Pullback.factorPullback p1 p2 k1 k2
     testEq "factorization (1)" "p1 . factored" (p1 . factored) "k1" k1
     testEq "factorization (2)" "p2 . factored" (p2 . factored) "k2" k2
+    -- And the half those cannot reach: an arbitrary commuting cone must factor too.
+    x <- genNamed @(z ~> a) "x"
+    y <- genNamed @(z ~> b) "y"
+    commutes <- eqP (f . x) (g . y)
+    when commutes $ do
+      let fac = Pullback.factorPullback p1 p2 x y
+      testEq "existence (1)" "p1 . factorPullback p1 p2 x y" (p1 . fac) "x" x
+      testEq "existence (2)" "p2 . factorPullback p1 p2 x y" (p2 . fac) "y" y
 
 propPullbacks_
   :: forall k
@@ -353,6 +343,14 @@ propPushouts withTestOb = testProperty "Pushouts" $ do
         factored = Pushout.factorPushout p1 p2 k1 k2
     testEq "factorization (1)" "factored . p1" (factored . p1) "k1" k1
     testEq "factorization (2)" "factored . p2" (factored . p2) "k2" k2
+    -- And the half those cannot reach: an arbitrary commuting cocone must factor too.
+    x <- genNamed @(a ~> z) "x"
+    y <- genNamed @(b ~> z) "y"
+    commutes <- eqP (x . f) (y . g)
+    when commutes $ do
+      let fac = Pushout.factorPushout p1 p2 x y
+      testEq "existence (1)" "factorPushout p1 p2 x y . p1" (fac . p1) "x" x
+      testEq "existence (2)" "factorPushout p1 p2 x y . p2" (fac . p2) "y" y
 
 propPushouts_
   :: forall k
@@ -956,6 +954,95 @@ propProfunctorWith genPro withEqShow = do
       "dimap f' g' (dimap f g p)"
       (dimap f' g' (dimap f g p))
 
+-- | Laws of a lax monoidal profunctor: @'M.**'@ is natural in both arguments and coherent with the
+-- unitors and the associator. This is the law of 'M.MonoidalProfunctor', which is a property of a
+-- profunctor, not of a kind -- so it applies to any monoidal profunctor, and to a monoidal
+-- /category/ by taking @p = 'Hom' k@.
+--
+-- At @'Hom' k@, 'dimap' is pre- and postcomposition, so naturality reads
+-- @(g ** g\') . (f ** f\') == (g . f) ** (g\' . f\')@: the bifunctoriality of the tensor, saying the
+-- two arrows are combined rather than sequenced. A /premonoidal/ @**@ satisfies every coherence law
+-- in 'propMonoidal' and fails exactly this one.
+propMonoidalProfunctor
+  :: forall {j} {k} (p :: j +-> k)
+   . (M.MonoidalProfunctor p, TestableProfunctor p, TestOb (M.Unit @k), TestOb (M.Unit @j))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> (forall (a :: j) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> Property ()
+propMonoidalProfunctor withTestObK withTestObJ = do
+  SomeP @a @b x <- genProfunctorElt @p "x"
+  SomeP @c @d y <- genProfunctorElt @p "y"
+  withTestObK @a @c @(Property ()) $ withTestObJ @b @d @(Property ()) $ do
+    Some @a' <- genObSuchThat @k \(Some @a') -> isGenNonEmpty @(a' ~> a)
+    Some @c' <- genObSuchThat @k \(Some @c') -> isGenNonEmpty @(c' ~> c)
+    l1 <- genNamed @(a' ~> a) "l1"
+    l2 <- genNamed @(c' ~> c) "l2"
+    withTestObK @a' @c' @(Property ()) $
+      testEq
+        "lmap naturality"
+        "lmap (l1 ** l2) (x ** y)"
+        (lmap (l1 M.** l2) (x M.** y))
+        "lmap l1 x ** lmap l2 y"
+        (lmap l1 x M.** lmap l2 y)
+    Some @b' <- genObSuchThat @j \(Some @b') -> isGenNonEmpty @(b ~> b')
+    Some @d' <- genObSuchThat @j \(Some @d') -> isGenNonEmpty @(d ~> d')
+    r1 <- genNamed @(b ~> b') "r1"
+    r2 <- genNamed @(d ~> d') "r2"
+    withTestObJ @b' @d' @(Property ()) $
+      testEq
+        "rmap naturality"
+        "rmap (r1 ** r2) (x ** y)"
+        (rmap (r1 M.** r2) (x M.** y))
+        "rmap r1 x ** rmap r2 y"
+        (rmap r1 x M.** rmap r2 y)
+    withTestObK @(M.Unit @k) @a @(Property ()) $
+      withTestObJ @(M.Unit @j) @b @(Property ()) $
+        testEq
+          "left unit"
+          "dimap leftUnitorInv leftUnitor (one ** x)"
+          (dimap (M.leftUnitorInv @k @a) (M.leftUnitor @j @b) (M.one @p M.** x))
+          "x"
+          x
+    withTestObK @a @(M.Unit @k) @(Property ()) $
+      withTestObJ @b @(M.Unit @j) @(Property ()) $
+        testEq
+          "right unit"
+          "dimap rightUnitorInv rightUnitor (x ** one)"
+          (dimap (M.rightUnitorInv @k @a) (M.rightUnitor @j @b) (x M.** M.one @p))
+          "x"
+          x
+    SomeP @e @f z <- genProfunctorElt @p "z"
+    withTestObK @c @e @(Property ()) $
+      withTestObJ @d @f @(Property ()) $
+        withTestObK @a @(c M.** e) @(Property ()) $
+          withTestObJ @b @(d M.** f) @(Property ()) $
+            withTestObK @(a M.** c) @e @(Property ()) $
+              withTestObJ @(b M.** d) @f @(Property ()) $
+                testEq
+                  "associativity"
+                  "dimap associatorInv associator ((x ** y) ** z)"
+                  (dimap (M.associatorInv @k @a @c @e) (M.associator @j @b @d @f) ((x M.** y) M.** z))
+                  "x ** (y ** z)"
+                  (x M.** (y M.** z))
+
+-- | 'propMonoidalProfunctor' at a monoidal category\'s own hom-profunctor. The two kinds coincide
+-- there, so one witness serves both.
+propMonoidalHom
+  :: forall k
+   . (Testable k, M.Monoidal k, TestOb (M.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> TestTree
+-- Both witnesses are eta-expanded rather than passed through: 'TestOb' is an associated type
+-- family, so two rank-2 witness types cannot be matched by unification, and each use has to be
+-- solved at its own concrete objects.
+propMonoidalHom withTestOb2 =
+  testProperty
+    "Monoidal profunctor"
+    (propMonoidalProfunctor @(Hom k) (\ @a @b r -> withTestOb2 @a @b r) (\ @a @b r -> withTestOb2 @a @b r))
+
+propMonoidalHom_ :: forall k. (Testable k, M.Monoidal k, TestObIsOb k, TestOb (M.Unit @k)) => TestTree
+propMonoidalHom_ = propMonoidalHom @k (\ @a @b r -> M.withOb2 @k @a @b r)
+
 -- | Check the functor laws of a 'Functor.Functor' @f@: @map id = id@ and @map (g . f) = map g . map
 -- f@. The witness lifts 'TestOb' along @f@ (usually @\\ \@a r -> r@ when @'TestOb' (f a)@ follows
 -- from @'TestOb' a@). Functors encoded as representable profunctors ('Functor.FunctorForRep') are
@@ -998,6 +1085,35 @@ testFunctor_
    . (Functor.Functor f, Testable k1, Testable k2, forall (a :: k1). (TestOb a) => TestOb' (f a))
   => TestTree
 testFunctor_ = testFunctor @f (\r -> r)
+
+-- | The numbering laws of a 'Finitary.Finitary' profunctor: 'Finitary.elements' has
+-- 'Finitary.size' entries and is numbered in order, and 'Finitary.fromIndex' recovers any element
+-- from its index -- including elements the instance did not itself produce, which is what makes
+-- 'Finitary.size' honest rather than merely self-consistent -- but only as far as the 'TestableType'
+-- generator is independent of the instance: one defined as @optGen 'Finitary.elements'@ makes the
+-- last law vacuous. The label names the profunctor, which nothing in its type can supply.
+propFinitary
+  :: forall {j} {k} (p :: j +-> k)
+   . (Testable j, Testable k, Finitary.Finitary p, TestableTypeP p)
+  => String
+  -> TestTree
+propFinitary nm = testProperty ("Finitary " ++ nm) $ do
+  Some @a <- genOb @k
+  Some @b <- genOb @j
+  let n = Finitary.size @p @a @b
+      es = Finitary.elements @p @a @b
+  unless (genericLength es == n) $
+    testFailed ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
+  unless (map (Finitary.toIndex @p @a @b) es == Finitary.indices n) $
+    testFailed ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
+  x <- genNamed @(p a b) "x"
+  -- That every index is below 'Finitary.size' is what the numbering claims and what a @Fin@-typed
+  -- index would have given for free; without it an undersized 'Finitary.size' goes unnoticed, since
+  -- the other laws only ever look at the elements it admits.
+  unless (Finitary.toIndex x < n) $
+    testFailed ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
+  roundTrips <- eqP (Finitary.fromIndex @p @a @b (Finitary.toIndex x)) x
+  unless roundTrips $ testFailed ("fromIndex (toIndex x) /= x for x = " ++ showP x)
 
 propNaturalTransformation
   :: forall {j} {k} (p :: j +-> k) q. (TestableProfunctor p, TestableProfunctor q) => p :~> q -> Property ()

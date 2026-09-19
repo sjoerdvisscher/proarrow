@@ -33,6 +33,7 @@ test =
     "Span(FinSet)"
     [ propCategory @(SPAN FINSET)
     , propMonoidal_ @(SPAN FINSET)
+    , propMonoidalHom_ @(SPAN FINSET)
     , propSymMonoidal_ @(SPAN FINSET)
     , propClosed_ @(SPAN FINSET)
     , propStarAutonomous_ @(SPAN FINSET)

@@ -11,7 +11,17 @@ import Test.Falsify.Generator (Function)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 
-import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj, (//), type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Obj
+  , Profunctor (..)
+  , Promonad (..)
+  , dimapDefault
+  , obj
+  , (//)
+  , type (+->)
+  )
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
@@ -47,6 +57,7 @@ import Proarrow.Testing.Laws
   , propCategory
   , propClosed
   , propMonoidal
+  , propMonoidalHom
   , propProfunctor
   , propTerminalObject
   )
@@ -517,6 +528,7 @@ test =
     , propTerminalObject @CON
     , propBinaryProducts @CON (\ @a @b r -> withTestObProdCON @a @b r)
     , propMonoidal @CON (\ @a @b r -> withTestObProdCON @a @b r)
+    , propMonoidalHom @CON (\ @a @b r -> withTestObProdCON @a @b r)
     , propClosed @CON (\ @a @b r -> withTestObProdCON @a @b r) (\ @a @b r -> withTestObExpCON @a @b r)
     , testProperty "Tm profunctor" $ propProfunctor @Tm
     ]

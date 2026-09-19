@@ -42,6 +42,7 @@ test =
     , propBinaryProducts_ @FINREL
     , propBinaryCoproducts_ @FINREL
     , propMonoidal_ @FINREL
+    , propMonoidalHom_ @FINREL
     , propSymMonoidal_ @FINREL
     , propDistributive_ @FINREL
     , propClosed_ @FINREL

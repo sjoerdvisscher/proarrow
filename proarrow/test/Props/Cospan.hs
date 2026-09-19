@@ -33,6 +33,7 @@ test =
     "Cospan(FinSet)"
     [ propCategory @(COSPAN FINSET)
     , propMonoidal_ @(COSPAN FINSET)
+    , propMonoidalHom_ @(COSPAN FINSET)
     , propSymMonoidal_ @(COSPAN FINSET)
     , propClosed_ @(COSPAN FINSET)
     , propStarAutonomous_ @(COSPAN FINSET)

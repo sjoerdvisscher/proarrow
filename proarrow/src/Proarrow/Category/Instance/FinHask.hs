@@ -1,6 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+{- HLINT ignore "Use const" -}
+
 -- | The category of __finite Haskell types__: objects are types with 'Universe'\/'Finite'
 -- instances (wrapped in 'FH'), and a morphism is a function stored extensionally as a finite
 -- lookup table ('Data.Map.Map'), so morphisms can be enumerated, shown and compared. A finite,
@@ -26,7 +28,7 @@ import Prelude qualified as P
 import Proarrow.Category.Enriched.Finitary (Finitary (..), finiteSize)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
-import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
@@ -162,7 +164,7 @@ instance Closed FINHASK where
   type a ~~> b = FH (FinHask a b)
   withObExp r = r
   curry f@FinHask{} = arr \a -> arr \b -> f ! (a, b)
-  apply = arr \(m, x) -> m ! x
+  apply = arr (uncurry (!))
 
 -- | Where a value sits in its own type's 'universe'.
 position :: forall x. (Finite x, P.Eq x) => x -> Natural

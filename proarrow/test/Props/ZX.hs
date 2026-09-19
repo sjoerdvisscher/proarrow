@@ -26,9 +26,8 @@ test =
   testGroup
     "ZX calculus"
     [ propCategory @Nat
-    , propTerminalObject @Nat
-    , propInitialObject @Nat
     , propMonoidal_ @Nat
+    , propMonoidalHom_ @Nat
     , propHypergraph_ @Nat
     , propSymMonoidal_ @Nat
     , propClosed_ @Nat

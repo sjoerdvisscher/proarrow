@@ -88,6 +88,7 @@ test =
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
     , propMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , propMonoidalHom @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , propSymMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , propDistributive @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)

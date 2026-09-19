@@ -47,6 +47,7 @@ test =
     , propBinaryProducts @Type (\r -> r)
     , propCartesian @Type (\r -> r) (\r -> r)
     , propMonoidal @Type (\r -> r)
+    , propMonoidalHom @Type (\r -> r)
     , propSymMonoidal @Type (\r -> r)
     , propCopyDiscard @Type (\r -> r) (\r -> r)
     , propBinaryCoproducts @Type (\r -> r)

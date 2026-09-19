@@ -46,6 +46,7 @@ test =
     , propBinaryCoproducts_ @(MatK Int)
     , propHypergraph_ @(MatK Int)
     , propMonoidal_ @(MatK Int)
+    , propMonoidalHom_ @(MatK Int)
     , propSymMonoidal_ @(MatK Int)
     , propDistributive_ @(MatK Int)
     , propClosed_ @(MatK Int)
