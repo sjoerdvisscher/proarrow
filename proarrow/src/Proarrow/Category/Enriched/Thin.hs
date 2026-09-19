@@ -252,11 +252,23 @@ data IndexedList as where
   FNil :: IndexedList '[]
   FCons :: forall a as. (KnownIndex a) => IndexedList as -> IndexedList (a ': as)
 
+-- | Every element of the list is numbered, so the list can be reflected to an 'IndexedList'. This
+-- is what lets a kind that simply writes its objects out give 'finite' for free.
+class HasFiniteDefault (xs :: [k]) where
+  finiteDefault :: IndexedList xs
+
+instance HasFiniteDefault '[] where
+  finiteDefault = FNil
+instance (KnownIndex a, HasFiniteDefault as) => HasFiniteDefault (a ': as) where
+  finiteDefault = FCons finiteDefault
+
 -- | An 'Indexed' kind with finitely many inhabitants, listed in 'Objects' in the order of their
 -- indices: 'withAtLookup' says that the list tabulates 'At'.
 class (Indexed k) => Finite k where
   type Objects k :: [k]
   finite :: IndexedList (Objects k)
+  default finite :: (HasFiniteDefault (Objects k)) => IndexedList (Objects k)
+  finite = finiteDefault
   withAtLookup :: forall (i :: Nat) r. SNat i -> ((Lookup (Objects k) i ~ At k i) => r) -> r
   default withAtLookup
     :: forall (i :: Nat) r. (At k i ~ Lookup (Objects k) i) => SNat i -> ((Lookup (Objects k) i ~ At k i) => r) -> r
@@ -282,6 +294,7 @@ type Enumerable :: Type -> Constraint
 class (CategoryOf k, Finite k) => Enumerable k where
   withIndex :: forall (a :: k) r. (Ob a) => ((KnownIndex a) => r) -> r
   withOb :: forall (a :: k) r. (KnownIndex a) => ((Ob a) => r) -> r
+  withOb @x r = case atOb @k (snat @(Index x)) of AtJust -> r
 
   -- | The object at an index, if there is one. The default walks the object list, which is all a
   -- kind in general can do. A kind that can answer from the index alone should say so, and a wrapper
@@ -289,6 +302,8 @@ class (CategoryOf k, Finite k) => Enumerable k where
   -- since they ask only that the kind they wrap be 'Finite'.
   atOb :: forall (i :: Nat). SNat i -> AtOb k (At k i)
   atOb i = withAtLookup @k i (lookupOb @k i (finite @k))
+
+  {-# MINIMAL withIndex, (atOb | withOb) #-}
 
 -- | Locate an object in the object list.
 member :: forall {k} (a :: k). (Enumerable k, Ob a) => Member a (Objects k)
@@ -353,15 +368,9 @@ lookupOb _ FNil = AtNothing
 lookupOb SZ (FCons @a _) = withOb @k @a AtJust
 lookupOb (SS @j') (FCons xs) = lookupOb @k (snat @j') xs
 
-instance Indexed BOOL where
-  type Index FLS = 'Z
-  type Index TRU = 'S 'Z
-  type At BOOL i = Lookup '[FLS, TRU] i
+instance Indexed BOOL
 
-instance Finite BOOL where
-  type Objects BOOL = '[FLS, TRU]
-  finite = FCons (FCons FNil)
-  withAtLookup _ r = r
+instance Finite BOOL where type Objects BOOL = '[FLS, TRU]
 
 instance Enumerable BOOL where
   withIndex @a r = case obj @a of
@@ -376,10 +385,7 @@ instance Indexed VOID where
   type Index (a :: VOID) = 'Z
   type At VOID i = 'Nothing
 
-instance Finite VOID where
-  type Objects VOID = '[]
-  finite = FNil
-  withAtLookup _ r = r
+instance Finite VOID where type Objects VOID = '[]
 
 instance Enumerable VOID where
   withIndex _ = no

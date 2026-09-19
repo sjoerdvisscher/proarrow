@@ -16,8 +16,6 @@ module Proarrow.Category.Instance.Kleisli
   , pattern LiftF
   ) where
 
-import Data.Type.Nat (snat)
-
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
@@ -158,7 +156,6 @@ instance (T.Finite k) => T.Finite (KLEISLI (p :: CAT k)) where
 
 instance (T.Enumerable k, Promonad p) => T.Enumerable (KLEISLI (p :: CAT k)) where
   withIndex @(KL a) r = T.withIndex @k @a r
-  withOb @a r = case T.atOb @k (snat @(T.Index a)) of T.AtJust -> r
   atOb i = case T.atOb @k i of
     T.AtJust -> T.AtJust
     T.AtNothing -> T.AtNothing

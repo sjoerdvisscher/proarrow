@@ -14,7 +14,7 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..))
-import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..), IndexedList (..))
+import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Testing
   ( GenTotal (..)
@@ -22,7 +22,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow
-  , genSomeDef
+  , genSomeFinite
   , optGen
   )
 import Proarrow.Testing.Laws (propCategory, propFinitary)
@@ -59,11 +59,7 @@ instance Promonad GraphHom where
   IdV . f = f
 
 instance Indexed GRAPH
-
-instance Finite GRAPH where
-  type Objects GRAPH = '[E, V]
-  finite = FCons (FCons FNil)
-
+instance Finite GRAPH where type Objects GRAPH = '[E, V]
 instance Enumerable GRAPH where
   withIndex @a r = case obj @a of
     IdE -> r
@@ -105,7 +101,7 @@ instance TestableProfunctor GraphHom
 
 instance Testable GRAPH where
   showOb @a = case obj @a of IdE -> "E"; IdV -> "V"
-  genSome = genSomeDef @'[E, V]
+  genSome = genSomeFinite
 
 test :: TestTree
 test =

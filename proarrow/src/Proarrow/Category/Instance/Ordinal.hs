@@ -149,7 +149,6 @@ instance (SNatI n) => Enumerable (ORDINAL n) where
   withIndex @a r = case singOrdinal @a of
     SOZ -> r
     SOS @a' -> case snat @n of SS -> withIndex @_ @a' r
-  withOb @a r = case atOb @(ORDINAL n) (snat @(OrdIndex a)) of AtJust -> r
   atOb = ordAtOb
 
 instance Profunctor LTE where

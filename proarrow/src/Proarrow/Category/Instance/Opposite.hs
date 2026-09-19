@@ -4,8 +4,6 @@
 -- to give one collection of types a second category structure.
 module Proarrow.Category.Instance.Opposite where
 
-import Data.Type.Nat (snat)
-
 import Proarrow.Category.Enriched.Thin
   ( AtOb (..)
   , DecidableProfunctor (..)
@@ -94,7 +92,6 @@ instance (Finite k) => Finite (OPPOSITE k) where
 
 instance (Enumerable k) => Enumerable (OPPOSITE k) where
   withIndex @(OP a) r = withIndex @k @a r
-  withOb @a r = case atOb @k (snat @(Index a)) of AtJust -> r
   atOb i = case atOb @k i of
     AtJust -> AtJust
     AtNothing -> AtNothing

@@ -19,8 +19,9 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 import Control.Applicative (Alternative (..))
 import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
-import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat)
+import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, foreachOb)
 import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, natTable)
+import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -327,9 +328,19 @@ someElemWith _ [] = discard
 someElemWith f (x : xs) = genWith (Just . f) (elem (x :| xs))
 
 genSomeDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Gen (Some k)
-genSomeDef = case mkSomeList @k @obs of
-  [] -> error "genSomeDef: empty list"
-  (x : xs) -> elem (x :| xs)
+genSomeDef = genSomeList "the palette is empty" (mkSomeList @k @obs)
+
+-- | The palette of a category that already knows its own objects: @'Proarrow.Category.Enriched.Thin.Objects' k@
+-- is exactly the list 'genSomeDef' would otherwise be given by hand, so writing it twice is how the
+-- two drift apart. Only for kinds that really are finite categories -- a palette like \"four
+-- cardinalities out of infinitely many\" is a sample rather than an enumeration, and has to stay
+-- hand-picked.
+genSomeFinite :: forall k. (Enumerable k, TestObIsOb k) => Gen (Some k)
+genSomeFinite = genSomeList "the category has no objects" (foreachOb @k \ @a -> [Some @a])
+
+genSomeList :: String -> [Some k] -> Gen (Some k)
+genSomeList what [] = error ("genSome: " ++ what)
+genSomeList _ (x : xs) = elem (x :| xs)
 
 optGen :: [a] -> GenTotal a
 optGen [] = error "optGen: empty list"

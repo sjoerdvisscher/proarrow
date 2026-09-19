@@ -230,7 +230,6 @@ instance (Enumerable j, Enumerable k, Profunctor p) => Enumerable (COLLAGE (p ::
   withIndex @a r = case obj @a of
     InL @x f -> withIndex @j @x (withCollageL @p @x r) \\ f
     InR @y f -> withIndex @k @y (withCollageR @p @y r) \\ f
-  withOb @a r = case atOb @(COLLAGE p) (snat @(Index a)) of AtJust -> r
   atOb = go (finite @j)
     where
       go :: forall xs i. IndexedList xs -> SNat i -> AtOb (COLLAGE p) (Lookup (CollageObjects p xs) i)

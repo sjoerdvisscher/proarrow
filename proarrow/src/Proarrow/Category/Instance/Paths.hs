@@ -31,7 +31,27 @@ import Data.Type.Equality ((:~:) (..))
 import Prelude (Eq (..), Maybe (..), Show (..), showParen, showString)
 import Prelude qualified as P
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), Show2, WrappedOb, dimapDefault, type (+->))
+import Proarrow.Category.Enriched.Thin
+  ( AtOb (..)
+  , Enumerable (..)
+  , Finite (..)
+  , FmapWrap
+  , Indexed (..)
+  , MapWrap
+  , withWrapAtLookup
+  , wrapFinite
+  )
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Profunctor (..)
+  , Promonad (..)
+  , Show2
+  , UN
+  , WrappedOb
+  , dimapDefault
+  , type (+->)
+  )
 import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | The objects of the free category on @p@: its vertices.
@@ -121,6 +141,26 @@ foldPaths withObF pn = go
 instance (CategoryOf k, Rewrite p) => CategoryOf (PATHS (p :: CAT k)) where
   type (~>) = Paths
   type Ob a = WrappedOb PTH a
+
+-- | Objects are vertices, so a free category has exactly as many of them as its quiver has, however
+-- many arrows the paths add -- and unboundedly many is the normal case. So a free category is
+-- 'Finite' without being anywhere near thin or decidable. What they buy is enumeration of the
+-- /objects/ alone -- enough for @Proarrow.Testing.genSomeFinite@ to derive a schema\'s object
+-- palette, and not enough for anything that wants to enumerate arrows.
+instance (Indexed k) => Indexed (PATHS (p :: CAT k)) where
+  type Index (a :: PATHS p) = Index (UN PTH a)
+  type At (PATHS (p :: CAT k)) i = FmapWrap PTH (At k i)
+
+instance (Finite k) => Finite (PATHS (p :: CAT k)) where
+  type Objects (PATHS (p :: CAT k)) = MapWrap PTH (Objects k)
+  finite = wrapFinite @PTH
+  withAtLookup = withWrapAtLookup @PTH
+
+instance (Enumerable k, Rewrite p) => Enumerable (PATHS (p :: CAT k)) where
+  withIndex @(PTH a) r = withIndex @k @a r
+  atOb i = case atOb @k i of
+    AtJust -> AtJust
+    AtNothing -> AtNothing
 
 instance (CategoryOf k, Rewrite p) => Promonad (Paths :: CAT (PATHS (p :: CAT k))) where
   id = PNil

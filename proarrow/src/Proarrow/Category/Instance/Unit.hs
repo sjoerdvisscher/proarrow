@@ -14,7 +14,6 @@ import Proarrow.Category.Enriched.Thin
   , Enumerable (..)
   , Finite (..)
   , Indexed (..)
-  , IndexedList (..)
   , ThinProfunctor (..)
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
@@ -52,9 +51,7 @@ instance DecidableProfunctor Unit where
 
 instance Indexed ()
 
-instance Finite () where
-  type Objects () = '[ '()]
-  finite = FCons FNil
+instance Finite () where type Objects () = '[ '()]
 
 instance Enumerable () where
   withIndex r = r

@@ -15,12 +15,13 @@
 module Props.Paths (test) where
 
 import Control.Monad (unless)
-import Data.Kind (Type)
 import Data.Type.Equality ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (id, (.))
 
+import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Member (..), memberIndex)
+import Proarrow.Category.Instance.Discrete (DISCRETE (..))
 import Proarrow.Category.Instance.Paths (EqGen (..), PATHS (..), Paths (..), Rewrite (..), emb, pathLength)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
@@ -31,20 +32,43 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
-  , genSomeDef
+  , genSomeFinite
   , oneOfTotal
   , optGen
   )
 import Proarrow.Testing.Laws (propCategory, propProfunctor)
 
--- | The book's own running schema (section 3.1), which the airline one deliberately avoids: two
--- entity points, one attribute point, and two path equations. Equations are what a graph cannot
--- express and a category can, and they are the reason a schema is a category at all.
-type data HR' = Employee' | Department' | Str'
+-- | The points of the schema, as bare data: two entity points and one attribute point. The
+-- category over them is 'DISCRETE', which supplies the identity arrows and makes 'Ob' the point\'s
+-- own index. @(\':~:\')@ would serve as the arrows just as well, but its 'Ob' is vacuous, and then
+-- the test suite has to carry a singleton class of its own to say which point it has been handed.
+-- 'DISCRETE' supplies that, and enumerability with it.
+type data HRPoint = EmployeeP | DepartmentP | StrP
 
--- | Nothing maps out of this kind, so identities are all it needs.
-instance CategoryOf HR' where
-  type (~>) = (:~:)
+instance Indexed HRPoint
+instance Finite HRPoint where type Objects HRPoint = '[EmployeeP, DepartmentP, StrP]
+
+type HR' = DISCRETE HRPoint
+
+type Employee' = D EmployeeP :: HR'
+type Department' = D DepartmentP :: HR'
+type Str' = D StrP :: HR'
+
+-- | A singleton for the points. 'memberIndex' already refines a point to the one it is, but
+-- positionally -- @There (There Here)@ says nothing about which point that is -- so the three
+-- positions get names, as pattern synonyms rather than as a separate type with a dispatcher.
+type SHR (a :: HR') = Member a (Objects HR')
+
+pattern SEmployee :: () => (a ~ Employee') => SHR a
+pattern SEmployee = Here
+
+pattern SDepartment :: () => (a ~ Department') => SHR a
+pattern SDepartment = There Here
+
+pattern SStr :: () => (a ~ Str') => SHR a
+pattern SStr = There (There Here)
+
+{-# COMPLETE SEmployee, SDepartment, SStr #-}
 
 type GHR :: CAT HR'
 data GHR a b where
@@ -74,6 +98,9 @@ instance Rewrite GHR where
   rewrite WorksIn (PCons Mngr more) = rewrite WorksIn more
   rewrite q f = PCons q f
 
+-- | The book's own running schema (section 3.1), which the airline one deliberately avoids: two
+-- entity points, one attribute point, and two path equations. Equations are what a graph cannot
+-- express and a category can, and they are the reason a schema is a category at all.
 type HR = PATHS GHR
 
 type Employee = PTH Employee' :: HR
@@ -129,27 +156,16 @@ allDepartments = [Dep101, Dep102]
 
 -- * Law checking
 
--- | A singleton for the points, for the test suite only: the schema itself never needs one, since
--- nothing maps out of it. Contrast @'ObA'@ above, which is the airline schema's own 'Ob' because
--- 'matchSeats' has to produce a seat at an arbitrary point.
-type SHR :: HR' -> Type
-data SHR a where
-  SEmployee :: SHR Employee'
-  SDepartment :: SHR Department'
-  SStr :: SHR Str'
-
-class (Ob a) => KnownHR (a :: HR) where theHR :: SHR (UN PTH a)
-instance KnownHR Employee where theHR = SEmployee
-instance KnownHR Department where theHR = SDepartment
-instance KnownHR Str where theHR = SStr
+-- | The singleton at a path-category object, which is the one at its vertex.
+theHR :: forall (a :: HR). (Ob a) => SHR (UN PTH a)
+theHR = memberIndex @(UN PTH a)
 
 instance Testable HR where
-  type TestOb a = KnownHR a
   showOb @a = case theHR @a of
     SEmployee -> "Employee"
     SDepartment -> "Department"
     SStr -> "Str"
-  genSome = genSomeDef @'[Employee, Department, Str]
+  genSome = genSomeFinite
 
 -- | Grow a path backwards from its target, normalising as it goes, so every generated arrow is in
 -- normal form like every other one.
@@ -171,14 +187,14 @@ genPath n sx sy = oneOfTotal (stay ++ grow)
 -- | Comparing paths needs nothing of the endpoints: 'EqGen' decides it from the generators.
 instance TestingEqShow (Paths (a :: HR) b)
 
-instance (KnownHR a, KnownHR b) => TestableType (Paths (a :: HR) b) where
+instance (Ob a, Ob b) => TestableType (Paths (a :: HR) b) where
   gen = genPath 3 (theHR @a) (theHR @b)
 
 instance TestableProfunctor (Paths :: CAT HR)
 
 instance TestingEqShow (Staff u b)
 
-instance (KnownHR b) => TestableType (Staff '() b) where
+instance (Ob b) => TestableType (Staff '() b) where
   gen = case theHR @b of
     SEmployee -> optGen allEmployees
     SDepartment -> optGen allDepartments

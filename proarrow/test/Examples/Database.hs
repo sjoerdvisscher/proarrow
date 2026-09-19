@@ -25,15 +25,16 @@
 module Examples.Database (test) where
 
 import Control.Monad (unless)
-import Data.Kind (Type)
 import Data.Type.Equality ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (id, (.))
 
+import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Member (..), memberIndex)
+import Proarrow.Category.Instance.Discrete (DISCRETE (..))
 import Proarrow.Category.Instance.Paths (PATHS (..), Paths (..), Rewrite, emb, foldPaths, pathLength)
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Copresheaf, FunctorForRep (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (corepUniv))
@@ -43,42 +44,39 @@ import Proarrow.Profunctor.Representable (Rep (..), Representable (repUniv))
 
 -- * The detailed schema @A@
 
--- | The points of schema @A@: two classes of seat, and the two attribute types.
-type data A' = Economy' | FirstClass' | DollarsA' | StringA'
+-- | The points of schema @A@: two classes of seat, and the two attribute types. Bare data, with
+-- 'DISCRETE' supplying the identity arrows.
+type data APoint = EconomyP | FirstClassP | DollarsAP | StringAP
 
-type SA :: A' -> Type
-data SA a where
-  SEconomy :: SA Economy'
-  SFirstClass :: SA FirstClass'
-  SDollarsA :: SA DollarsA'
-  SStringA :: SA StringA'
+instance Indexed APoint
+instance Finite APoint where type Objects APoint = '[EconomyP, FirstClassP, DollarsAP, StringAP]
 
--- | @A'@ is discrete, but it gets its own hand-written identities rather than @(':~:')@, whose
--- instances ask for a vacuous 'Ob'. The right pushforward is an end, so 'matchSeats' has to
--- /produce/ a seat at an arbitrary point of this kind, and only a non-vacuous 'Ob' can carry the
--- singleton saying which point it has been handed. That one use earns this whole block.
-class ObA (a :: A') where sa :: SA a
+type A' = DISCRETE APoint
 
-instance ObA Economy' where sa = SEconomy
-instance ObA FirstClass' where sa = SFirstClass
-instance ObA DollarsA' where sa = SDollarsA
-instance ObA StringA' where sa = SStringA
+type Economy' = D EconomyP :: A'
+type FirstClass' = D FirstClassP :: A'
+type DollarsA' = D DollarsAP :: A'
+type StringA' = D StringAP :: A'
 
-type DiscA :: CAT A'
-data DiscA a b where
-  ReflA :: (ObA a) => DiscA a a
+-- | A singleton for the points. The right pushforward is an end, so 'matchSeats' has to /produce/ a
+-- seat at an arbitrary point of this kind, and 'Ob' is what carries which point it has been handed
+-- -- so this kind cannot be @(\':~:\')@-arrowed like @B'@, whose 'Ob' is vacuous. 'memberIndex'
+-- already refines a point to the one it is, but positionally, so the four positions get names.
+type SA (a :: A') = Member a (Objects A')
 
-instance CategoryOf A' where
-  type (~>) = DiscA
-  type Ob a = ObA a
+pattern SEconomy :: () => (a ~ Economy') => SA a
+pattern SEconomy = Here
 
-instance Promonad DiscA where
-  id = ReflA
-  ReflA . ReflA = ReflA
+pattern SFirstClass :: () => (a ~ FirstClass') => SA a
+pattern SFirstClass = There Here
 
-instance Profunctor DiscA where
-  dimap = dimapDefault
-  r \\ ReflA = r
+pattern SDollarsA :: () => (a ~ DollarsA') => SA a
+pattern SDollarsA = There (There Here)
+
+pattern SStringA :: () => (a ~ StringA') => SA a
+pattern SStringA = There (There (There Here))
+
+{-# COMPLETE SEconomy, SFirstClass, SDollarsA, SStringA #-}
 
 -- | The generating arrows: each class of seat has a price and a position.
 type GA :: CAT A'
@@ -250,7 +248,7 @@ mergedSeats = [toSigma E1, toSigma E2, toSigma F1, toSigma F2]
 -- objects can appear: an attribute object would need an arrow from @DollarsB@ or @StringB@ to
 -- @AirlineSeat@, and the schema has none, so those cases are unreachable and need no equation.
 seatName :: Sigma Merge Seats '() AirlineSeat -> String
-seatName (s :.: Corep @a PNil) = case sa @(UN PTH a) of
+seatName (s :.: Corep @a PNil) = case memberIndex @(UN PTH a) of
   SEconomy -> "economy " ++ show s
   SFirstClass -> "first class " ++ show s
 
@@ -282,7 +280,7 @@ matchSeats e f
   | dimap Unit (emb PriceE) e == dimap Unit (emb PriceF) f
   , dimap Unit (emb PosE) e == dimap Unit (emb PosF) f =
       Just
-        ( Ran \(Rep @x _) -> case sa @(UN PTH x) of
+        ( Ran \(Rep @x _) -> case memberIndex @(UN PTH x) of
             SEconomy -> e
             SFirstClass -> f
             SDollarsA -> dimap Unit (emb PriceE) e

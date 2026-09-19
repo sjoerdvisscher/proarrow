@@ -7,7 +7,7 @@ module Proarrow.Category.Instance.Monoid where
 import Data.Type.Nat (Nat (..))
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..), IndexedList (..))
+import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
@@ -98,9 +98,7 @@ instance (CommutativeMonoid m) => CopyDiscard (MONOID m)
 instance Indexed (MONOID m) where
   type Index (a :: MONOID m) = 'Z
 
-instance Finite (MONOID m) where
-  type Objects (MONOID m) = '[M]
-  finite = FCons FNil
+instance Finite (MONOID m) where type Objects (MONOID m) = '[M]
 
 instance (Monoid m) => Enumerable (MONOID m) where
   withIndex r = r

@@ -35,7 +35,7 @@ import Proarrow.Testing
   , TestingEqShow (..)
   , genNamed
   , genObSuchThat
-  , genSomeDef
+  , genSomeFinite
   , isGenNonEmpty
   , oneElem
   , someElemNamed
@@ -147,7 +147,7 @@ instance Testable BOOL where
   showOb @a = case obj @a of
     Fls -> "FLS"
     Tru -> "TRU"
-  genSome = genSomeDef @'[FLS, TRU]
+  genSome = genSomeFinite
 
 instance (Ob a, Ob b) => TestableType (Booleans a b) where
   gen = case (obj @a, obj @b) of

@@ -26,7 +26,7 @@ import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude
 
 import Proarrow.Category.Enriched (EnrichedProfunctor (..))
-import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), IndexedList (..), Length)
+import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Length)
 import Proarrow.Category.Enriched.Thin.Composition (Closure, GradedWalk (..), shortest)
 import Proarrow.Category.Instance.Cost (COST (..), GTE (..), IsCost (..), SCost (..))
 import Proarrow.Category.Instance.Discrete (DISCRETE (..))
@@ -104,10 +104,7 @@ instance TestableProfunctor GTE
 data V = P | Q | R | X | Y
 
 instance Indexed V
-
-instance Finite V where
-  type Objects V = '[P, Q, R, X, Y]
-  finite = FCons (FCons (FCons (FCons (FCons FNil))))
+instance Finite V where type Objects V = '[P, Q, R, X, Y]
 
 type G = Edges '[ '(P, Q, C 3), '(Q, R, C 4), '(P, R, C 9), '(R, X, C 2), '(X, P, C 5)]
 
