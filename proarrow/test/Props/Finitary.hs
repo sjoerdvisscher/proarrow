@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | (Co)equalizers, pullbacks and pushouts of finitary profunctors, on a small copresheaf over the
 -- walking arrow: three rows at 'FLS', two at 'TRU', and 'F2T' carrying the first to the second.
@@ -15,16 +16,17 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (id, (.))
 
-import Proarrow.Category.Enriched.Finitary (FIN, FINITARY, Finitary (..))
+import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb)
+import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Instance.Sub (Sub (..))
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..), isEq)
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Functor (Copresheaf)
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
@@ -34,8 +36,28 @@ import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
-import Proarrow.Testing (TestableType (..), TestingEqShow (..), expect, optGen)
-import Proarrow.Testing.Laws (propFinitary)
+import Proarrow.Testing
+  ( Testable (..)
+  , TestableProfunctor
+  , TestableType (..)
+  , TestingEqShow (..)
+  , expect
+  , genSomeDef
+  , optGen
+  )
+import Proarrow.Testing.Laws
+  ( propBinaryCoproducts_
+  , propBinaryProducts_
+  , propCategory
+  , propClosed_
+  , propCoequalizers_
+  , propEqualizers_
+  , propFinitary
+  , propInitialObject
+  , propPullbacks_
+  , propPushouts_
+  , propTerminalObject
+  )
 import Proarrow.Tools.DPO (Rule (..), dpoStep)
 import Props.Bool ()
 
@@ -190,6 +212,23 @@ atR3 = Prof \case
 atS2 :: Prof Point Rows
 atS2 = Prof \Pt -> S2
 
+-- * The category of finitary copresheaves, as a testable kind
+
+instance TestableProfunctor (Sub Prof :: CAT Psh)
+
+-- | Objects are picked from a list, exactly as 'Proarrow.Category.Instance.FinHask.FINHASK' does:
+-- generating an arbitrary finitary profunctor would mean generating a type.
+--
+-- 'TestOb' is just 'Ob', with no 'Typeable': a profunctor is displayed by its table of sizes rather
+-- than by a type name, and 'eqOb' is answered conservatively, which costs nothing because no
+-- law-checking property consumes it. That is what lets every property be used in its @prop..._@
+-- form below: those pass the constructions\' own object witnesses, which supply @Ob@ and nothing
+-- more, and @Ob@ is now all 'TestOb' asks for.
+instance Testable Psh where
+  showOb @(SUB p) = show (foreachOb @BOOL (\ @b -> [size @p @'() @b]))
+  eqOb = Nothing
+  genSome = genSomeDef @'[FIN Rows, FIN Point, FIN Edge, FIN TwoEdges, FIN TerminalProfunctor]
+
 -- | Swap the first two rows at 'FLS'. 'F2T' is onto, so naturality leaves no choice about the
 -- component at 'TRU'; and the swap stays inside 'F2T'\'s fibres, so the component it forces is the
 -- identity.
@@ -216,7 +255,34 @@ test :: TestTree
 test =
   testGroup
     "Finitary"
-    [ propFinitary @Rows "Rows"
+    [ propCategory @Psh
+    , propTerminalObject @Psh
+    , propInitialObject @Psh
+    , propBinaryProducts_ @Psh
+    , propBinaryCoproducts_ @Psh
+    , propClosed_ @(PROD Psh)
+    , propEqualizers_ @Psh
+    , propCoequalizers_ @Psh
+    , propPullbacks_ @Psh
+    , propPushouts_ @Psh
+    , propFinitary @Rows "Rows"
+    , -- The enumeration of natural transformations is itself a numbering, and obeys the same laws.
+      -- Its generator draws from that same enumeration, so this checks the table round trip --
+      -- tabulate a transformation built from a row and get the row back -- and not whether the
+      -- enumeration is complete. The counts below are what check that.
+      propFinitary @(Sub Prof :: CAT Psh) "Psh"
+    , testProperty "the hom-sets have the sizes a hand count gives them" $ do
+        -- 'F2T' is onto, so the component at TRU is forced; at FLS, R1 and R2 must land in a common
+        -- fibre of it -- four ways inside {R1, R2}, or both on R3 -- and R3 is free: 5 * 3.
+        expect "Rows -> Rows" 15 (size @(Sub Prof) @(FIN Rows) @(FIN Rows))
+        -- 'Edge' is the representable at 'FLS', so Yoneda says this is the size of 'Rows' there.
+        expect "Edge -> Rows" 3 (size @(Sub Prof) @(FIN Edge) @(FIN Rows))
+        -- two edges share an endpoint, so their images share a fibre, as R1 and R2 did above
+        expect "TwoEdges -> Rows" 5 (size @(Sub Prof) @(FIN TwoEdges) @(FIN Rows))
+        -- 'Point' is empty at FLS, so only its one element at TRU has to go somewhere
+        expect "Point -> Rows" 2 (size @(Sub Prof) @(FIN Point) @(FIN Rows))
+        -- and nothing at FLS can receive the three rows
+        expect "Rows -> Point" 0 (size @(Sub Prof) @(FIN Rows) @(FIN Point))
     , testProperty "the equalizer of the identity and a swap is the fixed rows" $
         equalize @Psh @(FIN Rows) id (Sub swapRows) \(Sub (Prof @e incl)) -> do
           expect "both rows at TRU" 2 (size @e @'() @TRU)

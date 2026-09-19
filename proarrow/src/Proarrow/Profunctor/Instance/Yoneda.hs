@@ -1,16 +1,19 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The Yoneda construction: @'Yoneda' p@ is the cofree profunctor on an arbitrary type of kind
--- @j +-> k@ (the 'HasCofree' instance for 'Profunctor'), and 'Yo' is the Yoneda embedding. By the Yoneda
--- lemma @Yoneda p@ is equivalent to @p@ when @p@ is already a profunctor ('yoneda'\/'mkYoneda').
+-- @j +-> k@ (the 'HasCofree' instance for 'Profunctor'), and 'Yo' is the Yoneda embedding. By the
+-- Yoneda lemma @Yoneda p@ is equivalent to @p@ when @p@ is already a profunctor
+-- ('yoneda'\/'mkYoneda').
 module Proarrow.Profunctor.Instance.Yoneda where
 
 import Data.Function (($))
+import Prelude ((*))
 
+import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, pairIndex, unpairIndex)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (Prof))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
@@ -57,7 +60,23 @@ data Yo a b c d where
 instance (CategoryOf j, CategoryOf k) => Profunctor (Yo (a :: k) (OP b :: OPPOSITE j) :: j +-> k) where
   dimap l r (Yo f g) = Yo (f . l) (r . g)
   r \\ Yo f g = r \\ f \\ g
+
+-- | The embedding is finitary when the arrows are: its elements over @c@\/@d@ are an arrow @c ~> a@
+-- paired with an arrow @b ~> d@, numbered with the first varying slowest. This is the weight of the
+-- ends in "Proarrow.Category.Enriched.Finitary.Topos", which is why it shares that module\'s
+-- 'pairIndex' rather than spelling the radix out again.
+instance (FiniteCat j, FiniteCat k, Ob a, Ob b) => Finitary (Yo (a :: k) (OP (b :: j)) :: j +-> k) where
+  size @c @d = size @(Hom k) @c @a * size @(Hom j) @b @d
+  toIndex @c @d (Yo ca bd) = pairIndex (size @(Hom j) @b @d) (toIndex @(Hom k) @c @a ca) (toIndex @(Hom j) @b @d bd)
+  fromIndex @c @d i =
+    let (l, r) = unpairIndex (size @(Hom j) @b @d) i
+    in Yo (fromIndex @(Hom k) @c @a l) (fromIndex @(Hom j) @b @d r)
+
+  -- spelled out for the same reason as the product's: the default would ask for a size per element
+  elements @c @d = [Yo ca bd | ca <- elements @(Hom k) @c @a, bd <- elements @(Hom j) @b @d]
+
 instance (CategoryOf j, CategoryOf k) => Functor (Yo (a :: k) :: OPPOSITE j -> j +-> k) where
   map (Op f) = Prof \(Yo ca bd) -> Yo ca (bd . f)
+
 instance (CategoryOf j, CategoryOf k) => Functor (Yo :: k -> OPPOSITE j -> j +-> k) where
   map f = Nat (Prof \(Yo ca bd) -> Yo (f . ca) bd)

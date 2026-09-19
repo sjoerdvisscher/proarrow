@@ -27,15 +27,8 @@ import Prelude qualified as P
 
 import Numeric.Natural (Natural)
 
-import Proarrow.Category.Enriched.Finitary
-  ( FINITARY
-  , Finitary (..)
-  , FiniteCat
-  , elements
-  , foreachOb
-  , objIndex
-  , withSubobject
-  )
+import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, elements, foreachOb, objIndex)
+import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, withSubobject)
 import Proarrow.Category.Instance.FinHask (FINHASK, FinHask (..), reifyList)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Sub (..))

@@ -6,6 +6,7 @@ import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
 import Examples.Database qualified as Database
+import Examples.Graph qualified as Graph
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
@@ -19,6 +20,7 @@ import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
 import Props.FinSet qualified as FinSet
 import Props.Finitary qualified as Finitary
+import Props.Finitary.Graph qualified as FinitaryGraph
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
@@ -50,6 +52,7 @@ main =
           , FinRel.test
           , FinSet.test
           , Finitary.test
+          , FinitaryGraph.test
           , Free.test
           , Hask.test
           , Kleisli.test
@@ -67,6 +70,7 @@ main =
       , testGroup
           "Examples"
           [ Database.test
+          , Graph.test
           , STLC.test
           , ULC.test
           , Vitrea.test

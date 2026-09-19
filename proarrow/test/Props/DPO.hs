@@ -8,88 +8,22 @@
 module Props.DPO (test) where
 
 import Data.List (genericIndex, genericLength)
-import Data.Type.Nat (SNat (..), snat)
 import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, testFailed, testProperty)
 import Prelude hiding (id, (.))
 
-import Proarrow.Category.Enriched.Finitary (FIN, Finitary (..), withSubobject)
-import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..), IndexedList (..))
+import Examples.Graph (GRAPH (..), GraphHom (..))
+import Proarrow.Category.Enriched.Finitary (Finitary (..))
+import Proarrow.Category.Enriched.Finitary.Topos (FIN, withSubobject)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
 import Proarrow.Functor (Copresheaf)
 import Proarrow.Limit.Equalizer (factorEqualizer)
 import Proarrow.Testing (expect)
 import Proarrow.Tools.DPO (Rule (..), dpoStep)
-
--- * The schema of directed graphs
-
--- | Two objects: the edges and the vertices.
-type data GRAPH = E | V
-
--- | Four morphisms: the two identities, and an edge's source and target.
-type GraphHom :: CAT GRAPH
-data GraphHom a b where
-  IdE :: GraphHom E E
-  IdV :: GraphHom V V
-  Src :: GraphHom E V
-  Tgt :: GraphHom E V
-
-class IsGraphOb (a :: GRAPH) where graphId :: GraphHom a a
-instance IsGraphOb E where graphId = IdE
-instance IsGraphOb V where graphId = IdV
-
-instance CategoryOf GRAPH where
-  type (~>) = GraphHom
-  type Ob a = IsGraphOb a
-
-instance Profunctor GraphHom where
-  dimap = dimapDefault
-  r \\ f = case f of IdE -> r; IdV -> r; Src -> r; Tgt -> r
-
-instance Promonad GraphHom where
-  id = graphId
-
-  -- everything out of 'E' precomposes with 'IdE', and everything into 'V' postcomposes with 'IdV';
-  -- there is nothing else, so these two cover all six composable pairs
-  g . IdE = g
-  IdV . f = f
-
--- | The objects are numbered by 'Objects', which is all 'Indexed' needs.
-instance Indexed GRAPH
-
-instance Finite GRAPH where
-  type Objects GRAPH = '[E, V]
-  finite = FCons (FCons FNil)
-
-instance Enumerable GRAPH where
-  withIndex @a r = case obj @a of
-    IdE -> r
-    IdV -> r
-  withOb @a r = case snat @(Index a) of
-    SZ -> r
-    SS @i -> case snat @i of SZ -> r
-
--- | The arrows of the schema, which is all the numbering needs: two identities and the two
--- incidence maps. Having finitely many of them is what lets the gluing conditions be enumerated.
-graphHoms :: forall a b. (Ob a, Ob b) => [GraphHom a b]
-graphHoms = case (obj @a, obj @b) of
-  (IdE, IdE) -> [IdE]
-  (IdV, IdV) -> [IdV]
-  (IdE, IdV) -> [Src, Tgt]
-  (IdV, IdE) -> []
-
-instance Finitary GraphHom where
-  size @a @b = genericLength (graphHoms @a @b)
-  toIndex IdE = 0
-  toIndex IdV = 0
-  toIndex Src = 0
-  toIndex Tgt = 1
-  fromIndex @a @b i = graphHoms @a @b `genericIndex` i
-  elements = graphHoms
 
 -- * An ambient graph to carve subgraphs out of
 

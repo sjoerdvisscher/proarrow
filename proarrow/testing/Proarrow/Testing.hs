@@ -20,12 +20,17 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 import Control.Applicative (Alternative (..))
 import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
+import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat)
+import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, natTable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
+import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Representable (Rep (..))
 import Test.Falsify.Interactive (falsify)
@@ -254,6 +259,18 @@ instance (Testable k) => Testable (OPPOSITE k) where
   eqOb @(OP a) @(OP b) = fmap (\Refl -> Refl) $ eqOb @k @a @b
   genSome = mapSome OP <$> genSome
 
+-- | The 'PROD' wrapper changes only which tensor a kind carries, so everything transports across it.
+instance (TestableProfunctor p) => TestableProfunctor (Prod p) where
+  genProfunctorElt nm = do
+    SomeP p <- genProfunctorElt @p nm
+    pure $ SomeP (Prod p)
+
+instance (Testable k) => Testable (PROD k) where
+  type TestOb a = (Is PR a, TestOb (UN PR a))
+  showOb @(PR a) = "PR (" ++ showOb @k @a ++ ")"
+  eqOb @(PR a) @(PR b) = fmap (\Refl -> Refl) (eqOb @k @a @b)
+  genSome = mapSome PR <$> genSome
+
 instance TestableProfunctor Unit
 instance Testable () where
   showOb = "()"
@@ -348,6 +365,12 @@ eqHask l r =
       a <- genWith (Just . showP) ga
       eqP (l a) (r a)
 
+instance (TestableType (p a b)) => TestableType (Prod p (PR a) (PR b)) where
+  gen = invmap Prod unProd gen
+instance (TestingEqShow (p a b)) => TestingEqShow (Prod p (PR a) (PR b)) where
+  eqP (Prod l) (Prod r) = eqP l r
+  showP (Prod p) = "Prod (" ++ showP p ++ ")"
+
 instance (TestableType (p b a)) => TestableType (Op p (OP a) (OP b)) where
   gen = invmap Op unOp gen
 instance (TestingEqShow (p b a)) => TestingEqShow (Op p (OP a) (OP b)) where
@@ -368,6 +391,21 @@ instance (TestableType (catk a1 b1), TestableType (catj a2 b2)) => TestableType 
     (GenEmpty f, _) -> GenEmpty \(l :**: _) -> f l
     (_, GenEmpty f) -> GenEmpty \(_ :**: r) -> f r
     (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty $ liftA2 (:**:) ga gb
+
+-- | A hom-set of 'FINITARY' is enumerable, by 'natTransformations', so it can be generated -- which
+-- is the thing that makes a category of profunctors testable at all. Equality and display go through
+-- the table of indices, there being nothing else to see of a natural transformation. (The table is
+-- cheaper than the index into 'elements' would be, which has to search for it.)
+instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestingEqShow (Sub Prof (SUB p :: FINITARY j k) (SUB q)) where
+  eqP (Sub (Prof f)) (Sub (Prof g)) = pure (natTable @p @q f == natTable @p @q g)
+  showP (Sub (Prof f)) = show (natTable @p @q f)
+
+instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestableType (Sub Prof (SUB p :: FINITARY j k) (SUB q)) where
+  gen = case elements @(Hom (FINITARY j k)) @(SUB p) @(SUB q) of
+    -- a hom-set is empty whenever @q@ runs out of elements where @p@ has some, and then the
+    -- properties discard rather than fail
+    [] -> GenEmpty \_ -> error "no natural transformations at these objects"
+    fs -> optGen fs
 
 instance (Ob a, Ob b) => TestableType (Unit a b) where
   gen = oneElem Unit
