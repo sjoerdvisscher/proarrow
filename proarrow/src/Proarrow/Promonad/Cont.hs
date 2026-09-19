@@ -12,6 +12,7 @@ import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), ap
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | An arrow from @a@ to @b@ is a mapping of continuations @(b '~>' r) -> (a '~>' r)@.
 data Cont r a b where
@@ -23,6 +24,17 @@ instance (CategoryOf k) => Profunctor (Cont (r :: k)) where
 instance (CategoryOf k) => Promonad (Cont (r :: k)) where
   id = Cont id
   Cont f . Cont g = Cont (g . f)
+
+-- | At @Type@ the continuation promonad is the continuation /monad/: @(b -> r) -> (a -> r)@ is
+-- @a -> (b -> r) -> r@ by flipping the arguments, so @'Cont' r '%' b@ is the double-negation
+-- @(b -> r) -> r@. This is what gives @'KLEISLI' ('Cont' r)@ its initial object and coproducts,
+-- which hold for the Kleisli category of a monad but not of an arbitrary promonad.
+instance Representable (Cont (r :: Type)) where
+  type Cont r % b = (b -> r) -> r
+  index (Cont f) a k = f k a
+  tabulate g = Cont \k a -> g a k
+  repMap f c k = c (k . f)
+
 instance Strong Tensor (Cont (r :: Type)) where
   act (Cont yrxy) = Cont \byr -> uncurry (yrxy . curry byr)
 

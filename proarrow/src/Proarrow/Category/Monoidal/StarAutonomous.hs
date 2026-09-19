@@ -30,12 +30,38 @@ import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
 import Proarrow.Optic (PIso, iso)
 
+-- | A *-autonomous category: a symmetric monoidal closed category with a dualizing object, so
+-- that 'Dual' is a contravariant involution and @Hom(a '**' b, 'Dual' c)@ is symmetric in its three
+-- arguments.
+--
+-- __Laws:__
+--
+-- * 'dual' is a contravariant functor: @'dual' 'id' = 'id'@ and @'dual' (f . g) = 'dual' g . 'dual' f@
+-- * 'dual' and 'dualInv' are mutually inverse bijections on hom-sets:
+--   @'dualInv' ('dual' f) = f@ and @'dual' ('dualInv' g) = g@
+-- * 'linDist' and 'linDistInv' are mutually inverse, giving
+--   @Hom(a '**' b, 'Dual' c) ≅ Hom(a, 'Dual' (b '**' c))@, natural in all three variables
+-- * 'Proarrow.Category.Monoidal.StarAutonomous.doubleNegIso' witnesses
+--   @'Dual' ('Dual' a) ≅ a@, naturally.
+--
+-- Checked by @Proarrow.Testing.Laws.propStarAutonomous@.
 class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
+  -- | The dual of an object.
   type Dual (a :: k) :: k
+
+  -- | Recovers @'Ob' ('Dual' a)@ from the objecthood of @a@.
   withObDual :: (Ob (a :: k)) => ((Ob (Dual a)) => r) -> r
+
+  -- | 'Dual'\'s contravariant action on arrows.
   dual :: (a :: k) ~> b -> Dual b ~> Dual a
+
+  -- | Inverse to 'dual' on hom-sets: recovers the undualized arrow.
   dualInv :: (Ob (a :: k), Ob b) => Dual a ~> Dual b -> b ~> a
+
+  -- | Linear distribution: transposes a tensor factor across the dual.
   linDist :: (Ob (a :: k), Ob b, Ob c) => a ** b ~> Dual c -> a ~> Dual (b ** c)
+
+  -- | Inverse to 'linDist'.
   linDistInv :: (Ob (a :: k), Ob b, Ob c) => a ~> Dual (b ** c) -> a ** b ~> Dual c
 
 dualObj :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Obj (Dual a)

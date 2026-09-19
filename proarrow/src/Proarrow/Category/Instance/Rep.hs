@@ -7,13 +7,12 @@
 module Proarrow.Category.Instance.Rep where
 
 import Data.Kind (Constraint)
-import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Representable (Representable (..), repObj)
 
@@ -30,12 +29,19 @@ class (HasArrow (~>) (p % a) (q % a)) => HasArrowRep p q a
 instance (HasArrow (~>) (p % a) (q % a)) => HasArrowRep p q a
 class (forall a. (Ob a) => HasArrowRep p q a) => HasAllArrows (p :: j +-> k) (q :: j +-> k)
 instance (forall a. (Ob a) => HasArrowRep p q a) => HasAllArrows (p :: j +-> k) (q :: j +-> k)
-instance (Thin k) => ThinProfunctor (Sub Prof :: CAT (REPK j k)) where
-  type HasArrow (Sub Prof :: CAT (REPK j k)) (REP p) (REP q) = HasAllArrows p q
-  arr @(REP p) @(REP q) = Sub (Prof \ @_ @b p -> tabulate (arr . index p) \\ repObj @p @b \\ repObj @q @b \\ p)
 
-  -- Recovering @HasAllArrows p q@ from a natural transformation would require building the
-  -- quantified @forall a. Ob a => HasArrowRep p q a@ dictionary out of per-@a@ 'withArr' calls
-  -- (e.g. @withArr (index (n repUniv))@, which only proves it for one @a@) -- value-level
-  -- entailment GHC cannot express (cf. GHC issue #16502). 'arr' works; 'withArr' cannot.
-  withArr _ _ = P.error "withArr @(Sub Prof): cannot construct the quantified HasAllArrows dictionary (GHC #16502)"
+-- | The natural transformation @p ':~>' q@ obtained from a thin arrow @p % a '~>' q % a@ at every
+-- object, i.e. the 'Proarrow.Category.Enriched.Thin.arr' of a thin structure on @'REPK' j k@.
+--
+-- It is given as a plain function rather than as
+-- @'Proarrow.Category.Enriched.Thin.ThinProfunctor' ('Sub' 'Prof')@, because that class also
+-- requires 'Proarrow.Category.Enriched.Thin.withArr', the converse direction: recovering
+-- @'HasAllArrows' p q@ from a natural transformation would mean building the quantified
+-- @forall a. 'Ob' a => 'HasArrowRep' p q a@ dictionary out of per-@a@ evidence, which is
+-- value-level entailment GHC cannot express (cf. GHC issue #16502). An instance whose 'withArr'
+-- is bottom would promise a capability the value does not have, so none is given.
+repArr
+  :: forall {j} {k} (p :: j +-> k) q
+   . (Thin k, Ob (REP p), Ob (REP q), HasAllArrows p q)
+  => REP p ~> REP q
+repArr = Sub (Prof \ @_ @b p -> tabulate (arr . index p) \\ repObj @p @b \\ repObj @q @b \\ p)

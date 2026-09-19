@@ -38,7 +38,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
-newtype LINEAR = L Type
+type data LINEAR = L Type
 
 type Linear :: CAT LINEAR
 data Linear a b where

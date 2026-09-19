@@ -51,50 +51,76 @@ the category theory should work with profunctors where possible.
 
 ## Example: defining your own category
 
-A category is picked out by its *kind*, so a new category starts with a fresh kind, here
-one with a single object. Its arrows hold a natural number each, and composition adds them:
-a monoid, viewed as a one-object category.
+A category is picked out by its *kind*, so a new category starts with a fresh kind -- here one
+with two objects, a `Draft` and a `Live` state, and a single non-identity arrow publishing the
+one as the other.
 
 ```haskell
-{-# LANGUAGE TypeData #-}
+{-# LANGUAGE TypeData, TypeFamilies #-}
 import Prelude hiding (id, (.))
-import Numeric.Natural (Natural)
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
-type data COUNTER = Counter
+type data STATE = Draft | Live
 
-type Count :: CAT COUNTER
-data Count a b where
-  Count :: Natural -> Count Counter Counter
+type Move :: CAT STATE
+data Move a b where
+  KeepDraft :: Move Draft Draft
+  Publish :: Move Draft Live
+  KeepLive :: Move Live Live
 
-deriving instance Show (Count a b)
+deriving instance Show (Move a b)
 
-instance CategoryOf COUNTER where
-  type (~>) = Count
-  type Ob a = a ~ Counter
+-- 'id' has to produce the identity *at whichever object it is asked for*, so being an
+-- object is exactly the ability to supply that identity:
+class IsState (a :: STATE) where stateId :: Move a a
+instance IsState Draft where stateId = KeepDraft
+instance IsState Live where stateId = KeepLive
 
-instance Promonad Count where
-  id = Count 0
-  Count m . Count n = Count (m + n)
+instance CategoryOf STATE where
+  type (~>) = Move
+  type Ob a = IsState a
 
-instance Profunctor Count where
+instance Promonad Move where
+  id = stateId
+  KeepDraft . KeepDraft = KeepDraft
+  Publish . KeepDraft = Publish
+  KeepLive . Publish = Publish
+  KeepLive . KeepLive = KeepLive
+
+instance Profunctor Move where
   dimap = dimapDefault
-  r \\ Count{} = r
+  r \\ KeepDraft = r
+  r \\ Publish = r
+  r \\ KeepLive = r
 ```
+
+Beyond `TypeData` and `TypeFamilies` above, going further needs more extensions — a
+`Proarrow.Testing.TestableType` instance for `Move a b`, for instance, also needs
+`UndecidableInstances`. Rather than discovering them one failed build at a time, enable the set
+the library itself is built with: `GHC2024` plus the `default-extensions` block in
+[`proarrow.cabal`](proarrow.cabal).
 
 ```haskell
->>> Count 2 . id . Count 3
-Count 5
+>>> KeepLive . Publish . id
+Publish
 ```
 
-The `Ob` family is where the object constraints from above come in (here every type of kind
-`COUNTER` is an object, i.e. `Counter`), and the `\\` method is how those constraints are
-observed from an arrow. And now the generic kind-machinery applies: `OPPOSITE COUNTER` is the
-opposite category, `(COUNTER, COUNTER)` the product category, `COUNTER +-> COUNTER` are
-profunctors on counters, and so on. The `Proarrow` module exports the curated core vocabulary; 
-`Proarrow.Core` explains the design in depth, and the `Proarrow.Category.Instance.*` modules
-contain many more worked examples of categories.
+The `Ob` family is where the object constraints from above come in, and the `\\` method is how
+those constraints are observed from an arrow — matching on a constructor reveals which objects
+it runs between, which is what lets `id` be recovered later. The singleton-class shape of
+`IsState` is the house pattern for any category with more than one object:
+`Proarrow.Category.Instance.Bool` does exactly this for the walking arrow, and
+`test/Examples/Graph.hs` for a free category on a quiver. Where the objects carry *no*
+non-identity arrows at all, reach for `Proarrow.Category.Instance.Discrete`'s `DISCRETE` instead
+and skip the class (see `test/Props/Paths.hs`). A one-object category needs no dispatch and is
+just a monoid — that is `Proarrow.Category.Instance.Monoid`.
+
+And now the generic kind-machinery applies: `OPPOSITE STATE` is the opposite category,
+`(STATE, STATE)` the product category, `STATE +-> STATE` are profunctors on states, and so on.
+The `Proarrow` module exports the curated core vocabulary; `Proarrow.Core` explains the design
+in depth, and the `Proarrow.Category.Instance.*` modules contain many more worked examples of
+categories.
 
 To property-test the laws of your own category, depend on the public sublibrary
 `proarrow:testing`: a `Testable` instance for your kind plus the law checks from

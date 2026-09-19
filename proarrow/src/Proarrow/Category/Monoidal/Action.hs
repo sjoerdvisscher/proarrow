@@ -41,10 +41,36 @@ type Act :: (m, k) +-> k -> m -> k -> k
 type Act t a x = t % '(a, x)
 
 type MonoidalAction :: forall {m} {k}. (m, k) +-> k -> Constraint
+
+-- | An action of a monoidal category @m@ on a category @k@, given by a representable profunctor
+-- @t@ whose functor is @'Act' t@. This is 'Monoidal' with the two sides allowed to differ: taking
+-- @k = m@ and @t@ the tensor recovers it exactly.
+--
+-- __Laws:__
+--
+-- The two isomorphisms must be mutually inverse:
+--
+-- * @'unitor' . 'unitorInv' = 'id'@ and @'unitorInv' . 'unitor' = 'id'@
+-- * @'multiplicator' . 'multiplicatorInv' = 'id'@ and @'multiplicatorInv' . 'multiplicator' = 'id'@
+--
+-- natural in every argument (via 'actHom'), and coherent with the monoidal structure of @m@:
+--
+-- * Triangle: @'actHom' 'id' 'unitor' . 'multiplicator' = 'actHom' ('rightUnitor') 'id'@
+-- * Pentagon: @'actHom' 'id' 'multiplicator' . 'multiplicator'
+--   = 'multiplicator' . 'actHom' ('associator') 'id'@
+--
+-- There is no @propMonoidalAction@ yet; these laws are currently unchecked.
 class (Representable t, Monoidal m) => MonoidalAction (t :: (m, k) +-> k) where
+  -- | Acting by the 'Unit' does nothing.
   unitor :: (Ob x) => Act t Unit x ~> x
+
+  -- | Inverse to 'unitor'.
   unitorInv :: (Ob x) => x ~> Act t Unit x
+
+  -- | Acting by a tensor is acting twice.
   multiplicator :: (Ob a, Ob b, Ob x) => Act t (a ** b) x ~> Act t a (Act t b x)
+
+  -- | Inverse to 'multiplicator'.
   multiplicatorInv :: (Ob a, Ob b, Ob x) => Act t a (Act t b x) ~> Act t (a ** b) x
 
 actHom :: (Representable t) => a ~> b -> x ~> y -> Act t a x ~> Act t b y

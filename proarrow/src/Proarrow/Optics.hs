@@ -2,12 +2,13 @@
 --
 -- * /Build/ optics with 'iso', 'lens', 'monLens', 'prism', 'affineTraversal', 'grate', 'glass',
 --   'powerGrate', 'cotraversal', 'kaleidoscope', 'algebraicLens', 'classifyingLens', 'tracer',
---   'traversed', 'traversal' (a 'Traversal' from its van-Laarhoven \/
---   profunctor-class form), 'to' and 'unto'. These produce
+--   'traversed', 'traversal' (a 'Traversal' from its profunctor-class form -- a rank-2 function
+--   on profunctors, not the van-Laarhoven encoding), 'to' and 'unto'. These produce
 --   'Proarrow.Optic.Prostrong'-flavored optics ('Iso', 'Lens', 'Prism', 'Traversal', ...), which
 --   support subtyping: any optic can be used directly wherever a weaker flavor is needed (a 'Lens'
 --   is a 'Getter', a 'Setter', a 'Fold', ...), checked by the flavor superclass lattice.
---   'MonoidalTraversal' is built from its van-Laarhoven form with 'fromPTraversal'. Only the three
+--   'MonoidalTraversal' is built with 'fromPTraversal', from the profunctor-class form 'PTraversal'
+--   (see /Beyond this import/ below). Only the three
 --   read-\/write-only flavors ('Setter', 'Fold', 'AffineFold') have no builder of their own -- reach
 --   them by 'convert' from a stronger optic (or '%'-composition, as 'affineTraversal' does with a
 --   'Lens' and a 'Prism').
@@ -18,9 +19,13 @@
 --   'powerGrateOf' (a 'PowerGrate'), 'cotraverseOf' (a 'Cotraversal'), 'kaleidoscopeOf' and
 --   'zipWithOf' (a 'Kaleidoscope'), 'classifyOf' (an 'AlgebraicLens') and 'tracerOf' (a 'Tracer')
 --   /run/ the optic, while 'withIso', 'withLens',
---   'withMonLens', 'withPrism', 'withGrate' and 'withGlass' /recover its two legs/. Operator shorthands
---   ('(^.)', '(#)', '(^?)', 'set', '(%~)', '(.~)', 'unfold') abbreviate the common ones. All of
---   these are encoding-agnostic.
+--   'withMonLens', 'withPrism', 'withGrate' and 'withGlass' /recover its two legs/. Operator
+--   shorthands ('(^.)', '(#)', 'set', '(%~)', '(.~)') abbreviate the common ones, and '(^?)' and
+--   '(.?)' abbreviate 'preview' and 'classifyOf' while also landing the result in a plain
+--   'Prelude.Maybe' \/ pair rather than the ambient category's coproduct. All of these are
+--   encoding-agnostic. Note that 'preview'\'s own result type is stated with @||@ and
+--   @TerminalObject@, so writing that type down needs "Proarrow.Colimit.BinaryCoproduct" and
+--   "Proarrow.Limit.Terminal".
 -- * The library's structural isos (e.g. 'Proarrow.Category.Monoidal.associator') live in a
 --   second, /profunctor-class-flavored/ encoding ('Proarrow.Optic.PIso'); every consumer above
 --   accepts those as-is too, so this distinction rarely matters. When it does — converting
@@ -96,10 +101,10 @@ module Proarrow.Optics
 
     -- * Eliminating optics
 
-    -- | Exactly one eliminator per flavor: 'view', 'review', 'preview', 'over', 'foldMapOf',
-    -- 'traverseOf', 'monTraverseOf', 'powerGrateOf', 'cotraverseOf', 'kaleidoscopeOf', 'zipWithOf',
-    -- 'classifyOf' and 'tracerOf' /run/ the optic; 'withIso', 'withLens',
-    -- 'withMonLens', 'withPrism' and 'withGrate' /recover its two legs/.
+    -- | Exactly one eliminator per flavor: 'view', 'review', 'preview', 'matching', 'over',
+    -- 'foldMapOf', 'traverseOf', 'monTraverseOf', 'powerGrateOf', 'cotraverseOf', 'kaleidoscopeOf',
+    -- 'zipWithOf', 'classifyOf' and 'tracerOf' /run/ the optic; 'withIso', 'withLens',
+    -- 'withMonLens', 'withPrism', 'withGrate' and 'withGlass' /recover its two legs/.
   , view
   , review
   , preview

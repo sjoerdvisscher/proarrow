@@ -120,16 +120,58 @@ type StrongMonoidalRep p = (LaxMonoidal p, OplaxMonoidalRep p)
 -- | A corepresentable profunctor whose functor is /strong/ monoidal, dually.
 type StrongMonoidalCorep p = (OplaxMonoidal p, LaxMonoidalCorep p)
 
+-- | A monoidal category: a tensor @'**'@ with a 'Unit', associative and unital up to the coherent
+-- isomorphisms below. The tensor's action on arrows is the 'MonoidalProfunctor' method @**@ at
+-- @('~>')@, which the superclass supplies.
+--
+-- __Laws:__
+--
+-- The three isomorphisms must be mutually inverse:
+--
+-- * @'leftUnitor' . 'leftUnitorInv' = 'id'@ and @'leftUnitorInv' . 'leftUnitor' = 'id'@
+-- * @'rightUnitor' . 'rightUnitorInv' = 'id'@ and @'rightUnitorInv' . 'rightUnitor' = 'id'@
+-- * @'associator' . 'associatorInv' = 'id'@ and @'associatorInv' . 'associator' = 'id'@
+--
+-- and natural in every argument:
+--
+-- * @'leftUnitor' . ('id' '**' f) = f . 'leftUnitor'@
+-- * @'rightUnitor' . (f '**' 'id') = f . 'rightUnitor'@
+-- * @'associator' . ((f '**' g) '**' h) = (f '**' (g '**' h)) . 'associator'@
+--
+-- subject to the two coherence conditions:
+--
+-- * Triangle: @('id' '**' 'leftUnitor') . 'associator' = 'rightUnitor' '**' 'id'@
+-- * Pentagon: @('id' '**' 'associator') . 'associator' . ('associator' '**' 'id')
+--   = 'associator' . 'associator'@
+--
+-- Checked by @Proarrow.Testing.Laws.propMonoidal@.
 type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Monoidal k where
+  -- | The tensor unit.
   type Unit :: k
+
+  -- | The tensor product of two objects.
   type (a :: k) ** (b :: k) :: k
+
+  -- | Recovers @'Ob' (a '**' b)@ from the objecthood of the factors.
   withOb2 :: (Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
+
+  -- | Cancels a 'Unit' on the left.
   leftUnitor :: (Ob (a :: k)) => Unit ** a ~> a
+
+  -- | Introduces a 'Unit' on the left; inverse to 'leftUnitor'.
   leftUnitorInv :: (Ob (a :: k)) => a ~> Unit ** a
+
+  -- | Cancels a 'Unit' on the right.
   rightUnitor :: (Ob (a :: k)) => a ** Unit ~> a
+
+  -- | Introduces a 'Unit' on the right; inverse to 'rightUnitor'.
   rightUnitorInv :: (Ob (a :: k)) => a ~> a ** Unit
+
+  -- | Reassociates the tensor to the right.
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
+
+  -- | Reassociates the tensor to the left; inverse to 'associator'.
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
 
 leftUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => PIso (Unit ** a) (Unit ** a') a a'

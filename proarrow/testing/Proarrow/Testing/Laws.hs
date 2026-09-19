@@ -3,9 +3,21 @@
 {- HLINT ignore "Redundant id" -}
 
 -- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'propCategory',
--- 'propMonoidal', 'propBinaryProducts', 'propClosed', 'propProfunctor', 'propMonoid', and friends.
--- Wiring a new category into a test suite is a 'Testable' instance plus calls to these -- see
--- proarrow's own test suite for many examples.
+-- 'propMonoidal', 'propBinaryProducts', 'propClosed', and friends. Wiring a new category into a
+-- test suite is a 'Testable' instance plus calls to these -- see proarrow's own test suite for
+-- many examples.
+--
+-- Most of them return a 'TestTree', ready for a 'Test.Tasty.testGroup'. Eighteen return a
+-- @'Property' ()@ instead, meant to be composed into a property of your own -- at a chosen object,
+-- or under a witness the caller has just brought into scope: 'propProfunctor', 'propProfunctorWith',
+-- 'propMonoidalProfunctor', 'propFunctor', 'propNaturalTransformation', 'propRepresentable',
+-- 'propCorepresentable', 'propAdjunction', 'propIso', 'propIso'', 'propIsoP', 'propNaturalIsoP',
+-- 'propMonoid', 'propCommutativeMonoid', 'propCocommutativeComonoid', 'propFrobenius',
+-- 'propDecidable' and 'propCartesianAt'. Most have a @test@-prefixed 'TestTree' wrapper
+-- (e.g. 'testMonoid' around 'propMonoid'), which is what to reach for unless you are assembling a
+-- property yourself. Note that 'propMonoid' and 'propMonoidal' differ by more than two letters:
+-- the first is a fragment about a monoid /object/, the second a test tree about a monoidal
+-- /category/.
 --
 -- Many of these take an explicit witness that 'TestOb' is closed under the structure being tested
 -- (e.g. that @'TestOb' (a '**' b)@ follows from @'TestOb' a@ and @'TestOb' b@), since in general a

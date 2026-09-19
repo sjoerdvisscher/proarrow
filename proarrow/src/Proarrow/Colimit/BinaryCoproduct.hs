@@ -46,12 +46,34 @@ infixl 4 ||
 infixl 4 |||
 infixl 4 +++
 
+-- | Binary coproducts, dual to 'Proarrow.Limit.BinaryProduct.HasBinaryProducts': an object
+-- @a '||' b@ with injections 'lft' and 'rgt', universal among all pairs of arrows into a common
+-- target -- each such pair factors through it uniquely via '(|||)'.
+--
+-- __Laws:__
+--
+-- * @(f '|||' g) . 'lft' = f@
+-- * @(f '|||' g) . 'rgt' = g@
+-- * Uniqueness: @(h . f) '|||' (h . g) = h . (f '|||' g)@
+--
+-- Checked by @Proarrow.Testing.Laws.propBinaryCoproducts@.
 class (CategoryOf k) => HasBinaryCoproducts k where
+  -- | The coproduct object.
   type (a :: k) || (b :: k) :: k
+
+  -- | Recovers @'Ob' (a '||' b)@ from the objecthood of the summands.
   withObCoprod :: (Ob (a :: k), Ob b) => ((Ob (a || b)) => r) -> r
+
+  -- | The left injection.
   lft :: (Ob (a :: k), Ob b) => a ~> (a || b)
+
+  -- | The right injection.
   rgt :: (Ob (a :: k), Ob b) => b ~> (a || b)
+
+  -- | The mediating arrow: case-splits two arrows into a common target.
   (|||) :: (x :: k) ~> a -> y ~> a -> (x || y) ~> a
+
+  -- | The coproduct of two arrows, acting on each summand independently.
   (+++) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a || b ~> x || y
   l +++ r = lft @k @x @y . l ||| rgt @k @x @y . r \\ l \\ r
 
@@ -174,7 +196,7 @@ instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where
   rgt @(PR a) @(PR b) = Prod (rgt @_ @a @b)
   Prod l ||| Prod r = Prod (l ||| r)
 
-newtype COPROD k = COPR k
+type data COPROD k = COPR k
 
 -- | Lifts a profunctor to the 'COPROD'-wrapped kinds, where the monoidal structure is the
 -- coproduct.

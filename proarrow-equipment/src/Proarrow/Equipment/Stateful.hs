@@ -122,7 +122,7 @@ instance (SymMonoidal k) => Equipment (STT' k) where
   withCotightAdjoint r = r
 
 type STSq (p :: k +-> k) (q :: k +-> k) (a :: k) (b :: k) =
-  ST (Writer a) `O` (ST p :: STT k) ~> (ST q :: STT k) `O` ST (Writer a)
+  ST (Writer a) `O` (ST p :: STT k) ~> (ST q :: STT k) `O` ST (Writer b)
 
 crossing
   :: forall {k} (p :: k +-> k) (a :: k)

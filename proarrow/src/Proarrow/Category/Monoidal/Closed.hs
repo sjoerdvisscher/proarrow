@@ -34,11 +34,37 @@ import Proarrow.Profunctor.Representable (Rep (..))
 
 infixr 2 ~~>
 
+-- | A (right) closed monoidal category: every @b '~~>' c@ is an internal hom, right adjoint to
+-- tensoring with @b@. 'curry' and 'Proarrow.Category.Monoidal.Closed.uncurry' witness the
+-- adjunction @Hom(a '**' b, c) ≅ Hom(a, b '~~>' c)@.
+--
+-- __Laws:__
+--
+-- * @'curry'@ and @'Proarrow.Category.Monoidal.Closed.uncurry'@ are mutually inverse:
+--   @'Proarrow.Category.Monoidal.Closed.uncurry' ('curry' f) = f@ and
+--   @'curry' ('Proarrow.Category.Monoidal.Closed.uncurry' g) = g@
+-- * and natural in all three variables: for @f :: a' '~>' a@, @g :: b' '~>' b@, @h :: c '~>' c'@,
+--   @'curry' . 'dimap' (f '**' g) h = 'dimap' f (h '^^^' g) . 'curry'@
+--
+-- Together these say @'curry'@ is a natural isomorphism, which also forces the familiar
+-- @'apply' . ('curry' f '**' 'id') = f@. The exponential is thereby functorial: @'(^^^)'@ is
+-- contravariant in its second argument and covariant in its first.
+--
+-- Checked by @Proarrow.Testing.Laws.propClosed@.
 class (Monoidal k) => Closed k where
+  -- | The internal hom (exponential) object.
   type (a :: k) ~~> (b :: k) :: k
+
+  -- | Recovers @'Ob' (a '~~>' b)@ from the objecthood of the ends.
   withObExp :: (Ob (a :: k), Ob b) => ((Ob (a ~~> b)) => r) -> r
+
+  -- | Transposes an arrow out of a tensor into one into an exponential.
   curry :: (Ob (a :: k), Ob b) => a ** b ~> c -> a ~> b ~~> c
+
+  -- | Evaluation: the counit of the adjunction.
   apply :: (Ob (a :: k), Ob b) => (a ~~> b) ** a ~> b
+
+  -- | The exponential's action on arrows: covariant in the result, contravariant in the argument.
   (^^^) :: forall (a :: k) b x y. b ~> y -> x ~> a -> a ~~> b ~> x ~~> y
   f ^^^ g =
     f //

@@ -64,7 +64,7 @@ eqFinSet = (\Refl -> Refl) P.<$> testEquality (snat @(UN FS a)) (snat @(UN FS b)
 instance Testable FINSET where
   type TestOb a = Ob a
   showOb @(FS a) = P.show (reflect (Proxy @a))
-  genSome = genSomeDef @'[FS Nat1, FS Nat2, FS Nat3, FS Nat4]
+  genSome = genSomeDef @'[FS Nat0, FS Nat1, FS Nat2, FS Nat3, FS Nat4]
 
 instance (Ob a, Ob b) => TestingEqShow (FinSet a b)
 instance (Ob a, Ob b) => TestableType (FinSet a b) where

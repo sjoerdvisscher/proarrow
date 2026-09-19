@@ -1,10 +1,25 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | Profunctor-weighted limits: @'HasLimits' j k@ says @k@ has limits of @i '+->' k@-diagrams weighted
--- by @j@, given by the 'Limit' profunctor with 'limit' and 'limitUniv'. The 'Unweighted' (terminal
--- profunctor) weight recovers ordinary conical limits, e.g. terminal objects, binary products and
--- powers as special shapes.
-module Proarrow.Limit where
+-- by @j@, given by the 'Limit' profunctor with 'limit' and 'limitUniv'. The
+-- 'Proarrow.Profunctor.Instance.Terminal.TerminalProfunctor' weight recovers ordinary conical
+-- limits, e.g. terminal objects, binary products and powers as special shapes.
+--
+-- The weight synonyms and shape helpers used to state those instances are deliberately not
+-- exported: @Unweighted@, @O1@\/@O2@, @At1@\/@At2@, the end weight @Hom@ and the @Ran@ carrier all
+-- have namesakes in "Proarrow.Colimit", "Proarrow.Core" or
+-- "Proarrow.Profunctor.Instance.Ran", and importing this module alongside those is far more common
+-- than needing the helpers by name.
+module Proarrow.Limit
+  ( HasLimits (..)
+  , IsRepresentableLimit
+  , mapLimit
+  , ProductLimit
+  , PowerLimit
+  , End (..)
+  , EndLimit
+  , AnyLimit (..)
+  ) where
 
 import Data.Function (($))
 import Data.Kind (Constraint, Type)

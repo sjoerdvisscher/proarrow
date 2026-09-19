@@ -24,7 +24,7 @@ import Proarrow.Monoid qualified as M
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type MonK :: Kind -> CAT ()
-newtype MonK k i j = MK k
+type data MonK k i j = MK k
 
 type Mon2 :: forall {k} {i} {j}. CAT (MonK k i j)
 data Mon2 a b where

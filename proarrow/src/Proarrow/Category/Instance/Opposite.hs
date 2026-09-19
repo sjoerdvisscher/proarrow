@@ -23,7 +23,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 
-newtype OPPOSITE k = OP k
+type data OPPOSITE k = OP k
 
 -- | Flips the two arguments of a profunctor, giving a profunctor between the 'OPPOSITE'
 -- categories; at @p = ('~>')@ this is the hom of the opposite category.

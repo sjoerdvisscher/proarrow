@@ -17,8 +17,6 @@ import Proarrow.Category.Monoidal
   , OplaxMonoidalRep
   , SymMonoidal
   , Tensor
-  , obj2
-  , swap
   , unpar0Rep
   , unparRep
   , type (**)
@@ -57,19 +55,6 @@ instance (ActFl act f g, ActFl act f' g') => ActFl act (f :.: f') (g' :.: g) whe
       withActP @act @f' @g' f' g' \ @y f2 g2 ->
         withOb2 @_ @x @y $
           k @(x ** y) (composeActs @act @x @y @a f1 f2) (decomposeActs @act @x @y @b g2 g1)
-
-type MonoidalOptic (s :: k) (t :: k) a b = Optic (Prostrong (ActFl Tensor)) s t a b
-
-mkMonoidal
-  :: forall {k} (m :: k) (a :: k) (b :: k) s t
-   . (Monoidal k, Ob m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalOptic s t a b
-mkMonoidal sma mbt = legs2prof @(ActFl Tensor) (Rep @a @(ActionAt Tensor m) sma) (Corep @b @(ActionAt Tensor m) mbt)
-
-_1 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (a ** c) (b ** c) a b
-_1 = mkMonoidal @c (swap @k @a @c) (swap @k @c @b)
-
-_2 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (c ** a) (c ** b) a b
-_2 = mkMonoidal @c (obj2 @c @a) (obj2 @c @b)
 
 -- | An Eilenberg-Moore algebra for the monad @m@ -- a representable 'Promonad' on @k@, acting as
 -- the functor @m '%' -@ ("Proarrow.Promonad"): a structure map @m % a ~> a@, coherent with the

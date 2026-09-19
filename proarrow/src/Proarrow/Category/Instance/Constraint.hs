@@ -19,7 +19,7 @@ import Proarrow.Limit.BinaryProduct qualified as P
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 
-newtype CONSTRAINT = CNSTRNT Constraint
+type data CONSTRAINT = CNSTRNT Constraint
 
 data (:-) a b where
   Entails :: {unEntails :: forall r. (a) => ((b) => r) -> r} -> CNSTRNT a :- CNSTRNT b

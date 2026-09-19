@@ -45,8 +45,9 @@ import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
+import Proarrow.Promonad (Comonad, Monad)
 
-newtype KLEISLI (p :: CAT k) = KL k
+type data KLEISLI (p :: CAT k) = KL k
 
 -- | The arrows of the promonad @p@, wrapped as a category on the 'KLEISLI'-wrapped kind.
 type Kleisli :: CAT (KLEISLI p)
@@ -69,26 +70,35 @@ instance (Promonad p) => Promonad (Kleisli :: CAT (KLEISLI p)) where
   id = Kleisli id
   Kleisli f . Kleisli g = Kleisli (f . g)
 
--- TODO: Only valid for certain promonads, which ones?
-instance (HasTerminalObject k, Promonad p) => HasTerminalObject (KLEISLI (p :: k +-> k)) where
+-- | The terminal object lifts to the co-Kleisli category of a 'Comonad': there @p a b@ is
+-- @p '%%' a '~>' b@, so @p a (-)@ is representable and preserves limits. A bare 'Promonad' is not
+-- enough -- at the constant promonad @'Proarrow.Profunctor.Instance.HaskValue.HaskValue' c@ every
+-- element of @c@ is an arrow into the terminal object, so uniqueness fails.
+instance (HasTerminalObject k, Comonad p) => HasTerminalObject (KLEISLI (p :: k +-> k)) where
   type TerminalObject @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
   terminate = arr terminate
 
--- TODO: Only valid for certain promonads, which ones?
-instance (HasInitialObject k, Promonad p) => HasInitialObject (KLEISLI (p :: k +-> k)) where
+-- | Dually, the initial object lifts to the Kleisli category of a 'Monad': there @p a b@ is
+-- @a '~>' p '%' b@, so the presheaf @p (-) z@ is representable and takes colimits in @k@ to limits.
+instance (HasInitialObject k, Monad p) => HasInitialObject (KLEISLI (p :: k +-> k)) where
   type InitialObject @(KLEISLI (p :: k +-> k)) = KL (InitialObject :: k)
   initiate = arr initiate
 
--- TODO: Only valid for certain promonads, which ones?
-instance (Cartesian k, Promonad p, MonoidalProfunctor p) => HasBinaryProducts (KLEISLI (p :: k +-> k)) where
+-- | Products lift for the same reason as the terminal object: for a 'Comonad' @p a (-)@ is
+-- representable, and @'lmap' 'diag' (f '**' g)@ is then exactly the canonical mediating map.
+instance (Cartesian k, Comonad p, MonoidalProfunctor p) => HasBinaryProducts (KLEISLI (p :: k +-> k)) where
   type a && b = KL (UN KL a && UN KL b)
   withObProd @(KL a) @(KL b) r = withObProd @k @a @b r
   fst @(KL a) @(KL b) = arr (fst @_ @a @b)
   snd @(KL a) @(KL b) = arr (snd @_ @a @b)
   Kleisli f &&& Kleisli g = Kleisli (lmap diag (f ** g)) \\ f
 
--- TODO: Only valid for certain promonads, which ones?
-instance (HasBinaryCoproducts k, Promonad p, MonoidalProfunctor (Coprod p)) => HasBinaryCoproducts (KLEISLI (p :: k +-> k)) where
+-- | Coproducts lift for the same reason as the initial object: for a 'Monad' @p (-) z@ is a
+-- representable presheaf.
+instance
+  (HasBinaryCoproducts k, Monad p, MonoidalProfunctor (Coprod p))
+  => HasBinaryCoproducts (KLEISLI (p :: k +-> k))
+  where
   type a || b = KL (UN KL a || UN KL b)
   withObCoprod @(KL a) @(KL b) r = withObCoprod @k @a @b r
   lft @(KL a) @(KL b) = arr (lft @_ @a @b)
@@ -123,7 +133,7 @@ instance (Promonad p, MonoidalProfunctor p, CopyDiscard k) => CopyDiscard (KLEIS
   copy = arr copy
   discard = arr discard
 
-instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive (KLEISLI (p :: k +-> k)) where
+instance (Distributive k, Monad p, DistributiveProfunctor p) => Distributive (KLEISLI (p :: k +-> k)) where
   distL @(KL a) @(KL b) @(KL c) = arr (distL @k @a @b @c)
   distR @(KL a) @(KL b) @(KL c) = arr (distR @k @a @b @c)
   absorbL @(KL a) = arr (absorbL @k @a)

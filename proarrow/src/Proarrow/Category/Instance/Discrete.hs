@@ -30,7 +30,7 @@ import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 
-newtype DISCRETE k = D k
+type data DISCRETE k = D k
 
 type Discrete :: CAT (DISCRETE k)
 data Discrete a b where
@@ -136,7 +136,7 @@ instance (Thin.Indexed k) => HasPushouts (DISCRETE k) where
 instance (Thin.Indexed k) => HasEpiMonoFactorization (DISCRETE k) where
   factorize = defaultFactorize
 
-newtype CODISCRETE k = CD k
+type data CODISCRETE k = CD k
 
 type Codiscrete :: CAT (CODISCRETE k)
 data Codiscrete a b where

@@ -11,7 +11,6 @@ import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
-import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, src)
 import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
@@ -28,7 +27,7 @@ import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 
-newtype SPAN k = SP k
+type data SPAN k = SP k
 
 type Span :: CAT (SPAN k)
 data Span a b where
@@ -101,19 +100,9 @@ instance (HasPullbacks k, HasProducts k) => CompactClosed (SPAN k) where
 instance (HasPullbacks k, HasProducts k) => DaggerProfunctor (Span :: CAT (SPAN k)) where
   dagger = dual
 
-instance (HasPullbacks k, HasBinaryCoproducts k) => HasBinaryProducts (SPAN k) where
-  type SP a && SP b = SP (a || b)
-  withObProd @(SP a) @(SP b) r = withObCoprod @k @a @b r
-  fst @(SP a) @(SP b) = coarr (lft @k @a @b)
-  snd @(SP a) @(SP b) = coarr (rgt @k @a @b)
-  Span f g &&& Span h i = Span (f ||| h) (g +++ i)
-
-instance (HasPullbacks k, HasBinaryCoproducts k) => HasBinaryCoproducts (SPAN k) where
-  type SP a || SP b = SP (a || b)
-  withObCoprod @(SP a) @(SP b) r = withObCoprod @k @a @b r
-  lft @(SP a) @(SP b) = arr (lft @k @a @b)
-  rgt @(SP a) @(SP b) = arr (rgt @k @a @b)
-  Span f g ||| Span h i = Span (f +++ h) (g ||| i)
-
-instance (HasPullbacks k, HasBinaryCoproducts k) => HasBiproducts (SPAN k) where
-  Span f g `sum` Span h i = Span (f ||| h) (g ||| i)
+-- Spans over @k@ do /not/ inherit binary products, coproducts or biproducts from @k@'s
+-- coproducts alone. That construction is valid only when @k@ is extensive -- its coproducts
+-- disjoint and stable under pullback -- which 'HasPullbacks' plus 'HasBinaryCoproducts' does not
+-- imply. Over BOOL, which satisfies both, @snd . (s &&& t)@ collapses to @s@ where the product
+-- law demands @t@. The instances are therefore omitted; the monoidal, compact-closed and
+-- hypergraph structure above needs no such condition and is unaffected.

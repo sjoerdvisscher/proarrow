@@ -26,10 +26,12 @@ import Proarrow.Optic.PowerGrate (Nat (..), PowerGrate', powerGrate, powerGrateO
 import Proarrow.Optics
   ( Lens
   , Lens'
+  , MonoidalLens
   , Prism'
   , Traversal
   , foldMapOf
   , lens
+  , monLens
   , over
   , prism
   , review
@@ -211,9 +213,17 @@ tick = Clock (\t -> (t, t + 1))
 runK :: forall m a b. Kleisli (KL a :: KLEISLI (Star m)) (KL b) -> a -> m b
 runK k = unStar (unKleisli k)
 
--- | A lens in the Kleisli category of 'Clock': viewing is pure, updating also stamps the time.
-stamp :: Lens (KL (Timestamped a) :: KLEISLI (Star Clock)) (KL (Timestamped b)) (KL a) (KL b)
-stamp = lens (arr contents') (Kleisli (Star (\(x, b) -> map (\t -> x{contents' = b, modified' = t}) tick)))
+-- | A monadic lens over 'Clock': viewing is pure, updating also stamps the time.
+--
+-- This is a 'MonoidalLens', not a 'Lens'. The Kleisli category of a monad has coproducts but not
+-- products -- @'fst' . (f '&&&' g)@ would run both effects where the law allows only @f@\'s -- so
+-- the monadic lenses of the paper live over the Kleisli /tensor/, with a comonoidal residual,
+-- rather than over a product. Here the residual is the whole record.
+stamp :: forall a b. MonoidalLens (KL (Timestamped a) :: KLEISLI (Star Clock)) (KL (Timestamped b)) (KL a) (KL b)
+stamp =
+  monLens @(KL (Timestamped a))
+    (arr (\x -> (x, contents' x)))
+    (Kleisli (Star (\(x, b) -> map (\t -> x{contents' = b, modified' = t}) tick)))
 
 -- | A writer-like monad, for a lens that logs its updates.
 newtype Log a = Log {runLog :: ([String], a)}
@@ -229,9 +239,11 @@ instance Promonad (Star Log) where
 
 newtype Box a = Box {openBox :: a} deriving (Show, Eq)
 
-box :: (Show b) => Lens (KL (Box a) :: KLEISLI (Star Log)) (KL (Box b)) (KL a) (KL b)
+box :: forall a b. (Show b) => MonoidalLens (KL (Box a) :: KLEISLI (Star Log)) (KL (Box b)) (KL a) (KL b)
 box =
-  lens (arr openBox) (Kleisli (Star (\(_, b) -> Log (["[box]: contents changed to " ++ show b ++ "."], Box b))))
+  monLens @(KL (Box a))
+    (arr (\x -> (x, openBox x)))
+    (Kleisli (Star (\(_, b) -> Log (["[box]: contents changed to " ++ show b ++ "."], Box b))))
 
 -- * Example 4: traversals
 

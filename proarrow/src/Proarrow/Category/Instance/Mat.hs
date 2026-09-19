@@ -3,7 +3,9 @@
 -- | The category of __matrices__ over a numeric type @a@: objects are natural numbers (dimensions,
 -- @'M' n@ of kind @'MatK' a@) and a morphism is an @n@-by-@m@ matrix, composed by matrix
 -- multiplication. A dagger (conjugate-transpose) category with biproducts, whose Kronecker-product
--- tensor makes it compact closed -- the linear-algebra playground of the library.
+-- tensor makes it compact closed -- the linear-algebra playground of the library. The compact
+-- structure's 'Proarrow.Category.Monoidal.StarAutonomous.dual' is the plain 'transpose', distinct
+-- from 'dagger' once the entries are complex.
 module Proarrow.Category.Instance.Mat where
 
 import Data.Complex (Complex, conjugate)
@@ -113,8 +115,19 @@ instance (IsNat n) => IsNat (S n) where
   withAssocMult @m @o r = withMultNat @n @m $ withAssocMult @n @m @o (withDist @m @(n * m) @o r)
   withDist @m @o r = withMultNat @n @o $ withMultNat @m @o $ withAssocPlus @o @(n * o) @(m * o) $ withDist @n @m @o r
 
+-- | Plain transpose, with no conjugation.
+--
+-- Three operations on a matrix are easy to confuse, and at @'MatK' ('Complex' a)@ they differ:
+-- this one, the entrywise 'Conjugate' functor, and 'dagger', which is their composite (the
+-- conjugate-transpose). Composition and the compact-closed structure are /bilinear/ and must not
+-- conjugate, so they are written in terms of 'transpose' rather than 'dagger'. They read the same
+-- at a real element type -- where 'dagger' /is/ 'transpose' -- which is what makes the distinction
+-- easy to lose.
+transpose :: Mat (n :: MatK a) m -> Mat m n
+transpose (Mat m) = Mat (P.sequenceA m)
+
 instance {-# OVERLAPPABLE #-} (P.Num a) => DaggerProfunctor (Mat :: CAT (MatK a)) where
-  dagger (Mat m) = Mat (P.sequenceA m)
+  dagger = transpose
 
 instance {-# OVERLAPS #-} (P.RealFloat a) => DaggerProfunctor (Mat :: CAT (MatK (Complex a))) where
   dagger (Mat m) = Mat (P.traverse (P.fmap conjugate) m)
@@ -124,7 +137,7 @@ instance (P.Num a) => Profunctor (Mat :: CAT (MatK a)) where
   r \\ Mat{} = r
 instance (P.Num a) => Promonad (Mat :: CAT (MatK a)) where
   id = Mat matId
-  Mat m . n = case dagger n of Mat nT -> Mat (P.fmap (app nT) m)
+  Mat m . n = case transpose n of Mat nT -> Mat (P.fmap (app nT) m)
 
 -- | The category of matrices with entries in a type @a@, where the objects are natural numbers and the arrows @n ~> m@ are matrices of dimension @n@ by @m@.
 instance (P.Num a) => CategoryOf (MatK a) where
@@ -311,13 +324,16 @@ instance (P.Num a) => Closed (MatK a) where
 instance (P.Num a) => StarAutonomous (MatK a) where
   type Dual n = n
   withObDual r = r
-  dual = dagger
-  dualInv = dagger
+
+  -- The dual of the compact-closed structure is the transpose, /not/ the conjugate-transpose:
+  -- it is the bilinear pairing, so it must not conjugate. See 'transpose'.
+  dual = transpose
+  dualInv = transpose
   linDist @(M x) @(M y) @(M z) (Mat m) = withMultNat @z @y $ Mat (concat (P.fmap (chunks @y @x) m))
   linDistInv @(M x) @(M y) @(M z) (Mat m) = withMultNat @y @x $ Mat (P.fmap concat (chunks @z @y m))
 
 instance (P.Num a) => CompactClosed (MatK a) where
-  distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ dagger (obj @m) ** dagger (obj @n)
+  distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ transpose (obj @m) ** transpose (obj @n)
   dualUnit = id
 
 instance (P.Num a, MonoidalAction (t :: (MatK a, MatK a) +-> MatK a)) => Costrong t (Mat :: CAT (MatK a)) where

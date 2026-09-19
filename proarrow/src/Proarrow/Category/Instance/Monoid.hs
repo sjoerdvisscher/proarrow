@@ -1,7 +1,13 @@
 -- | A monoid as a one-object category: the single object 'M', with the monoid's elements
--- @'Unit' ~> m@ as the morphisms. Every universal construction collapses onto @M@, so for a
--- commutative monoid it is cartesian (hence 'CopyDiscard'), cocartesian, closed and compact
--- closed all at once.
+-- @'Unit' ~> m@ as the morphisms. For a commutative monoid the tensor is the monoid operation
+-- itself, making it symmetric monoidal, 'Closed', 'StarAutonomous' and 'CompactClosed', with a
+-- cocommutative comonoid on @M@ and hence 'CopyDiscard'.
+--
+-- It is deliberately /not/ cartesian or cocartesian. A one-object category has a terminal object
+-- only when its hom-set is a singleton, and likewise has binary products only when @'fst' . (f
+-- '&&&' g) = f@ forces @'combine' f g = f@ -- both hold only for the trivial monoid. The
+-- corresponding instances would be unlawful for every other @m@, so they are omitted rather than
+-- given a definition that type-checks.
 module Proarrow.Category.Instance.Monoid where
 
 import Data.Type.Nat (Nat (..))
@@ -13,11 +19,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
-import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..), combine)
 
 type data MONOID (m :: k) = M
@@ -34,25 +36,6 @@ instance (Monoid m) => Promonad (Mon :: CAT (MONOID m)) where
 instance (Monoid m) => CategoryOf (MONOID m) where
   type (~>) = Mon
   type Ob a = a P.~ M
-
-instance (Monoid m) => HasInitialObject (MONOID m) where
-  type InitialObject = M
-  initiate = Mon mempty
-instance (Monoid m) => HasTerminalObject (MONOID m) where
-  type TerminalObject = M
-  terminate = Mon mempty
-instance (Monoid m) => HasBinaryProducts (MONOID m) where
-  type a && b = M
-  withObProd @M @M r = r
-  fst @M @M = Mon mempty
-  snd @M @M = Mon mempty
-  Mon f &&& Mon g = Mon (combine f g)
-instance (Monoid m) => HasBinaryCoproducts (MONOID m) where
-  type a || b = M
-  withObCoprod @M @M r = r
-  lft @M @M = Mon mempty
-  rgt @M @M = Mon mempty
-  Mon f ||| Mon g = Mon (combine f g)
 
 instance (CommutativeMonoid m) => MonoidalProfunctor (Mon :: CAT (MONOID m)) where
   one = Mon mempty

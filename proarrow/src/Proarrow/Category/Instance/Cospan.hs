@@ -30,7 +30,7 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 
-newtype COSPAN k = CS k
+type data COSPAN k = CS k
 
 type Cospan :: CAT (COSPAN k)
 data Cospan a b where

@@ -55,7 +55,7 @@ import Proarrow.Core
 import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | The objects of the free category on @p@: its vertices.
-newtype PATHS (p :: CAT k) = PTH k
+type data PATHS (p :: CAT k) = PTH k
 
 -- | A path of generators, as a right-associated spine, which is what makes the category laws hold
 -- definitionally.

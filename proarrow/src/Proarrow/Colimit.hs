@@ -1,10 +1,24 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | Profunctor-weighted colimits: @'HasColimits' j k@ says @k@ has colimits of @k '+->' i@-diagrams
--- weighted by @j@, given by the 'Colimit' profunctor with 'colimit' and 'colimitUniv'. The 'Unweighted'
--- (terminal profunctor) weight recovers ordinary conical colimits, e.g. initial objects, binary
--- coproducts and copowers as special shapes.
-module Proarrow.Colimit where
+-- weighted by @j@, given by the 'Colimit' profunctor with 'colimit' and 'colimitUniv'. The
+-- 'Proarrow.Profunctor.Instance.Terminal.TerminalProfunctor' weight recovers ordinary conical
+-- colimits, e.g. initial objects, binary coproducts and copowers as special shapes.
+--
+-- As in "Proarrow.Limit", the weight synonyms and shape helpers are deliberately not exported:
+-- @Unweighted@, @O1@\/@O2@, @At1@\/@At2@, the coend weight @Hom@ and the @Lan@ carrier all have
+-- namesakes elsewhere, and importing this module alongside "Proarrow.Limit" is far more common
+-- than needing the helpers by name.
+module Proarrow.Colimit
+  ( HasColimits (..)
+  , IsCorepColimit
+  , mapColimit
+  , CoproductColimit
+  , CopowerLimit
+  , Coend (..)
+  , CoendLimit
+  , AnyColimit (..)
+  ) where
 
 import Data.Function (($))
 import Data.Kind (Constraint, Type)

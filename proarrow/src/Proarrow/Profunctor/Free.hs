@@ -44,7 +44,8 @@ import Proarrow.Core
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts)
 import Proarrow.Limit.Terminal (HasTerminalObject)
-import Proarrow.Monoid (Monoid (..))
+import Proarrow.Monoid (Monoid)
+import Proarrow.Monoid qualified as M
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id)
@@ -116,9 +117,14 @@ instance (Monoidal k, Functor f) => Applicative (Ap (f :: k -> Type)) where
   pure a () = Pure a
   liftA2 f (fa, fb) = LiftA2 f fa fb
 
-instance (Monoidal k, Monoid m) => Monoid (Ap (f :: k -> Type) m) where
-  mempty () = Pure mempty
-  mappend (l, r) = LiftA2 mappend l r
+-- | Given as 'P.Semigroup'\/'P.Monoid' rather than as 'Monoid' directly: @'Ap' f m@ is of kind
+-- @Type@, where 'Monoid' already comes from the blanket @'P.Monoid' m => 'Monoid' (m :: Type)@
+-- instance, so defining it here too would make every use overlap and solve to neither.
+instance (Monoidal k, Monoid m) => P.Semigroup (Ap (f :: k -> Type) m) where
+  l <> r = LiftA2 M.mappend l r
+
+instance (Monoidal k, Monoid m) => P.Monoid (Ap (f :: k -> Type) m) where
+  mempty = Pure M.mempty
 
 retractAp :: (Applicative f) => Ap f a -> f a
 retractAp (Pure a) = pure a ()

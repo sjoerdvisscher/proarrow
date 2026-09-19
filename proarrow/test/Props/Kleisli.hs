@@ -50,10 +50,11 @@ test =
     , testGroup
         "Continuation promonad"
         [ propCategory @(KLEISLI (Cont Void))
-        , propTerminalObject @(KLEISLI (Cont Void))
-        , propInitialObject @(KLEISLI (Cont Void))
-        , propBinaryProducts @(KLEISLI (Cont Void)) (\r -> r)
-        , propCartesian @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
+        , -- No terminal object, products or 'propCartesian' here: those lift to the co-Kleisli
+          -- category of a 'Comonad', and @'Cont' r@ is a monad, not a comonad. They did hold at
+          -- @'Cont' 'Void'@, but only because every hom-set in this group is a singleton (see the
+          -- note below), not for any reason that generalises.
+          propInitialObject @(KLEISLI (Cont Void))
         , propBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
         , propClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
         , -- Note this group is close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
@@ -66,8 +67,10 @@ test =
         "Pair comonad"
         [ propCategory @(KLEISLI (Costar (Prelude Pair)))
         , propTerminalObject @(KLEISLI (Costar (Prelude Pair)))
-        , propInitialObject @(KLEISLI (Costar (Prelude Pair)))
-        , propBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
+        , -- No initial object: that lifts for a 'Monad', and @'Costar' f@ is a comonad. It did
+          -- hold here because @'Pair' 'Void'@ is itself empty, which is a fact about 'Pair' rather
+          -- than about comonads.
+          propBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         , propCartesian @(KLEISLI (Costar (Prelude Pair))) (\r -> r) (\r -> r)
         , propMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         , propMonoidalHom @(KLEISLI (Costar (Prelude Pair))) (\r -> r)

@@ -39,8 +39,6 @@ test =
     , propStarAutonomous_ @(SPAN FINSET)
     , propCompactClosed_ @(SPAN FINSET)
     , propCopyDiscard_ @(SPAN FINSET)
-    , propBinaryProducts_ @(SPAN FINSET)
-    , propBinaryCoproducts_ @(SPAN FINSET)
     , propHypergraph_ @(SPAN FINSET)
     , testMonoid_ @(SP (FS Nat0))
     , testMonoid_ @(SP (FS Nat1))

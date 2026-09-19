@@ -79,7 +79,7 @@ type family ds `Elems` cs where
 -- | The objects of the free category over the quiver @p@ on @k@: the embedded objects of @k@
 -- ('EMB') plus one object former per structure in @cs@ (products, exponentials, ...), which live
 -- in their structures' modules.
-newtype FREE (cs :: [Kind -> Constraint]) (p :: CAT k) = EMB k
+type data FREE (cs :: [Kind -> Constraint]) (p :: CAT k) = EMB k
 
 -- | Arrows of the free category: a right-associated composition spine ending in 'Nil', with a
 -- generator ('Emb') or structure morphism ('St') precomposed onto the rest at each step -- which

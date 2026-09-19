@@ -43,10 +43,28 @@ import Prelude (($))
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 
+-- | A distributive monoidal category: the tensor distributes over coproducts, and annihilates the
+-- 'InitialObject'. This is where the monoidal and coproduct worlds meet.
+--
+-- __Laws:__
+--
+-- Each of the four arrows is invertible, with the named inverse:
+--
+-- * @'distL'@ is inverse to 'distLInv', and @'distR'@ to 'distRInv'
+-- * @'absorbL'@ and @'absorbR'@ are inverse to 'Proarrow.Colimit.Initial.initiate'
+--
+-- Checked by @Proarrow.Testing.Laws.propDistributive@, which verifies all four as isomorphisms.
 class (Monoidal k, HasCoproducts k) => Distributive k where
+  -- | Distributes a tensor on the left over a coproduct.
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
+
+  -- | Distributes a tensor on the right over a coproduct.
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
+
+  -- | The 'InitialObject' annihilates the tensor on the right.
   absorbL :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
+
+  -- | The 'InitialObject' annihilates the tensor on the left.
   absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
 
 -- | The free-category structure for 'Distributive': formal distributors and absorbers,

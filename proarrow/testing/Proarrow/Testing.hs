@@ -6,7 +6,72 @@
 -- (using @falsify@ generators), and 'TestingEqShow' provides semantic equality and display for
 -- values without useful structural 'Eq'\/'Show' (functions, opaque morphisms). Instances for your
 -- own category plus the law checks in "Proarrow.Testing.Laws" give it a test suite.
-module Proarrow.Testing where
+module Proarrow.Testing
+  ( -- * Describing a category
+    Testable (..)
+  , TestableProfunctor (..)
+  , TestableType (..)
+  , TestableTypeP
+  , TestingEqShow (..)
+  , TestObIsOb
+  , TestOb'
+  , obFromTestOb
+
+    -- * Objects
+  , Some (..)
+  , mapSome
+  , genOb
+  , genObSuchThat
+  , genSomeDef
+  , genSomeFinite
+  , genSomeList
+  , MkSomeList (..)
+
+    -- * Profunctor elements
+  , SomeProfunctorElt (..)
+  , someP
+
+    -- * Generators
+
+    -- | @falsify@ generators, wrapped so that an empty type is a first-class case rather than a
+    -- generator that fails at run time: match 'GenEmpty' first, then 'GenNonEmpty'. The two are a
+    -- @COMPLETE@ set. The representation behind 'GenNonEmpty' is deliberately not exported --
+    -- go through the pattern, which is total.
+  , GenTotal (GenEmpty)
+  , pattern GenNonEmpty
+  , invmap
+  , isGenNonEmpty
+  , optGen
+  , oneElem
+  , oneOfTotal
+  , genP
+  , genNamed
+  , genWithNamed
+  , genSuchThat
+  , someElem
+  , someElemNamed
+  , someElemWith
+
+    -- * Generating functions
+
+    -- | 'ShowP' supplies the 'Show' instance @falsify@ needs on both parameters of a generated
+    -- 'Test.Falsify.Generator.Fun', derived from 'showP'; 'applyFunP' unwraps on the way back out.
+  , ShowP (..)
+  , applyFunP
+
+    -- * Assertions
+  , expect
+  , testEq
+  , eqHask
+
+    -- * Interactive debugging
+
+    -- | Run a generator once in @ghci@ and print what it produced. These trace to stdout and are
+    -- for exploring a generator by hand, not for use inside a test.
+  , sampleT
+  , sampleP
+  , sampleK
+  ) where
 
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
@@ -109,7 +174,7 @@ class (TestingEqShow a) => TestableType a where
 --
 -- falsify's 'Show' instance for 'Fun' needs 'Show' on both parameters, and we
 -- only ever have 'TestingEqShow'. Rather than reinterpret a @'Fun' a b@ at the
--- wrapped type after the fact, 'GenFun' generates at
+-- wrapped type after the fact, @GenFun@ generates at
 -- @'Fun' ('ShowP' a) ('ShowP' b)@ from the start, so 'show' applies directly and
 -- no coercion is involved. 'applyFunP' unwraps on the way back out.
 newtype ShowP a = ShowP {unShowP :: a}
@@ -174,7 +239,7 @@ isGenNonEmpty = case gen @a of
   GenEmpty _ -> False
   _ -> True
 
--- | Resample @genKey@ (cheaply, within 'Gen') up to 'maxTries' times until @isUsable@ accepts
+-- | Resample @genKey@ (cheaply, within 'Gen') up to @maxTries@ times until @isUsable@ accepts
 -- the draw, before ever asking 'Property' to commit to a choice.
 --
 -- 'Property'-level 'discard' restarts the *whole* property from scratch (and can trip
@@ -182,7 +247,7 @@ isGenNonEmpty = case gen @a of
 -- later, dependent draw (e.g. \"a morphism out of this object\") is likely to be empty for a
 -- \"bad\" choice made here, it's far cheaper to reject that choice immediately, inside 'Gen',
 -- than to commit to it via 'Property' and let the dependent draw discover the problem. A
--- choice that's still unusable after 'maxTries' attempts is returned anyway, so a genuinely
+-- choice that's still unusable after @maxTries@ attempts is returned anyway, so a genuinely
 -- unsatisfiable requirement still falls through to whatever ordinary 'discard' the caller's
 -- own dependent generation triggers.
 genSuchThat :: Gen key -> (key -> Bool) -> Gen key

@@ -40,12 +40,33 @@ infixl 5 &&
 infixl 5 &&&
 infixl 5 ***
 
+-- | Binary products: an object @a '&&' b@ with projections 'fst' and 'snd', universal among all
+-- pairs of arrows out of a common source -- each such pair factors through it uniquely via '(&&&)'.
+--
+-- __Laws:__
+--
+-- * @'fst' . (f '&&&' g) = f@
+-- * @'snd' . (f '&&&' g) = g@
+-- * Uniqueness: @(f . h) '&&&' (g . h) = (f '&&&' g) . h@
+--
+-- Checked by @Proarrow.Testing.Laws.propBinaryProducts@.
 class (CategoryOf k) => HasBinaryProducts k where
+  -- | The product object.
   type (a :: k) && (b :: k) :: k
+
+  -- | Recovers @'Ob' (a '&&' b)@ from the objecthood of the factors.
   withObProd :: (Ob (a :: k), Ob b) => ((Ob (a && b)) => r) -> r
+
+  -- | The left projection.
   fst :: (Ob (a :: k), Ob b) => (a && b) ~> a
+
+  -- | The right projection.
   snd :: (Ob (a :: k), Ob b) => (a && b) ~> b
+
+  -- | The mediating arrow: pairs two arrows out of a common source.
   (&&&) :: (a :: k) ~> x -> a ~> y -> a ~> x && y
+
+  -- | The product of two arrows, acting on each factor independently.
   (***) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a && b ~> x && y
   l *** r = (l . fst @k @a @b) &&& (r . snd @k @a @b) \\ l \\ r
 
@@ -165,7 +186,7 @@ associatorProdInv = withObProd @k @b @c ((obj @a *** fst @k @b @c) &&& (snd @k @
 swapProd :: forall {k} (a :: k) b. (HasBinaryProducts k, Ob a, Ob b) => a && b ~> b && a
 swapProd = snd @k @a @b &&& fst @k @a @b
 
-newtype PROD k = PR k
+type data PROD k = PR k
 
 -- | Lifts a profunctor to the 'PROD'-wrapped kinds, where the monoidal structure is the
 -- categorical product.

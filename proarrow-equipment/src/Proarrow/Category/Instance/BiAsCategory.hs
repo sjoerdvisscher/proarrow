@@ -7,7 +7,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 
-newtype BI (kk :: CAT s) = B s
+type data BI (kk :: CAT s) = B s
 
 type Bi :: CAT (BI kk)
 data Bi a b where

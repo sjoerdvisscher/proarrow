@@ -51,11 +51,13 @@ data LTE a b where
   ZLT :: LTE OZ b -> LTE OZ (OS b)
   SLT :: LTE a b -> LTE (OS a) (OS b)
 
-absurdL :: (a :: ORDINAL Z) ~> b
-absurdL @a = case obj @a of {}
+-- | @'ORDINAL' 'Z'@ is the empty ordinal, so an object of it is a contradiction: @'LTE' a a@ has
+-- no constructor that can match at this kind, and the empty case discharges any goal.
+absurdL :: forall (a :: ORDINAL Z) b. (Ob a) => a ~> b
+absurdL = case obj @a of {}
 
-absurdR :: a ~> (b :: ORDINAL Z)
-absurdR @_ @b = case obj @b of {}
+absurdR :: forall a (b :: ORDINAL Z). (Ob b) => a ~> b
+absurdR = case obj @b of {}
 
 type SOrdinal :: forall {n :: Nat}. ORDINAL n -> Type
 data SOrdinal a where
@@ -65,8 +67,6 @@ data SOrdinal a where
 type IsOrdinal :: forall {n :: Nat}. ORDINAL n -> Constraint
 class IsOrdinal (a :: ORDINAL n) where
   singOrdinal :: SOrdinal a
-instance IsOrdinal (a :: ORDINAL Z) where
-  singOrdinal = singOrdinal
 instance IsOrdinal OZ where
   singOrdinal = SOZ
 instance (IsOrdinal b) => IsOrdinal (OS b) where
