@@ -4,7 +4,6 @@
 module Props.Mat where
 
 import Data.Kind (Type)
-import Data.Type.Equality (TestEquality (..), type (:~:) (..))
 import Data.Type.Nat (Nat (..), Nat0, Nat1, Nat2, Nat3, SNat (..), SNatI, snat, snatToNat)
 import Data.Vec.Lazy (Vec (..), repeat)
 import Test.Falsify.Generator (elem)
@@ -66,7 +65,6 @@ type TestableNum n = (Num n, Eq n, Show n, TestableType n)
 
 instance (TestableNum n) => Testable (MatK n) where
   showOb @(M a) = show $ snatToNat $ snat @a
-  eqOb @(M a) @(M b) = (\Refl -> Refl) <$> testEquality (snat @a) (snat @b)
   genSome = genSomeDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
 
 instance (TestOb (a :: MatK n), TestOb b, TestableNum n) => TestableType (Mat a b) where

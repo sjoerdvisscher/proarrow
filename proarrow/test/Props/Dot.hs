@@ -8,14 +8,14 @@ import Data.List qualified as List
 import Data.List.NonEmpty (fromList)
 import Data.Proxy (Proxy (..))
 import Data.Traversable (for)
-import Data.Type.Equality (TestEquality (testEquality), (:~:) (..))
+import Data.Type.Equality ((:~:) (..))
 import Data.Void (absurd)
-import GHC.TypeLits (Symbol, decideSymbol, symbolVal, pattern SSymbol)
+import GHC.TypeLits (Symbol, decideSymbol, symbolVal)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, fst, id, snd, (.))
 
-import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..))
+import Proarrow.Category.Monoidal.Strictified (IsList (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
 import Proarrow.Tools.Diagrams.Dot
   ( DOT (..)
@@ -30,7 +30,6 @@ import Proarrow.Tools.Diagrams.Dot
   , (!)
   )
 
-import Proarrow.Testing.Laws
 import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
@@ -42,6 +41,7 @@ import Proarrow.Testing
   , oneElem
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
 
 test :: TestTree
 test =
@@ -74,12 +74,6 @@ instance Testable DOT where
     somes <- replicateM num (genSome @Symbol)
     pure $ foldSome somes
   showOb @ns = List.intercalate "," $ unVec $ names @(UN D ns)
-  eqOb @(D s) @(D t) =
-    case (sList @s, sList @t) of
-      (SNil, SNil) -> Just Refl
-      (SSing @a, SSing @b) -> (\Refl -> Refl) <$> testEquality (SSymbol @a) (SSymbol @b)
-      (SCons @a @as, SCons @b @bs) -> (\Refl Refl -> Refl) <$> testEquality (SSymbol @a) (SSymbol @b) <*> eqOb @DOT @(D as) @(D bs)
-      _ -> Nothing
 
 instance (Ob a, Ob b) => TestingEqShow (Dot a b)
 instance (Ob a, Ob b) => TestableType (Dot a b) where

@@ -187,7 +187,6 @@ instance TestableProfunctor (Sub Prof :: CAT GHom)
 -- sizes -- here the four numbers @[FLS\/E, FLS\/V, TRU\/E, TRU\/V]@.
 instance Testable GHom where
   showOb @(SUB p) = show (foreachOb @BOOL (\ @a -> foreachOb @GRAPH (\ @b -> [size @p @a @b])))
-  eqOb = Nothing
   genSome = genSomeDef @'[FIN Same, FIN Fold, FIN Dot, FIN TerminalProfunctor]
 
 -- | The sizes of @1 ~~> p@ and of @p@ over one object, which Yoneda says must agree.

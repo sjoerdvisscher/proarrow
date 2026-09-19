@@ -25,7 +25,7 @@ import Proarrow.Testing
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
-import Props.FinSet ()
+import Props.FinSet (eqFinSet)
 
 test :: TestTree
 test =
@@ -53,7 +53,6 @@ test =
 instance Testable (COSPAN FINSET) where
   type TestOb a = Ob a
   showOb @a = showOb @_ @(UN CS a)
-  eqOb @a @b = (\Refl -> Refl) <$> eqOb @_ @(UN CS a) @(UN CS b)
   genSome = mapSome CS <$> genSome
 
 -- instance (Ob a, Ob b, Testable k, TestObIsOb k) => TestingEqShow (Cospan a (b :: COSPAN k)) where
@@ -61,7 +60,7 @@ instance (Ob a, Ob b) => TestingEqShow (Cospan a (b :: COSPAN FINSET)) where
   eqP (Cospan @c1 l1 r1) (Cospan @c2 l2 r2) =
     l1 //
       l2 //
-        case eqOb @_ @c1 @c2 of
+        case eqFinSet @c1 @c2 of
           Just Refl -> do
             eql <- eqP l1 l2
             eqr <- eqP r1 r2

@@ -77,12 +77,6 @@ instance Testable COST where
   showOb @a = case sing @a of
     SINF -> "INF"
     SC @n -> "C " ++ show (natVal (Proxy @n))
-  eqOb @a @b = case (sing @a, sing @b) of
-    (SINF, SINF) -> Just Refl
-    (SC @a', SC @b') -> case cmpNat (Proxy @a') (Proxy @b') of
-      EQI -> Just Refl
-      _ -> Nothing
-    _ -> Nothing
 
 instance (Ob a, Ob b) => TestableType (GTE a b) where
   gen = case (sing @a, sing @b) of

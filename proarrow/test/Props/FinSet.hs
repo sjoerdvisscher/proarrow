@@ -12,7 +12,7 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
-import Proarrow.Core (CategoryOf (..))
+import Proarrow.Core (CategoryOf (..), UN)
 
 import Proarrow.Testing
   ( GenTotal (..)
@@ -51,10 +51,15 @@ test =
     , testMonoid_ @(FS Nat1)
     ]
 
+-- | Two finite sets are the same object when they have the same cardinality. Not a method of
+-- 'Testable': no law needs to compare objects (see "Props.Span"\'s 'eqP' for why the ones that do
+-- are comparing something existential).
+eqFinSet :: forall (a :: FINSET) (b :: FINSET). (Ob a, Ob b) => P.Maybe (a :~: b)
+eqFinSet = (\Refl -> Refl) P.<$> testEquality (snat @(UN FS a)) (snat @(UN FS b))
+
 instance Testable FINSET where
   type TestOb a = Ob a
   showOb @(FS a) = P.show (reflect (Proxy @a))
-  eqOb @(FS a) @(FS b) = (\Refl -> Refl) P.<$> testEquality (snat @a) (snat @b)
   genSome = genSomeDef @'[FS Nat1, FS Nat2, FS Nat3, FS Nat4]
 
 instance (Ob a, Ob b) => TestingEqShow (FinSet a b)

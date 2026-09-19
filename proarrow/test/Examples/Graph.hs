@@ -9,7 +9,6 @@
 module Examples.Graph where
 
 import Data.List (genericIndex, genericLength)
-import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (SNat (..), snat)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
@@ -106,10 +105,6 @@ instance TestableProfunctor GraphHom
 
 instance Testable GRAPH where
   showOb @a = case obj @a of IdE -> "E"; IdV -> "V"
-  eqOb @a @b = case (obj @a, obj @b) of
-    (IdE, IdE) -> Just Refl
-    (IdV, IdV) -> Just Refl
-    _ -> Nothing
   genSome = genSomeDef @'[E, V]
 
 test :: TestTree

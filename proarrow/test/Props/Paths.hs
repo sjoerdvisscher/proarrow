@@ -149,11 +149,6 @@ instance Testable HR where
     SEmployee -> "Employee"
     SDepartment -> "Department"
     SStr -> "Str"
-  eqOb @a @b = case (theHR @a, theHR @b) of
-    (SEmployee, SEmployee) -> Just Refl
-    (SDepartment, SDepartment) -> Just Refl
-    (SStr, SStr) -> Just Refl
-    _ -> Nothing
   genSome = genSomeDef @'[Employee, Department, Str]
 
 -- | Grow a path backwards from its target, normalising as it goes, so every generated arrow is in

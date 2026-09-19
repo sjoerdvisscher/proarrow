@@ -273,7 +273,6 @@ genTerm fuel sa sb =
 instance Testable FREEKIND where
   type TestOb a = (KnownFree a, Ob (LowerT a))
   showOb @a = showSFree (theFree @a)
-  eqOb @a @b = eqSFree (theFree @a) (theFree @b)
   genSome = genSomeDef @Palette
 
 -- | Two terms are equal iff they denote the same relation once interpreted into 'FINREL' via

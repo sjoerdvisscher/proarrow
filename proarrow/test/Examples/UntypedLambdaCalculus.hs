@@ -17,7 +17,6 @@ import Proarrow.Functor (Presheaf)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Testing.Laws (propBinaryProducts_, propCategory, propProfunctor, propTerminalObject)
 import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
@@ -28,6 +27,7 @@ import Proarrow.Testing
   , mapSome
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws (propBinaryProducts_, propCategory, propProfunctor, propTerminalObject)
 
 type data CON = Z | S CON
 
@@ -169,17 +169,22 @@ test =
     , testProperty "Tm presheaf" $ propProfunctor @Tm'
     ]
 
+-- | Two contexts are the same when they have the same length. Not a method of 'Testable': the
+-- laws never compare objects, and the two places below that do are comparing an object recovered
+-- from a value -- the middle context of a composite substitution, and the one a weakening drops.
+eqCon :: forall (a :: CON) (b :: CON). (Ob a, Ob b) => Maybe (a :~: b)
+eqCon = case (sing @a, sing @b) of
+  (SZ, SZ) -> Just Refl
+  (SS @a', SS @b') -> case eqCon @a' @b' of
+    Just Refl -> Just Refl
+    Nothing -> Nothing
+  _ -> Nothing
+
 instance Testable CON where
   genSome = frequency [(2, pure (Some @Z)), (1, mapSome S <$> genSome)]
   showOb @a = case sing @a of
     SZ -> "Z"
     SS @b -> "(S " ++ showOb @CON @b ++ ")"
-  eqOb @a @b = case (sing @a, sing @b) of
-    (SZ, SZ) -> Just Refl
-    (SS @a', SS @b') -> case eqOb @CON @a' @b' of
-      Just Refl -> Just Refl
-      Nothing -> Nothing
-    _ -> Nothing
 
 deriving instance Show (Sub a b)
 instance Eq (Sub a b) where
@@ -187,7 +192,7 @@ instance Eq (Sub a b) where
   Wk == Wk = True
   Cons a b == Cons c d = a == c && b == d
   Comp @l a b == Comp @r c d =
-    a // c // case eqOb @CON @l @r of
+    a // c // case eqCon @l @r of
       Just Refl -> a == c && b == d
       Nothing -> False
   _ == _ = False
@@ -221,7 +226,7 @@ genDepthSub 0 = Nothing
 genDepthSub d =
   oneof' $
     [ [pure Id | SZ <- [sing @a], SZ <- [sing @b]]
-    , [pure Wk | SS @a' <- [sing @a], Just Refl <- [eqOb @CON @a' @b]]
+    , [pure Wk | SS @a' <- [sing @a], Just Refl <- [eqCon @a' @b]]
     , [liftA2 cons s t | SS <- [sing @b], Just s <- [genDepthSub (d - 1)], Just t <- [genDepthTm (d - 1)]]
     ]
       ++ [ [liftA2 (.) l r | Just l <- [genDepthSub @m @b (d - 1)], Just r <- [genDepthSub (d - 1)]]

@@ -25,7 +25,7 @@ import Proarrow.Testing
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
-import Props.FinSet ()
+import Props.FinSet (eqFinSet)
 
 test :: TestTree
 test =
@@ -53,7 +53,6 @@ test =
 instance Testable (SPAN FINSET) where
   type TestOb a = Ob a
   showOb @a = showOb @_ @(UN SP a)
-  eqOb @a @b = (\Refl -> Refl) <$> eqOb @_ @(UN SP a) @(UN SP b)
   genSome = mapSome SP <$> genSome
 
 -- instance (Ob a, Ob b, Testable k, TestObIsOb k) => TestingEqShow (Span a (b :: SPAN k)) where
@@ -61,7 +60,7 @@ instance (Ob a, Ob b) => TestingEqShow (Span a (b :: SPAN FINSET)) where
   eqP (Span @c1 l1 r1) (Span @c2 l2 r2) =
     l1 //
       l2 //
-        case eqOb @_ @c1 @c2 of
+        case eqFinSet @c1 @c2 of
           Just Refl -> do
             eql <- eqP l1 l2
             eqr <- eqP r1 r2

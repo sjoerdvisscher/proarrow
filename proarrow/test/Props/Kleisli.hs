@@ -81,7 +81,6 @@ instance
 instance (TestableProfunctor p, TestableTypeP p, Promonad p) => Testable (KLEISLI (p :: Type +-> Type)) where
   type TestOb a = (Ob a, TestOb (UN KL a))
   showOb @(KL a) = "KL " ++ showOb @_ @a
-  eqOb @(KL a) @(KL b) = (\Refl -> Refl) <$> eqOb @Type @a @b
   genSome = genSomeDef @'[KL Bool, KL (), KL (Maybe Bool)]
 
 newtype Pair a = Pair {unPair :: (a, a)}

@@ -11,7 +11,6 @@ module Proarrow.Testing where
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Maybe (mapMaybe)
-import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
 import Test.Falsify.Generator (Fun, Function (..), Gen, applyFun, elem, fun, functionMap, minimalValue, oneof)
 import Test.Tasty.Falsify (Property, discard, genWith, testFailed)
@@ -237,13 +236,11 @@ class
     p <- genNamed @(p a b) nm
     pure $ SomeP p
 
+-- | A kind whose objects can be enumerated and displayed.
 class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor (Hom k), TestableTypeP (Hom k), CategoryOf k) => Testable k where
   type TestOb (a :: k) :: GHC.Constraint
   type TestOb a = Ob a
   showOb :: forall (a :: k). (TestOb a) => String
-  eqOb :: (TestOb (a :: k), TestOb b) => Maybe (a :~: b)
-  default eqOb :: forall a b. (TestOb (a :: k), TestOb b, Typeable a, Typeable b) => Maybe (a :~: b)
-  eqOb = eqT @a @b
   genSome :: Gen (Some k)
 
 genOb :: (Testable k) => Property (Some k)
@@ -256,7 +253,6 @@ instance (TestableProfunctor p) => TestableProfunctor (Op p) where
 instance (Testable k) => Testable (OPPOSITE k) where
   type TestOb a = (Is OP a, TestOb (UN OP a))
   showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
-  eqOb @(OP a) @(OP b) = fmap (\Refl -> Refl) $ eqOb @k @a @b
   genSome = mapSome OP <$> genSome
 
 -- | The 'PROD' wrapper changes only which tensor a kind carries, so everything transports across it.
@@ -268,7 +264,6 @@ instance (TestableProfunctor p) => TestableProfunctor (Prod p) where
 instance (Testable k) => Testable (PROD k) where
   type TestOb a = (Is PR a, TestOb (UN PR a))
   showOb @(PR a) = "PR (" ++ showOb @k @a ++ ")"
-  eqOb @(PR a) @(PR b) = fmap (\Refl -> Refl) (eqOb @k @a @b)
   genSome = mapSome PR <$> genSome
 
 instance TestableProfunctor Unit
@@ -284,9 +279,6 @@ instance (TestableProfunctor p, TestableProfunctor q) => TestableProfunctor (p :
 instance (Testable j, Testable k) => Testable (j, k) where
   type TestOb a = (a ~ '(Fst @ a, Snd @ a), TestOb (Fst @ a), TestOb (Snd @ a))
   showOb @'(a, b) = "(" ++ showOb @j @a ++ ", " ++ showOb @k @b ++ ")"
-  eqOb @'(a1, a2) @'(b1, b2) = case (eqOb @j @a1 @b1, eqOb @k @a2 @b2) of
-    (Just Refl, Just Refl) -> Just Refl
-    _ -> Nothing
   genSome = do
     Some @a <- genSome @j
     Some @b <- genSome @k

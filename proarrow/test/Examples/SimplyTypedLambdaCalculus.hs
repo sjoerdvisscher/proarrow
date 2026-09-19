@@ -442,7 +442,6 @@ genSub fuel = oneOfTotal [idB, termB, wkB, consB, compB]
 instance Testable TY where
   type TestOb a = (IsTy a, TyTestOb a)
   showOb @a = showTy @a
-  eqOb = eqTy
   genSome = genSomeDef @TyPalette
 
 deriving instance Show (Ty a b)
@@ -457,7 +456,6 @@ instance TestableProfunctor Ty
 instance Testable CON where
   type TestOb g = (ConOb g, ConTestOb g)
   showOb @g = showCon @g
-  eqOb = eqCon
   genSome = genSomeDef @ConPalette
 
 deriving instance Show (Sub a b)

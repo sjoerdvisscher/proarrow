@@ -147,10 +147,6 @@ instance Testable BOOL where
   showOb @a = case obj @a of
     Fls -> "FLS"
     Tru -> "TRU"
-  eqOb @a @b = case (obj @a, obj @b) of
-    (Fls, Fls) -> Just Refl
-    (Tru, Tru) -> Just Refl
-    _ -> Nothing
   genSome = genSomeDef @'[FLS, TRU]
 
 instance (Ob a, Ob b) => TestableType (Booleans a b) where

@@ -3,7 +3,6 @@
 
 module Props.FinRel where
 
-import Data.Type.Equality (TestEquality (..), type (:~:) (..))
 import Data.Type.Nat (Nat (..), Nat0, Nat1, Nat2, Nat3, SNatI, snat, snatToNat)
 import Test.Falsify.Generator (Function (..), elem)
 import Test.Tasty (TestTree, testGroup)
@@ -66,7 +65,6 @@ test =
 
 instance Testable FINREL where
   showOb @(FR a) = show $ snatToNat $ snat @a
-  eqOb @(FR a) @(FR b) = (\Refl -> Refl) <$> testEquality (snat @a) (snat @b)
   genSome = genSomeDef @'[FR Z, FR (S Z), FR (S (S Z)), FR (S (S (S Z)))]
 
 instance (TestOb a, TestOb b) => TestableType (FinRel a b) where

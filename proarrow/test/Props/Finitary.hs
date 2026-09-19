@@ -220,13 +220,11 @@ instance TestableProfunctor (Sub Prof :: CAT Psh)
 -- generating an arbitrary finitary profunctor would mean generating a type.
 --
 -- 'TestOb' is just 'Ob', with no 'Typeable': a profunctor is displayed by its table of sizes rather
--- than by a type name, and 'eqOb' is answered conservatively, which costs nothing because no
--- law-checking property consumes it. That is what lets every property be used in its @prop..._@
--- form below: those pass the constructions\' own object witnesses, which supply @Ob@ and nothing
--- more, and @Ob@ is now all 'TestOb' asks for.
+-- than by a type name. That is what lets every property be used in its @prop..._@ form below: those
+-- pass the constructions\' own object witnesses, which supply @Ob@ and nothing more, and @Ob@ is all
+-- 'TestOb' asks for.
 instance Testable Psh where
   showOb @(SUB p) = show (foreachOb @BOOL (\ @b -> [size @p @'() @b]))
-  eqOb = Nothing
   genSome = genSomeDef @'[FIN Rows, FIN Point, FIN Edge, FIN TwoEdges, FIN TerminalProfunctor]
 
 -- | Swap the first two rows at 'FLS'. 'F2T' is onto, so naturality leaves no choice about the
