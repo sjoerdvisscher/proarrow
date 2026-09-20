@@ -25,6 +25,7 @@ module Proarrow.Core
   , CategoryOf (..)
   , Hom
   , Ob'
+  , ObId (..)
 
     -- * Profunctors
 
@@ -106,10 +107,12 @@ class (Promonad ((~>) :: CAT k)) => CategoryOf k where
   -- | The type of morphisms in the category.
   type (~>) :: CAT k
 
-  -- | What constraints objects must satisfy.
+  -- | What constraints objects must satisfy. Defaults to 'ObId', which is what a category with
+  -- more than one object wants; a category where every type of the kind is an object, with no
+  -- evidence needed, says @type 'Ob' a = 'Any' a@ instead.
   type Ob (a :: k) :: Constraint
 
-  type Ob a = Any a
+  type Ob a = ObId a
 
 -- | A type synonym for @(~>) :: CAT k@, the type of morphisms in the category of kind @k@.
 type Hom k = ((~>) :: CAT k)
@@ -119,6 +122,31 @@ type Hom k = ((~>) :: CAT k)
 class (Ob a, CategoryOf k) => Ob' (a :: k)
 
 instance (Ob a, CategoryOf k) => Ob' (a :: k)
+
+-- | Objecthood that carries the object's own identity arrow, and the default for 'Ob'.
+--
+-- This is what a category with more than one object needs: 'id' must produce the identity /at
+-- whichever object it is asked for/, so it has to dispatch on the object, and one instance per
+-- object is exactly that dispatch. Since 'Ob' defaults to 'ObId' and 'id' defaults to 'objId',
+-- such a category defines neither -- it just gives an 'ObId' instance per object:
+--
+-- > type data STATE = Draft | Live
+-- >
+-- > type Move :: CAT STATE
+-- > data Move a b where
+-- >   KeepDraft :: Move Draft Draft
+-- >   Publish :: Move Draft Live
+-- >   KeepLive :: Move Live Live
+-- >
+-- > instance ObId Draft where objId = KeepDraft
+-- > instance ObId Live where objId = KeepLive
+-- >
+-- > instance CategoryOf STATE where
+-- >   type (~>) = Move
+type ObId :: forall {k}. k -> Constraint
+class (CategoryOf k) => ObId (a :: k) where
+  -- | The identity arrow at @a@.
+  objId :: a ~> a
 
 -- * Profunctors
 
@@ -182,9 +210,15 @@ dimapDefault f g h = g . h . f
 -- * Left identity: @'id' . f = f@
 -- * Right identity: @f . 'id' = f@
 -- * Associativity: @(h . g) . f = h . (g . f)@
-class (Profunctor p) => Promonad p where
+type Promonad :: forall {k}. CAT k -> Constraint
+class (Profunctor p) => Promonad (p :: CAT k) where
   -- | Identity morphisms.
+  --
+  -- Defaults to 'objId' for a category's own hom-profunctor, so a category that leaves 'Ob' at
+  -- its 'ObId' default gets 'id' for free.
   id :: (Ob a) => p a a
+  default id :: forall (a :: k). (ObId a, p ~ ((~>) :: CAT k)) => p a a
+  id = objId
 
   -- | Composition (note the parameter order matches function composition).
   (.) :: p b c -> p a b -> p a c
@@ -226,6 +260,7 @@ instance Promonad (->) where
 -- | The category of Haskell types (a.k.a @Hask@), where the arrows are functions.
 instance CategoryOf Type where
   type (~>) = (->)
+  type Ob a = Any a
 
 instance (VacuousOb k, Hom k ~ (:~:)) => Profunctor ((:~:) :: CAT k) where
   dimap Refl Refl Refl = Refl

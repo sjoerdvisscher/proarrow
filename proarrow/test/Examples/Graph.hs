@@ -15,7 +15,7 @@ import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..))
 import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), ObId (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -41,20 +41,17 @@ data GraphHom a b where
 deriving instance Eq (GraphHom a b)
 deriving instance Show (GraphHom a b)
 
-class IsGraphOb (a :: GRAPH) where graphId :: GraphHom a a
-instance IsGraphOb E where graphId = IdE
-instance IsGraphOb V where graphId = IdV
+instance ObId E where objId = IdE
+instance ObId V where objId = IdV
 
 instance CategoryOf GRAPH where
   type (~>) = GraphHom
-  type Ob a = IsGraphOb a
 
 instance Profunctor GraphHom where
   dimap = dimapDefault
   r \\ f = case f of IdE -> r; IdV -> r; Src -> r; Tgt -> r
 
 instance Promonad GraphHom where
-  id = graphId
   g . IdE = g
   IdV . f = f
 

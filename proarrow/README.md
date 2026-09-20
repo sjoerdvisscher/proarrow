@@ -59,7 +59,7 @@ one as the other.
 {-# LANGUAGE TypeData, TypeFamilies #-}
 import Prelude hiding (id, (.))
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), ObId (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type data STATE = Draft | Live
 
@@ -73,16 +73,13 @@ deriving instance Show (Move a b)
 
 -- 'id' has to produce the identity *at whichever object it is asked for*, so being an
 -- object is exactly the ability to supply that identity:
-class IsState (a :: STATE) where stateId :: Move a a
-instance IsState Draft where stateId = KeepDraft
-instance IsState Live where stateId = KeepLive
+instance ObId Draft where objId = KeepDraft
+instance ObId Live where objId = KeepLive
 
 instance CategoryOf STATE where
   type (~>) = Move
-  type Ob a = IsState a
 
 instance Promonad Move where
-  id = stateId
   KeepDraft . KeepDraft = KeepDraft
   Publish . KeepDraft = Publish
   KeepLive . Publish = Publish
@@ -108,13 +105,13 @@ Publish
 
 The `Ob` family is where the object constraints from above come in, and the `\\` method is how
 those constraints are observed from an arrow — matching on a constructor reveals which objects
-it runs between, which is what lets `id` be recovered later. The singleton-class shape of
-`IsState` is the house pattern for any category with more than one object:
-`Proarrow.Category.Instance.Bool` does exactly this for the walking arrow, and
-`test/Examples/Graph.hs` for a free category on a quiver. Where the objects carry *no*
-non-identity arrows at all, reach for `Proarrow.Category.Instance.Discrete`'s `DISCRETE` instead
-and skip the class (see `test/Props/Paths.hs`). A one-object category needs no dispatch and is
-just a monoid — that is `Proarrow.Category.Instance.Monoid`.
+it runs between. Note what is *absent*: no `type Ob`, and no `id`. `Ob` defaults to `ObId`, and
+`id` defaults to `objId`, so the two instances above are the whole of the object structure. A
+category where every type of the kind is an object with no evidence needed says
+`type Ob a = Any a` instead — that is what `Hask` does. Where the objects carry *no* non-identity
+arrows at all, reach for `Proarrow.Category.Instance.Discrete`'s `DISCRETE` (see
+`test/Props/Paths.hs`), and a one-object category needs no dispatch at all, being just a monoid —
+`Proarrow.Category.Instance.Monoid`.
 
 And now the generic kind-machinery applies: `OPPOSITE STATE` is the opposite category,
 `(STATE, STATE)` the product category, `STATE +-> STATE` are profunctors on states, and so on.

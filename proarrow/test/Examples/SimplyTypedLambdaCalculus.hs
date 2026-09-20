@@ -14,7 +14,7 @@ import Test.Tasty.Falsify (testProperty)
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
-  , Obj
+  , ObId (..)
   , Profunctor (..)
   , Promonad (..)
   , dimapDefault
@@ -65,9 +65,8 @@ import Props.Hask ()
 
 type data TY = K | TY :=> TY
 
-class IsTy (a :: TY) where ty :: Obj a
-instance IsTy K where ty = SK
-instance (IsTy a, IsTy b) => IsTy (a :=> b) where ty = SF
+instance ObId K where objId = SK
+instance (ObId a, ObId b) => ObId (a :=> b) where objId = SF
 
 type Ty :: CAT TY
 data Ty g h where
@@ -78,12 +77,10 @@ instance Profunctor Ty where
   r \\ SK = r
   r \\ SF = r
 instance Promonad Ty where
-  id = ty
   SK . SK = SK
   SF . SF = SF
 instance CategoryOf TY where
   type (~>) = Ty
-  type Ob a = (IsTy a)
 
 type data CON = E | CON :> TY
 
@@ -307,7 +304,7 @@ succ = Lam (Lam (Lam (App (Vs Vz) (App (App (Vs (Vs Vz)) (Vs Vz)) Vz))))
 -- ** Structural equality and display, needing only 'Ob'
 
 eqTy :: forall (x :: TY) (y :: TY). (Ob x, Ob y) => Maybe (x :~: y)
-eqTy = case (ty @x, ty @y) of
+eqTy = case (obj @x, obj @y) of
   (SK, SK) -> Just Refl
   (SF @a @b, SF @a' @b') -> case (eqTy @a @a', eqTy @b @b') of
     (Just Refl, Just Refl) -> Just Refl
@@ -315,7 +312,7 @@ eqTy = case (ty @x, ty @y) of
   _ -> Nothing
 
 showTy :: forall (a :: TY). (Ob a) => String
-showTy = case ty @a of
+showTy = case obj @a of
   SK -> "K"
   SF @a' @b' -> "(" ++ showTy @a' ++ " => " ++ showTy @b' ++ ")"
 
@@ -358,7 +355,7 @@ type family ConTestOb (g :: CON) :: Constraint where
   ConTestOb (g :> a) = (ConTestOb g, TyTestOb a, Function (EvalTy a))
 
 withEvalTy :: forall (a :: TY) r. (Ob a, TyTestOb a) => ((TestableType (EvalTy a), TestingEqShow (EvalTy a)) => r) -> r
-withEvalTy r = case ty @a of
+withEvalTy r = case obj @a of
   SK -> r
   SF @x @y -> withEvalTy @x (withEvalTy @y r)
 
@@ -415,7 +412,7 @@ genTm fuel = oneOfTotal [varB, lamB, appB]
           [ case eqTy @b @a of Just Refl -> pure Vz; Nothing -> empty
           , Vs <$> genTm @g' @a fuel
           ]
-    lamB = case ty @a of
+    lamB = case obj @a of
       SK -> empty
       SF @a1 @a2 -> Lam <$> genTm @(g :> a1) @a2 fuel
     appB
@@ -451,7 +448,7 @@ genSub fuel = oneOfTotal [idB, termB, wkB, consB, compB]
 -- ** Testable instances
 
 instance Testable TY where
-  type TestOb a = (IsTy a, TyTestOb a)
+  type TestOb a = (ObId a, TyTestOb a)
   showOb @a = showTy @a
   genSome = genSomeDef @TyPalette
 
@@ -460,7 +457,7 @@ deriving instance Eq (Ty a b)
 instance (Ob a, Ob b) => TestingEqShow (Ty a b)
 instance (Ob a, Ob b) => TestableType (Ty a b) where
   gen = case eqTy @a @b of
-    Just Refl -> oneElem (ty @a)
+    Just Refl -> oneElem (obj @a)
     Nothing -> GenEmpty (error "gen @Ty")
 instance TestableProfunctor Ty
 

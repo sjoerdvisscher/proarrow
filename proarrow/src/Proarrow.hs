@@ -27,6 +27,7 @@ module Proarrow
   , tgt
   , pattern Objs
   , Ob'
+  , ObId (..)
 
     -- * Functors
   , Functor (..)
@@ -70,6 +71,7 @@ import Proarrow.Adjunction (Adjunction, leftAdjunct, rightAdjunct)
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
+  , ObId (..)
   , Obj
   , Profunctor (..)
   , Promonad (..)

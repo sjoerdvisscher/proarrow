@@ -34,7 +34,7 @@ import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Member (..), 
 import Proarrow.Category.Instance.Discrete (DISCRETE (..))
 import Proarrow.Category.Instance.Paths (PATHS (..), Paths (..), Rewrite, emb, foldPaths, pathLength)
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (Any, CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Copresheaf, FunctorForRep (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (corepUniv))
@@ -104,6 +104,7 @@ type data B' = AirlineSeat' | DollarsB' | StringB'
 
 instance CategoryOf B' where
   type (~>) = (:~:)
+  type Ob a = Any a
 
 type GB :: CAT B'
 data GB a b where
@@ -299,6 +300,7 @@ type data GR' = Arrow' | Vertex'
 
 instance CategoryOf GR' where
   type (~>) = (:~:)
+  type Ob a = Any a
 
 type GGr :: CAT GR'
 data GGr a b where
@@ -320,6 +322,7 @@ type data DDS' = State'
 
 instance CategoryOf DDS' where
   type (~>) = (:~:)
+  type Ob a = Any a
 
 type GDds :: CAT DDS'
 data GDds a b where
