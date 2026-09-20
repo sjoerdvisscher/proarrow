@@ -36,17 +36,17 @@ import Proarrow.Testing
   , optGen
   )
 import Proarrow.Testing.Laws
-  ( propBinaryCoproducts_
-  , propBinaryProducts_
-  , propCategory
-  , propClosed_
-  , propCoequalizers_
-  , propEqualizers_
-  , propFinitary
-  , propInitialObject
-  , propPullbacks_
-  , propPushouts_
-  , propTerminalObject
+  ( testBinaryCoproducts_
+  , testBinaryProducts_
+  , testCategory
+  , testClosed_
+  , testCoequalizers_
+  , testEqualizers_
+  , testFinitary
+  , testInitialObject
+  , testPullbacks_
+  , testPushouts_
+  , testTerminalObject
   )
 import Props.Bool ()
 
@@ -143,7 +143,7 @@ instance Finitary Fold where
 instance (Ob a, Ob b) => TestingEqShow (Same a b)
 instance (Ob a, Ob b) => TestingEqShow (Fold a b)
 
--- | Spelled out rather than taken from 'elements', so that 'propFinitary' compares the numbering
+-- | Spelled out rather than taken from 'elements', so that 'testFinitary' compares the numbering
 -- against something independent of it, as in "Props.Finitary".
 instance (Ob a, Ob b) => TestableType (Same a b) where
   gen = case obj @b of
@@ -199,21 +199,21 @@ test :: TestTree
 test =
   testGroup
     "Finitary.Graph"
-    [ propCategory @GHom
-    , propTerminalObject @GHom
-    , propInitialObject @GHom
-    , propBinaryProducts_ @GHom
-    , propBinaryCoproducts_ @GHom
-    , propClosed_ @(PROD GHom)
-    , propEqualizers_ @GHom
-    , propCoequalizers_ @GHom
-    , propPullbacks_ @GHom
-    , propPushouts_ @GHom
-    , propFinitary @Same "Same"
-    , propFinitary @Fold "Fold"
+    [ testCategory @GHom
+    , testTerminalObject @GHom
+    , testInitialObject @GHom
+    , testBinaryProducts_ @GHom
+    , testBinaryCoproducts_ @GHom
+    , testClosed_ @(PROD GHom)
+    , testEqualizers_ @GHom
+    , testCoequalizers_ @GHom
+    , testPullbacks_ @GHom
+    , testPushouts_ @GHom
+    , testFinitary @Same "Same"
+    , testFinitary @Fold "Fold"
     , -- as in "Props.Finitary": this checks the table round trip, the counts below check that the
       -- enumeration is complete
-      propFinitary @(Sub Prof :: CAT GHom) "GHom"
+      testFinitary @(Sub Prof :: CAT GHom) "GHom"
     , testProperty "the hom-sets have the sizes a hand count gives them" $ do
         -- a lone vertex picks an endpoint of the edge, and the same one in both layers
         expect "Dot -> Same" 2 (size @(Sub Prof) @(FIN Dot) @(FIN Same))

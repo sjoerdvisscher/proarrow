@@ -32,22 +32,22 @@ test :: TestTree
 test =
   testGroup
     "FinSet"
-    [ propCategory @FINSET
-    , propTerminalObject @FINSET
-    , propInitialObject @FINSET
-    , propBinaryProducts_ @FINSET
-    , propCartesian_ @FINSET
-    , propMonoidal_ @FINSET
-    , propMonoidalHom_ @FINSET
-    , propSymMonoidal_ @FINSET
-    , propCopyDiscard_ @FINSET
-    , propBinaryCoproducts_ @FINSET
-    , propDistributive_ @FINSET
-    , propClosed_ @FINSET
-    , propEqualizers_ @FINSET
-    , propCoequalizers_ @FINSET
-    , propPullbacks_ @FINSET
-    , propPushouts_ @FINSET
+    [ testCategory @FINSET
+    , testTerminalObject @FINSET
+    , testInitialObject @FINSET
+    , testBinaryProducts_ @FINSET
+    , testCartesian_ @FINSET
+    , testMonoidal_ @FINSET
+    , testMonoidalHom_ @FINSET
+    , testSymMonoidal_ @FINSET
+    , testCopyDiscard_ @FINSET
+    , testBinaryCoproducts_ @FINSET
+    , testDistributive_ @FINSET
+    , testClosed_ @FINSET
+    , testEqualizers_ @FINSET
+    , testCoequalizers_ @FINSET
+    , testPullbacks_ @FINSET
+    , testPushouts_ @FINSET
     , testComonoid_ @(FS Nat0)
     , testComonoid_ @(FS Nat1)
     , testComonoid_ @(FS Nat2)

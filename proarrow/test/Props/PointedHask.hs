@@ -28,15 +28,15 @@ test :: TestTree
 test =
   testGroup
     "Pointed Hask"
-    [ propCategory @POINTED
-    , propTerminalObject @POINTED
-    , propInitialObject @POINTED
-    , propBinaryProducts @POINTED (\r -> r)
-    , propBinaryCoproducts @POINTED (\r -> r)
-    , propMonoidal @POINTED (\r -> r)
-    , propMonoidalHom @POINTED (\r -> r)
-    , propSymMonoidal @POINTED (\r -> r)
-    , propCopyDiscard @POINTED (\r -> r) (\r -> r)
+    [ testCategory @POINTED
+    , testTerminalObject @POINTED
+    , testInitialObject @POINTED
+    , testBinaryProducts @POINTED (\r -> r)
+    , testBinaryCoproducts @POINTED (\r -> r)
+    , testMonoidal @POINTED (\r -> r)
+    , testMonoidalHom @POINTED (\r -> r)
+    , testSymMonoidal @POINTED (\r -> r)
+    , testCopyDiscard @POINTED (\r -> r) (\r -> r)
     , testMonoid @(P Void) (\r -> r)
     , testMonoid @(P ()) (\r -> r)
     , testMonoid @(P [()]) (\r -> r)

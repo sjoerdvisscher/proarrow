@@ -46,17 +46,17 @@ import Proarrow.Testing
   , optGen
   )
 import Proarrow.Testing.Laws
-  ( propBinaryCoproducts_
-  , propBinaryProducts_
-  , propCategory
-  , propClosed_
-  , propCoequalizers_
-  , propEqualizers_
-  , propFinitary
-  , propInitialObject
-  , propPullbacks_
-  , propPushouts_
-  , propTerminalObject
+  ( testBinaryCoproducts_
+  , testBinaryProducts_
+  , testCategory
+  , testClosed_
+  , testCoequalizers_
+  , testEqualizers_
+  , testFinitary
+  , testInitialObject
+  , testPullbacks_
+  , testPushouts_
+  , testTerminalObject
   )
 import Proarrow.Tools.DPO (Rule (..), dpoStep)
 import Props.Bool ()
@@ -104,7 +104,7 @@ instance Finitary Rows where
 
 instance (Ob u, Ob b) => TestingEqShow (Rows u b)
 
--- | Spelled out rather than taken from 'elements', so that 'propFinitary' checks the numbering
+-- | Spelled out rather than taken from 'elements', so that 'testFinitary' checks the numbering
 -- against something independent of it: a generator defined as @optGen elements@ can never produce a
 -- row the instance has lost track of, which is exactly the mistake worth catching.
 instance (Ob u, IsBool b) => TestableType (Rows u b) where
@@ -253,22 +253,22 @@ test :: TestTree
 test =
   testGroup
     "Finitary"
-    [ propCategory @Psh
-    , propTerminalObject @Psh
-    , propInitialObject @Psh
-    , propBinaryProducts_ @Psh
-    , propBinaryCoproducts_ @Psh
-    , propClosed_ @(PROD Psh)
-    , propEqualizers_ @Psh
-    , propCoequalizers_ @Psh
-    , propPullbacks_ @Psh
-    , propPushouts_ @Psh
-    , propFinitary @Rows "Rows"
+    [ testCategory @Psh
+    , testTerminalObject @Psh
+    , testInitialObject @Psh
+    , testBinaryProducts_ @Psh
+    , testBinaryCoproducts_ @Psh
+    , testClosed_ @(PROD Psh)
+    , testEqualizers_ @Psh
+    , testCoequalizers_ @Psh
+    , testPullbacks_ @Psh
+    , testPushouts_ @Psh
+    , testFinitary @Rows "Rows"
     , -- The enumeration of natural transformations is itself a numbering, and obeys the same laws.
       -- Its generator draws from that same enumeration, so this checks the table round trip --
       -- tabulate a transformation built from a row and get the row back -- and not whether the
       -- enumeration is complete. The counts below are what check that.
-      propFinitary @(Sub Prof :: CAT Psh) "Psh"
+      testFinitary @(Sub Prof :: CAT Psh) "Psh"
     , testProperty "the hom-sets have the sizes a hand count gives them" $ do
         -- 'F2T' is onto, so the component at TRU is forced; at FLS, R1 and R2 must land in a common
         -- fibre of it -- four ways inside {R1, R2}, or both on R3 -- and R3 is free: 5 * 3.

@@ -44,7 +44,7 @@ import Proarrow.Optic (PIso, iso)
 -- * 'Proarrow.Category.Monoidal.StarAutonomous.doubleNegIso' witnesses
 --   @'Dual' ('Dual' a) ≅ a@, naturally.
 --
--- Checked by @Proarrow.Testing.Laws.propStarAutonomous@.
+-- Checked by @Proarrow.Testing.Laws.testStarAutonomous@.
 class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
   -- | The dual of an object.
   type Dual (a :: k) :: k

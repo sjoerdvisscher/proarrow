@@ -41,18 +41,18 @@ test :: TestTree
 test =
   testGroup
     "Hask"
-    [ propCategory @Type
-    , propTerminalObject @Type
-    , propInitialObject @Type
-    , propBinaryProducts @Type (\r -> r)
-    , propCartesian @Type (\r -> r) (\r -> r)
-    , propMonoidal @Type (\r -> r)
-    , propMonoidalHom @Type (\r -> r)
-    , propSymMonoidal @Type (\r -> r)
-    , propCopyDiscard @Type (\r -> r) (\r -> r)
-    , propBinaryCoproducts @Type (\r -> r)
-    , propDistributive @Type (\r -> r) (\r -> r)
-    , propClosed @Type (\r -> r) (\r -> r)
+    [ testCategory @Type
+    , testTerminalObject @Type
+    , testInitialObject @Type
+    , testBinaryProducts @Type (\r -> r)
+    , testCartesian @Type (\r -> r) (\r -> r)
+    , testMonoidal @Type (\r -> r)
+    , testMonoidalHom @Type (\r -> r)
+    , testSymMonoidal @Type (\r -> r)
+    , testCopyDiscard @Type (\r -> r) (\r -> r)
+    , testBinaryCoproducts @Type (\r -> r)
+    , testDistributive @Type (\r -> r) (\r -> r)
+    , testClosed @Type (\r -> r) (\r -> r)
     , testFrobenius @() (\r -> r)
     , testProperty "list monoid is not Frobenius: copy-comonoid breaks speciality" $
         unless

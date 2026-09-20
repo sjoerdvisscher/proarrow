@@ -124,5 +124,5 @@ categories.
 
 To property-test the laws of your own category, depend on the public sublibrary
 `proarrow:testing`: a `Testable` instance for your kind plus the law checks from
-`Proarrow.Testing.Laws` (`propCategory`, `propMonoidal`, ...) give it a test suite —
+`Proarrow.Testing.Laws` (`testCategory`, `testMonoidal`, ...) give it a test suite —
 proarrow's own tests are built from exactly these pieces.

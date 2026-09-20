@@ -25,15 +25,15 @@ test :: TestTree
 test =
   testGroup
     "ZX calculus"
-    [ propCategory @Nat
-    , propMonoidal_ @Nat
-    , propMonoidalHom_ @Nat
-    , propHypergraph_ @Nat
-    , propSymMonoidal_ @Nat
-    , propClosed_ @Nat
-    , propCompactClosed_ @Nat
-    , propStarAutonomous_ @Nat
-    , propCopyDiscard_ @Nat
+    [ testCategory @Nat
+    , testMonoidal_ @Nat
+    , testMonoidalHom_ @Nat
+    , testHypergraph_ @Nat
+    , testSymMonoidal_ @Nat
+    , testClosed_ @Nat
+    , testCompactClosed_ @Nat
+    , testStarAutonomous_ @Nat
+    , testCopyDiscard_ @Nat
     , testCommutativeMonoid_ @0
     , testCommutativeMonoid_ @1
     , testCommutativeMonoid_ @2

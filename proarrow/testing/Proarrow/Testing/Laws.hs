@@ -2,26 +2,20 @@
 
 {- HLINT ignore "Redundant id" -}
 
--- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'propCategory',
--- 'propMonoidal', 'propBinaryProducts', 'propClosed', and friends. Wiring a new category into a
+-- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'testCategory',
+-- 'testMonoidal', 'testBinaryProducts', 'testClosed', and friends. Wiring a new category into a
 -- test suite is a 'Testable' instance plus calls to these -- see proarrow's own test suite for
 -- many examples.
 --
--- Most of them return a 'TestTree', ready for a 'Test.Tasty.testGroup'. Eighteen return a
--- @'Property' ()@ instead, meant to be composed into a property of your own -- at a chosen object,
--- or under a witness the caller has just brought into scope: 'propProfunctor', 'propProfunctorWith',
--- 'propMonoidalProfunctor', 'propFunctor', 'propNaturalTransformation', 'propRepresentable',
--- 'propCorepresentable', 'propAdjunction', 'propIso', 'propIso'', 'propIsoP', 'propNaturalIsoP',
--- 'propMonoid', 'propCommutativeMonoid', 'propCocommutativeComonoid', 'propFrobenius',
--- 'propDecidable' and 'propCartesianAt'. Most have a @test@-prefixed 'TestTree' wrapper
--- (e.g. 'testMonoid' around 'propMonoid'), which is what to reach for unless you are assembling a
--- property yourself. Note that 'propMonoid' and 'propMonoidal' differ by more than two letters:
--- the first is a fragment about a monoid /object/, the second a test tree about a monoidal
--- /category/.
+-- The prefix tells you the return type. A @test@ returns a 'TestTree', ready to drop into a
+-- 'Test.Tasty.testGroup'; a @prop@ returns a @'Property' ()@, meant to be composed into a property
+-- of your own -- at a chosen object, or under a witness the caller has just brought into scope.
+-- Where both exist the @test@ one is the ready-made wrapper (e.g. 'testMonoid' around
+-- 'propMonoid'), and is what to reach for unless you are assembling a property yourself.
 --
 -- Many of these take an explicit witness that 'TestOb' is closed under the structure being tested
 -- (e.g. that @'TestOb' (a '**' b)@ follows from @'TestOb' a@ and @'TestOb' b@), since in general a
--- category may restrict which objects are testable. The @_@-suffixed variant (e.g. 'propMonoidal_')
+-- category may restrict which objects are testable. The @_@-suffixed variant (e.g. 'testMonoidal_')
 -- supplies that witness for free, and so carries a 'TestObIsOb' constraint: it applies exactly when
 -- every object is a 'TestOb' -- typically a category that leaves 'TestOb' at its @'Ob'@ default.
 module Proarrow.Testing.Laws where
@@ -86,8 +80,8 @@ import Proarrow.Testing
   , testEq
   )
 
-propCategory :: forall k. (Testable k) => TestTree
-propCategory = testProperty "Category" $ do
+testCategory :: forall k. (Testable k) => TestTree
+testCategory = testProperty "Category" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   f <- genNamed @(a ~> b) "f"
@@ -99,30 +93,30 @@ propCategory = testProperty "Category" $ do
   h <- genNamed @(c ~> d) "h"
   testEq "associativity" "(h . g) . f" ((h . g) . f) "h . (g . f)" (h . (g . f))
 
-propTerminalObject
+testTerminalObject
   :: forall k
    . (Testable k, Terminal.HasTerminalObject k, TestOb (Terminal.TerminalObject :: k))
   => TestTree
-propTerminalObject = testProperty "Terminal object" $ do
+testTerminalObject = testProperty "Terminal object" $ do
   Some @a <- genOb @k
   g <- genNamed @(a ~> Terminal.TerminalObject) "g"
   testEq "uniqueness" "g" g "terminate" Terminal.terminate
 
-propInitialObject
+testInitialObject
   :: forall k
    . (Testable k, Initial.HasInitialObject k, TestOb (Initial.InitialObject :: k))
   => TestTree
-propInitialObject = testProperty "Initial object" $ do
+testInitialObject = testProperty "Initial object" $ do
   Some @a <- genOb @k
   g <- genNamed @(Initial.InitialObject ~> a) "g"
   testEq "uniqueness" "g" g "initiate" Initial.initiate
 
-propBinaryProducts
+testBinaryProducts
   :: forall k
    . (Testable k, BinaryProduct.HasBinaryProducts k)
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryProduct.&& b)) => r) -> r)
   -> TestTree
-propBinaryProducts withTestObProd = testProperty "Binary products" $ do
+testBinaryProducts withTestObProd = testProperty "Binary products" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   Some @c <- genOb
@@ -140,18 +134,18 @@ propBinaryProducts withTestObProd = testProperty "Binary products" $ do
       "(f &&& g) . h"
       ((f BinaryProduct.&&& g) . h)
 
-propBinaryProducts_
+testBinaryProducts_
   :: forall k
    . (Testable k, BinaryProduct.HasBinaryProducts k, TestObIsOb k)
   => TestTree
-propBinaryProducts_ = propBinaryProducts @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
+testBinaryProducts_ = testBinaryProducts @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
 
-propBinaryCoproducts
+testBinaryCoproducts
   :: forall k
    . (Testable k, BinaryCoproduct.HasBinaryCoproducts k)
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryCoproduct.|| b)) => r) -> r)
   -> TestTree
-propBinaryCoproducts withTestObCoprod = testProperty "Binary coproducts" $ do
+testBinaryCoproducts withTestObCoprod = testProperty "Binary coproducts" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   Some @c <- genOb
@@ -169,26 +163,26 @@ propBinaryCoproducts withTestObCoprod = testProperty "Binary coproducts" $ do
       "h . (f ||| g)"
       (h . (f BinaryCoproduct.||| g))
 
-propBinaryCoproducts_
+testBinaryCoproducts_
   :: forall k
    . (Testable k, BinaryCoproduct.HasBinaryCoproducts k, TestObIsOb k)
   => TestTree
-propBinaryCoproducts_ = propBinaryCoproducts @k (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
+testBinaryCoproducts_ = testBinaryCoproducts @k (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
 
 -- | Checks the equalizer laws: the equalizer arrow @e@ equalizes @f@ and @g@; any @h@ that factors
 -- through @e@ (built here as @e . p@ for an arbitrary @p@, so the precondition holds by construction)
 -- is correctly recovered by 'Equalizer.factorEqualizer'; and @e@ is mono (composing with it on the
 -- left reflects equality).
 --
--- Unlike 'propBinaryProducts', the equalizer object isn't computed from @a@, @b@ by a type family --
+-- Unlike 'testBinaryProducts', the equalizer object isn't computed from @a@, @b@ by a type family --
 -- it's an arbitrary object revealed at runtime, whose 'Ob' evidence 'Objs' recovers generically from
 -- the equalizer arrow. So @withTestOb@ only ever needs to bridge that single recovered 'Ob' to 'TestOb'.
-propEqualizers
+testEqualizers
   :: forall k
    . (Testable k, Equalizer.HasEqualizers k)
   => (forall (e :: k) r. (Ob e) => ((TestOb e) => r) -> r)
   -> TestTree
-propEqualizers withTestOb = testProperty "Equalizers" $ do
+testEqualizers withTestOb = testProperty "Equalizers" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   f <- genNamed @(a ~> b) "f"
@@ -218,22 +212,22 @@ propEqualizers withTestOb = testProperty "Equalizers" $ do
           ++ " but (k1 == k2) = "
           ++ show eqDirect
 
-propEqualizers_
+testEqualizers_
   :: forall k
    . (Testable k, Equalizer.HasEqualizers k, TestObIsOb k)
   => TestTree
-propEqualizers_ = propEqualizers @k (\r -> r)
+testEqualizers_ = testEqualizers @k (\r -> r)
 
--- | Checks the coequalizer laws, dual to 'propEqualizers': the coequalizer arrow @c@ coequalizes @f@
+-- | Checks the coequalizer laws, dual to 'testEqualizers': the coequalizer arrow @c@ coequalizes @f@
 -- and @g@; any @h@ that factors through @c@ (built here as @p . c@ for an arbitrary @p@, so the
 -- precondition holds by construction) is correctly recovered by 'Coequalizer.factorCoequalizer'; and
 -- @c@ is epi (post-composing with it on the right reflects equality).
-propCoequalizers
+testCoequalizers
   :: forall k
    . (Testable k, Coequalizer.HasCoequalizers k)
   => (forall (c :: k) r. (Ob c) => ((TestOb c) => r) -> r)
   -> TestTree
-propCoequalizers withTestOb = testProperty "Coequalizers" $ do
+testCoequalizers withTestOb = testProperty "Coequalizers" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   f <- genNamed @(a ~> b) "f"
@@ -245,7 +239,7 @@ propCoequalizers withTestOb = testProperty "Coequalizers" $ do
     let h = p . cq
         factored = Coequalizer.factorCoequalizer cq h
     testEq "factorization" "factored . c" (factored . cq) "h" h
-    -- As in 'propEqualizers': an arbitrary arrow that coequalizes must factor, not only one
+    -- As in 'testEqualizers': an arbitrary arrow that coequalizes must factor, not only one
     -- built by composing through @cq@.
     m <- genNamed @(b ~> z) "m"
     coequalizes <- eqP (m . f) (m . g)
@@ -262,22 +256,22 @@ propCoequalizers withTestOb = testProperty "Coequalizers" $ do
           ++ " but (k1 == k2) = "
           ++ show eqDirect
 
-propCoequalizers_
+testCoequalizers_
   :: forall k
    . (Testable k, Coequalizer.HasCoequalizers k, TestObIsOb k)
   => TestTree
-propCoequalizers_ = propCoequalizers @k (\r -> r)
+testCoequalizers_ = testCoequalizers @k (\r -> r)
 
 -- | Checks the pullback laws: the pullback cone commutes; it's jointly monic (composing with both
 -- legs at once reflects equality); and any compatible cone (built here as @(p1 . j, p2 . j)@ for an
 -- arbitrary @j@, so compatibility holds by construction) is correctly recovered by
 -- 'Pullback.factorPullback'.
-propPullbacks
+testPullbacks
   :: forall k
    . (Testable k, Pullback.HasPullbacks k)
   => (forall (p :: k) r. (Ob p) => ((TestOb p) => r) -> r)
   -> TestTree
-propPullbacks withTestOb = testProperty "Pullbacks" $ do
+testPullbacks withTestOb = testProperty "Pullbacks" $ do
   Some @o <- genOb @k
   Some @a <- genOb
   Some @b <- genOb
@@ -313,22 +307,22 @@ propPullbacks withTestOb = testProperty "Pullbacks" $ do
       testEq "existence (1)" "p1 . factorPullback p1 p2 x y" (p1 . fac) "x" x
       testEq "existence (2)" "p2 . factorPullback p1 p2 x y" (p2 . fac) "y" y
 
-propPullbacks_
+testPullbacks_
   :: forall k
    . (Testable k, Pullback.HasPullbacks k, TestObIsOb k)
   => TestTree
-propPullbacks_ = propPullbacks @k (\r -> r)
+testPullbacks_ = testPullbacks @k (\r -> r)
 
--- | Checks the pushout laws, dual to 'propPullbacks': the pushout cocone commutes; it's jointly epic
+-- | Checks the pushout laws, dual to 'testPullbacks': the pushout cocone commutes; it's jointly epic
 -- (post-composing with both legs at once reflects equality); and any compatible cocone (built here as
 -- @(j . p1, j . p2)@ for an arbitrary @j@, so compatibility holds by construction) is correctly
 -- recovered by 'Pushout.factorPushout'.
-propPushouts
+testPushouts
   :: forall k
    . (Testable k, Pushout.HasPushouts k)
   => (forall (p :: k) r. (Ob p) => ((TestOb p) => r) -> r)
   -> TestTree
-propPushouts withTestOb = testProperty "Pushouts" $ do
+testPushouts withTestOb = testProperty "Pushouts" $ do
   Some @o <- genOb @k
   Some @a <- genOb
   Some @b <- genOb
@@ -364,18 +358,18 @@ propPushouts withTestOb = testProperty "Pushouts" $ do
       testEq "existence (1)" "factorPushout p1 p2 x y . p1" (fac . p1) "x" x
       testEq "existence (2)" "factorPushout p1 p2 x y . p2" (fac . p2) "y" y
 
-propPushouts_
+testPushouts_
   :: forall k
    . (Testable k, Pushout.HasPushouts k, TestObIsOb k)
   => TestTree
-propPushouts_ = propPushouts @k (\r -> r)
+testPushouts_ = testPushouts @k (\r -> r)
 
-propMonoidal
+testMonoidal
   :: forall k
    . (Testable k, M.Monoidal k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> TestTree
-propMonoidal withTestOb2 = testProperty "Monoidal" $ do
+testMonoidal withTestOb2 = testProperty "Monoidal" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   Some @c <- genOb
@@ -457,18 +451,18 @@ propMonoidal withTestOb2 = testProperty "Monoidal" $ do
                                           "associator . associator"
                                           (M.associator @k @a @b @(c M.** d) . M.associator @k @(a M.** b) @c @d)
 
-propMonoidal_
+testMonoidal_
   :: forall k
    . (Testable k, M.Monoidal k, TestObIsOb k)
   => TestTree
-propMonoidal_ = propMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
+testMonoidal_ = testMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
 
-propSymMonoidal
+testSymMonoidal
   :: forall k
    . (Testable k, M.SymMonoidal k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> TestTree
-propSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $ do
+testSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   Some @c <- genOb
@@ -486,19 +480,19 @@ propSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $ do
                 "(swap ** id) . associator . (id ** swap)"
                 ((obj @b M.** M.swap @k @a @c) . M.associator @k @b @a @c . (M.swap @k @a @b M.** obj @c))
 
-propSymMonoidal_
+testSymMonoidal_
   :: forall k
    . (Testable k, M.SymMonoidal k, TestObIsOb k)
   => TestTree
-propSymMonoidal_ = propSymMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
+testSymMonoidal_ = testSymMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
 
-propCopyDiscard
+testCopyDiscard
   :: forall k
    . (Testable k, CopyDiscard.CopyDiscard k, TestOb (M.Unit @k))
   => (forall (a :: k) r. (TestOb a) => ((Ob a, Monoid.CocommutativeComonoid a) => r) -> r)
   -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> TestTree
-propCopyDiscard withCoco withTestOb2 = testProperty "CopyDiscard" $ do
+testCopyDiscard withCoco withTestOb2 = testProperty "CopyDiscard" $ do
   Some @a <- genOb @k
   withCoco @a (propCocommutativeComonoid @a (\ @x @y r -> withTestOb2 @x @y r))
 
@@ -506,23 +500,23 @@ propCopyDiscard withCoco withTestOb2 = testProperty "CopyDiscard" $ do
 -- @'Monoid.Supplies' 'Monoid.CocommutativeComonoid' k@ superclass), so only @'Ob' a@ has to be
 -- recovered from @'TestOb' a@ -- through 'obFromTestOb', because with that quantified superclass in
 -- scope GHC no longer finds the @TestOb a => Ob' a => Ob a@ route on its own.
-propCopyDiscard_
+testCopyDiscard_
   :: forall k
    . (Testable k, CopyDiscard.CopyDiscard k, TestObIsOb k)
   => TestTree
-propCopyDiscard_ =
-  propCopyDiscard @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+testCopyDiscard_ =
+  testCopyDiscard @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
 
 -- | The coherence law tying 'Cartesian.Cartesian' to its 'CopyDiscard.CopyDiscard' superclass
 -- (Fox's theorem): the comonoid supplied on every object is the natural one, @copy = id &&& id@
 -- and @discard = terminate@.
-propCartesian
+testCartesian
   :: forall k
    . (Testable k, Cartesian.Cartesian k, TestOb (M.Unit @k))
   => (forall (a :: k) r. (TestOb a) => ((Ob a) => r) -> r)
   -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> TestTree
-propCartesian withOb withTestOb2 = testProperty "Cartesian" $ do
+testCartesian withOb withTestOb2 = testProperty "Cartesian" $ do
   Some @a <- genOb @k
   withOb @a (withTestOb2 @a @a (propCartesianAt @a))
 
@@ -543,20 +537,20 @@ propCartesianAt = do
   testEq "copy" "copy" (CopyDiscard.copy @k @a) "id &&& id" (BinaryProduct.diag @a)
   testEq "discard" "discard" (CopyDiscard.discard @k @a) "terminate" (Terminal.terminate @k @a)
 
-propCartesian_
+testCartesian_
   :: forall k
    . (Testable k, Cartesian.Cartesian k, TestObIsOb k, TestOb (M.Unit @k))
   => TestTree
-propCartesian_ =
-  propCartesian @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+testCartesian_ =
+  testCartesian @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
 
-propDistributive
+testDistributive
   :: forall k
    . (Testable k, Distributive.Distributive k, TestOb (Initial.InitialObject :: k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryCoproduct.|| b)) => r) -> r)
   -> TestTree
-propDistributive withTestOb2 withTestObCoprod = testProperty "Distributive" $ do
+testDistributive withTestOb2 withTestObCoprod = testProperty "Distributive" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   Some @c <- genOb
@@ -577,22 +571,22 @@ propDistributive withTestOb2 withTestObCoprod = testProperty "Distributive" $ do
                           propIso (Distributive.absorbL @k @a) Initial.initiate
                           propIso (Distributive.absorbR @k @a) Initial.initiate
 
-propDistributive_
+testDistributive_
   :: forall k
    . (Testable k, Distributive.Distributive k, TestObIsOb k)
   => TestTree
-propDistributive_ =
-  propDistributive @k
+testDistributive_ =
+  testDistributive @k
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
 
-propClosed
+testClosed
   :: forall k
    . (Testable k, Exponential.Closed k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Exponential.~~> b)) => r) -> r)
   -> TestTree
-propClosed withTestOb2 withTestObExp =
+testClosed withTestOb2 withTestObExp =
   testGroup
     "Closed"
     [ testProperty "Exponential is functorial" $ do
@@ -639,12 +633,12 @@ propClosed withTestOb2 withTestObExp =
               (n . Exponential.uncurry @b @c)
     ]
 
-propClosed_
+testClosed_
   :: forall k
    . (Testable k, Exponential.Closed k, TestObIsOb k)
   => TestTree
-propClosed_ =
-  propClosed @k
+testClosed_ =
+  testClosed @k
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a @b r -> Exponential.withObExp @k @a @b r)
 
@@ -652,13 +646,13 @@ propClosed_ =
 -- 'SA.dualInv', establishes a bijection on hom-sets; 'SA.linDist'\/'SA.linDistInv' establish a
 -- bijection @Hom(a ** b, Dual c) ≅ Hom(a, Dual (b ** c))@, natural in all three variables; and
 -- 'SA.doubleNegIso' witnesses that double dualization is (naturally) isomorphic to the identity.
-propStarAutonomous
+testStarAutonomous
   :: forall k
    . (Testable k, SA.StarAutonomous k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> (forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r)
   -> TestTree
-propStarAutonomous withTestOb2 withTestObDual = testProperty "*-autonomous" $ do
+testStarAutonomous withTestOb2 withTestObDual = testProperty "*-autonomous" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   Some @c <- genOb
@@ -752,12 +746,12 @@ propStarAutonomous withTestOb2 withTestObDual = testProperty "*-autonomous" $ do
                                 "dual (id ** h) . linDist p"
                                 (SA.dual @k @(b M.** c) @(b M.** c') (obj @b M.** hc) . SA.linDist @k @a @b @c' p2)
 
-propStarAutonomous_
+testStarAutonomous_
   :: forall k
    . (Testable k, SA.StarAutonomous k, TestObIsOb k)
   => TestTree
-propStarAutonomous_ =
-  propStarAutonomous
+testStarAutonomous_ =
+  testStarAutonomous
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
 
@@ -766,13 +760,13 @@ propStarAutonomous_ =
 -- @Dual Unit ≅ Unit@ (i.e. 'SA.Dual' is a strong monoidal functor); and the yanking\/zigzag
 -- identities witness that @a@ and @Dual a@ are genuinely dual to one another via
 -- 'CC.dualityUnit'\/'CC.dualityCounit'.
-propCompactClosed
+testCompactClosed
   :: forall k
    . (Testable k, CC.CompactClosed k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> (forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r)
   -> TestTree
-propCompactClosed withTestOb2 withTestObDual = testProperty "Compact closed" $ do
+testCompactClosed withTestOb2 withTestObDual = testProperty "Compact closed" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   withTestObDual @a $
@@ -845,19 +839,19 @@ propCompactClosed withTestOb2 withTestObDual = testProperty "Compact closed" $ d
                                     "id"
                                     id
 
-propCompactClosed_
+testCompactClosed_
   :: forall k
    . (Testable k, CC.CompactClosed k, TestObIsOb k)
   => TestTree
-propCompactClosed_ =
-  propCompactClosed
+testCompactClosed_ =
+  testCompactClosed
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
 
 -- | Check that the object @m@ is a special commutative 'Hypergraph.Frobenius' algebra: it is a
 -- 'Monoid.CommutativeMonoid' (via 'propCommutativeMonoid') and a 'Monoid.CocommutativeComonoid'
 -- (via 'propCocommutativeComonoid'), and satisfies speciality (@mappend . comult = id@) and the
--- Frobenius condition. This is the structure a 'Hypergraph.Hypergraph' category supplies -- @'propHypergraph'@
+-- Frobenius condition. This is the structure a 'Hypergraph.Hypergraph' category supplies -- @'testHypergraph'@
 -- samples an object and delegates here.
 propFrobenius
   :: forall {k} m
@@ -897,21 +891,21 @@ propFrobenius withTestOb2 = do
         (delta . mu)
 
 -- | Check 'propFrobenius' at randomly sampled objects.
-propHypergraph
+testHypergraph
   :: forall k
    . (Testable k, M.SymMonoidal k, TestOb (M.Unit @k))
   => (forall (a :: k) r. (TestOb a) => ((Ob a, Hypergraph.Frobenius a) => r) -> r)
   -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> TestTree
-propHypergraph withFrob withTestOb2 = testProperty "Hypergraph (Frobenius supply)" $ do
+testHypergraph withFrob withTestOb2 = testProperty "Hypergraph (Frobenius supply)" $ do
   Some @a <- genOb @k
   withFrob @a (propFrobenius @a (\ @x @y r -> withTestOb2 @x @y r))
 
-propHypergraph_
+testHypergraph_
   :: forall k
    . (Testable k, M.SymMonoidal k, TestObIsOb k, forall (a :: k). (TestOb a) => Hypergraph.Frobenius a)
   => TestTree
-propHypergraph_ = propHypergraph @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r)
+testHypergraph_ = testHypergraph @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r)
 
 testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
 testProfunctor = testProperty "Profunctor" (propProfunctor @p)
@@ -974,7 +968,7 @@ propProfunctorWith genPro withEqShow = do
 -- At @'Hom' k@, 'dimap' is pre- and postcomposition, so naturality reads
 -- @(g ** g\') . (f ** f\') == (g . f) ** (g\' . f\')@: the bifunctoriality of the tensor, saying the
 -- two arrows are combined rather than sequenced. A /premonoidal/ @**@ satisfies every coherence law
--- in 'propMonoidal' and fails exactly this one.
+-- in 'testMonoidal' and fails exactly this one.
 propMonoidalProfunctor
   :: forall {j} {k} (p :: j +-> k)
    . (M.MonoidalProfunctor p, TestableProfunctor p, TestOb (M.Unit @k), TestOb (M.Unit @j))
@@ -1039,7 +1033,7 @@ propMonoidalProfunctor withTestObK withTestObJ = do
 
 -- | 'propMonoidalProfunctor' at a monoidal category\'s own hom-profunctor. The two kinds coincide
 -- there, so one witness serves both.
-propMonoidalHom
+testMonoidalHom
   :: forall k
    . (Testable k, M.Monoidal k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
@@ -1047,13 +1041,13 @@ propMonoidalHom
 -- Both witnesses are eta-expanded rather than passed through: 'TestOb' is an associated type
 -- family, so two rank-2 witness types cannot be matched by unification, and each use has to be
 -- solved at its own concrete objects.
-propMonoidalHom withTestOb2 =
+testMonoidalHom withTestOb2 =
   testProperty
     "Monoidal profunctor"
     (propMonoidalProfunctor @(Hom k) (\ @a @b r -> withTestOb2 @a @b r) (\ @a @b r -> withTestOb2 @a @b r))
 
-propMonoidalHom_ :: forall k. (Testable k, M.Monoidal k, TestObIsOb k, TestOb (M.Unit @k)) => TestTree
-propMonoidalHom_ = propMonoidalHom @k (\ @a @b r -> M.withOb2 @k @a @b r)
+testMonoidalHom_ :: forall k. (Testable k, M.Monoidal k, TestObIsOb k, TestOb (M.Unit @k)) => TestTree
+testMonoidalHom_ = testMonoidalHom @k (\ @a @b r -> M.withOb2 @k @a @b r)
 
 -- | Check the functor laws of a 'Functor.Functor' @f@: @map id = id@ and @map (g . f) = map g . map
 -- f@. The witness lifts 'TestOb' along @f@ (usually @\\ \@a r -> r@ when @'TestOb' (f a)@ follows
@@ -1104,12 +1098,12 @@ testFunctor_ = testFunctor @f (\r -> r)
 -- 'Finitary.size' honest rather than merely self-consistent -- but only as far as the 'TestableType'
 -- generator is independent of the instance: one defined as @optGen 'Finitary.elements'@ makes the
 -- last law vacuous. The label names the profunctor, which nothing in its type can supply.
-propFinitary
+testFinitary
   :: forall {j} {k} (p :: j +-> k)
    . (Testable j, Testable k, Finitary.Finitary p, TestableTypeP p)
   => String
   -> TestTree
-propFinitary nm = testProperty ("Finitary " ++ nm) $ do
+testFinitary nm = testProperty ("Finitary " ++ nm) $ do
   Some @a <- genOb @k
   Some @b <- genOb @j
   let n = Finitary.size @p @a @b

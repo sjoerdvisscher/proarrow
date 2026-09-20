@@ -25,7 +25,7 @@ import Proarrow.Testing
   , genSomeFinite
   , optGen
   )
-import Proarrow.Testing.Laws (propCategory, propFinitary)
+import Proarrow.Testing.Laws (testCategory, testFinitary)
 
 -- | Two objects: the edges and the vertices.
 type data GRAPH = E | V
@@ -107,7 +107,7 @@ test :: TestTree
 test =
   testGroup
     "Graph"
-    [ propCategory @GRAPH
+    [ testCategory @GRAPH
     , -- the numbering of the hom-sets, which everything finitary over this schema is built on
-      propFinitary @GraphHom "GraphHom"
+      testFinitary @GraphHom "GraphHom"
     ]

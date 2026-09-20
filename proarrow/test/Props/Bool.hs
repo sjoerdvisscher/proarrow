@@ -47,23 +47,23 @@ test :: TestTree
 test =
   testGroup
     "Booleans"
-    [ propCategory @BOOL
-    , propTerminalObject @BOOL
-    , propInitialObject @BOOL
-    , propBinaryProducts_ @BOOL
-    , propCartesian_ @BOOL
-    , propMonoidal_ @BOOL
-    , propMonoidalHom_ @BOOL
-    , propSymMonoidal_ @BOOL
-    , propCopyDiscard_ @BOOL
-    , propStarAutonomous_ @BOOL
-    , propBinaryCoproducts_ @BOOL
-    , propDistributive_ @BOOL
-    , propClosed_ @BOOL
-    , propEqualizers_ @BOOL
-    , propCoequalizers_ @BOOL
-    , propPullbacks_ @BOOL
-    , propPushouts_ @BOOL
+    [ testCategory @BOOL
+    , testTerminalObject @BOOL
+    , testInitialObject @BOOL
+    , testBinaryProducts_ @BOOL
+    , testCartesian_ @BOOL
+    , testMonoidal_ @BOOL
+    , testMonoidalHom_ @BOOL
+    , testSymMonoidal_ @BOOL
+    , testCopyDiscard_ @BOOL
+    , testStarAutonomous_ @BOOL
+    , testBinaryCoproducts_ @BOOL
+    , testDistributive_ @BOOL
+    , testClosed_ @BOOL
+    , testEqualizers_ @BOOL
+    , testCoequalizers_ @BOOL
+    , testPullbacks_ @BOOL
+    , testPushouts_ @BOOL
     , testCommutativeMonoid_ @TRU
     , testProperty "FF,FT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(FLS, TRU))

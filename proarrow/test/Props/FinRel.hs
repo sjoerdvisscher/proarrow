@@ -36,22 +36,22 @@ test :: TestTree
 test =
   testGroup
     "FinRel"
-    [ propCategory @FINREL
-    , propTerminalObject @FINREL
-    , propInitialObject @FINREL
-    , propBinaryProducts_ @FINREL
-    , propBinaryCoproducts_ @FINREL
-    , propMonoidal_ @FINREL
-    , propMonoidalHom_ @FINREL
-    , propSymMonoidal_ @FINREL
-    , propDistributive_ @FINREL
-    , propClosed_ @FINREL
-    , propStarAutonomous_ @FINREL
-    , propCompactClosed_ @FINREL
+    [ testCategory @FINREL
+    , testTerminalObject @FINREL
+    , testInitialObject @FINREL
+    , testBinaryProducts_ @FINREL
+    , testBinaryCoproducts_ @FINREL
+    , testMonoidal_ @FINREL
+    , testMonoidalHom_ @FINREL
+    , testSymMonoidal_ @FINREL
+    , testDistributive_ @FINREL
+    , testClosed_ @FINREL
+    , testStarAutonomous_ @FINREL
+    , testCompactClosed_ @FINREL
     , -- the tensor-hom (currying) adjunction @(FR Nat2 '**' -) ⊣ (FR Nat2 '~~>' -)@
       testAdjunction_ @(Reader (OP (FR Nat2)) :: FINREL +-> FINREL)
-    , propHypergraph_ @FINREL
-    , propCopyDiscard_ @FINREL
+    , testHypergraph_ @FINREL
+    , testCopyDiscard_ @FINREL
     , testCommutativeMonoid_ @(FR Nat0)
     , testCommutativeMonoid_ @(FR Nat1)
     , testCommutativeMonoid_ @(FR Nat2)

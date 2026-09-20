@@ -50,7 +50,7 @@ infixr 2 ~~>
 -- @'apply' . ('curry' f '**' 'id') = f@. The exponential is thereby functorial: @'(^^^)'@ is
 -- contravariant in its second argument and covariant in its first.
 --
--- Checked by @Proarrow.Testing.Laws.propClosed@.
+-- Checked by @Proarrow.Testing.Laws.testClosed@.
 class (Monoidal k) => Closed k where
   -- | The internal hom (exponential) object.
   type (a :: k) ~~> (b :: k) :: k

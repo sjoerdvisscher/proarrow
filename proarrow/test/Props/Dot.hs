@@ -47,13 +47,13 @@ test :: TestTree
 test =
   testGroup
     "Dot"
-    [ propCategory @DOT
-    , propMonoidal_ @DOT
-    , propSymMonoidal_ @DOT
-    -- No 'propMonoidalHom_' for the same reason as 'propCopyDiscard_' below: the two sides draw
+    [ testCategory @DOT
+    , testMonoidal_ @DOT
+    , testSymMonoidal_ @DOT
+    -- No 'testMonoidalHom_' for the same reason as 'testCopyDiscard_' below: the two sides draw
     -- the same graph but emit its nodes in a different order, and a 'Dot' arrow is compared as the
     -- picture data, node names and all.
-    -- No 'propCopyDiscard_': a 'Dot' arrow /is/ the picture, compared structurally, and the
+    -- No 'testCopyDiscard_': a 'Dot' arrow /is/ the picture, compared structurally, and the
     -- comonoid laws only hold up to what the picture means. @counit@ and @comult@ each draw a
     -- point node, so copying and then discarding a branch leaves two nodes the identity does not.
     ]

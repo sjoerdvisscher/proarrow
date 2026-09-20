@@ -39,41 +39,41 @@ test =
     "Kleisli"
     [ testGroup
         "Maybe monad"
-        [ propCategory @(KLEISLI (Star (Prelude Maybe)))
-        , propInitialObject @(KLEISLI (Star (Prelude Maybe)))
-        , propMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
-        , propMonoidalHom @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
-        , propSymMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
-        , propCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r) (\r -> r)
-        , propBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        [ testCategory @(KLEISLI (Star (Prelude Maybe)))
+        , testInitialObject @(KLEISLI (Star (Prelude Maybe)))
+        , testMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        , testMonoidalHom @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        , testSymMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        , testCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r) (\r -> r)
+        , testBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         ]
     , testGroup
         "Continuation promonad"
-        [ propCategory @(KLEISLI (Cont Void))
-        , -- No terminal object, products or 'propCartesian' here: those lift to the co-Kleisli
+        [ testCategory @(KLEISLI (Cont Void))
+        , -- No terminal object, products or 'testCartesian' here: those lift to the co-Kleisli
           -- category of a 'Comonad', and @'Cont' r@ is a monad, not a comonad. They did hold at
           -- @'Cont' 'Void'@, but only because every hom-set in this group is a singleton (see the
           -- note below), not for any reason that generalises.
-          propInitialObject @(KLEISLI (Cont Void))
-        , propBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
-        , propClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
+          testInitialObject @(KLEISLI (Cont Void))
+        , testBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
+        , testClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
         , -- Note this group is close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
           -- and every object in the palette is inhabited, so every hom-set here is a singleton and
           -- every law holds trivially. A non-empty answer type would make it meaningful, but the
           -- generator for @(b -> r) -> (a -> r)@ does not currently support one.
-          propMonoidalHom @(KLEISLI (Cont Void)) (\r -> r)
+          testMonoidalHom @(KLEISLI (Cont Void)) (\r -> r)
         ]
     , testGroup
         "Pair comonad"
-        [ propCategory @(KLEISLI (Costar (Prelude Pair)))
-        , propTerminalObject @(KLEISLI (Costar (Prelude Pair)))
+        [ testCategory @(KLEISLI (Costar (Prelude Pair)))
+        , testTerminalObject @(KLEISLI (Costar (Prelude Pair)))
         , -- No initial object: that lifts for a 'Monad', and @'Costar' f@ is a comonad. It did
           -- hold here because @'Pair' 'Void'@ is itself empty, which is a fact about 'Pair' rather
           -- than about comonads.
-          propBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
-        , propCartesian @(KLEISLI (Costar (Prelude Pair))) (\r -> r) (\r -> r)
-        , propMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
-        , propMonoidalHom @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
+          testBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
+        , testCartesian @(KLEISLI (Costar (Prelude Pair))) (\r -> r) (\r -> r)
+        , testMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
+        , testMonoidalHom @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         ]
     ]
 

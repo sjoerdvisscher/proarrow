@@ -53,13 +53,13 @@ import Proarrow.Testing
   , oneOfTotal
   )
 import Proarrow.Testing.Laws
-  ( propBinaryProducts
-  , propCategory
-  , propClosed
-  , propMonoidal
-  , propMonoidalHom
-  , propProfunctor
-  , propTerminalObject
+  ( propProfunctor
+  , testBinaryProducts
+  , testCategory
+  , testClosed
+  , testMonoidal
+  , testMonoidalHom
+  , testTerminalObject
   )
 import Props.Hask ()
 
@@ -524,11 +524,11 @@ test :: TestTree
 test =
   testGroup
     "Simply typed lambda calculus"
-    [ propCategory @CON
-    , propTerminalObject @CON
-    , propBinaryProducts @CON (\ @a @b r -> withTestObProdCON @a @b r)
-    , propMonoidal @CON (\ @a @b r -> withTestObProdCON @a @b r)
-    , propMonoidalHom @CON (\ @a @b r -> withTestObProdCON @a @b r)
-    , propClosed @CON (\ @a @b r -> withTestObProdCON @a @b r) (\ @a @b r -> withTestObExpCON @a @b r)
+    [ testCategory @CON
+    , testTerminalObject @CON
+    , testBinaryProducts @CON (\ @a @b r -> withTestObProdCON @a @b r)
+    , testMonoidal @CON (\ @a @b r -> withTestObProdCON @a @b r)
+    , testMonoidalHom @CON (\ @a @b r -> withTestObProdCON @a @b r)
+    , testClosed @CON (\ @a @b r -> withTestObProdCON @a @b r) (\ @a @b r -> withTestObExpCON @a @b r)
     , testProperty "Tm profunctor" $ propProfunctor @Tm
     ]

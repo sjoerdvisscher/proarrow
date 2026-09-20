@@ -46,23 +46,23 @@ test :: TestTree
 test =
   testGroup
     "FinHask"
-    [ propCategory @FINHASK
-    , propTerminalObject @FINHASK
-    , propInitialObject @FINHASK
-    , propBinaryProducts @FINHASK (\r -> r)
-    , propCartesian @FINHASK (\r -> r) (\r -> r)
-    , propMonoidal @FINHASK (\r -> r)
-    , propMonoidalHom @FINHASK (\r -> r)
-    , propSymMonoidal @FINHASK (\r -> r)
-    , propCopyDiscard @FINHASK (\r -> r) (\r -> r)
-    , propBinaryCoproducts @FINHASK (\r -> r)
-    , propDistributive @FINHASK (\r -> r) (\r -> r)
-    , propClosed @FINHASK (\r -> r) (\r -> r)
-    , propEqualizers @FINHASK withTestObFinHaskViaFin
-    , propCoequalizers @FINHASK withTestObFinHaskViaFin
-    , propPullbacks @FINHASK withTestObFinHaskViaFin
-    , propPushouts @FINHASK withTestObFinHaskViaFin
-    , propFinitary @FinHask "FinHask"
+    [ testCategory @FINHASK
+    , testTerminalObject @FINHASK
+    , testInitialObject @FINHASK
+    , testBinaryProducts @FINHASK (\r -> r)
+    , testCartesian @FINHASK (\r -> r) (\r -> r)
+    , testMonoidal @FINHASK (\r -> r)
+    , testMonoidalHom @FINHASK (\r -> r)
+    , testSymMonoidal @FINHASK (\r -> r)
+    , testCopyDiscard @FINHASK (\r -> r) (\r -> r)
+    , testBinaryCoproducts @FINHASK (\r -> r)
+    , testDistributive @FINHASK (\r -> r) (\r -> r)
+    , testClosed @FINHASK (\r -> r) (\r -> r)
+    , testEqualizers @FINHASK withTestObFinHaskViaFin
+    , testCoequalizers @FINHASK withTestObFinHaskViaFin
+    , testPullbacks @FINHASK withTestObFinHaskViaFin
+    , testPushouts @FINHASK withTestObFinHaskViaFin
+    , testFinitary @FinHask "FinHask"
     , testProperty "a pushout complement deletes what the rule does not keep" $
         -- a : Fin 1 -> l : Fin 2 keeps one of two elements; the match is the identity on Fin 2, so
         -- the complement is the one kept element
@@ -86,14 +86,14 @@ test =
           (\_ _ -> testFailed "should not have been glueable")
           (pure ())
     , testProperty "the numbering agrees with the universe" $ do
-        -- 'propFinitary'\'s laws are all order-agnostic, so they would accept a numbering that
+        -- 'testFinitary'\'s laws are all order-agnostic, so they would accept a numbering that
         -- disagreed with 'universe'; this is what pins the digit order.
         Some @a <- genOb @FINHASK
         Some @b <- genOb @FINHASK
         expect "elements should be the universe, in order" universeF (elements @FinHask @a @b)
     ]
 
--- | Only ever pass this to 'propEqualizers', 'propCoequalizers', 'propPullbacks', or 'propPushouts':
+-- | Only ever pass this to 'testEqualizers', 'testCoequalizers', 'testPullbacks', or 'testPushouts':
 -- it exploits the fact that 'HasEqualizers'\'s 'factorEqualizer', 'HasCoequalizers'\'s
 -- 'factorCoequalizer', and 'HasPullbacks'\'s 'pullback' for 'FINHASK' all produce an object of the
 -- form @FH (Fin n)@ (see their shared @reifyList@-based construction, which 'HasPushouts'\'s
@@ -101,7 +101,7 @@ test =
 -- to check. @n@ is recovered here from @e@'s cardinality, which must match since @Fin n@ has exactly
 -- @n@ elements; the resulting (unsafely obtained) equality then borrows @Fin@'s existing
 -- 'Typeable'/'TestableType' instances. Passing this to any other combinator (whose produced object
--- need not be 'Fin'-shaped, e.g. 'propBinaryProducts') would be unsound: same cardinality doesn't mean
+-- need not be 'Fin'-shaped, e.g. 'testBinaryProducts') would be unsound: same cardinality doesn't mean
 -- same runtime representation.
 withTestObFinHaskViaFin :: forall (e :: FINHASK) r. (Ob e) => ((TestOb e) => r) -> r
 withTestObFinHaskViaFin body = case cardinality @(UN FH e) of

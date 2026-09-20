@@ -79,31 +79,31 @@ test :: TestTree
 test =
   testGroup
     "Free"
-    [ propCategory @FREEKIND
-    , propTerminalObject @FREEKIND
-    , propInitialObject @FREEKIND
-    , propBinaryProducts @FREEKIND (\ @a @b r -> withObProd @FINREL @(LowerT a) @(LowerT b) r)
-    , propBinaryCoproducts @FREEKIND (\ @a @b r -> withObCoprod @FINREL @(LowerT a) @(LowerT b) r)
-    , propClosed @FREEKIND
+    [ testCategory @FREEKIND
+    , testTerminalObject @FREEKIND
+    , testInitialObject @FREEKIND
+    , testBinaryProducts @FREEKIND (\ @a @b r -> withObProd @FINREL @(LowerT a) @(LowerT b) r)
+    , testBinaryCoproducts @FREEKIND (\ @a @b r -> withObCoprod @FINREL @(LowerT a) @(LowerT b) r)
+    , testClosed @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
-    , propMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
-    , propMonoidalHom @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
-    , propSymMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
-    , propDistributive @FREEKIND
+    , testMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , testMonoidalHom @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , testSymMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , testDistributive @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObCoprod @FINREL @(LowerT a) @(LowerT b) r)
-    , -- 'propStarAutonomous' isn't wired in here: its naturality checks need e.g. an arbitrary
+    , -- 'testStarAutonomous' isn't wired in here: its naturality checks need e.g. an arbitrary
       -- @a ** b ~> Dual c@ for independently-drawn a,b,c, but in a *free* category that hom-set is
       -- genuinely empty for most palette triples (no unitor/associator-driven bridge connects a
       -- plain tensor shape to an unrelated dualized one) — 'genTerm' can't conjure a morphism that
-      -- doesn't exist, so every sample gets discarded. 'propCompactClosed' avoids this: none of its
+      -- doesn't exist, so every sample gets discarded. 'testCompactClosed' avoids this: none of its
       -- checks need to *generate* a random Dual-involving morphism, only compose the fixed ones
       -- 'CompactClosed' already provides.
-      propCompactClosed @FREEKIND
+      testCompactClosed @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
-    , propHypergraph @FREEKIND (\r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , testHypergraph @FREEKIND (\r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , testProperty "cartesian coercions interpret to identities" P.$ do
         let roundTrip = retract @CARTCS @(Rep InterpT) (tensorToProd @(EMB '()) @(EMB '()) . prodToTensor @(EMB '()) @(EMB '()))
             unitTrip = retract @CARTCS @(Rep InterpT) (unitToTerm . termToUnit)

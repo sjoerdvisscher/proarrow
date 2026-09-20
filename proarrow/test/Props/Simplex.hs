@@ -35,11 +35,11 @@ test :: TestTree
 test =
   testGroup
     "Simplex"
-    [ propCategory @Nat
-    , propInitialObject @Nat
-    , propTerminalObject @Nat
-    , propMonoidal_ @Nat
-    , propMonoidalHom_ @Nat
+    [ testCategory @Nat
+    , testInitialObject @Nat
+    , testTerminalObject @Nat
+    , testMonoidal_ @Nat
+    , testMonoidalHom_ @Nat
     , testMonoid_ @Z
     , testMonoid_ @(S Z)
     , testProfunctor @(Rep Forget)

@@ -27,7 +27,7 @@ import Proarrow.Testing
   , mapSome
   , pattern GenNonEmpty
   )
-import Proarrow.Testing.Laws (propBinaryProducts_, propCategory, propProfunctor, propTerminalObject)
+import Proarrow.Testing.Laws (propProfunctor, testBinaryProducts_, testCategory, testTerminalObject)
 
 type data CON = Z | S CON
 
@@ -163,9 +163,9 @@ test :: TestTree
 test =
   testGroup
     "Untyped lambda calculus"
-    [ propCategory @CON
-    , propTerminalObject @CON
-    , propBinaryProducts_ @CON
+    [ testCategory @CON
+    , testTerminalObject @CON
+    , testBinaryProducts_ @CON
     , testProperty "Tm presheaf" $ propProfunctor @Tm'
     ]
 

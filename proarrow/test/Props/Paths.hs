@@ -7,7 +7,7 @@
 -- A quiver with no equations generates a free category and the laws hold structurally. The
 -- interesting case is a quiver with a 'Rewrite' instance, where composition normalises and
 -- associativity holds only if that rewriting system is confluent. Nothing checks confluence, so
--- 'propCategory' below is what stands between a plausible-looking set of equations and a category
+-- 'testCategory' below is what stands between a plausible-looking set of equations and a category
 -- that is not one.
 --
 -- The instance then carries the second, separate obligation: that the data satisfies the
@@ -36,7 +36,7 @@ import Proarrow.Testing
   , oneOfTotal
   , optGen
   )
-import Proarrow.Testing.Laws (propCategory, propProfunctor)
+import Proarrow.Testing.Laws (propProfunctor, testCategory)
 
 -- | The points of the schema, as bare data: two entity points and one attribute point. The
 -- category over them is 'DISCRETE', which supplies the identity arrows and makes 'Ob' the point\'s
@@ -223,6 +223,6 @@ test =
         unless
           (all (\e -> staffStep WorksIn (staffStep Mngr e) == staffStep WorksIn e) allEmployees)
           (testFailed "every employee's manager must work in the same department")
-    , propCategory @HR
+    , testCategory @HR
     , testProperty "Staff is a profunctor" $ propProfunctor @Staff
     ]

@@ -48,7 +48,7 @@ test :: TestTree
 test =
   testGroup
     "Cost"
-    [ propCategory @COST
+    [ testCategory @COST
     , testProperty "GTE decidable" $ propDecidable @GTE
     , testProperty "shortest paths computed at the value level" $ do
         unless (distance @(D P) @(D R) == Just 7) (testFailed "P -> R should be 7")
@@ -59,18 +59,18 @@ test =
         unless (steps (shortest @COST @N @G @(D P) @(D R)) == 2) (testFailed "P -> R should take the detour via Q")
         unless (steps (shortest @COST @N @G @(D Q) @(D P)) == 3) (testFailed "Q -> P should go around the cycle")
         unless (steps (shortest @COST @N @G @(D P) @(D P)) == 0) (testFailed "P -> P should stay put")
-    , propTerminalObject @COST
-    , propInitialObject @COST
-    , propBinaryProducts_ @COST
-    , propBinaryCoproducts_ @COST
-    , propMonoidal_ @COST
-    , propMonoidalHom_ @COST
-    , propSymMonoidal_ @COST
-    , propDistributive_ @COST
-    , propEqualizers_ @COST
-    , propCoequalizers_ @COST
-    , propPullbacks_ @COST
-    , propPushouts_ @COST
+    , testTerminalObject @COST
+    , testInitialObject @COST
+    , testBinaryProducts_ @COST
+    , testBinaryCoproducts_ @COST
+    , testMonoidal_ @COST
+    , testMonoidalHom_ @COST
+    , testSymMonoidal_ @COST
+    , testDistributive_ @COST
+    , testEqualizers_ @COST
+    , testCoequalizers_ @COST
+    , testPullbacks_ @COST
+    , testPushouts_ @COST
     ]
 
 instance Testable COST where

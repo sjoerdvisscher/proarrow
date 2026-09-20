@@ -361,8 +361,8 @@ instance (forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category, whose head has @Ob@ as a
 -- superclass) don't have to rely on GHC expanding superclasses of quantified-constraint heads.
 -- Observed on GHC 9.10.3: with such a given in scope, @\\r -> r@ at this type fails with "Could not
--- deduce Ob a", while the same lambda compiles without it (cf. 'Proarrow.Testing.Laws.propSymMonoidal_'
--- versus 'Proarrow.Testing.Laws.propCopyDiscard_'). Likely a solver limitation; retry dropping this
+-- deduce Ob a", while the same lambda compiles without it (cf. 'Proarrow.Testing.Laws.testSymMonoidal_'
+-- versus 'Proarrow.Testing.Laws.testCopyDiscard_'). Likely a solver limitation; retry dropping this
 -- helper after a GHC upgrade.
 obFromTestOb :: forall {k} (a :: k) r. (Testable k, TestOb a) => ((Ob a) => r) -> r
 obFromTestOb r = r

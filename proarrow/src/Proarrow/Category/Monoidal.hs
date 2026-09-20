@@ -144,7 +144,7 @@ type StrongMonoidalCorep p = (OplaxMonoidal p, LaxMonoidalCorep p)
 -- * Pentagon: @('id' '**' 'associator') . 'associator' . ('associator' '**' 'id')
 --   = 'associator' . 'associator'@
 --
--- Checked by @Proarrow.Testing.Laws.propMonoidal@.
+-- Checked by @Proarrow.Testing.Laws.testMonoidal@.
 type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Monoidal k where
   -- | The tensor unit.
