@@ -7,11 +7,11 @@
 -- such as "Proarrow.Category.Instance.ZX".
 module Proarrow.Category.Monoidal.Hypergraph where
 
-import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat)
+import Data.Type.Nat (SNatI)
 import Prelude (($))
 
 import Proarrow.Category.Instance.Free (FREE)
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), (==))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), NFold, NFoldS, (==))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, singleton, swap2)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
@@ -21,44 +21,11 @@ import Proarrow.Monoid
   , Comonoid (..)
   , Monoid (..)
   , Supplies
-  , comultS
-  , mappendS
+  , fanIn
+  , fanInS
+  , fanOut
+  , fanOutS
   )
-
-type family NFold (n :: Nat) (x :: k) :: k where
-  NFold Z x = Unit
-  NFold (S n) x = x ** NFold n x
-
-type family NFoldS (n :: Nat) (x :: k) :: [k] where
-  NFoldS Z x = '[]
-  NFoldS (S n) x = x ': NFoldS n x
-
-withObNFold :: forall {k} n (a :: k) r. (SNatI n, Ob a, Monoidal k) => ((Ob (NFold n a)) => r) -> r
-withObNFold r = case snat @n of
-  SZ -> r
-  SS @n' -> withObNFold @n' @a (withOb2 @k @a @(NFold n' a) r)
-
-fanIn :: forall n a. (SNatI n, Monoid a) => NFold n a ~> a
-fanIn = case snat @n of
-  SZ -> mempty
-  SS @n' -> mappend @a . (obj @a ** fanIn @n' @a)
-
-fanInS :: forall n a. (SNatI n, Monoid a) => NFoldS n a ~> '[a]
-fanInS =
-  case snat @n of
-    SZ -> Str mempty
-    SS @n' -> mappendS @a . (obj1 @a ** fanInS @n' @a)
-
-fanOut :: forall n a. (SNatI n, Comonoid a) => a ~> NFold n a
-fanOut = case snat @n of
-  SZ -> counit
-  SS @n' -> (obj @a ** fanOut @n' @a) . comult @a
-
-fanOutS :: forall n a. (SNatI n, Comonoid a) => '[a] ~> NFoldS n a
-fanOutS =
-  case snat @n of
-    SZ -> Str counit
-    SS @n' -> (obj1 @a ** fanOutS @n' @a) . comultS @a
 
 -- | A __special commutative Frobenius algebra__: a commutative monoid and cocommutative comonoid
 -- satisfying speciality (@mappend . comult = id@) and the Frobenius law. This is exactly the

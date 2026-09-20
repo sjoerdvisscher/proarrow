@@ -46,44 +46,53 @@ import Proarrow.Profunctor.Representable (Rep (..))
 -- closed category, where the residual can be copied and selectors can be internalised.
 type GlassFl :: forall {k}. FLAVOR k k
 class (SetterFl p q) => GlassFl (p :: k +-> k) (q :: k +-> k) where
-  glassP :: (CCC k) => p s a -> q b t -> (s && ((s ~~> a) ~~> b)) ~> t
+  glassP :: (CCC k) => p s a -> q b t -> (s && Mod s a b) ~> t
 
--- | Feed a fixed selector @s ~> a@ to a selector-consumer.
-applySel :: forall {k} (s :: k) a b. (Closed k, Ob s, Ob a, Ob b) => (s ~> a) -> ((s ~~> a) ~~> b) ~> b
+-- | A /modifier/: given a selector @s '~~>' a@ for reading the focus out of the source, it
+-- produces the new focus @b@. It is the right half of a glass's single leg, and the whole of a
+-- 'Proarrow.Optic.Grate.grate'\'s argument.
+type Mod :: forall {k}. k -> k -> k -> k
+type Mod s a b = (s ~~> a) ~~> b
+
+-- | Feed a fixed selector @s ~> a@ to a 'Mod'.
+applySel :: forall {k} (s :: k) a b. (Closed k, Ob s, Ob a, Ob b) => (s ~> a) -> Mod s a b ~> b
 applySel sel =
-  withObExp @k @s @a $
-    withObExp @k @(s ~~> a) @b $
-      apply @k @(s ~~> a) @b . (obj @((s ~~> a) ~~> b) ** mkExponential sel) . rightUnitorInv @k @((s ~~> a) ~~> b)
+  withObSel @s @a @b $
+    apply @k @(s ~~> a) @b . (obj @(Mod s a b) ** mkExponential sel) . rightUnitorInv @k @(Mod s a b)
+
+-- | The two 'Ob' facts every modifier needs: the selector type @s '~~>' a@ and the 'Mod' that
+-- consumes it. Each 'GlassFl' instance below opens with this.
+withObSel
+  :: forall {k} (s :: k) a b r
+   . (Closed k, Ob s, Ob a, Ob b) => ((Ob (s ~~> a), Ob (Mod s a b)) => r) -> r
+withObSel r = withObExp @k @s @a (withObExp @k @(s ~~> a) @b r)
 
 -- | The product pair, a lens witness: the selector is the lens's own @get@, applied to the source
 -- at hand; the residual is kept.
 instance (HasBinaryProducts k, Ob (c :: k)) => GlassFl (Rep (Product c)) (Corep (Product c)) where
   glassP @s @a @b (Rep h@Objs) (Corep i) =
-    withObExp @k @s @a $
-      withObExp @k @(s ~~> a) @b $
-        i
-          . tensorToProduct @c @b
-          . ( (P.fst @k @c @a . h . fst @s @((s ~~> a) ~~> b))
-                &&& (applySel @s @a @b (P.snd @k @c @a . h) . snd @s @((s ~~> a) ~~> b))
-            )
-          . productToTensor @s @((s ~~> a) ~~> b)
+    withObSel @s @a @b $
+      i
+        . tensorToProduct @c @b
+        . ( (P.fst @k @c @a . h . fst @s @(Mod s a b))
+              &&& (applySel @s @a @b (P.snd @k @c @a . h) . snd @s @(Mod s a b))
+          )
+        . productToTensor @s @(Mod s a b)
 
 -- | The exponential pair, a grate witness: the source is ignored, and the consumer is fed the
 -- selector @\\s -> h s d@ for each point @d@ of the exponent.
 instance (Closed k, Ob (d :: k)) => GlassFl (Rep (Exp d)) (Corep (Exp d)) where
   glassP @s @a @b (Rep h@Objs) (Corep i) =
-    withObExp @k @s @a $
-      withObExp @k @(s ~~> a) @b $
-        i
-          . curry @k @((s ~~> a) ~~> b) @d (apply @k @(s ~~> a) @b . (obj @((s ~~> a) ~~> b) ** swapClosed @a @s @d h))
-          . snd @s @((s ~~> a) ~~> b)
-          . productToTensor @s @((s ~~> a) ~~> b)
+    withObSel @s @a @b $
+      i
+        . curry @k @(Mod s a b) @d (apply @k @(s ~~> a) @b . (obj @(Mod s a b) ** swapClosed @a @s @d h))
+        . snd @s @(Mod s a b)
+        . productToTensor @s @(Mod s a b)
 
 instance (CategoryOf k) => GlassFl (Id :: k +-> k) (Id :: k +-> k) where
   glassP @s @a @b (Id l@Objs) (Id r@Objs) =
-    withObExp @k @s @a $
-      withObExp @k @(s ~~> a) @b $
-        r . applySel @s @a @b l . snd @s @((s ~~> a) ~~> b) . productToTensor @s @((s ~~> a) ~~> b)
+    withObSel @s @a @b $
+      r . applySel @s @a @b l . snd @s @(Mod s a b) . productToTensor @s @(Mod s a b)
 
 -- | Composition threads the selector through: the outer glass is given the consumer
 -- @\\sel -> inner (sel s, \\sel' -> k (sel' . sel))@.
@@ -93,41 +102,38 @@ instance
   => GlassFl (f :.: f') (g' :.: g)
   where
   glassP @s @a @b (f@Objs :.: (f'@Objs :: f' x a)) ((g'@Objs :: g' b y) :.: g@Objs) =
-    withObExp @k @s @a $
-      withObExp @k @(s ~~> a) @b $
-        withObExp @k @s @x $
-          withObExp @k @(s ~~> x) @y $
-            withObExp @k @x @a $
-              withObExp @k @(x ~~> a) @b $
-                withOb2 @k @s @((s ~~> a) ~~> b) $
-                  withOb2 @k @(s ** ((s ~~> a) ~~> b)) @(s ~~> x) $
-                    withOb2 @k @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a) $
-                      let
-                        -- the inner glass, fed a product-typed pair
-                        inner = glassP @f' @g' f' g' . tensorToProduct @x @((x ~~> a) ~~> b)
-                        -- the source of the inner glass: the outer selector applied to @s@
-                        xpart =
-                          apply @k @s @x
-                            . ( snd @(s ** ((s ~~> a) ~~> b)) @(s ~~> x)
-                                  &&& (fst @s @((s ~~> a) ~~> b) . fst @(s ** ((s ~~> a) ~~> b)) @(s ~~> x))
-                              )
-                        -- the inner consumer: compose the selectors, hand the result to @k@
-                        kk =
-                          snd @s @((s ~~> a) ~~> b)
-                            . fst @(s ** ((s ~~> a) ~~> b)) @(s ~~> x)
-                            . fst @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a)
-                        sel =
-                          comp @s @x @a
-                            . ( snd @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a)
-                                  &&& (snd @(s ** ((s ~~> a) ~~> b)) @(s ~~> x) . fst @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a))
-                              )
-                        kipart = curry @k @((s ** ((s ~~> a) ~~> b)) ** (s ~~> x)) @(x ~~> a) (apply @k @(s ~~> a) @b . (kk &&& sel))
-                        body = inner . (xpart &&& kipart)
-                      in
-                        glassP @f @g f g
-                          . tensorToProduct @s @((s ~~> x) ~~> y)
-                          . (fst @s @((s ~~> a) ~~> b) &&& curry @k @(s ** ((s ~~> a) ~~> b)) @(s ~~> x) body)
-                          . productToTensor @s @((s ~~> a) ~~> b)
+    withObSel @s @a @b $
+      withObSel @s @x @y $
+        withObSel @x @a @b $
+          withOb2 @k @s @(Mod s a b) $
+            withOb2 @k @(s ** Mod s a b) @(s ~~> x) $
+              withOb2 @k @((s ** Mod s a b) ** (s ~~> x)) @(x ~~> a) $
+                let
+                  -- the inner glass, fed a product-typed pair
+                  inner = glassP @f' @g' f' g' . tensorToProduct @x @(Mod x a b)
+                  -- the source of the inner glass: the outer selector applied to @s@
+                  xpart =
+                    apply @k @s @x
+                      . ( snd @(s ** Mod s a b) @(s ~~> x)
+                            &&& (fst @s @(Mod s a b) . fst @(s ** Mod s a b) @(s ~~> x))
+                        )
+                  -- the inner consumer: compose the selectors, hand the result to @k@
+                  kk =
+                    snd @s @(Mod s a b)
+                      . fst @(s ** Mod s a b) @(s ~~> x)
+                      . fst @((s ** Mod s a b) ** (s ~~> x)) @(x ~~> a)
+                  sel =
+                    comp @s @x @a
+                      . ( snd @((s ** Mod s a b) ** (s ~~> x)) @(x ~~> a)
+                            &&& (snd @(s ** Mod s a b) @(s ~~> x) . fst @((s ** Mod s a b) ** (s ~~> x)) @(x ~~> a))
+                        )
+                  kipart = curry @k @((s ** Mod s a b) ** (s ~~> x)) @(x ~~> a) (apply @k @(s ~~> a) @b . (kk &&& sel))
+                  body = inner . (xpart &&& kipart)
+                in
+                  glassP @f @g f g
+                    . tensorToProduct @s @(Mod s x y)
+                    . (fst @s @(Mod s a b) &&& curry @k @(s ** Mod s a b) @(s ~~> x) body)
+                    . productToTensor @s @(Mod s a b)
 
 type Glass (s :: k) (t :: k) a b = Optic (Prostrong GlassFl) s t a b
 type Glass' s a = Glass s s a a
@@ -137,20 +143,19 @@ type Glass' s a = Glass s s a a
 glass
   :: forall {k} (s :: k) (t :: k) a b
    . (CCC k, Ob s, Ob a, Ob b)
-  => ((s && ((s ~~> a) ~~> b)) ~> t) -> Glass s t a b
+  => ((s && Mod s a b) ~> t) -> Glass s t a b
 glass f =
-  withObExp @k @s @a $
-    withObExp @k @(s ~~> a) @a $
-      withObExp @k @(s ~~> a) @b $
-        let ev = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
-        in legs2prof @GlassFl
-             (Rep @((s ~~> a) ~~> a) @(Product s) (id P.&&& ev) :.: Rep @a @(Exp (s ~~> a)) (obj @((s ~~> a) ~~> a)))
-             (Corep @b @(Exp (s ~~> a)) (obj @((s ~~> a) ~~> b)) :.: Corep @((s ~~> a) ~~> b) @(Product s) f)
+  withObSel @s @a @a $
+    withObExp @k @(s ~~> a) @b $
+      let ev = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
+      in legs2prof @GlassFl
+           (Rep @(Mod s a a) @(Product s) (id P.&&& ev) :.: Rep @a @(Exp (s ~~> a)) (obj @(Mod s a a)))
+           (Corep @b @(Exp (s ~~> a)) (obj @(Mod s a b)) :.: Corep @(Mod s a b) @(Product s) f)
 
 -- | Eliminate any glass-flavored optic (a lens, a grate, or a composite of both, in either
 -- encoding) to its single leg.
 withGlass
   :: forall {k} c (s :: k) (t :: k) a b r
    . (CCC k, (Ob a, Ob b) => c (ExOptic GlassFl a b))
-  => Optic c s t a b -> (((s && ((s ~~> a) ~~> b)) ~> t) -> r) -> r
+  => Optic c s t a b -> (((s && Mod s a b) ~> t) -> r) -> r
 withGlass o k = withLegs @GlassFl o \ @p @q p q -> k (glassP @p @q p q)

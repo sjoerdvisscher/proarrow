@@ -24,7 +24,6 @@ module Proarrow.Optic.MonoidalLens where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt)
-import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Colimit.BinaryCoproduct (lft, rgt)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), first)
@@ -43,7 +42,7 @@ import Proarrow.Optic
 import Proarrow.Optic.AffineFold (AffineFoldFl (..))
 import Proarrow.Optic.AffineTraversal (AffineTravFl (..))
 import Proarrow.Optic.Getter (GetterFl (..))
-import Proarrow.Optic.Glass (GlassFl (..), applySel)
+import Proarrow.Optic.Glass (GlassFl (..), Mod, applySel, withObSel)
 import Proarrow.Optic.Traversal (MonTravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -71,12 +70,11 @@ instance (Comonoid (m :: k)) => AffineTravFl (Rep (ActionAt Tensor m) :: k +-> k
 
 instance (Comonoid (m :: k)) => GlassFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   glassP @s @a @b (Rep h@Objs) (Corep i) =
-    withObExp @k @s @a $
-      withObExp @k @(s ~~> a) @b $
-        i
-          . ( (fst @k @m @a . h . fst @k @s @((s ~~> a) ~~> b))
-                &&& (applySel @s @a @b (snd @k @m @a . h) . snd @k @s @((s ~~> a) ~~> b))
-            )
+    withObSel @s @a @b $
+      i
+        . ( (fst @k @m @a . h . fst @k @s @(Mod s a b))
+              &&& (applySel @s @a @b (snd @k @m @a . h) . snd @k @s @(Mod s a b))
+          )
 
 -- | The monoidal-lens flavor: a lens whose residual is a comonoid, so it is a
 -- 'Proarrow.Optic.Getter.Getter' and a 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal', and

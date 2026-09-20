@@ -67,6 +67,7 @@ test =
         expect "dimensions 0, 1, 3" [0, 1, 3] (map scalar [dimension @(M Nat0), dimension @(M Nat1), dimension @(M Nat3)])
     , testEqualizers_ @(MatK Rational)
     , testCoequalizers_ @(MatK Rational)
+    , testEpiMonoFactorization_ @(MatK Rational)
     , testPullbacks_ @(MatK Rational)
     , testPushouts_ @(MatK Rational)
     ]

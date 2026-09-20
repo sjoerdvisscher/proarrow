@@ -7,6 +7,7 @@
 module Proarrow.Monoid where
 
 import Data.Kind (Constraint, Type)
+import Data.Type.Nat (SNat (..), SNatI, snat)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
@@ -16,6 +17,8 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
+  , NFold
+  , NFoldS
   , SymMonoidal (..)
   , Tensor
   , UnitF
@@ -26,7 +29,7 @@ import Proarrow.Category.Monoidal
 import Proarrow.Category.Monoidal.Action (Act, ActionAt, CoprodAction, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
-import Proarrow.Category.Monoidal.Strictified (Strictified (..))
+import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1)
 import Proarrow.Colimit.BinaryCoproduct
   ( COPROD (..)
   , Coprod (..)
@@ -321,3 +324,29 @@ instance
   comult = F.St Fork F.Nil
 
 instance (Comonoid (a :: FREE cs p), SymMonoidal (FREE cs p)) => CocommutativeComonoid (a :: FREE cs p)
+
+-- | Collapse an @n@-fold tensor power of a monoid with 'mappend', bottoming out at 'mempty'.
+fanIn :: forall n a. (SNatI n, Monoid a) => NFold n a ~> a
+fanIn = case snat @n of
+  SZ -> mempty
+  SS @n' -> mappend @a . (obj @a ** fanIn @n' @a)
+
+-- | Dually, build an @n@-fold tensor power of a comonoid with 'comult', bottoming out at 'counit'.
+fanOut :: forall n a. (SNatI n, Comonoid a) => a ~> NFold n a
+fanOut = case snat @n of
+  SZ -> counit
+  SS @n' -> (obj @a ** fanOut @n' @a) . comult @a
+
+-- | The 'Proarrow.Category.Monoidal.Strictified.Strictified' counterpart of 'fanIn'.
+fanInS :: forall n a. (SNatI n, Monoid a) => NFoldS n a ~> '[a]
+fanInS =
+  case snat @n of
+    SZ -> Str mempty
+    SS @n' -> mappendS @a . (obj1 @a ** fanInS @n' @a)
+
+-- | The 'Proarrow.Category.Monoidal.Strictified.Strictified' counterpart of 'fanOut'.
+fanOutS :: forall n a. (SNatI n, Comonoid a) => '[a] ~> NFoldS n a
+fanOutS =
+  case snat @n of
+    SZ -> Str counit
+    SS @n' -> (obj1 @a ** fanOutS @n' @a) . comultS @a

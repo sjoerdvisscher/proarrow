@@ -11,6 +11,7 @@ import Data.Char (toUpper)
 import Data.Function (on)
 import Data.List (minimumBy)
 import Data.Maybe (fromMaybe)
+import Data.Type.Nat (Nat4)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (Applicative (..), Functor (..), id, map, (.))
@@ -22,7 +23,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Optic (convert)
 import Proarrow.Optic.Action (ClassifyingLens, classifyingLens, (.?))
 import Proarrow.Optic.Kaleidoscope (Kaleidoscope', cotraverseOf, kaleidoscopeOf)
-import Proarrow.Optic.PowerGrate (Nat (..), PowerGrate', powerGrate, powerGrateOf)
+import Proarrow.Optic.PowerGrate (PowerGrate', powerGrate, powerGrateOf)
 import Proarrow.Optics
   ( Lens
   , Lens'
@@ -144,7 +145,7 @@ measure = classifyingLens measurements (uncurry learn)
 -- 'Float's aggregates a list of 'Measurements' field by field.
 aggregate :: PowerGrate' Measurements Float
 aggregate =
-  powerGrate @(S (S (S (S Z))))
+  powerGrate @Nat4
     (\(Measurements a b c d) -> (a, (b, (c, (d, ())))))
     (\(a, (b, (c, (d, ())))) -> Measurements a b c d)
 

@@ -60,6 +60,8 @@ test =
     , testClosed @FINHASK (\r -> r) (\r -> r)
     , testEqualizers @FINHASK withTestObFinHaskViaFin
     , testCoequalizers @FINHASK withTestObFinHaskViaFin
+    , testEpiMonoFactorization @FINHASK withTestObFinHaskViaFin
+    , testSubobjectClassifier @FINHASK (\r -> r)
     , testPullbacks @FINHASK withTestObFinHaskViaFin
     , testPushouts @FINHASK withTestObFinHaskViaFin
     , testFinitary @FinHask "FinHask"

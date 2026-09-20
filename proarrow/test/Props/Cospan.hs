@@ -65,6 +65,9 @@ instance (Ob a, Ob b) => TestingEqShow (Cospan a (b :: COSPAN FINSET)) where
           Just Refl -> do
             eql <- eqP l1 l2
             eqr <- eqP r1 r2
+            -- Both legs map *into* the apex, so a relabelling has to satisfy every constraint the
+            -- two leg pairs impose at once -- hence an actual search. Span's legs map out, so it
+            -- can settle the question by comparing multisets -- see "Props.Span".
             let hasIso =
                   isJust
                     ( findIso @(UN FS c1)

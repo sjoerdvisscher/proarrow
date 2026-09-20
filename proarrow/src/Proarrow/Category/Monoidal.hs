@@ -7,6 +7,7 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
+import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat)
 import Prelude (Show, ($), type (~))
 import Prelude qualified as P
 
@@ -195,6 +196,23 @@ associatorIso @k @a @b @c @a' @b' @c' = iso (associator @k @a @b @c) (associator
 
 class (((a ** b) ** c) ~ (a ** (b ** c))) => StrictlyAssoc a b c
 instance (((a ** b) ** c) ~ (a ** (b ** c))) => StrictlyAssoc a b c
+
+-- | The @n@-fold tensor power of @x@: @x '**' x '**' … '**' x@, @n@ times, terminated by 'Unit'.
+type family NFold (n :: Nat) (x :: k) :: k where
+  NFold Z x = Unit
+  NFold (S n) x = x ** NFold n x
+
+-- | The 'Proarrow.Category.Monoidal.Strictified.Strictified' counterpart of 'NFold': @n@ copies
+-- of @x@ as a list, rather than nested tensors.
+type family NFoldS (n :: Nat) (x :: k) :: [k] where
+  NFoldS Z x = '[]
+  NFoldS (S n) x = x ': NFoldS n x
+
+-- | @'NFold' n a@ is an object whenever @a@ is.
+withObNFold :: forall {k} n (a :: k) r. (SNatI n, Ob a, Monoidal k) => ((Ob (NFold n a)) => r) -> r
+withObNFold r = case snat @n of
+  SZ -> r
+  SS @n' -> withObNFold @n' @a (withOb2 @k @a @(NFold n' a) r)
 
 -- | If your monoidal category is a strict monoidal category, add 'Strictly' to your 'Ob' constraint.
 -- This will let GHC know that the unitors and associators are strict, so you won't have to provide proof of that.

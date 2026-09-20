@@ -17,12 +17,13 @@ import Data.Map.Strict qualified as Map
 import Data.Proxy (Proxy (..))
 import Data.Type.Nat qualified as M
 import Data.Vec.Lazy (Vec (..), reifyList)
-import GHC.TypeNats (KnownNat, Nat, natVal, withSomeSNat, pattern SNat, type SNat, type (+), type (-))
+import GHC.TypeNats (KnownNat, Nat, natVal, type (+), type (-))
 import Numeric (showFFloat)
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude hiding (Monoid, id, (**), (.))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Instance.Cost (withPlusIsNat)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
@@ -79,12 +80,6 @@ enumAll = [minBound .. maxBound]
 
 nat :: (KnownNat n) => Int
 nat @n = fromIntegral $ natVal (Proxy @n)
-
-withPlusIsNat :: forall a b r. (KnownNat a, KnownNat b) => ((KnownNat (a + b)) => r) -> r
-withPlusIsNat r = case ab of SNat -> r
-  where
-    ab :: SNat (a + b)
-    ab = withSomeSNat (natVal (Proxy @a) + natVal (Proxy @b)) unsafeCoerce
 
 type ZX :: CAT Nat
 data ZX i o where
@@ -225,12 +220,6 @@ zSpider alpha = ZX $ Map.fromListWith (+) [(minBound, 1), (maxBound, mkPolar 1 a
 
 xSpider :: (KnownNat i, KnownNat o) => Double -> ZX i o
 xSpider alpha = hadamard . zSpider alpha . hadamard
-
-cup :: (KnownNat n) => ZX 0 (n + n)
-cup @n = withOb2 @_ @n @n $ ZX $ Map.fromList [((mirror i, 0), 1) | i <- enumAll @n]
-
-cap :: (KnownNat n) => ZX (n + n) 0
-cap @n = withOb2 @_ @n @n $ ZX $ Map.fromList [((0, mirror i), 1) | i <- enumAll @n]
 
 zCopy :: ZX 1 2
 zCopy = zSpider 0

@@ -46,6 +46,8 @@ test =
     , testClosed_ @FINSET
     , testEqualizers_ @FINSET
     , testCoequalizers_ @FINSET
+    , testEpiMonoFactorization_ @FINSET
+    , testSubobjectClassifier_ @FINSET
     , testPullbacks_ @FINSET
     , testPushouts_ @FINSET
     , testComonoid_ @(FS Nat0)

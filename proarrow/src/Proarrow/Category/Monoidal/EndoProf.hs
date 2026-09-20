@@ -12,7 +12,7 @@
 -- hence the need for a fresh wrapper type rather than another instance for the same kind.
 module Proarrow.Category.Monoidal.EndoProf where
 
-import Data.Kind (Constraint, Type)
+import Data.Kind (Constraint)
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -21,7 +21,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..))
 import Proarrow.Category.Monoidal.Distributive (Traversable)
 import Proarrow.Category.Monoidal.Rev (REV (..), Rev (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->), type (:~>))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, OB, Profunctor (..), Promonad (..), UN, type (+->), type (:~>))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (type (:&&:))
 import Proarrow.Path qualified as Path
@@ -31,7 +31,7 @@ import Proarrow.Profunctor.Representable (Rep (..), Representable (..), index, r
 
 -- | An object of @'ENDO' k@ is an endo-profunctor @k +-> k@, i.e. (not necessarily
 -- representable) a functor @k -> k@ under the profunctor encoding.
-type ENDO :: Type -> Type
+type ENDO :: Kind -> Kind
 type data ENDO k = E (k +-> k)
 
 -- | Morphisms of @'ENDO' k@ are natural transformations between the underlying profunctors.

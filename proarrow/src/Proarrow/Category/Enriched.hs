@@ -40,6 +40,27 @@ import Proarrow.Profunctor.Instance.Exponential ()
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,
 -- and show that the enriched structure can be recovered.
+--
+-- Call an arrow @'Unit' '~>' x@ an /element/ of @x@. The laws say that @'ProObj' v p a b@ has
+-- exactly the elements of the hom-set @p a b@, and that its two actions are the profunctor's:
+--
+-- [Elements] 'underlying' and 'enriched' are mutually inverse, so 'underlying' is a bijection from
+-- @p a b@ onto the elements of @'ProObj' v p a b@.
+--
+-- [Right action] for @f :: b '~>' c@ in @j@ and @x :: p a b@, where @'underlying' f@ names @f@ as
+-- an element of @'HomObj' v b c@:
+--
+-- > rmap . (underlying f ** underlying x) . leftUnitorInv == underlying (P.rmap f x)
+--
+-- [Left action] dually, for @g :: c '~>' a@ in @k@:
+--
+-- > lmap . (underlying g ** underlying x) . leftUnitorInv == underlying (P.lmap g x)
+--
+-- Because the first law makes 'underlying' a bijection, the other two pin 'rmap' and 'lmap' down on
+-- elements -- all the way down exactly when @v@ is well-pointed, which 'Type' and the thin @v@s
+-- are. Functoriality of 'rmap' and 'lmap' is then not a separate law: it follows from that of the
+-- 'Profunctor' they agree with. At @p ~ 'Hom' k@, where 'ProObj' is 'HomObj' and 'rmap' is 'comp',
+-- the right-action law says that the enriched composition is @('.')@.
 type EnrichedProfunctor :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (Monoidal v, Profunctor p, Enriched v j, Enriched v k) => EnrichedProfunctor v (p :: j +-> k) where
   type ProObj v (p :: j +-> k) (a :: k) (b :: j) :: v

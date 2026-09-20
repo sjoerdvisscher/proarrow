@@ -69,6 +69,7 @@ test =
     , testDistributive_ @COST
     , testEqualizers_ @COST
     , testCoequalizers_ @COST
+    , testEpiMonoFactorization_ @COST
     , testPullbacks_ @COST
     , testPushouts_ @COST
     ]

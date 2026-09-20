@@ -14,6 +14,7 @@ import Control.Monad (unless)
 import Data.Bifunctor (bimap, first, second)
 import Data.Maybe (maybeToList)
 import Data.Tuple (swap)
+import Data.Type.Nat (Nat2, Nat3)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
 import Prelude
@@ -38,7 +39,7 @@ import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, fromPIso, toPIso, withIso)
 import Proarrow.Optic.Lens (Lens, lens, withLens)
 import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, withMonLens)
-import Proarrow.Optic.PowerGrate (Nat (..), PowerGrate, powerGrate, powerGrateOf, zipWithOf)
+import Proarrow.Optic.PowerGrate (PowerGrate, powerGrate, powerGrateOf, zipWithOf)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterFl (..), over, set, (%~))
 import Proarrow.Optic.Tracer (Tracer, fromPTracer, toPTracer, tracer, tracerOf, withTracer)
@@ -244,11 +245,11 @@ notIso = O.iso not not
 
 -- | The binary (pair) power grate, focusing both components of a tensor.
 pairK :: PowerGrate (Bool, Bool) (Bool, Bool) Bool Bool
-pairK = powerGrate @(S (S Z)) (\(a, b) -> (a, (b, ()))) (\(a, (b, ())) -> (a, b))
+pairK = powerGrate @Nat2 (\(a, b) -> (a, (b, ()))) (\(a, (b, ())) -> (a, b))
 
 -- | The arity-3 power grate, over a nested tensor triple.
 triK :: PowerGrate (Bool, (Bool, (Bool, ()))) (Bool, (Bool, (Bool, ()))) Bool Bool
-triK = powerGrate @(S (S (S Z))) id id
+triK = powerGrate @Nat3 id id
 
 -- | A tracer in Hask with a @Bool@ residual and identity legs, so @over feedback f s@ solves
 -- @(m, t) = f (m, s)@ for @m@ through the lazy fixpoint of @'Proarrow.Category.Monoidal.Strength.Costrong' (->)@.

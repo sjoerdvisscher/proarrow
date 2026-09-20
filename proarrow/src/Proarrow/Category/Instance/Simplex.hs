@@ -16,7 +16,7 @@ import Prelude (Eq, Show (..), (++), type (~))
 
 import Data.Typeable (Typeable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly, associatorDefault)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
@@ -111,8 +111,8 @@ instance Monoidal Nat where
   withOb2 @a @b r = case singNat @a of
     SZ -> r
     SS @a' -> withOb2 @_ @a' @b r
-  associator @a @b @c = withOb2 @_ @a @b (withOb2 @_ @(a ** b) @c (id @Simplex))
-  associatorInv @a @b @c = withOb2 @_ @b @c (withOb2 @_ @a @(b ** c) (id @Simplex))
+  associator @a @b @c = associatorDefault @a @b @c
+  associatorInv @a @b @c = associatorDefault @a @b @c
 
 -- Not symmetric monoidal
 

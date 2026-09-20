@@ -25,17 +25,22 @@ module Proarrow.Optic.PowerGrate
   , zipWithOf
 
     -- * @n@-ary aggregation
-  , Nat (..)
-  , Tensor
-  , KnownNat (..)
   , Pow (..)
   , CoPow (..)
   , powerGrate
   ) where
 
-import Data.Kind (Constraint)
+import Data.Type.Nat (Nat, Nat2, SNat (..), SNatI, snat)
 import Proarrow.Adjunction (Proadjunction (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swapInner, type (**))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , NFold
+  , SymMonoidal
+  , swapInner
+  , withObNFold
+  , type (**)
+  )
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Cartesian (Cartesian)
@@ -47,7 +52,7 @@ import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCopr
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), (\\), type (+->))
 import Proarrow.Functor (Functor)
-import Proarrow.Monoid (Monoid (..))
+import Proarrow.Monoid (fanIn, fanOut)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
@@ -58,7 +63,7 @@ import Proarrow.Optic
   , withLegs
   )
 import Proarrow.Optic.Fold (FoldFl (..))
-import Proarrow.Optic.Glass (GlassFl (..))
+import Proarrow.Optic.Glass (GlassFl (..), Mod, withObSel)
 import Proarrow.Optic.Grate (GrateFl (..))
 import Proarrow.Optic.Kaleidoscope (CotravFl, KaleidoFl (..), Kaleidoscopic (..), kaleidoscopeOf)
 import Proarrow.Optic.Setter (SetterFl (..))
@@ -67,7 +72,6 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
-import Prelude (type (~))
 
 -- | The power-grate flavor: distribute any 'MonoidalProfunctor' @r@ through the witness
 -- pair. 'Proarrow.Optic.Traversal.TravFl' is a superclass: every power-grate witness is a
@@ -108,153 +112,119 @@ powerGrateOf o rab = withLegs @PowerGrateFl o \l r -> powerGrateP l r rab
 
 -- * @n@-ary aggregation via tensor powers
 
--- | A Peano natural, the arity of a 'Pow' witness.
-data Nat = Z | S Nat
-
--- | The @n@-fold tensor power of @a@: @a ** a ** ... ** a@ (@n@ times, terminated by 'Unit').
-type Tensor :: Nat -> k -> k
-type family Tensor n a where
-  Tensor Z a = Unit
-  Tensor (S n) a = a ** Tensor n a
-
--- | Case analysis on a type-level 'Nat': the single method from which every tensor-power
--- operation below is defined by recursion on @n@.
-type KnownNat :: Nat -> Constraint
-class KnownNat (n :: Nat) where
-  natCase :: ((n ~ Z) => r) -> (forall m. (n ~ S m, KnownNat m) => r) -> r
-
-instance KnownNat Z where
-  natCase z _ = z
-instance (KnownNat n) => KnownNat (S n) where
-  natCase _ s = s
-
 -- | Distribute a 'MonoidalProfunctor' over the @n@-fold tensor power, by combining @n@ copies of
 -- the carrier value with 'one' (at 'Z') and '**' (at 'S') -- the profunctor-general heart of the
 -- @n@-ary power grate.
-powDist :: forall n r a b. (KnownNat n, MonoidalProfunctor r) => r a b -> r (Tensor n a) (Tensor n b)
-powDist rab = natCase @n one (\ @m -> rab ** powDist @m rab)
-
--- | Collapse the @n@-fold tensor power of a monoid via 'mappend'\/'mempty'.
-powFold :: forall n m. (KnownNat n, Monoid m) => Tensor n m ~> m
-powFold = natCase @n mempty (\ @p -> mappend . ((id :: m ~> m) ** powFold @p @m))
-
--- | @Tensor n a@ is an object whenever @a@ is.
-withObTensor :: forall n k (a :: k) r. (KnownNat n, Monoidal k, Ob a) => ((Ob (Tensor n a)) => r) -> r
-withObTensor r = natCase @n r (\ @m -> withObTensor @m @k @a (withOb2 @k @a @(Tensor m a) r))
+powDist :: forall n r a b. (SNatI n, MonoidalProfunctor r) => r a b -> r (NFold n a) (NFold n b)
+powDist rab = case snat @n of
+  SZ -> one
+  SS @m -> rab ** powDist @m rab
 
 -- | Distribute the internal hom over the tensor power: split @x ~~> aⁿ@ into @(x ~~> a)ⁿ@ using
 -- 'CopyDiscard' projections -- this is what makes an @n@-ary power grate a
 -- 'Proarrow.Optic.Grate.Grate'.
 splitPow
-  :: forall n k (x :: k) a. (KnownNat n, Closed k, CopyDiscard k, Ob x, Ob a) => (x ~~> Tensor n a) ~> Tensor n (x ~~> a)
-splitPow =
-  natCase @n
-    (withObExp @k @x @Unit (discard @k @(x ~~> Unit)))
-    ( \ @m ->
-        withObTensor @m @k @a
-          ((fst @a @(Tensor m a) ^^^ obj @x) &&& (splitPow @m @k @x @a . (snd @a @(Tensor m a) ^^^ obj @x)))
-    )
+  :: forall n k (x :: k) a. (SNatI n, Closed k, CopyDiscard k, Ob x, Ob a) => (x ~~> NFold n a) ~> NFold n (x ~~> a)
+splitPow = case snat @n of
+  SZ -> withObExp @k @x @Unit (discard @k @(x ~~> Unit))
+  SS @m ->
+    withObNFold @m @a
+      ((fst @a @(NFold m a) ^^^ obj @x) &&& (splitPow @m @k @x @a . (snd @a @(NFold m a) ^^^ obj @x)))
 
 -- | Zip two tensor powers into the tensor power of the tensor: the @<*>@ of the reader
--- applicative @Tensor n@.
+-- applicative @NFold n@.
 powZip
-  :: forall n k (a :: k) c. (KnownNat n, SymMonoidal k, Ob a, Ob c) => (Tensor n a ** Tensor n c) ~> Tensor n (a ** c)
-powZip =
-  natCase @n
-    (leftUnitor @k @Unit)
-    ( \ @m ->
-        withObTensor @m @k @a
-          (withObTensor @m @k @c (((obj @a ** obj @c) ** powZip @m @k @a @c) . swapInner @a @(Tensor m a) @c @(Tensor m c)))
-    )
-
--- | @n@ copies of an object, via 'copy' and 'discard': the @pure@ of the reader applicative.
-powCopy :: forall n k (a :: k). (KnownNat n, CopyDiscard k, Ob a) => a ~> Tensor n a
-powCopy = natCase @n (discard @k @a) (\ @m -> (obj @a ** powCopy @m @k @a) . copy @k @a)
+  :: forall n k (a :: k) c. (SNatI n, SymMonoidal k, Ob a, Ob c) => (NFold n a ** NFold n c) ~> NFold n (a ** c)
+powZip = case snat @n of
+  SZ -> leftUnitor @k @Unit
+  SS @m ->
+    withObNFold @m @a
+      (withObNFold @m @c (((obj @a ** obj @c) ** powZip @m @k @a @c) . swapInner @a @(NFold m a) @c @(NFold m c)))
 
 -- | The tensor power of the unit is (isomorphic to) the unit.
-powUnit :: forall n k. (KnownNat n, Monoidal k) => Unit ~> Tensor n (Unit :: k)
-powUnit = natCase @n id (\ @m -> (obj @(Unit :: k) ** powUnit @m @k) . leftUnitorInv @k @Unit)
+powUnit :: forall n k. (SNatI n, Monoidal k) => Unit ~> NFold n (Unit :: k)
+powUnit = case snat @n of
+  SZ -> id
+  SS @m -> (obj @(Unit :: k) ** powUnit @m @k) . leftUnitorInv @k @Unit
 
 -- | The arity-@n@ aggregation witness: @s@ presents @n@ foci via the tensor power.
 type Pow :: forall {k}. Nat -> k +-> k
 data Pow n s a where
-  Pow :: forall (n :: Nat) {k} (s :: k) (a :: k). (Ob a) => (s ~> Tensor n a) -> Pow n s a
+  Pow :: forall (n :: Nat) {k} (s :: k) (a :: k). (Ob a) => (s ~> NFold n a) -> Pow n s a
 
 -- | The dual of 'Pow': @t@ is rebuilt from @n@ foci.
 type CoPow :: forall {k}. Nat -> k +-> k
 data CoPow n b t where
-  CoPow :: forall (n :: Nat) {k} (b :: k) (t :: k). (Ob b) => (Tensor n b ~> t) -> CoPow n b t
+  CoPow :: forall (n :: Nat) {k} (b :: k) (t :: k). (Ob b) => (NFold n b ~> t) -> CoPow n b t
 
-instance (Monoidal k, KnownNat n) => Profunctor (Pow n :: k +-> k) where
+instance (Monoidal k, SNatI n) => Profunctor (Pow n :: k +-> k) where
   dimap l r (Pow sa) = Pow (powDist @n r . sa . l) \\ l \\ r
   r \\ Pow sa = r \\ sa
-instance (Monoidal k, KnownNat n) => Profunctor (CoPow n :: k +-> k) where
+instance (Monoidal k, SNatI n) => Profunctor (CoPow n :: k +-> k) where
   dimap l r (CoPow bt) = CoPow (r . bt . powDist @n l) \\ l \\ r
   r \\ CoPow bt = r \\ bt
 
-instance (Monoidal k, KnownNat n) => SetterFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+instance (Monoidal k, SNatI n) => SetterFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   overP (Pow sl) (CoPow rt) f = rt . powDist @n f . sl
-instance (Monoidal k, KnownNat n) => FoldFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
-  foldMapP (Pow sl) am = powFold @n . powDist @n am . sl
-instance (Monoidal k, KnownNat n) => TravFl (Pow n :: k +-> k) (CoPow n :: k +-> k)
-instance (Monoidal k, KnownNat n) => MonTravFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+instance (Monoidal k, SNatI n) => FoldFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+  foldMapP (Pow sl) am = fanIn @n . powDist @n am . sl
+instance (Monoidal k, SNatI n) => TravFl (Pow n :: k +-> k) (CoPow n :: k +-> k)
+instance (Monoidal k, SNatI n) => MonTravFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   monTravP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 
 -- | A power grate is a glass: ignore the source, and for each of the @n@ positions feed the
--- consumer the selector "project this focus". The selectors come from 'splitPow' of @sl@, the
--- consumer is copied @n@ times with 'powCopy', 'powZip' pairs them, and 'powDist' applies each.
+-- consumer the selector "project this focus". The selectors come from @splitPow@ of @sl@, the
+-- consumer is copied @n@ times with 'fanOut', @powZip@ pairs them, and @powDist@ applies each.
 -- Everything is stated with the 'CopyDiscard' structure that 'CCC' now provides, so the tensor
 -- and the product never have to be identified by hand.
-instance (Monoidal k, HasCoproducts k, KnownNat n) => GlassFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+instance (Monoidal k, HasCoproducts k, SNatI n) => GlassFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   glassP @s @a @b (Pow sl@Objs) (CoPow rt@Objs) =
-    withObExp @k @s @a
-      ( withObExp @k @(s ~~> a) @b
-          ( withOb2 @k @s @((s ~~> a) ~~> b)
-              ( rt
-                  . powDist @n (apply @k @(s ~~> a) @b)
-                  . powZip @n @k @((s ~~> a) ~~> b) @(s ~~> a)
-                  . ( (powCopy @n @k @((s ~~> a) ~~> b) . snd @s @((s ~~> a) ~~> b))
-                        &&& (splitPow @n @k @s @a . mkExponential sl . discard @k @(s ** ((s ~~> a) ~~> b)))
-                    )
-              )
+    withObSel @s @a @b
+      ( withOb2 @k @s @(Mod s a b)
+          ( rt
+              . powDist @n (apply @k @(s ~~> a) @b)
+              . powZip @n @k @(Mod s a b) @(s ~~> a)
+              . ( (fanOut @n @(Mod s a b) . snd @s @(Mod s a b))
+                    &&& (splitPow @n @k @s @a . mkExponential sl . discard @k @(s ** Mod s a b))
+                )
           )
       )
 
-instance (CopyDiscard k, HasCoproducts k, KnownNat n) => GrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+instance (CopyDiscard k, HasCoproducts k, SNatI n) => GrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   zipWithP (Pow @_ @_ @a sl) (CoPow rt) @x kk = rt . powDist @n kk . splitPow @n @_ @x @a . (sl ^^^ obj @x)
-instance (CopyDiscard k, HasCoproducts k, KnownNat n) => PowerGrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+instance (CopyDiscard k, HasCoproducts k, SNatI n) => PowerGrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   powerGrateP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 
--- | @'Pow' n@ is the representable profunctor of the tensor power @Tensor n@, which is the reader
+-- | @'Pow' n@ is the representable profunctor of the tensor power @NFold n@, which is the reader
 -- applicative for @n@ readers; the instances below make it a
 -- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', hence a kaleidoscope
 -- witness.
 -- | A tensor power is a fixed-shape traversable: distribute the carrier over the @n@ copies.
-instance (Monoidal k, KnownNat n) => Traversable (Pow n :: k +-> k) where
-  traverse @_ @_ @b (Pow f :.: p) = p // withObTensor @n @k @b (lmap f (powDist @n p) :.: Pow id)
+instance (Monoidal k, SNatI n) => Traversable (Pow n :: k +-> k) where
+  traverse @_ @_ @b (Pow f :.: p) = p // withObNFold @n @b (lmap f (powDist @n p) :.: Pow id)
 
-instance (Monoidal k, KnownNat n) => Representable (Pow n :: k +-> k) where
-  type Pow n % a = Tensor n a
+instance (Monoidal k, SNatI n) => Representable (Pow n :: k +-> k) where
+  type Pow n % a = NFold n a
   index (Pow f) = f
   tabulate = Pow
   repMap = powDist @n
 
-instance (SymMonoidal k, KnownNat n) => MonoidalProfunctor (Pow n :: k +-> k) where
+instance (SymMonoidal k, SNatI n) => MonoidalProfunctor (Pow n :: k +-> k) where
   one = Pow (powUnit @n)
   Pow @_ @_ @a f ** Pow @_ @_ @c g = f // g // withOb2 @k @a @c (Pow (powZip @n @k @a @c . (f ** g)))
-instance (SymMonoidal k, HasCoproducts k, KnownNat n) => MonoidalProfunctor (Coprod (Pow n :: k +-> k)) where
-  one = withObTensor @n @k @InitialObject (Coprod (Pow initiate))
+instance (SymMonoidal k, HasCoproducts k, SNatI n) => MonoidalProfunctor (Coprod (Pow n :: k +-> k)) where
+  one = withObNFold @n @(InitialObject :: k) (Coprod (Pow initiate))
   Coprod (Pow @_ @_ @a f) ** Coprod (Pow @_ @_ @c g) =
     withObCoprod @k @a @c (Coprod (Pow (powDist @n (lft @k @a @c) . f ||| powDist @n (rgt @k @a @c) . g)))
-instance (CopyDiscard k, KnownNat n) => Strong M.Tensor (Pow n :: k +-> k) where
-  act @x (Pow @_ @_ @a f) = f // withOb2 @k @x @a (Pow (powZip @n @k @x @a . (powCopy @n @k @x ** f)))
-instance (CopyDiscard k, HasCoproducts k, KnownNat n) => Strong CoprodAction (Pow n :: k +-> k) where
+instance (CopyDiscard k, SNatI n) => Strong M.Tensor (Pow n :: k +-> k) where
+  act @x (Pow @_ @_ @a f) = f // withOb2 @k @x @a (Pow (powZip @n @k @x @a . (fanOut @n @x ** f)))
+instance (CopyDiscard k, HasCoproducts k, SNatI n) => Strong CoprodAction (Pow n :: k +-> k) where
   act @(COPR x) (Pow @_ @_ @a f) =
-    f // withObCoprod @k @x @a (Pow (powDist @n (lft @k @x @a) . powCopy @n @k @x ||| powDist @n (rgt @k @x @a) . f))
-instance (CopyDiscard k, HasCoproducts k, KnownNat n) => CotravFl (Pow n :: k +-> k) (CoPow n :: k +-> k)
-instance (CopyDiscard k, HasCoproducts k, KnownNat n) => KaleidoFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+    f // withObCoprod @k @x @a (Pow (powDist @n (lft @k @x @a) . fanOut @n @x ||| powDist @n (rgt @k @x @a) . f))
+instance (CopyDiscard k, HasCoproducts k, SNatI n) => CotravFl (Pow n :: k +-> k) (CoPow n :: k +-> k)
+instance (CopyDiscard k, HasCoproducts k, SNatI n) => KaleidoFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   kaleidoP (Pow sl) (CoPow rt) rab = dimap sl rt (kaleidoAct @_ @(Pow n) rab)
-instance (Monoidal k, KnownNat n) => Proadjunction (Pow n :: k +-> k) (CoPow n) where
+instance (Monoidal k, SNatI n) => Proadjunction (Pow n :: k +-> k) (CoPow n) where
   unit @x = (CoPow id :.: Pow id) \\ powDist @n (id :: x ~> x)
   counit (Pow sl :.: CoPow rt) = rt . sl
 
@@ -262,8 +232,8 @@ instance (Monoidal k, KnownNat n) => Proadjunction (Pow n :: k +-> k) (CoPow n) 
 -- of @t@.
 powerGrate
   :: forall {k} (n :: Nat) (s :: k) (t :: k) a b
-   . (CopyDiscard k, HasCoproducts k, KnownNat n, Ob a, Ob b)
-  => (s ~> Tensor n a) -> (Tensor n b ~> t) -> PowerGrate s t a b
+   . (CopyDiscard k, HasCoproducts k, SNatI n, Ob a, Ob b)
+  => (s ~> NFold n a) -> (NFold n b ~> t) -> PowerGrate s t a b
 powerGrate sl rt = legs2prof @PowerGrateFl (Pow @n sl) (CoPow @n rt)
 
 -- | Zip two sources through a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' (or any stronger optic, a
@@ -275,5 +245,5 @@ zipWithOf
    . (Monoidal k, Ob a, (Ob a, Ob b) => c (ExOptic KaleidoFl a b))
   => Optic c s t a b -> ((a ** a) ~> b) -> (s ** s) ~> t
 zipWithOf o f =
-  case kaleidoscopeOf o (RepCostar @_ @(Pow (S (S Z))) (f . (obj @a ** rightUnitor @k @a))) of
+  case kaleidoscopeOf o (RepCostar @_ @(Pow Nat2) (f . (obj @a ** rightUnitor @k @a))) of
     RepCostar @s' g -> g . (obj @s' ** rightUnitorInv @k @s')

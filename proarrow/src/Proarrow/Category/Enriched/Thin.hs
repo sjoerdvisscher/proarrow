@@ -16,7 +16,7 @@ import Prelude (Maybe (..), type (~))
 
 import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..), NonTrivialHolds, NonTrivialProfunctor (..))
 import Proarrow.Category.Instance.Zero (Bottom (..), VOID, Zero)
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), VacuousOb, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), VacuousOb, obj, type (+->))
 
 -- | The defaults take everything from a 'DecidableProfunctor' instance: the arrow exists when
 -- @'Holds' p a b@ computes to 'TRU'.
@@ -290,7 +290,7 @@ memberIndex = withAtLookup @k (snat @(Index a)) (go (snat @(Index a)) (finite @k
 
 -- | A category on a 'Finite' kind whose objects are exactly its numbered inhabitants: 'withIndex'
 -- and 'withOb' convert between the two notions, and 'atOb' looks an object up by its index.
-type Enumerable :: Type -> Constraint
+type Enumerable :: Kind -> Constraint
 class (CategoryOf k, Finite k) => Enumerable k where
   withIndex :: forall (a :: k) r. (Ob a) => ((KnownIndex a) => r) -> r
   withOb :: forall (a :: k) r. (KnownIndex a) => ((Ob a) => r) -> r

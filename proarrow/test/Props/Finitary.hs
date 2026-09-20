@@ -51,6 +51,7 @@ import Proarrow.Testing.Laws
   , testCategory
   , testClosed_
   , testCoequalizers_
+  , testEpiMonoFactorization_
   , testEqualizers_
   , testFinitary
   , testInitialObject
@@ -261,6 +262,7 @@ test =
     , testClosed_ @(PROD Psh)
     , testEqualizers_ @Psh
     , testCoequalizers_ @Psh
+    , testEpiMonoFactorization_ @Psh
     , testPullbacks_ @Psh
     , testPushouts_ @Psh
     , testFinitary @Rows "Rows"

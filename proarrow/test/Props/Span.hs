@@ -65,6 +65,9 @@ instance (Ob a, Ob b) => TestingEqShow (Span a (b :: SPAN FINSET)) where
           Just Refl -> do
             eql <- eqP l1 l2
             eqr <- eqP r1 r2
+            -- Both legs map *out* of the apex, so any relabelling of it is admissible: two spans
+            -- are isomorphic exactly when their multisets of (left, right) image pairs agree.
+            -- Cospan's legs map in, which is why it has to search instead -- see "Props.Cospan".
             let hasIso = sort (zip (toList (unFinSet l1)) (toList (unFinSet r1))) == sort (zip (toList (unFinSet l2)) (toList (unFinSet r2)))
             pure $ (eql && eqr) || hasIso
           Nothing -> pure False

@@ -10,7 +10,13 @@ module Proarrow.Category.Monoidal.Strictified where
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly, SymMonoidal (..))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , Strictly
+  , SymMonoidal (..)
+  , associatorDefault
+  )
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
 
 infixl 7 ==
@@ -151,8 +157,8 @@ instance (Monoidal k) => Monoidal [k] where
   type Unit = '[]
   type as ** bs = as ++ bs
   withOb2 @as @bs r = withIsList2 @as @bs r
-  associator @as @bs @cs = obj @as ** obj @bs ** obj @cs
-  associatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
+  associator @as @bs @cs = associatorDefault @as @bs @cs
+  associatorInv @as @bs @cs = associatorDefault @as @bs @cs
 
 instance (SymMonoidal k) => SymMonoidal [k] where
   swap @as @bs = swap' @as @bs

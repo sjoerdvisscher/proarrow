@@ -14,7 +14,7 @@ module Proarrow.Path where
 import Data.Kind (Constraint, Type)
 import Prelude (type (~))
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, src, tgt, (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, src, tgt, (:~>), type (+->))
 import Proarrow.Profunctor.Instance.Composition (o, (:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable)
@@ -48,7 +48,7 @@ associatorInv :: p :.: (q :.: r) :~> (p :.: q) :.: r
 associatorInv (p :.: (q :.: r)) = (p :.: q) :.: r
 
 -- | A type-level list of profunctors, from category @j@ to category @k@.
-type Path :: Type -> Type -> Type
+type Path :: Kind -> Kind -> Kind
 type data Path j k where
   Nil :: Path k k
   (:::) :: (i +-> j) -> Path j k -> Path i k

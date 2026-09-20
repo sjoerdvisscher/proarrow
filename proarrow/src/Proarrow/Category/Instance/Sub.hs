@@ -4,18 +4,18 @@
 -- in "Proarrow.Category.Instance.Rep").
 module Proarrow.Category.Instance.Sub where
 
-import Data.Kind (Constraint, Type)
+import Data.Kind (Constraint)
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 
-type SUBCAT :: forall {k}. OB k -> Type
+type SUBCAT :: forall {k}. OB k -> Kind
 type data SUBCAT (ob :: OB k) = SUB k
 
 -- | Wraps an arrow whose endpoints satisfy the predicate @ob@: the arrows of the full

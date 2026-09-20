@@ -20,6 +20,10 @@ module Proarrow.Tools.CCC
   , rgt
   , Free
   , Syntax
+  , Ctx
+  , Mul
+  , Cast (..)
+  , KnownCtx (..)
   , BiCCCStructs
   , type F
   , injectRight

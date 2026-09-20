@@ -28,7 +28,7 @@ import Proarrow.Optic
   , legs2prof
   , withLegs
   )
-import Proarrow.Optic.Glass (GlassFl)
+import Proarrow.Optic.Glass (GlassFl, Mod)
 import Proarrow.Optic.Kaleidoscope (KaleidoFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -92,7 +92,7 @@ withGrate o k = withLegs @GrateFl o \ @p @q p q -> k (\ @x kk -> zipWithP @p @q 
 grate
   :: forall {k} (s :: k) (t :: k) a b
    . (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (s ~~> a), Ob s, Ob a, Ob b)
-  => (((s ~~> a) ~~> b) ~> t) -> Grate s t a b
+  => (Mod s a b ~> t) -> Grate s t a b
 grate f@Objs =
   withObExp @k @s @a $
     let sa = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
