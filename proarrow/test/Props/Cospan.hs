@@ -32,6 +32,7 @@ test =
   testGroup
     "Cospan(FinSet)"
     [ testCategory @(COSPAN FINSET)
+    , testDagger @(COSPAN FINSET)
     , testMonoidal_ @(COSPAN FINSET)
     , testMonoidalHom_ @(COSPAN FINSET)
     , testSymMonoidal_ @(COSPAN FINSET)

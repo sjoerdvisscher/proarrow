@@ -32,6 +32,7 @@ test =
   testGroup
     "Span(FinSet)"
     [ testCategory @(SPAN FINSET)
+    , testDagger @(SPAN FINSET)
     , testMonoidal_ @(SPAN FINSET)
     , testMonoidalHom_ @(SPAN FINSET)
     , testSymMonoidal_ @(SPAN FINSET)

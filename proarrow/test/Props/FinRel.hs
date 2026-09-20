@@ -37,6 +37,7 @@ test =
   testGroup
     "FinRel"
     [ testCategory @FINREL
+    , testDagger @FINREL
     , testTerminalObject @FINREL
     , testInitialObject @FINREL
     , testBinaryProducts_ @FINREL

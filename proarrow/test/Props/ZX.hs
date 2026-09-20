@@ -26,6 +26,7 @@ test =
   testGroup
     "ZX calculus"
     [ testCategory @Nat
+    , testDagger @Nat
     , testMonoidal_ @Nat
     , testMonoidalHom_ @Nat
     , testHypergraph_ @Nat

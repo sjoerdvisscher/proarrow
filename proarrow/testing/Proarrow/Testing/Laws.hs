@@ -28,6 +28,7 @@ import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Adjunction (Adjunction)
+import Proarrow.Category.Enriched.Dagger qualified as Dagger
 import Proarrow.Category.Enriched.Finitary qualified as Finitary
 import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -197,6 +198,25 @@ propReflectsEq label desc eqComposed k1 k2 = do
   unless (eqComposed == eqDirect) $
     testFailed $
       "Failed " ++ label ++ ": (" ++ desc ++ ") = " ++ show eqComposed ++ " but (k1 == k2) = " ++ show eqDirect
+
+-- | Laws of a dagger category: 'Dagger.dagger' is an identity-on-objects involution, and a
+-- contravariant functor. Identity-on-objects is what makes this statable without any objecthood
+-- witness -- the dagger of an @a '~>' b@ is a @b '~>' a@, never landing on a new object.
+testDagger :: forall k. (Testable k, Dagger.Dagger k) => TestTree
+testDagger = testProperty "Dagger" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb
+  Some @c <- genOb
+  f <- genNamed @(a ~> b) "f"
+  g <- genNamed @(b ~> c) "g"
+  testEq "involution" "dagger (dagger f)" (Dagger.dagger (Dagger.dagger f)) "f" f
+  testEq "identity" "dagger id" (Dagger.dagger (id :: a ~> a)) "id" (id :: a ~> a)
+  testEq
+    "contravariant"
+    "dagger (g . f)"
+    (Dagger.dagger (g . f))
+    "dagger f . dagger g"
+    (Dagger.dagger f . Dagger.dagger g)
 
 -- | Checks the subobject classifier. Four laws, of which the first is the defining one for the
 -- class\'s primitive:

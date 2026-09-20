@@ -40,6 +40,7 @@ test =
   testGroup
     "Matrix"
     [ testCategory @(MatK Int)
+    , testDagger @(MatK Int)
     , testTerminalObject @(MatK Int)
     , testInitialObject @(MatK Int)
     , testBinaryProducts_ @(MatK Int)
