@@ -17,7 +17,7 @@ import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..),
 import Proarrow.Category.Instance.Bool (BOOL (..), FromBool)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
-import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), factorPushoutDefault, thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -300,5 +300,4 @@ instance HasPushouts COST where
   pushout = thinPushout
   factorPushout = factorPushoutDefault
 
-instance HasEpiMonoFactorization COST where
-  factorize = defaultFactorize
+instance HasEpiMonoFactorization COST

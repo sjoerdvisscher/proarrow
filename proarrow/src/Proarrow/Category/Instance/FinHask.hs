@@ -33,7 +33,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
@@ -259,8 +259,7 @@ instance HasCoequalizers FINHASK where
 -- >>> let r :: FinHask (FH (Fin 4)) (FH (Fin 5)) = fromList [(0,0), (1,2), (2,4), (3,4)]
 -- >>> (pushout l r \l' r' -> P.show (l', r')) :: P.String
 -- "(fromList [(0,1),(1,3),(2,3)],fromList [(0,1),(1,0),(2,1),(3,2),(4,3)])"
-instance HasPushouts FINHASK where
-  pushout = pushoutDefault
+instance HasPushouts FINHASK
 
 -- | >>> import Proarrow.Colimit.Pushout (isEpi)
 -- >>> let f :: FinHask (FH (Fin 3)) (FH (Fin 3)) = fromList [(0,2), (1,0), (2,1)]

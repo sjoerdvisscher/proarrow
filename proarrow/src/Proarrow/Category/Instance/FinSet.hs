@@ -38,7 +38,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
@@ -309,8 +309,7 @@ instance HasCoequalizers FINSET where
 -- >>> let r :: FinSet (FS Nat4) (FS Nat5) = FinSet $ fin0 ::: fin2 ::: fin4 ::: fin4 ::: VNil
 -- >>> (pushout l r \(FinSet l') (FinSet r') -> P.show (l', r')) :: P.String
 -- "(1 ::: 3 ::: 3 ::: VNil,1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil)"
-instance HasPushouts FINSET where
-  pushout = pushoutDefault
+instance HasPushouts FINSET
 
 findIndex :: (a -> P.Bool) -> Vec n a -> Fin n
 findIndex _ VNil = P.error "unexpected missing element"

@@ -28,20 +28,19 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, dis
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
-import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
-import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Limit.Equalizer (HasEqualizers (..), pullbackDefault)
+import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 type n + m = Plus n m
@@ -234,8 +233,7 @@ instance (P.Fractional a, P.Eq a) => HasCoequalizers (MatK a) where
 -- >>> let g = Mat @(S Z) @(S Z) ((3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
 -- >>> (pullback f g \p q -> case (p, q) of (Mat pv, Mat qv) -> P.show (pv, qv)) :: P.String
 -- "((1.5 ::: VNil) ::: VNil,(1.0 ::: VNil) ::: VNil)"
-instance (P.Fractional a, P.Eq a) => HasPullbacks (MatK a) where
-  pullback = pullbackDefault
+instance (P.Fractional a, P.Eq a) => HasPullbacks (MatK a)
 
 -- | Pushouts are computed via 'pushoutDefault', as the coequalizer of @lft . f@ and @rgt . g@ on the
 -- coproduct @a || b@ -- the standard linear-algebra construction of a cofiber product of vector spaces.
@@ -244,19 +242,17 @@ instance (P.Fractional a, P.Eq a) => HasPullbacks (MatK a) where
 -- >>> let g = Mat @(S Z) @(S Z) ((3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
 -- >>> (pushout f g \p q -> case (p, q) of (Mat pv, Mat qv) -> P.show (pv, qv)) :: P.String
 -- "((1.5 ::: VNil) ::: VNil,(1.0 ::: VNil) ::: VNil)"
-instance (P.Fractional a, P.Eq a) => HasPushouts (MatK a) where
-  pushout = pushoutDefault
+instance (P.Fractional a, P.Eq a) => HasPushouts (MatK a)
 
 -- | Epi-mono factorization is computed via 'defaultFactorize': @f@ factors as the coequalizer of its
 -- cokernel pair (the epi onto its image) followed by the equalizer factorization of @f@ through that
 -- epi (the mono inclusion of the image).
 --
+-- >>> import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 -- >>> let h = Mat @(S (S Z)) @(S (S Z)) ((1 ::: 2 ::: VNil) ::: (2 ::: 4 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S (S Z)) :: MatK P.Double)
 -- >>> (case factorize h of e :.: m -> case (e, m) of (Mat ev, Mat mv) -> P.show (ev, mv, unMat (m . e))) :: P.String
 -- "((2.0 ::: 4.0 ::: VNil) ::: VNil,(0.5 ::: VNil) ::: (1.0 ::: VNil) ::: VNil,(1.0 ::: 2.0 ::: VNil) ::: (2.0 ::: 4.0 ::: VNil) ::: VNil)"
-instance (P.Fractional a, P.Eq a) => HasEpiMonoFactorization (MatK a) where
-  factorize :: forall (x :: MatK a) y. (x ~> y) -> (Mat :.: Mat) x y
-  factorize = defaultFactorize
+instance (P.Fractional a, P.Eq a) => HasEpiMonoFactorization (MatK a)
 
 -- | Reads the entry of a row at a runtime column index.
 at :: Vec m a -> P.Int -> a
@@ -298,10 +294,6 @@ instance (P.Num a) => Monoidal (MatK a) where
   type Unit = M (S Z)
   type M x ** M y = M (y * x)
   withOb2 @(M x) @(M y) r = withMultNat @y @x r
-  leftUnitor = id
-  leftUnitorInv = id
-  rightUnitor = id
-  rightUnitorInv = id
   associator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) ** (obj @(M c) ** obj @(M d)))
   associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) ** (obj @(M c) ** obj @(M d)))
 

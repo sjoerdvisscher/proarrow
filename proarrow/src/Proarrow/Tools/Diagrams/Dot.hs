@@ -182,10 +182,6 @@ instance Monoidal DOT where
   type Unit = D '[]
   type ls ** rs = D (UN D ls ++ UN D rs)
   withOb2 @(D ls) @(D rs) r = withIsList2 @ls @rs r
-  leftUnitor = id
-  leftUnitorInv = id
-  rightUnitor = id
-  rightUnitorInv = id
   associator @as @bs @cs = associatorDefault @as @bs @cs
   associatorInv @as @bs @cs = associatorDefault @as @bs @cs
 instance SymMonoidal DOT where

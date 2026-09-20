@@ -151,10 +151,6 @@ instance (Monoidal k) => Monoidal [k] where
   type Unit = '[]
   type as ** bs = as ++ bs
   withOb2 @as @bs r = withIsList2 @as @bs r
-  leftUnitor = id
-  leftUnitorInv = id
-  rightUnitor = id
-  rightUnitorInv = id
   associator @as @bs @cs = obj @as ** obj @bs ** obj @cs
   associatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
 

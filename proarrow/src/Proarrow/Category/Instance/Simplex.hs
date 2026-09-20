@@ -111,10 +111,6 @@ instance Monoidal Nat where
   withOb2 @a @b r = case singNat @a of
     SZ -> r
     SS @a' -> withOb2 @_ @a' @b r
-  leftUnitor = id
-  leftUnitorInv = id
-  rightUnitor = id
-  rightUnitorInv = id
   associator @a @b @c = withOb2 @_ @a @b (withOb2 @_ @(a ** b) @c (id @Simplex))
   associatorInv @a @b @c = withOb2 @_ @b @c (withOb2 @_ @a @(b ** c) (id @Simplex))
 

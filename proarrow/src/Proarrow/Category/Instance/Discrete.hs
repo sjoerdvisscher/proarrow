@@ -20,7 +20,7 @@ import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Bool (BOOL (..), If)
 import Proarrow.Category.Instance.Cost (COST)
 import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -133,8 +133,7 @@ instance (Thin.Indexed k) => HasPushouts (DISCRETE k) where
   pushout Refl Refl k = k Refl Refl
   factorPushout Refl Refl Refl Refl = Refl
 
-instance (Thin.Indexed k) => HasEpiMonoFactorization (DISCRETE k) where
-  factorize = defaultFactorize
+instance (Thin.Indexed k) => HasEpiMonoFactorization (DISCRETE k)
 
 type data CODISCRETE k = CD k
 
@@ -199,8 +198,7 @@ instance (Thin.Indexed k) => HasPushouts (CODISCRETE k) where
   pushout @o Arr Arr k = k @o Arr Arr
   factorPushout Arr Arr Arr Arr = Arr
 
-instance (Thin.Indexed k) => HasEpiMonoFactorization (CODISCRETE k) where
-  factorize = defaultFactorize
+instance (Thin.Indexed k) => HasEpiMonoFactorization (CODISCRETE k)
 
 -- | Any object works as the product of any two objects here, since every hom-set is a singleton.
 instance (Thin.Indexed k) => HasBinaryProducts (CODISCRETE k) where

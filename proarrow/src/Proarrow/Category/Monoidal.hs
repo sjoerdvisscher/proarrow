@@ -158,15 +158,23 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Mono
 
   -- | Cancels a 'Unit' on the left.
   leftUnitor :: (Ob (a :: k)) => Unit ** a ~> a
+  default leftUnitor :: (Ob (a :: k), (Unit ** a) ~ a) => Unit ** a ~> a
+  leftUnitor = id
 
   -- | Introduces a 'Unit' on the left; inverse to 'leftUnitor'.
   leftUnitorInv :: (Ob (a :: k)) => a ~> Unit ** a
+  default leftUnitorInv :: (Ob (a :: k), (Unit ** a) ~ a) => a ~> Unit ** a
+  leftUnitorInv = id
 
   -- | Cancels a 'Unit' on the right.
   rightUnitor :: (Ob (a :: k)) => a ** Unit ~> a
+  default rightUnitor :: (Ob (a :: k), (a ** Unit) ~ a) => a ** Unit ~> a
+  rightUnitor = id
 
   -- | Introduces a 'Unit' on the right; inverse to 'rightUnitor'.
   rightUnitorInv :: (Ob (a :: k)) => a ~> a ** Unit
+  default rightUnitorInv :: (Ob (a :: k), (a ** Unit) ~ a) => a ~> a ** Unit
+  rightUnitorInv = id
 
   -- | Reassociates the tensor to the right.
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
@@ -190,13 +198,15 @@ instance (((a ** b) ** c) ~ (a ** (b ** c))) => StrictlyAssoc a b c
 
 -- | If your monoidal category is a strict monoidal category, add 'Strictly' to your 'Ob' constraint.
 -- This will let GHC know that the unitors and associators are strict, so you won't have to provide proof of that.
--- You can use 'associatorDefault' as implementation for both 'associator' and 'associatorInv':
+--
+-- The four unitors then need no definition at all: each defaults to 'id' under its own equality
+-- (@'Unit' '**' a ~ a@ or @a '**' 'Unit' ~ a@), which is what strictness gives you. Note those
+-- defaults are keyed on the equalities rather than on 'Strictly' itself, so they also fire for a
+-- category whose tensor is strictly unital but not strictly associative -- 'Proarrow.Category.Instance.Mat.MatK'
+-- and 'Proarrow.Category.Instance.ZX.ZX' are both in that position. Only the associators are left,
+-- and 'associatorDefault' serves for both:
 --
 -- @
--- leftUnitor = id
--- leftUnitorInv = id
--- rightUnitor = id
--- rightUnitorInv = id
 -- associator \@a \@b \@c = associatorDefault \@a \@b \@c
 -- associatorInv \@a \@b \@c = associatorDefault \@a \@b \@c
 -- @

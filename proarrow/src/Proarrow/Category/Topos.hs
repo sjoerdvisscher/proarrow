@@ -40,7 +40,11 @@ classifyKernelPair :: forall {k} (a :: k) b. (HasSubobjectClassifier k) => a ~> 
 classifyKernelPair f@Objs = isEq @b . (f *** f)
 
 class (CategoryOf k) => HasEpiMonoFactorization k where
+  -- | Factor an arrow as an epi followed by a mono. Defaults to 'defaultFactorize', the image
+  -- factorization via the cokernel pair, which applies whenever @k@ has pushouts and equalizers.
   factorize :: (a ~> b) -> (Hom k :.: Hom k) a b
+  default factorize :: (HasPushouts k, HasEqualizers k) => (a ~> b) -> (Hom k :.: Hom k) a b
+  factorize = defaultFactorize
 
 defaultFactorize :: (HasPushouts k, HasEqualizers k) => (a ~> b) -> (Hom k :.: Hom k) a b
 defaultFactorize f = pushout f f \q1 q2 -> equalize q1 q2 \incl -> factorEqualizer incl f :.: incl

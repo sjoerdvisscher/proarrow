@@ -24,7 +24,7 @@ import Proarrow.Category.Enriched.Thin
   , withLookupMapWrap
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
-import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -337,5 +337,4 @@ instance HasPushouts (ORDINAL n) where
 
   factorPushout p1 _ k1 _ = factorCoequalizer p1 k1
 
-instance HasEpiMonoFactorization (ORDINAL n) where
-  factorize = defaultFactorize
+instance HasEpiMonoFactorization (ORDINAL n)

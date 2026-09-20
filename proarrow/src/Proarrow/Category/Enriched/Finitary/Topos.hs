@@ -49,7 +49,6 @@ import Proarrow.Category.Topos
   ( ElementaryTopos
   , HasEpiMonoFactorization (..)
   , HasSubobjectClassifier (..)
-  , defaultFactorize
   )
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
@@ -303,8 +302,7 @@ instance (Enumerable j, Enumerable k) => HasPullbacks (FINITARY j k)
 instance (Enumerable j, Enumerable k) => HasPushouts (FINITARY j k)
 
 -- | The image of a natural transformation is the equalizer of its cokernel pair.
-instance (Enumerable j, Enumerable k) => HasEpiMonoFactorization (FINITARY j k) where
-  factorize = defaultFactorize
+instance (Enumerable j, Enumerable k) => HasEpiMonoFactorization (FINITARY j k)
 
 -- * Natural transformations, enumerated
 

@@ -158,10 +158,6 @@ instance Monoidal Nat where
   type Unit = 0
   type p ** q = p + q
   withOb2 @a @b r = withPlusIsNat @a @b r
-  leftUnitor = id
-  leftUnitorInv = id
-  rightUnitor = id
-  rightUnitorInv = id
   associator @a @b @c = unsafeCoerce (withOb2 @_ @a @b (withOb2 @_ @(a + b) @c (obj @(a + b + c))))
   associatorInv @a @b @c = unsafeCoerce (withOb2 @_ @a @b (withOb2 @_ @(a + b) @c (obj @(a + b + c))))
 

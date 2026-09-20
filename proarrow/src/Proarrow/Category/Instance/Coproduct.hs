@@ -8,7 +8,7 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
@@ -98,8 +98,7 @@ instance (HasPushouts j, HasPushouts k) => HasPushouts (COPRODUCT j k) where
   factorPushout (InjL p1) (InjL p2) (InjL k1) (InjL k2) = InjL (factorPushout p1 p2 k1 k2)
   factorPushout (InjR p1) (InjR p2) (InjR k1) (InjR k2) = InjR (factorPushout p1 p2 k1 k2)
 
-instance (HasPushouts j, HasEqualizers j, HasPushouts k, HasEqualizers k) => HasEpiMonoFactorization (COPRODUCT j k) where
-  factorize = defaultFactorize
+instance (HasPushouts j, HasEqualizers j, HasPushouts k, HasEqualizers k) => HasEpiMonoFactorization (COPRODUCT j k)
 
 data family Lft :: j +-> COPRODUCT j k
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (Lft :: j +-> COPRODUCT j k) where

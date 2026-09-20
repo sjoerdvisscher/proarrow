@@ -76,10 +76,6 @@ instance (CategoryOf k) => Monoidal (LIST k) where
   type Unit = L '[]
   type p ** q = L (UN L p Str.++ UN L q)
   withOb2 @(L as) @(L bs) r = Str.withIsList2 @as @bs r
-  leftUnitor = id
-  leftUnitorInv = id
-  rightUnitor = id
-  rightUnitorInv = id
   associator @as @bs @cs = associatorDefault @as @bs @cs
   associatorInv @as @bs @cs = associatorDefault @as @bs @cs
 
