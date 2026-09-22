@@ -7,9 +7,19 @@ module Proarrow.Category.Instance.Product where
 
 import Prelude (type (~))
 
+import Data.Type.Nat (SNat (..), snat)
+
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), Discrete (..), ThinProfunctor (..))
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Category.Enriched.Thin
+  ( CodiscreteProfunctor (..)
+  , Discrete (..)
+  , Enumerable (..)
+  , Finite (..)
+  , Indexed (..)
+  , ThinProfunctor (..)
+  )
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 
 type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
@@ -62,3 +72,30 @@ checkDiscrete f r = withEq f r
 
 checkCodiscreteProfunctor :: (CodiscreteProfunctor p, CodiscreteProfunctor q, Ob a, Ob b) => (p :**: q) a b
 checkCodiscreteProfunctor = anyArr
+
+-- | The product of two enumerable kinds is enumerable, but numbering one in general needs type-level
+-- division to invert the pairing, which @fin@ does not provide, so the one product needed so far is
+-- numbered by hand. The order matches the value-level 'Proarrow.Category.Enriched.Finitary.pairIndex'
+-- convention -- first component slowest -- so a generic instance could replace this without
+-- renumbering anything.
+--
+-- ("Proarrow.Category.Sheaf" uses this kind as the opens of a discrete two-point space: a pair of
+-- booleans is a subset of @{x, y}@.)
+instance Indexed (BOOL, BOOL)
+
+instance Finite (BOOL, BOOL) where
+  type Objects (BOOL, BOOL) = '[ '(FLS, FLS), '(FLS, TRU), '(TRU, FLS), '(TRU, TRU)]
+
+instance Enumerable (BOOL, BOOL) where
+  withIndex @a r = case obj @a of
+    Fls :**: Fls -> r
+    Fls :**: Tru -> r
+    Tru :**: Fls -> r
+    Tru :**: Tru -> r
+  withOb @a r = case snat @(Index a) of
+    SZ -> r
+    SS @i -> case snat @i of
+      SZ -> r
+      SS @i' -> case snat @i' of
+        SZ -> r
+        SS @i'' -> case snat @i'' of SZ -> r

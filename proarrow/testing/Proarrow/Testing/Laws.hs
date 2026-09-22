@@ -5,7 +5,9 @@
 -- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'testCategory',
 -- 'testMonoidal', 'testBinaryProducts', 'testClosed', and friends. Wiring a new category into a
 -- test suite is a 'Testable' instance plus calls to these -- see proarrow's own test suite for
--- many examples.
+-- many examples. A 'Sheaf.Site' has five: 'testGluesBack' and 'testGluesBackAt' for the sheaf
+-- condition at a profunctor, and 'testGeneratedSieveIsSieve', 'testDenseIsCovering' and
+-- 'testLawvereTierney' for the coverage itself.
 --
 -- The prefix tells you the return type. A @test@ returns a 'TestTree', ready to drop into a
 -- 'Test.Tasty.testGroup'; a @prop@ returns a @'Property' ()@, meant to be composed into a property
@@ -21,6 +23,7 @@
 module Proarrow.Testing.Laws where
 
 import Control.Monad (unless, when)
+import Data.Foldable (for_)
 import Data.List (genericLength)
 import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
@@ -30,6 +33,8 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Category.Enriched.Dagger qualified as Dagger
 import Proarrow.Category.Enriched.Finitary qualified as Finitary
+import Proarrow.Category.Enriched.Finitary.Sheaf qualified as FinSheaf
+import Proarrow.Category.Enriched.Finitary.Topos qualified as FinTopos
 import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
@@ -40,6 +45,7 @@ import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.Hypergraph qualified as Hypergraph
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
+import Proarrow.Category.Sheaf qualified as Sheaf
 import Proarrow.Category.Topos qualified as Topos
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Colimit.Coequalizer qualified as Coequalizer
@@ -64,6 +70,8 @@ import Proarrow.Profunctor.Corepresentable
   , type (%%)
   )
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
+import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep, Representable, index, repMap, tabulate, withObRep, type (%))
 import Proarrow.Testing
   ( Some (..)
@@ -77,6 +85,7 @@ import Proarrow.Testing
   , expect
   , genNamed
   , genOb
+  , genObSmall
   , genObSuchThat
   , genSuchThat
   , isGenNonEmpty
@@ -300,6 +309,85 @@ testSubobjectClassifier_
   => TestTree
 testSubobjectClassifier_ =
   testSubobjectClassifier @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
+
+-- | A cover's generated sieve really is a sieve -- closed under composing on either side, which is
+-- what 'FinTopos.closedUnder' decides.
+--
+-- The closure holds for any coverage, lawful or not -- membership ignores the covariant argument
+-- and is closed under precomposition -- so this is not a check on the 'Sheaf.Site'. It is a check
+-- on 'Finitary.factorsThrough' and on the hom-profunctor's 'Finitary.elements', which every verdict
+-- in "Proarrow.Category.Enriched.Finitary.Sheaf" is read off. An argument-swapped
+-- 'Finitary.factorsThrough' is the mistake it catches.
+testGeneratedSieveIsSieve
+  :: forall t j k. (Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
+testGeneratedSieveIsSieve =
+  testProperty "generated sieves are sieves" $
+    sequence_
+      ( Finitary.foreachOb @k @(Property ()) \ @a -> Finitary.foreachOb @j @(Property ()) \ @b ->
+          [ case FinSheaf.generatedSieve @t @a @b c of
+              Sieve inSieve ->
+                expect
+                  ("the sieve a cover of object " ++ show (Finitary.objIndex @a) ++ " generates")
+                  True
+                  (FinTopos.closedUnder @(Yo a (OP b)) \(Yo g h) -> inSieve g h)
+          | Sheaf.SomeCover c <- Sheaf.covers @t @k @a
+          ]
+      )
+
+-- | For every sieve at every pair of objects of a finite site: it is covering exactly when it is dense,
+-- that is when its 'FinSheaf.closure' is the maximal sieve. Two independent computations of one
+-- fact: 'FinSheaf.isCovering' reads it off the coverage, 'FinSheaf.closure' off the induced
+-- topology.
+-- The test runs both at every sieve.
+testDenseIsCovering
+  :: forall t j k. (Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
+testDenseIsCovering =
+  testProperty "covering sieves are the dense ones" $
+    sequence_
+      ( Finitary.foreachOb @k @(Property ()) \ @a -> Finitary.foreachOb @j @(Property ()) \ @b ->
+          [ expect
+              ("sieve " ++ show (Finitary.toIndex s) ++ " at object " ++ show (Finitary.objIndex @a))
+              (FinSheaf.isCovering @t s)
+              (FinSheaf.isMaximal (FinSheaf.closure @t s))
+          | s <- Finitary.elements @(Sieve :: j +-> k) @a @b
+          ]
+      )
+
+-- | The three equations a Lawvere–Tierney topology satisfies, for an arrow
+-- @j :: 'Topos.Omega' '~>' 'Topos.Omega'@: it fixes @true@, is idempotent, and preserves meets.
+--
+-- Such a @j@ is the same data as a Grothendieck topology -- the covering sieves are the ones @j@
+-- sends to @true@. 'FinSheaf.lawvereTierney' is the @j@ a coverage induces, so this is how a
+-- coverage's stability and composition get checked, without quantifying over arrows the coverage
+-- was never handed.
+testLawvereTierney
+  :: forall k
+   . (Testable k, Topos.ElementaryTopos k, TestOb (Topos.Omega :: k), TestOb (Terminal.TerminalObject :: k))
+  => WithTestObProd k
+  -> (Topos.Omega :: k) ~> Topos.Omega
+  -> TestTree
+testLawvereTierney withTestObProd j =
+  testGroup
+    "Lawvere-Tierney topology"
+    [ testProperty "fixes true" $ testEq "true" "j . true" (j . Topos.true) "true" Topos.true
+    , testProperty "idempotent" $ testEq "idempotent" "j . j" (j . j) "j" j
+    , testProperty "preserves meets" $
+        withTestObProd @Topos.Omega @Topos.Omega @(Property ()) $
+          testEq "meets" "j . and" (j . Topos.and) "and . (j *** j)" (Topos.and . (j BinaryProduct.*** j))
+    ]
+
+testLawvereTierney_
+  :: forall k
+   . ( Testable k
+     , Topos.ElementaryTopos k
+     , TestObIsOb k
+     , TestOb (Topos.Omega :: k)
+     , TestOb (Terminal.TerminalObject :: k)
+     )
+  => (Topos.Omega :: k) ~> Topos.Omega
+  -> TestTree
+testLawvereTierney_ =
+  testLawvereTierney @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (BinaryProduct.withObProd @k @a @b r)))
 
 -- | Checks the epi-mono factorization laws: 'Topos.factorize' splits @f@ as @m . e@ through an
 -- image object, with @e@ epi and @m@ mono.
@@ -690,7 +778,7 @@ testClosed withTestOb2 withTestObExp =
               (Some @a, Some @b1, Some @b2) <-
                 genWith
                   (Just . show)
-                  ( genSuchThat ((,,) <$> genSome @k <*> genSome @k <*> genSome @k) \(Some @a, Some @b1, Some @b2) ->
+                  ( genSuchThat ((,,) <$> genSomeSmall @k <*> genSomeSmall @k <*> genSomeSmall @k) \(Some @a, Some @b1, Some @b2) ->
                       withTestObExp @b1 @b2 (isGenNonEmpty @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)))
                   )
               p <- withTestObExp @b1 @b2 (genNamed @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)) "p")
@@ -698,16 +786,16 @@ testClosed withTestOb2 withTestObExp =
           )
           (\ @_ @'(OP b1, b2) r -> withTestObExp @b1 @b2 r)
     , testProperty "Curry/uncurry is a natural isomorphism" $ do
-        Some @a <- genOb @k
-        Some @b <- genOb
-        Some @c <- genOb
+        Some @a <- genObSmall @k
+        Some @b <- genObSmall
+        Some @c <- genObSmall
         withTestOb2 @a @b $ withTestObExp @b @c $ do
           propIsoP
             (Exponential.curry @k @a @b @c)
             (Exponential.uncurry @b @c)
-          Some @a' <- genOb @k
-          Some @b' <- genOb
-          Some @c' <- genOb
+          Some @a' <- genObSmall @k
+          Some @b' <- genObSmall
+          Some @c' <- genObSmall
           f <- genNamed @(a' ~> a) "f"
           g <- genNamed @(b' ~> b) "g"
           h <- genNamed @(c ~> c') "h"
@@ -1057,6 +1145,65 @@ propProfunctorWith genPro withEqShow = do
       "dimap f' g' (dimap f g p)"
       (dimap f' g' (dimap f g p))
 
+-- | The uniqueness half of the sheaf condition at one cover: an element at the covered object is
+-- the gluing of its own restrictions.
+--
+-- The restriction half is not here, because a generic version of it would assert nothing. It needs
+-- a matching family, and the only family this code can build is an element's own restrictions --
+-- at which restriction reads @'lmap' ('Sheaf.legArrow' g) ('Sheaf.glue' c (restrictions of x)) =
+-- 'lmap' ('Sheaf.legArrow' g) x@, which is uniqueness with @'lmap' ('Sheaf.legArrow' g)@ applied to
+-- both sides. A family not of that shape has to come from the site, so @Props.Sheaf@ and
+-- @Props.Free@ each write their restriction test by hand. (Comparing @p x b@ would also want
+-- @'TestOb' x@ for the existential source of @'Sheaf.Leg' t k a c x@, which 'Sheaf.legArrow'
+-- recovers only as @'Ob' x@ -- free at a 'TestObIsOb' kind, not in general.)
+--
+-- At a finite site neither half needs a property test:
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.isSheaf' says restriction is a /bijection/ onto the
+-- matching families, which is both halves at once.
+propGluesBack
+  :: forall {j} {k} t (p :: j +-> k) (a :: k) (b :: j) c
+   . (Sheaf.Sheaf t p, Ob a, Ob b, TestingEqShow (p a b))
+  => Sheaf.Cover t k a c
+  -> p a b
+  -> Property ()
+propGluesBack c x =
+  testEq
+    "uniqueness"
+    "glue c (\\g -> lmap (legArrow g) x)"
+    (Sheaf.glue @t c \g -> lmap (Sheaf.legArrow g) x)
+    "x"
+    x
+
+-- | 'propGluesBack' at every cover of a random element's object. Named for the law and not for the
+-- class, since it is half of what 'Sheaf.Sheaf' asks for -- see 'propGluesBack' for the other half.
+--
+-- The object is drawn from those that actually have a cover: on a site where only some objects are
+-- covered, drawing uniformly would leave most runs asserting nothing while reporting successes.
+testGluesBack
+  :: forall {j} {k} t (p :: j +-> k)
+   . (Sheaf.HasFiniteCovers t k, Sheaf.Sheaf t p, TestableProfunctor p, TestableTypeP p, TestObIsOb k)
+  => TestTree
+testGluesBack = testProperty "glues back" do
+  Some @a <- genObSuchThat @k \(Some @a) -> not (null (Sheaf.covers @t @k @a))
+  Some @b <- genOb @j
+  x <- genNamed @(p a b) "x"
+  obFromTestOb @a $
+    obFromTestOb @b $
+      for_ (Sheaf.covers @t @k @a) \(Sheaf.SomeCover c) -> propGluesBack @t c x
+
+-- | 'propGluesBack' at one named cover, for a site whose covers cannot be listed. The label names
+-- the profunctor and cover, which nothing in the type can supply.
+testGluesBackAt
+  :: forall {j} {k} t (p :: j +-> k) (a :: k) c
+   . (Sheaf.Sheaf t p, TestableProfunctor p, TestableTypeP p, TestOb a)
+  => String
+  -> Sheaf.Cover t k a c
+  -> TestTree
+testGluesBackAt lbl c = testProperty ("glues back at " ++ lbl) do
+  Some @b <- genOb @j
+  x <- genNamed @(p a b) "x"
+  obFromTestOb @a $ obFromTestOb @b $ propGluesBack @t c x
+
 -- | Laws of a lax monoidal profunctor: @'M.**'@ is natural in both arguments and coherent with the
 -- unitors and the associator. This is the law of 'M.MonoidalProfunctor', which is a property of a
 -- profunctor, not of a kind -- so it applies to any monoidal profunctor, and to a monoidal
@@ -1218,8 +1365,9 @@ propNaturalTransformation
   :: forall {j} {k} (p :: j +-> k) q. (TestableProfunctor p, TestableProfunctor q) => p :~> q -> Property ()
 propNaturalTransformation n = do
   SomeP @a @b p <- genProfunctorElt @p "p"
-  Some @c <- genOb @k
-  Some @d <- genOb @j
+  -- as in 'propProfunctorWith': an object with no arrow to @a@ discards the run
+  Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
+  Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
   f <- genNamed @(c ~> a) "f"
   g <- genNamed @(b ~> d) "g"
   testEq "naturality" "n (dimap f g p)" (n (dimap f g p)) "dimap f g (n p)" (dimap f g (n p))

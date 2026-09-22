@@ -56,6 +56,7 @@ instance Testable (SPAN FINSET) where
   type TestOb a = Ob a
   showOb @a = showOb @_ @(UN SP a)
   genSome = mapSome SP <$> genSome
+  genSomeSmall = mapSome SP <$> genSomeSmall
 
 -- instance (Ob a, Ob b, Testable k, TestObIsOb k) => TestingEqShow (Span a (b :: SPAN k)) where
 instance (Ob a, Ob b) => TestingEqShow (Span a (b :: SPAN FINSET)) where

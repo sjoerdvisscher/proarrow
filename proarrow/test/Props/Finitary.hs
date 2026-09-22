@@ -16,7 +16,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (id, (.))
 
-import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb)
+import Proarrow.Category.Enriched.Finitary (Finitary (..), sizes)
 import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -225,7 +225,7 @@ instance TestableProfunctor (Sub Prof :: CAT Psh)
 -- pass the constructions\' own object witnesses, which supply @Ob@ and nothing more, and @Ob@ is all
 -- 'TestOb' asks for.
 instance Testable Psh where
-  showOb @(SUB p) = show (foreachOb @BOOL (\ @b -> [size @p @'() @b]))
+  showOb @(SUB p) = show (sizes @p)
   genSome = genSomeDef @'[FIN Rows, FIN Point, FIN Edge, FIN TwoEdges, FIN TerminalProfunctor]
 
 -- | Swap the first two rows at 'FLS'. 'F2T' is onto, so naturality leaves no choice about the

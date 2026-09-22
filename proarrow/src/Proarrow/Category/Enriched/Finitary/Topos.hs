@@ -75,7 +75,7 @@ import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
-import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
+import Proarrow.Profunctor.Instance.Sieve (Sieve (..), maximalSieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
@@ -497,11 +497,13 @@ sieveElements =
     (natDomain @(Yo a (OP b)) (P.const [P.False, P.True]))
     (natConditions @(Yo a (OP b)) @TerminalProfunctor \_ s t -> P.not s P.|| t)
 
+-- | A sieve as the tabulation of its membership, in 'natDomain' order -- the inverse of 'sieveAt'.
+sieveTable :: forall {j} {k} (a :: k) (b :: j). (FiniteCat j, FiniteCat k) => Sieve a b -> [P.Bool]
+sieveTable (Sieve s) = natDomain @(Yo a (OP b)) \(Yo ca bd) -> s ca bd
+
 instance (FiniteCat j, FiniteCat k) => Finitary (Sieve :: j +-> k) where
   size @a @b = genericLength (sieveElements @a @b)
-  toIndex @a @b = \(Sieve s) -> familyIndex "toIndex: not a sieve" es (natDomain @(Yo a (OP b)) \(Yo ca bd) -> s ca bd)
-    where
-      es = sieveElements @a @b
+  toIndex @a @b = familyIndex "toIndex: not a sieve" (sieveElements @a @b) . sieveTable
   fromIndex @a @b i = sieveAt (natPositions @(Yo a (OP b))) (genericIndex (sieveElements @a @b) i)
   elements @a @b = let pos = natPositions @(Yo a (OP b)) in P.map (sieveAt pos) (sieveElements @a @b)
 
@@ -518,7 +520,7 @@ sieveAt pos row = Sieve \ca bd -> ca // bd // atNatKey pos row (natKey (Yo ca bd
 -- sieve of all the ways an element of @p@ and one of @q@ can be carried to a matching pair.
 instance (FiniteCat j, FiniteCat k) => HasSubobjectClassifier (PROD (FINITARY j k)) where
   type Omega = PR (SUB Sieve)
-  true = Prod (Sub (Prof \TerminalProfunctor -> Sieve \_ _ -> P.True))
+  true = Prod (Sub (Prof \TerminalProfunctor -> maximalSieve))
   classifyGraph (Prod (Sub (Prof @_ @q f))) =
     Prod (Sub (Prof \(x :*: y) -> x // Sieve \g h -> g // h // toIndex @q (f (dimap g h x)) == toIndex (dimap g h y)))
 

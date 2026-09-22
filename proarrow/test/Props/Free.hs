@@ -5,31 +5,35 @@ module Props.Free where
 
 import Control.Applicative (Alternative (..))
 import Control.Monad (unless)
+import Data.Foldable (for_)
 import Data.Kind (Type)
 import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (Nat2)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testFailed, testProperty)
-import Prelude hiding (Monoid, curry, fst, id, snd, (.))
+import Prelude hiding (Monoid, curry, fst, id, mempty, snd, (**), (.))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinRel (FINREL (..))
 import Proarrow.Category.Instance.Free (FREE (..), Free (..), Lower, retract, widen)
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, UnitF, withOb2, type (**!))
+import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), SymMonoidal, UnitF, withOb2, type (**!))
 import Proarrow.Category.Monoidal.Cartesian (Cartesian, prodToTensor, tensorToProd, termToUnit, unitToTerm)
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Distributive (Distributive)
 import Proarrow.Category.Monoidal.StarAutonomous (DualF, StarAutonomous)
+import Proarrow.Category.Sheaf (Cover (..), Leg (..), Sheaf (..), Summands, Sums, legArrow)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
-import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), lmap, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..), type (@))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), type (*!))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
-import Proarrow.Monoid (Comonoid, Monoid, Supplies)
+import Proarrow.Monoid (Comonoid (..), Monoid (..), Supplies)
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
+import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 import Proarrow.Testing
@@ -40,8 +44,11 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , expect
+  , genNamed
   , genSomeDef
   , oneOfTotal
+  , testEq
   )
 import Proarrow.Testing.Laws
 import Props.Hask ()
@@ -104,6 +111,7 @@ test =
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
     , testHypergraph @FREEKIND (\r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , sheafTests
     , testProperty "cartesian coercions interpret to identities" P.$ do
         let roundTrip = retract @CARTCS @(Rep InterpT) (tensorToProd @(EMB '()) @(EMB '()) . prodToTensor @(EMB '()) @(EMB '()))
             unitTrip = retract @CARTCS @(Rep InterpT) (unitToTerm . termToUnit)
@@ -203,14 +211,25 @@ showSFree (STen a b) = "(" ++ showSFree a ++ " **! " ++ showSFree b ++ ")"
 showSFree (SExp a b) = "(" ++ showSFree a ++ " --> " ++ showSFree b ++ ")"
 showSFree (SDual a) = "(Dual " ++ showSFree a ++ ")"
 
--- | The finite palette of shapes 'Testable' picks 'Some' objects from — reused here (via
--- 'theFree', recovered from each 'Some' value's bundled 'KnownFree') so 'genTerm' can try
--- composing through each of them (see 'genTerm'\'s @composeB@, and the note on why it avoids
--- 'Testable.genSome' there).
-type Palette = '[InitF, TermF, TermF *! TermF, TermF + TermF, UnitF, TermF **! TermF]
+-- | The finite palette of shapes 'Testable' picks 'Some' objects from as the /endpoints/ of a
+-- generated term. 'Intermediates' is what @composeB@ routes through.
+--
+-- Every shape is built from 'UnitF', and none from 'TermF' or 'InitF': terms are compared by
+-- interpretation into 'FINREL', where the terminal and initial objects are both the empty set, so
+-- at any object built from them alone every hom-set has one element and every comparison is
+-- vacuous. The unit interprets to a one-element set, and the shapes over it do not collapse.
+type Palette = '[UnitF, UnitF *! UnitF, UnitF + UnitF, UnitF **! UnitF, UnitF --> UnitF]
 
-palette :: [Some FREEKIND]
-palette = mkSomeList @FREEKIND @Palette
+-- | The shapes @composeB@ routes intermediates through. It is 'Palette' plus 'TermF' and 'InitF':
+-- as /endpoints/ those two are useless (every hom-set at them is a singleton in 'FINREL', so a
+-- comparison there cannot fail), but as /waypoints/ they are not. Going through 'TermF' builds
+-- @'counit' '.' 'terminate' :: 'UnitF' '~>' 'UnitF'@, which interprets to the empty relation and is
+-- the only non-identity endomorphism of 'UnitF' the generator can reach -- without it every law
+-- comparison landing at @'UnitF' '~>' 'UnitF'@ is a single fixed instance.
+type Intermediates = TermF ': InitF ': Palette
+
+intermediates :: [Some FREEKIND]
+intermediates = mkSomeList @FREEKIND @Intermediates
 
 -- | Generate a random term between two (given) object shapes. Most branches recurse
 -- structurally on a strictly smaller sub-shape of the source or target, so they always
@@ -219,11 +238,11 @@ palette = mkSomeList @FREEKIND @Palette
 -- recursive call and cuts it off at zero.
 genTerm :: forall a b. (Ob a, Ob b) => Int -> SFree a -> SFree b -> GenTotal (Free a b)
 genTerm fuel sa sb =
-  oneOfTotal [idB, initiateB, terminateB, fstSndB, applyB, recB]
+  oneOfTotal [idB, initiateB, terminateB, unitB, counitB, fstSndB, applyB, recB]
   where
     recB
       | fuel <= 0 = empty
-      | otherwise = oneOfTotal [prodB, sumSrcB, sumTgtB, curryB, composeB]
+      | otherwise = oneOfTotal [prodB, tensorB, sumSrcB, sumTgtB, curryB, composeB]
     idB = case eqSFree sa sb of
       Just Refl -> pure id
       Nothing -> empty
@@ -232,6 +251,14 @@ genTerm fuel sa sb =
       _ -> empty
     terminateB = case sb of
       STerm -> pure terminate
+      _ -> empty
+    -- The unit is neither initial nor terminal, but every object is a monoid and a comonoid here,
+    -- so there is a canonical arrow from it and one to it all the same.
+    unitB = case sa of
+      SUnit -> pure mempty
+      _ -> empty
+    counitB = case sb of
+      SUnit -> pure counit
       _ -> empty
     fstSndB = case sa of
       SProd sa1 sa2 ->
@@ -242,6 +269,9 @@ genTerm fuel sa sb =
       _ -> empty
     prodB = case sb of
       SProd b1 b2 -> (&&&) <$> genTerm (fuel - 1) sa b1 <*> genTerm (fuel - 1) sa b2
+      _ -> empty
+    tensorB = case (sa, sb) of
+      (STen a1 a2, STen b1 b2) -> (**) <$> genTerm (fuel - 1) a1 b1 <*> genTerm (fuel - 1) a2 b2
       _ -> empty
     sumSrcB = case sa of
       SSum a1 a2 -> (|||) <$> genTerm (fuel - 1) a1 sb <*> genTerm (fuel - 1) a2 sb
@@ -265,7 +295,7 @@ genTerm fuel sa sb =
     composeB =
       oneOfTotal
         [ (.) <$> genTerm (fuel - 1) (theFree @mid) sb <*> genTerm (fuel - 1) sa (theFree @mid)
-        | Some @mid <- palette
+        | Some @mid <- intermediates
         ]
 
 -- | Bridges straight to 'FINREL'\'s 'Ob' rather than its 'TestOb' — 'Testable FINREL' leaves
@@ -288,3 +318,85 @@ instance (TestOb a, TestOb b) => TestingEqShow (Free (a :: FREEKIND) b) where
 instance (TestOb a, TestOb b) => TestableType (Free (a :: FREEKIND) b) where
   gen = genTerm 3 (theFree @a) (theFree @b)
 instance TestableProfunctor (Free :: CAT FREEKIND)
+
+-- | The cover of the booleans by their two points. 'BySummands' is polymorphic in the summands, so
+-- the cover it is used at has to be pinned. The summands are 'UnitF' and not @TermF@ for the reason
+-- 'Palette' gives.
+boolCover :: Cover Sums FREEKIND (UnitF + UnitF) (Summands (UnitF :: FREEKIND) UnitF)
+boolCover = BySummands
+
+-- | The sum coverage on the free category, at the cover of the booleans by their two points: the
+-- representables glue by @'|||'@, so restriction along either injection gives the branch back, and
+-- an element is the gluing of its restrictions.
+sheafTests :: TestTree
+sheafTests =
+  testGroup
+    "Sums"
+    [ testGluesBackAt @Sums @(Yo (UnitF + UnitF) (OP '())) "BySummands, sum representable" boolCover
+    , -- the two-sided representable's own profunctor laws: this is what exercises 'Yo'\'s action on
+      -- the covariant component, which the presheaf cases above leave at the identity
+      testProfunctor @(Yo (UnitF + UnitF) (OP Bool) :: Type +-> FREEKIND)
+    , testGluesBackAt
+        @Sums
+        @(Yo (UnitF + UnitF) (OP Bool) :: Type +-> FREEKIND)
+        "BySummands, representable over Hask"
+        boolCover
+    , -- The gluing keeps one covariant component where the family supplies two, so it is only well
+      -- defined because a matching family cannot supply two different ones. Restricting along the
+      -- overlap is what decides that: the two legs become equal there exactly when their covariant
+      -- components agree.
+      --
+      -- Note what each half of the comparison is doing. After restricting along the overlap the
+      -- /contravariant/ components are always equal, 'InitF' being initial -- so it is the covariant
+      -- half that carries the verdict. The un-restricted
+      -- pair below is the other way round, and is here so that both halves of @'eqP'@ on 'Yo' are
+      -- exercised rather than just one.
+      testProperty "the overlap decides the covariant component" do
+        let overlap = initiate @FREEKIND @UnitF
+            at
+              :: Free (UnitF :: FREEKIND) (UnitF + UnitF) -> (Bool -> Bool) -> Yo (UnitF + UnitF) (OP Bool) (UnitF :: FREEKIND) Bool
+            at inj h = Yo inj h
+        for_ [(h, h') | h <- [P.id, P.not], h' <- [P.id, P.not]] \(h, h') -> do
+          agree <- eqP h h'
+          same <- eqP (lmap overlap (at lft h)) (lmap overlap (at rgt h'))
+          expect "restricted to the overlap: equal exactly when the covariant halves agree" agree same
+          apart <- eqP (at lft h) (at rgt h)
+          expect "un-restricted: the differing contravariant halves separate them" False apart
+    , -- The commuting conversion, in sheaf vocabulary: a map of sheaves carries a gluing to the
+      -- gluing of the mapped family. At the representable, gluing is @'|||'@ and the map is
+      -- post-composition, so this is @h '.' (t '|||' e) = (h '.' t) '|||' (h '.' e)@ -- the
+      -- equation that makes @f (if b then x else y)@ and @if b then f x else f y@ the same
+      -- program. It follows from restriction and uniqueness together with @h@\'s naturality, so it
+      -- is not a new law but a demonstration.
+      testProperty "a map of sheaves commutes with the gluing" do
+        t <- genNamed @(Free (UnitF :: FREEKIND) (UnitF + UnitF)) "t"
+        e <- genNamed @(Free (UnitF :: FREEKIND) (UnitF + UnitF)) "e"
+        -- @h@ has to land somewhere it can be injective: every term @(UnitF + UnitF) ~> UnitF@ the
+        -- generator can build collapses the two summands, and then @h . t = h . e@ for almost any
+        -- branches and the equation holds for the wrong reason.
+        h <- genNamed @(Free ((UnitF :: FREEKIND) + UnitF) (UnitF + UnitF)) "h"
+        let after
+              :: Yo ((UnitF :: FREEKIND) + UnitF) (OP '()) z '()
+              -> Yo ((UnitF :: FREEKIND) + UnitF) (OP '()) z '()
+            after (Yo f g) = Yo (h . f) g
+            fam
+              :: forall z
+               . Leg Sums FREEKIND (UnitF + UnitF) (Summands (UnitF :: FREEKIND) UnitF) z
+              -> Yo ((UnitF :: FREEKIND) + UnitF) (OP '()) z '()
+            fam AtLeft = Yo t Unit
+            fam AtRight = Yo e Unit
+        testEq
+          "commuting conversion"
+          "h . glue [t, e]"
+          (after (glue @Sums boolCover fam))
+          "glue [h . t, h . e]"
+          (glue @Sums boolCover (\g -> after (fam g)))
+    , testProperty "restriction at BySummands" do
+        t <- genNamed @(Free UnitF (UnitF + UnitF)) "t"
+        e <- genNamed @(Free UnitF (UnitF + UnitF)) "e"
+        let ite = glue @Sums @(Yo (UnitF + UnitF) (OP '())) boolCover \case
+              AtLeft -> Yo t Unit
+              AtRight -> Yo e Unit
+        testEq "then" "lmap lft (glue [t, e])" (lmap (legArrow AtLeft) ite) "t" (Yo t Unit)
+        testEq "else" "lmap rgt (glue [t, e])" (lmap (legArrow AtRight) ite) "e" (Yo e Unit)
+    ]

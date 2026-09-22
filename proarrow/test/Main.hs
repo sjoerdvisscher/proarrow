@@ -32,6 +32,7 @@ import Props.Optic.Linear qualified as OpticLinear
 import Props.Ordinal qualified as Ordinal
 import Props.Paths qualified as Paths
 import Props.PointedHask qualified as PointedHask
+import Props.Sheaf qualified as Sheaf
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
 import Props.ZX qualified as ZX
@@ -64,6 +65,7 @@ main =
           , Ordinal.test
           , Paths.test
           , PointedHask.test
+          , Sheaf.test
           , Simplex.test
           , Span.test
           , ZX.test

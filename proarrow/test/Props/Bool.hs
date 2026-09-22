@@ -161,7 +161,8 @@ instance (Ob a, Ob b) => TestableType (Booleans a b) where
     (Tru, Tru) -> oneElem Tru
     (Tru, Fls) -> GenEmpty \case {}
 instance (Ob a, Ob b) => TestingEqShow (Booleans a b) where
-  eqP _ _ = pure True
+  -- thin, so parallel arrows are equal for free; forcing is the one thing left to check
+  eqP l r = l `seq` r `seq` pure True
   showP Fls = "F->F"
   showP F2T = "F->T"
   showP Tru = "T->T"

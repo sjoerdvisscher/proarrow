@@ -45,8 +45,10 @@ import Proarrow.Category.Enriched.Thin
   , IndexedList (..)
   )
 import Proarrow.Category.Instance.Bool (Booleans)
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
@@ -78,6 +80,12 @@ class (Profunctor p) => Finitary (p :: j +-> k) where
 -- | @[0 .. n-1]@, which @n@ being a 'Natural' rules out writing directly.
 indices :: Natural -> [Natural]
 indices n = genericTake n [0 ..]
+
+-- | A finitary profunctor's hom-set sizes, one per pair of objects, the outer index running over
+-- @k@ and the inner over @j@. Cheap enough to display an object by: see @Props.Finitary.Graph@,
+-- where one shows as @[2,4,2,4]@.
+sizes :: forall {j} {k} (p :: j +-> k). (Finitary p, Enumerable j, Enumerable k) => [Natural]
+sizes = foreachOb @k \ @a -> foreachOb @j \ @b -> [size @p @a @b]
 
 -- | The position of an object in its kind's object list.
 objIndex :: forall {k} (a :: k). (Enumerable k, Ob a) => Natural
@@ -135,6 +143,20 @@ instance (Finitary p) => P.Show (Elt (p :: j +-> k) a b) where
 class (CategoryOf k, Finitary (Hom k)) => LocallyFinite k
 
 instance (CategoryOf k, Finitary (Hom k)) => LocallyFinite k
+
+-- | Whether an arrow factors through another into the same object: @'factorsThrough' g f@ holds
+-- when @g = f '.' h@ for some @h@. Only the hom-sets have to be finite, not the category, since the
+-- search is over the one hom-set @x '~>' y@.
+--
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.generatedSieve' is the caller: a cover's sieve is the
+-- arrows that factor through one of its legs. It answers the image-membership question too --
+-- an element lands in the image of @f@ exactly when it factors through @f@ -- though nothing uses it
+-- for that yet, and 'Proarrow.Category.Enriched.Finitary.Topos.preimage' does its own search.
+factorsThrough :: forall {k} (x :: k) y a. (LocallyFinite k, Ob x, Ob y, Ob a) => x ~> a -> y ~> a -> P.Bool
+factorsThrough g f = P.any (\h -> toIndex @(Hom k) @x @a (f . h) == gi) (elements @(Hom k) @x @y)
+  where
+    -- hoisted out of the lambda, as 'toIndex' asks: an instance that searches only searches once
+    gi = toIndex g
 
 -- | A finite category: finitely many objects, and finitely many arrows between them. The first is
 -- 'Enumerable', the second does not follow from it, and the enumeration below needs both.
@@ -201,6 +223,24 @@ instance (Finitary p, Finitary q) => Finitary (p :*: q) where
   -- Spelled out, not left to the default: that would ask @p@ for its size once per element, and
   -- when @p@ is itself an enumeration ('Sieve', or a nested internal hom) a size is a whole search.
   elements @a @b = [x :*: y | x <- elements @p @a @b, y <- elements @q @a @b]
+
+-- | The product of two finitary profunctors on the product of their kinds, numbered as ':*:' is.
+instance (Finitary p, Finitary q) => Finitary (p :**: q) where
+  size @'(a1, a2) @'(b1, b2) = size @p @a1 @b1 P.* size @q @a2 @b2
+  toIndex @'(_, a2) @'(_, b2) (x :**: y) = pairIndex (size @q @a2 @b2) (toIndex x) (toIndex y)
+  fromIndex @'(_, a2) @'(_, b2) i = let (l, r) = unpairIndex (size @q @a2 @b2) i in fromIndex l :**: fromIndex r
+  elements @'(a1, a2) @'(b1, b2) = [x :**: y | x <- elements @p @a1 @b1, y <- elements @q @a2 @b2]
+
+-- | The opposite of a finitary profunctor is finitary, at the same sizes read the other way round.
+-- Taking @p = 'Hom' k@ this makes @'OPPOSITE' k@ a 'FiniteCat' whenever @k@ is one, so everything
+-- computed for a finite site is available on the opposite category too. (This instance lives here
+-- rather than with 'Op' because "Proarrow.Category.Instance.Opposite" sits below this module in the
+-- import graph.)
+instance (Finitary p) => Finitary (Op p) where
+  size @(OP a) @(OP b) = size @p @b @a
+  toIndex @(OP a) @(OP b) (Op x) = toIndex @p @b @a x
+  fromIndex @(OP a) @(OP b) i = Op (fromIndex @p @b @a i)
+  elements @(OP a) @(OP b) = P.map Op (elements @p @b @a)
 
 -- | The initial profunctor has no elements anywhere.
 instance (CategoryOf j, CategoryOf k) => Finitary (InitialProfunctor :: j +-> k) where

@@ -56,6 +56,7 @@ instance Testable (COSPAN FINSET) where
   type TestOb a = Ob a
   showOb @a = showOb @_ @(UN CS a)
   genSome = mapSome CS <$> genSome
+  genSomeSmall = mapSome CS <$> genSomeSmall
 
 -- instance (Ob a, Ob b, Testable k, TestObIsOb k) => TestingEqShow (Cospan a (b :: COSPAN k)) where
 instance (Ob a, Ob b) => TestingEqShow (Cospan a (b :: COSPAN FINSET)) where

@@ -21,6 +21,7 @@ module Proarrow.Testing
   , Some (..)
   , mapSome
   , genOb
+  , genObSmall
   , genObSuchThat
   , genSomeDef
   , genSomeFinite
@@ -43,6 +44,7 @@ module Proarrow.Testing
   , isGenNonEmpty
   , optGen
   , oneElem
+  , genBoth
   , oneOfTotal
   , genP
   , genNamed
@@ -85,7 +87,7 @@ import Control.Applicative (Alternative (..))
 import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, foreachOb)
-import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, natTable)
+import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, natTable, sieveTable)
 import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
@@ -97,6 +99,10 @@ import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object (Ob')
+import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Product (fstP, sndP, (:*:) (..))
+import Proarrow.Profunctor.Instance.Sieve (Sieve)
+import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 import Test.Falsify.Interactive (falsify)
 
@@ -309,8 +315,29 @@ class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor (Hom k), Testabl
   showOb :: forall (a :: k). (TestOb a) => String
   genSome :: Gen (Some k)
 
+  -- | The palette for properties whose cost grows steeply in the size of the objects drawn -- in
+  -- practice the ones that enumerate an internal hom, which is brute force over candidate tables
+  -- and so doubly exponential. @Props.Finitary.Graph@ has the measured figure: one object whose own
+  -- hom-sizes are @[2,4,2,4]@ has the hom /into/ it at @[1024,256,1024,256]@, and enumerating a
+  -- single such hom-set took 13.6s and 36.6GB. Defaults to 'genSome', and should be overridden only by a kind whose
+  -- 'genSome' carries objects too big for that: the point is to let 'genSome' be widened for the
+  -- benefit of every other property without making
+  -- 'Proarrow.Testing.Laws.testClosed' stop terminating.
+  --
+  -- An instance that wraps another kind's palette must forward this alongside 'genSome', or the
+  -- default silently hands 'Proarrow.Testing.Laws.testClosed' the wide one. The wrapper instances
+  -- below are the model.
+  genSomeSmall :: Gen (Some k)
+  genSomeSmall = genSome
+
+  {-# MINIMAL showOb, genSome #-}
+
 genOb :: (Testable k) => Property (Some k)
 genOb = genWith (Just . show) genSome
+
+-- | 'genOb' from the small palette. See 'genSomeSmall'.
+genObSmall :: (Testable k) => Property (Some k)
+genObSmall = genWith (Just . show) genSomeSmall
 
 instance (TestableProfunctor p) => TestableProfunctor (Op p) where
   genProfunctorElt nm = do
@@ -320,6 +347,7 @@ instance (Testable k) => Testable (OPPOSITE k) where
   type TestOb a = (Is OP a, TestOb (UN OP a))
   showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
   genSome = mapSome OP <$> genSome
+  genSomeSmall = mapSome OP <$> genSomeSmall
 
 -- | The 'PROD' wrapper changes only which tensor a kind carries, so everything transports across it.
 instance (TestableProfunctor p) => TestableProfunctor (Prod p) where
@@ -331,6 +359,7 @@ instance (Testable k) => Testable (PROD k) where
   type TestOb a = (Is PR a, TestOb (UN PR a))
   showOb @(PR a) = "PR (" ++ showOb @k @a ++ ")"
   genSome = mapSome PR <$> genSome
+  genSomeSmall = mapSome PR <$> genSomeSmall
 
 instance TestableProfunctor Unit
 instance Testable () where
@@ -348,6 +377,10 @@ instance (Testable j, Testable k) => Testable (j, k) where
   genSome = do
     Some @a <- genSome @j
     Some @b <- genSome @k
+    pure $ Some @'(a, b)
+  genSomeSmall = do
+    Some @a <- genSomeSmall @j
+    Some @b <- genSomeSmall @k
     pure $ Some @'(a, b)
 
 class (TestOb a) => TestOb' a
@@ -407,6 +440,19 @@ genSomeList :: String -> [Some k] -> Gen (Some k)
 genSomeList what [] = error ("genSome: " ++ what)
 genSomeList _ (x : xs) = elem (x :| xs)
 
+-- | A generator for a two-component value: if either component has no values then neither does the
+-- pair, and otherwise the two are drawn independently.
+--
+-- 'GenEmpty' carries its proof of emptiness as a function out of the empty type, so reusing a
+-- component's proof for the pair means getting at that component first -- hence the two projections
+-- alongside the constructor.
+genBoth
+  :: forall a b c. (TestableType a, TestableType b) => (a -> b -> c) -> (c -> a) -> (c -> b) -> GenTotal c
+genBoth mk outl outr = case (gen @a, gen @b) of
+  (GenEmpty f, _) -> GenEmpty (\c -> f (outl c))
+  (_, GenEmpty g) -> GenEmpty (\c -> g (outr c))
+  (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty (liftA2 mk ga gb)
+
 optGen :: [a] -> GenTotal a
 optGen [] = error "optGen: empty list"
 optGen (x : xs) = GenNonEmpty (elem (x :| xs))
@@ -455,10 +501,72 @@ instance (TestingEqShow (catk a1 b1), TestingEqShow (catj a2 b2)) => TestingEqSh
   eqP (l1 :**: l2) (r1 :**: r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
   showP (l1 :**: l2) = "(" ++ showP l1 ++ ") :**: (" ++ showP l2 ++ ")"
 instance (TestableType (catk a1 b1), TestableType (catj a2 b2)) => TestableType ((catk :**: catj) '(a1, a2) '(b1, b2)) where
-  gen = case (gen, gen) of
-    (GenEmpty f, _) -> GenEmpty \(l :**: _) -> f l
-    (_, GenEmpty f) -> GenEmpty \(_ :**: r) -> f r
-    (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty $ liftA2 (:**:) ga gb
+  gen = genBoth (:**:) fstK sndK
+
+-- | An element of a product of profunctors is a pair of elements.
+instance (TestingEqShow (p a b), TestingEqShow (q a b)) => TestingEqShow ((p :*: q) a b) where
+  eqP (l1 :*: l2) (r1 :*: r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
+  showP (l :*: r) = "(" ++ showP l ++ ") :*: (" ++ showP r ++ ")"
+
+instance (TestableType (p a b), TestableType (q a b)) => TestableType ((p :*: q) a b) where
+  gen = genBoth (:*:) fstP sndP
+
+instance
+  (TestableProfunctor p, TestableProfunctor q, TestableTypeP p, TestableTypeP q)
+  => TestableProfunctor (p :*: q)
+
+-- | An element of a coproduct of profunctors is an element of one side, tagged.
+instance (TestingEqShow (p a b), TestingEqShow (q a b)) => TestingEqShow ((p :+: q) a b) where
+  eqP (InjL l) (InjL r) = eqP l r
+  eqP (InjR l) (InjR r) = eqP l r
+  eqP _ _ = pure False
+  showP (InjL l) = "InjL (" ++ showP l ++ ")"
+  showP (InjR r) = "InjR (" ++ showP r ++ ")"
+
+instance (TestableType (p a b), TestableType (q a b)) => TestableType ((p :+: q) a b) where
+  gen = case (gen @(p a b), gen @(q a b)) of
+    (GenEmpty f, GenEmpty g) -> GenEmpty \case InjL l -> f l; InjR r -> g r
+    (GenEmpty _, GenNonEmpty gr) -> GenNonEmpty (InjR <$> gr)
+    (GenNonEmpty gl, GenEmpty _) -> GenNonEmpty (InjL <$> gl)
+    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (oneof ((InjL <$> gl) :| [InjR <$> gr]))
+
+-- | An element of the Yoneda embedding is an arrow into @x@ paired with an arrow out of @b@, so it
+-- is testable wherever both categories are: this is what makes a representable usable as a test
+-- fixture, at either variance.
+instance
+  (Testable j, Testable k, TestOb (a :: k), TestOb (x :: k), TestOb (b :: j), TestOb (c :: j))
+  => TestingEqShow (Yo x (OP b) a c)
+  where
+  eqP (Yo f h) (Yo g i) = liftA2 (&&) (eqP f g) (eqP h i)
+  showP (Yo f h) = "Yo (" ++ showP f ++ ") (" ++ showP h ++ ")"
+
+instance
+  (Testable j, Testable k, TestOb (a :: k), TestOb (x :: k), TestOb (b :: j), TestOb (c :: j))
+  => TestableType (Yo x (OP b) a c)
+  where
+  gen = genBoth Yo (\(Yo l _) -> l) (\(Yo _ r) -> r)
+
+instance (Testable j, Testable k, TestOb (x :: k), TestOb (b :: j)) => TestableProfunctor (Yo x (OP b))
+
+-- | A sieve is a table of booleans over the points of the representable, and 'Finitary' numbers the
+-- sieves at each pair of objects -- so a sieve can be generated by picking one, and compared and
+-- shown by its table. Without this, nothing that quantifies over sieves as /elements of a
+-- profunctor/ -- 'Proarrow.Testing.Laws.propNaturalTransformation', in particular -- can run at
+-- 'Sieve'.
+--
+-- Drawing one enumerates /every/ sieve at that pair of objects, a count exponential in the size of
+-- the representable, so this is the generator to look at first if a suite gets slow.
+instance (FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (Sieve a b) where
+  eqP s t = pure (sieveTable s == sieveTable t)
+  showP s = show (sieveTable s)
+
+instance
+  (Testable j, Testable k, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestableType (Sieve a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (optGen (elements @(Sieve :: j +-> k) @a @b)))
+
+instance (Testable j, Testable k, FiniteCat j, FiniteCat k) => TestableProfunctor (Sieve :: j +-> k)
 
 -- | A hom-set of 'FINITARY' is enumerable, by 'natTransformations', so it can be generated -- which
 -- is the thing that makes a category of profunctors testable at all. Equality and display go through
@@ -479,7 +587,9 @@ instance (Ob a, Ob b) => TestableType (Unit a b) where
   gen = oneElem Unit
 instance TestingEqShow (Unit a b) where
   showP _ = "Unit"
-  eqP _ _ = pure True
+
+  -- a singleton, so equality is free; forcing is the one thing left to check
+  eqP l r = l `seq` r `seq` pure True
 
 sampleT :: forall t. (TestableType t) => IO (Maybe String)
 sampleT = falsify $ do

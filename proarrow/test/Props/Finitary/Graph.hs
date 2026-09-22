@@ -14,7 +14,7 @@ import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
 
 import Examples.Graph (GRAPH (..), GraphHom (..))
-import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb)
+import Proarrow.Category.Enriched.Finitary (Finitary (..), sizes)
 import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -22,6 +22,7 @@ import Proarrow.Category.Instance.Prof (Prof)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), obj, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (PROD (..))
+import Proarrow.Profunctor.Instance.Coproduct ((:+:))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Sieve (Sieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
@@ -186,14 +187,23 @@ instance TestableProfunctor (Sub Prof :: CAT GHom)
 -- | As in "Props.Finitary": objects come from a fixed palette, and are displayed by their table of
 -- sizes -- here the four numbers @[FLS\/E, FLS\/V, TRU\/E, TRU\/V]@.
 instance Testable GHom where
-  showOb @(SUB p) = show (foreachOb @BOOL (\ @a -> foreachOb @GRAPH (\ @b -> [size @p @a @b])))
-  genSome = genSomeDef @'[FIN Same, FIN Fold, FIN Dot, FIN TerminalProfunctor]
+  showOb @(SUB p) = show (sizes @p)
+
+  -- 'Same' twice over gives a palette object of size 2 at every point: without one, nine of the
+  -- ten non-empty hom-sets are singletons, where an equation between parallel arrows holds by
+  -- type-correctness alone and the run asserts nothing. Built from the library's ':+:', whose
+  -- 'Finitary' instance supplies the numbering.
+  genSome = genSomeDef @'[FIN Same, FIN Fold, FIN Dot, FIN TerminalProfunctor, FIN (Same :+: Same)]
+
+  -- The internal hom enumerates candidate tables by brute force, so it cannot afford the object
+  -- above: @sizes \@(Same :+: Same)@ is @[2,4,2,4]@, but the hom /into/ it is @[1024,256,1024,256]@,
+  -- and enumerating one such hom-set measured 13.6s and 36.6GB. 'genSomeSmall' is what
+  -- 'testClosed' draws from, so the two coexist.
+  genSomeSmall = genSomeDef @'[FIN Same, FIN Fold, FIN Dot, FIN TerminalProfunctor]
 
 -- | The sizes of @1 ~~> p@ and of @p@ over one object, which Yoneda says must agree.
 yoneda :: forall (p :: GRAPH +-> BOOL). (Finitary p) => [(Natural, Natural)]
-yoneda =
-  foreachOb @BOOL \ @a ->
-    foreachOb @GRAPH \ @b -> [(size @(TerminalProfunctor :~>: p) @a @b, size @p @a @b)]
+yoneda = zip (sizes @(TerminalProfunctor :~>: p)) (sizes @p)
 
 test :: TestTree
 test =
@@ -211,6 +221,8 @@ test =
     , testPushouts_ @GHom
     , testFinitary @Same "Same"
     , testFinitary @Fold "Fold"
+    , -- the palette object added above, so its numbering is law-checked and not merely used
+      testFinitary @(Same :+: Same) "Same + Same"
     , -- as in "Props.Finitary": this checks the table round trip, the counts below check that the
       -- enumeration is complete
       testFinitary @(Sub Prof :: CAT GHom) "GHom"
@@ -239,7 +251,7 @@ test =
         expect
           "sizes"
           [2, 4, 1, 2]
-          (foreachOb @GRAPH \ @c -> foreachOb @GRAPH \ @d -> [size @(Yo V (OP E)) @c @d])
+          (sizes @(Yo V (OP E)))
         -- and the index agrees with the enumeration where the radix actually carries -- which is the
         -- invariant the internal hom depends on, since it tabulates families against one and reads
         -- them back with the other
@@ -252,5 +264,5 @@ test =
         expect
           "Omega"
           [5, 2, 14, 3]
-          (foreachOb @BOOL \ @a -> foreachOb @GRAPH \ @b -> [size @Sieve @a @b])
+          (sizes @(Sieve :: GRAPH +-> BOOL))
     ]
