@@ -13,7 +13,17 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, (:~>), type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Kind
+  , Profunctor (..)
+  , Promonad (..)
+  , dimapDefault
+  , (:~>)
+  , type (+->)
+  , type (:&&:)
+  )
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -46,9 +56,6 @@ instance (CategoryOf j, CategoryOf k) => CategoryOf (OPTIC j k c) where
 
 type Optic (c :: j +-> k -> Constraint) s t a b = Optic_ (OPT a b) (OPT s t :: OPTIC j k c)
 type Optic' c s a = Optic c s s a a
-
-class (c1 p, c2 p) => (c1 :&&: c2) p
-instance (c1 p, c2 p) => (c1 :&&: c2) p
 
 infixl 9 %
 

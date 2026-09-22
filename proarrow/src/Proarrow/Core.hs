@@ -17,6 +17,7 @@ module Proarrow.Core
     type (+->)
   , CAT
   , OB
+  , type (:&&:)
   , Kind
 
     -- * Category Infrastructure
@@ -94,6 +95,12 @@ type CAT k = k +-> k
 
 -- | Object constraints for kind @k@.
 type OB k = k -> Constraint
+
+-- | The conjunction of two constraints on a common argument, as one constraint.
+type (:&&:) :: OB k -> OB k -> OB k
+class (c1 p, c2 p) => (c1 :&&: c2) p
+
+instance (c1 p, c2 p) => (c1 :&&: c2) p
 
 -- | Alias for 'Type' for clarity in kind signatures.
 type Kind = Type

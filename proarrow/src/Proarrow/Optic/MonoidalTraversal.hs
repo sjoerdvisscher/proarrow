@@ -26,7 +26,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , nil
   , (++)
   )
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->), type (:&&:))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Product)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
@@ -38,7 +38,6 @@ import Proarrow.Optic
   , Prostrong (..)
   , convert
   , withLegs
-  , type (:&&:)
   )
 import Proarrow.Optic.Traversal
   ( Beside

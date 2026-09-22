@@ -21,9 +21,20 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..))
 import Proarrow.Category.Monoidal.Distributive (Traversable)
 import Proarrow.Category.Monoidal.Rev (REV (..), Rev (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, OB, Profunctor (..), Promonad (..), UN, type (+->), type (:~>))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Is
+  , Kind
+  , OB
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , type (+->)
+  , type (:&&:)
+  , type (:~>)
+  )
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Optic (type (:&&:))
 import Proarrow.Path qualified as Path
 import Proarrow.Profunctor.Instance.Composition (o, (:.:))
 import Proarrow.Profunctor.Instance.Identity (Id)
