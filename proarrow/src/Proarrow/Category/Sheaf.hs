@@ -97,6 +97,16 @@ data SomeLeg t k a c where
 -- | A site whose covers can be listed, object by object. This is what the law tests and the
 -- decision procedure of "Proarrow.Category.Enriched.Finitary.Sheaf" quantify over. A free category
 -- is a 'Site' but not this: whether an object is a sum is not something its 'Ob' can answer.
+--
+-- Beyond 'Site'\'s Stability, listing the covers comes with a second law:
+--
+-- [Composition] covers compose. If @c@ covers @a@ and every leg of @c@ is itself covered, the
+--   composites cover @a@ too. Stability and composition together are what make the coverage
+--   generate a Grothendieck topology, and so make
+--   'Proarrow.Category.Enriched.Finitary.Sheaf.closure' idempotent and meet-preserving --
+--   without which the dense sieves at an object are not closed under meets, which is what
+--   'Proarrow.Category.Enriched.Finitary.Sheaf.Plus' rests on.
+--   'Proarrow.Testing.Laws.testLawvereTierney' is the check.
 class (Site t k) => HasFiniteCovers t k where
   -- | The covers of an object, beyond the identity.
   covers :: forall (a :: k). (Ob a) => [SomeCover t k a]
@@ -139,6 +149,11 @@ data SomeCover t k a where
 -- @'Sheaf' t ('Proarrow.Category.Instance.Opposite.Op' p)@; nothing supplies a cocoverage yet,
 -- though @'Proarrow.Category.Enriched.Finitary.Finitary' ('Proarrow.Category.Instance.Opposite.Op' p)@
 -- makes the machinery available for one.
+-- The instances are indexed by the /shape/ of the profunctor: the limits just below, a site's
+-- representables, and the image of sheafification
+-- ('Proarrow.Category.Enriched.Finitary.Sheaf.Plus' twice over). One indexed by the /coverage/
+-- instead cuts across that axis and so overlaps all of them -- which is why 'glueTrivial' is a
+-- function and not an @instance 'Sheaf' 'Trivial' p@.
 type Sheaf :: forall {j} {k}. Type -> j +-> k -> Constraint
 class (Site t k, Profunctor p) => Sheaf t (p :: j +-> k) where
   glue

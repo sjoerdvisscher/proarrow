@@ -14,7 +14,7 @@ import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
 
 import Examples.Graph (GRAPH (..), GraphHom (..))
-import Proarrow.Category.Enriched.Finitary (Finitary (..), sizes)
+import Proarrow.Category.Enriched.Finitary (Finitary (..), factorThrough, sizes)
 import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -219,6 +219,14 @@ test =
     , testCoequalizers_ @GHom
     , testPullbacks_ @GHom
     , testPushouts_ @GHom
+    , -- 'GRAPH' is the only non-thin finite category here, so it is the only place
+      -- 'factorThrough' has anything to decide: in a thin one @f . h@ and @g@ are both the unique
+      -- arrow of their hom-set, so the check succeeds whenever the hom-set is non-empty. The sheaf
+      -- sites are both thin, which is why @Props.Sheaf@ cannot exercise this.
+      testProperty "factorThrough decides, where there is a choice of arrow" $ do
+        expect "Src factors through itself" (Just IdE) (factorThrough Src Src)
+        expect "Tgt does not factor through Src" Nothing (factorThrough Tgt Src)
+        expect "Src factors through IdV" (Just Src) (factorThrough Src IdV)
     , testFinitary @Same "Same"
     , testFinitary @Fold "Fold"
     , -- the palette object added above, so its numbering is law-checked and not merely used

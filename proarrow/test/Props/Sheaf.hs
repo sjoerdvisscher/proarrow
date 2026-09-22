@@ -43,7 +43,7 @@ import Test.Tasty.Falsify (Property, testProperty)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb, objIndex, sizes)
-import Proarrow.Category.Enriched.Finitary.Sheaf (closure, isSheaf, lawvereTierney)
+import Proarrow.Category.Enriched.Finitary.Sheaf (Plus, Sheafify, closure, isSheaf, lawvereTierney)
 import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -77,7 +77,9 @@ import Proarrow.Testing.Laws
   , testGeneratedSieveIsSieve
   , testGluesBack
   , testLawvereTierney_
+  , testPlusFixes
   , testProfunctor
+  , testSheafification
   , testSubobjectClassifier_
   )
 import Props.Bool ()
@@ -290,6 +292,9 @@ test =
           -- two groups rely on.
           testLawvereTierney_ @(PROD Sh) (lawvereTierney @Trivial)
         , testDenseIsCovering @Trivial @() @BOOL
+        , -- only the maximal sieve is dense, so one plus changes nothing -- for a non-sheaf too
+          testPlusFixes @Trivial @Two
+        , testPlusFixes @Trivial @Collapse
         ]
     , testGroup
         "ByArrow"
@@ -322,6 +327,22 @@ test =
             propNaturalTransformation @(Sieve :: BOOL +-> BOOL) (closure @ByArrow)
         , testGeneratedSieveIsSieve @ByArrow @() @BOOL
         , testDenseIsCovering @ByArrow @() @BOOL
+        , testFinitary @(Plus ByArrow Collapse) "Plus Collapse"
+        , testFinitary @(Sheafify ByArrow Collapse) "Sheafify Collapse"
+        , testProfunctor @(Plus ByArrow Collapse)
+        , testSheafification @ByArrow @Collapse @Two
+        , -- 'isSheaf' above decides the condition by enumeration; this runs the 'glue' itself
+          testGluesBack @ByArrow @(Sheafify ByArrow Collapse)
+        , -- The one cover has no overlaps, so one plus is already a sheaf for /every/ presheaf here:
+          -- P⁺(TRU) is the classes of (maximal, x) and ({F2T}, y), identified when x restricts to y,
+          -- which is P(FLS) -- and restriction becomes the identity.
+          testProperty "one plus suffices without overlaps" $ do
+            expect "Plus Collapse is a sheaf" True (isSheaf @ByArrow @(Plus ByArrow Collapse))
+            expect "Plus (Yo FLS) is a sheaf" True (isSheaf @ByArrow @(Plus ByArrow (Yo FLS (OP '()))))
+            expect "Plus (Yo FLS) is the terminal presheaf" [1, 1] (sizes @(Plus ByArrow (Yo FLS (OP '()))))
+            expect "Sheafify Collapse keeps two elements at each object" [2, 2] (sizes @(Sheafify ByArrow Collapse))
+            -- and two-sidedly
+            expect "Plus (Yo FLS (OP TRU)) is a sheaf" True (isSheaf @ByArrow @(Plus ByArrow (Yo FLS (OP TRU) :: BOOL +-> BOOL)))
         ]
     , testGroup
         "Canonical"
@@ -348,5 +369,17 @@ test =
             propNaturalTransformation @(Sieve :: BOOL +-> (BOOL, BOOL)) (closure @Canonical)
         , testGeneratedSieveIsSieve @Canonical @() @(BOOL, BOOL)
         , testDenseIsCovering @Canonical @() @(BOOL, BOOL)
+        , testFinitary @(Plus Canonical Const2) "Plus Const2"
+        , testFinitary @(Sheafify Canonical Const2) "Sheafify Const2"
+        , testSheafification @Canonical @Const2 @Sections
+        , testGluesBack @Canonical @(Sheafify Canonical Const2)
+        , -- Every sieve at the empty set is dense, and the empty sieve is the meet of them all, so
+          -- one plus leaves 'Const2' a single section over the empty set. But the whole space still
+          -- has two, where a sheaf now needs a section per pair over the two points: four. The
+          -- second plus supplies them, and the result is the constant sheaf with fibre two.
+          testProperty "two pluses are needed" $ do
+            expect "one plus: one section over the empty set" [1, 2, 2, 2] (sizes @(Plus Canonical Const2))
+            expect "one plus is not yet a sheaf" False (isSheaf @Canonical @(Plus Canonical Const2))
+            expect "two pluses: the constant sheaf" [1, 2, 2, 4] (sizes @(Sheafify Canonical Const2))
         ]
     ]

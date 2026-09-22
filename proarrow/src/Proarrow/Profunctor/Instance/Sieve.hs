@@ -3,18 +3,19 @@
 -- @l@ and @r@. That closure is what makes a sieve a sieve.
 --
 -- __The constructor does not check it.__ It takes any predicate at all, so it will build a value
--- that is not a sieve, and the functions that rely on the closure check it themselves rather than
--- trusting the type: 'Proarrow.Category.Enriched.Finitary.Finitary'\'s @toIndex@ fails with
--- @\"not a sieve\"@, and
--- 'Proarrow.Category.Enriched.Finitary.Topos.withSubobject' takes its failure branch. If you
--- construct a 'Sieve' by hand, that closure is yours to get right.
+-- that is not a sieve. Where checking is cheap the closure is checked rather than trusted:
+-- 'Proarrow.Category.Enriched.Finitary.Finitary'\'s @toIndex@ fails with @\"not a sieve\"@, and
+-- 'Proarrow.Category.Enriched.Finitary.Topos.withSubobject' takes its failure branch. Elsewhere it
+-- is presupposed -- 'Proarrow.Category.Enriched.Finitary.Sheaf.coveringCover' reads a cover's legs
+-- and concludes about everything they generate -- so on a value that is not a sieve those two kinds
+-- of function part company. If you construct a 'Sieve' by hand, the closure is yours to get right.
 --
 -- Sieves are the subobjects of the representable at @a@\/@b@, so they are the truth values of a
 -- category of profunctors, and "Proarrow.Category.Enriched.Finitary.Topos" makes them the
 -- 'Proarrow.Category.Topos.HasSubobjectClassifier' of the finitary ones.
 module Proarrow.Profunctor.Instance.Sieve where
 
-import Prelude (Bool (..))
+import Prelude (Bool (..), (&&))
 
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), type (+->))
 
@@ -33,3 +34,12 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Sieve :: j +-> k) where
 -- 'Proarrow.Category.Enriched.Finitary.Sheaf.closure'.
 maximalSieve :: forall {j} {k} (a :: k) (b :: j). (CategoryOf j, CategoryOf k, Ob a, Ob b) => Sieve a b
 maximalSieve = Sieve \_ _ -> True
+
+-- | The sieve of arrows in both -- the @and@ of the truth values the two stand for, which is
+-- 'Proarrow.Category.Topos.and' at the classifier of
+-- "Proarrow.Category.Enriched.Finitary.Topos", computed directly rather than as an arrow. Being
+-- closed under composition is pointwise, so the meet of two sieves is again one; the meet of all
+-- the /dense/ sieves at a pair of objects is what
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.Plus' is computed on.
+sieveMeet :: Sieve a b -> Sieve a b -> Sieve a b
+sieveMeet (Sieve s) (Sieve s') = Sieve \g h -> s g h && s' g h

@@ -355,7 +355,17 @@ natKey x = (objIndex @a, objIndex @b, toIndex x)
 -- over a given weight, so bind it once outside a loop over them.
 natPositions
   :: forall {j} {k} (p :: j +-> k). (Finitary p, FiniteCat j, FiniteCat k) => M.Map NatKey P.Int
-natPositions = M.fromList (P.zip (natDomain @p @NatKey natKey) [0 ..])
+natPositions = natPositionsBy @p natKey
+
+-- | 'natPositions' with the key chosen by the caller, for a weight whose points are addressed by
+-- another object's keys -- a subobject carved out by 'withSubobject', whose inclusion says which
+-- point of the ambient object each of its own points is.
+natPositionsBy
+  :: forall {j} {k} (p :: j +-> k)
+   . (Finitary p, FiniteCat j, FiniteCat k)
+  => (forall a b. (Ob a, Ob b) => p a b -> NatKey)
+  -> M.Map NatKey P.Int
+natPositionsBy key = M.fromList (P.zip (natDomain @p @NatKey key) [0 ..])
 
 -- | Read a tabulated family back as a function on the points, given those positions.
 atNatKey :: M.Map NatKey P.Int -> [v] -> NatKey -> v
@@ -413,6 +423,19 @@ natTable
   -> [Natural]
 natTable f = natDomain @p (toIndex P.. f)
 
+-- | Which of the natural transformations @p -> q@ a given one is: 'familyIndex' of its 'natTable' in
+-- 'natElements'. The enumeration is bound before the transformation arrives, so a partial
+-- application shares it across a hom-set; every 'toIndex' that numbers transformations is this one.
+natIndex
+  :: forall {j} {k} (p :: j +-> k) (q :: j +-> k)
+   . (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
+  => P.String
+  -> (p :~> q)
+  -> Natural
+natIndex msg = \f -> familyIndex msg es (natTable @p @q f)
+  where
+    es = natElements @p @q
+
 -- | Every natural transformation @p -> q@, as an arrow of @'FINITARY' j k@. This is what makes the
 -- category of finitary profunctors testable: its hom-sets are enumerable, so a generator can pick
 -- from them, where in general a natural transformation is not something one can generate.
@@ -437,11 +460,9 @@ natAt pos row = Sub (Prof \x -> x // fromIndex @q (atNatKey pos row (natKey x)))
 -- many finitary profunctors -- which is exactly the difference between finite and locally finite.)
 instance (FiniteCat j, FiniteCat k) => Finitary (Sub Prof :: CAT (FINITARY j k)) where
   size @f @g = genericLength (natElements @(UN SUB f) @(UN SUB g))
-  toIndex @f @g (Sub (Prof n)) =
-    familyIndex
-      "toIndex: the transformation is not natural"
-      (natElements @(UN SUB f) @(UN SUB g))
-      (natTable @(UN SUB f) @(UN SUB g) n)
+  toIndex @f @g = \(Sub (Prof n)) -> ix n
+    where
+      ix = natIndex @(UN SUB f) @(UN SUB g) "toIndex: the transformation is not natural"
   fromIndex @f @g i =
     natAt @(UN SUB f) @(UN SUB g) (natPositions @(UN SUB f)) (genericIndex (natElements @(UN SUB f) @(UN SUB g)) i)
   elements @f @g = natTransformations @(UN SUB f) @(UN SUB g)
@@ -459,11 +480,9 @@ type ExpWeight p a b = Yo a (OP b) :*: p
 instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => Finitary (p :~>: q :: j +-> k) where
   size @a @b = genericLength (natElements @(ExpWeight p a b) @q)
 
-  -- the search is bound outside the argument lambda, so a caller can share it across a hom-set
-  toIndex @a @b = \(Exp f) ->
-    familyIndex "toIndex: the family is not natural" es (natTable @(ExpWeight p a b) @q \(Yo ca bd :*: x) -> f ca bd x)
+  toIndex @a @b = \(Exp f) -> ix \(Yo ca bd :*: x) -> f ca bd x
     where
-      es = natElements @(ExpWeight p a b) @q
+      ix = natIndex @(ExpWeight p a b) @q "toIndex: the family is not natural"
   fromIndex @a @b i = expAt @p @q (natPositions @(ExpWeight p a b)) (genericIndex (natElements @(ExpWeight p a b) @q) i)
   elements @a @b =
     let pos = natPositions @(ExpWeight p a b) in P.map (expAt @p @q pos) (natElements @(ExpWeight p a b) @q)

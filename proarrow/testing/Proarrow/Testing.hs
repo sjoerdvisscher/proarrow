@@ -45,6 +45,7 @@ module Proarrow.Testing
   , optGen
   , oneElem
   , genBoth
+  , genElements
   , oneOfTotal
   , genP
   , genNamed
@@ -87,6 +88,7 @@ import Control.Applicative (Alternative (..))
 import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, foreachOb)
+import Proarrow.Category.Enriched.Finitary.Sheaf (Plus, plusTable, samePlus)
 import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, natTable, sieveTable)
 import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -94,6 +96,7 @@ import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
+import Proarrow.Category.Sheaf (HasFiniteCovers)
 import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
@@ -102,6 +105,7 @@ import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Product (fstP, sndP, (:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve)
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 import Test.Falsify.Interactive (falsify)
@@ -457,6 +461,15 @@ optGen :: [a] -> GenTotal a
 optGen [] = error "optGen: empty list"
 optGen (x : xs) = GenNonEmpty (elem (x :| xs))
 
+-- | Draw from a finitary profunctor's own enumeration, an empty hom-set being 'GenEmpty' rather than
+-- an error: a profunctor built by the library can be empty at a pair of objects with nothing wrong.
+-- For a hand-written fixture prefer a palette of its own -- 'Proarrow.Testing.Laws.testFinitary'
+-- says why a generator that /is/ the enumeration makes the round-trip law vacuous.
+genElements :: forall {j} {k} (p :: j +-> k) (a :: k) (b :: j). (Finitary p, Ob a, Ob b) => GenTotal (p a b)
+genElements = case elements @p @a @b of
+  [] -> GenEmpty \_ -> error "genElements: no elements at these objects"
+  xs -> optGen xs
+
 oneElem :: a -> GenTotal a
 oneElem x = GenNonEmpty (pure x)
 
@@ -530,6 +543,21 @@ instance (TestableType (p a b), TestableType (q a b)) => TestableType ((p :+: q)
     (GenNonEmpty gl, GenEmpty _) -> GenNonEmpty (InjL <$> gl)
     (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (oneof ((InjL <$> gl) :| [InjR <$> gr]))
 
+instance
+  (TestableProfunctor p, TestableProfunctor q, TestableTypeP p, TestableTypeP q)
+  => TestableProfunctor (p :+: q)
+
+-- | The terminal profunctor has one element at every pair of objects.
+instance TestingEqShow (TerminalProfunctor a b) where
+  -- forcing is the one thing left to check
+  eqP l r = l `seq` r `seq` pure True
+  showP _ = "TerminalProfunctor"
+
+instance (Testable j, Testable k, TestOb (a :: k), TestOb (b :: j)) => TestableType (TerminalProfunctor a b) where
+  gen = obFromTestOb @a (obFromTestOb @b (oneElem TerminalProfunctor))
+
+instance (Testable j, Testable k) => TestableProfunctor (TerminalProfunctor :: j +-> k)
+
 -- | An element of the Yoneda embedding is an arrow into @x@ paired with an arrow out of @b@, so it
 -- is testable wherever both categories are: this is what makes a representable usable as a test
 -- fixture, at either variance.
@@ -556,6 +584,7 @@ instance (Testable j, Testable k, TestOb (x :: k), TestOb (b :: j)) => TestableP
 --
 -- Drawing one enumerates /every/ sieve at that pair of objects, a count exponential in the size of
 -- the representable, so this is the generator to look at first if a suite gets slow.
+-- the 'TestOb's are what pin @j@ and @k@, which @'Sieve' a b@ does not mention
 instance (FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (Sieve a b) where
   eqP s t = pure (sieveTable s == sieveTable t)
   showP s = show (sieveTable s)
@@ -564,9 +593,28 @@ instance
   (Testable j, Testable k, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
   => TestableType (Sieve a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (optGen (elements @(Sieve :: j +-> k) @a @b)))
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Sieve :: j +-> k)))
 
 instance (Testable j, Testable k, FiniteCat j, FiniteCat k) => TestableProfunctor (Sieve :: j +-> k)
+
+-- | Compared by 'samePlus' and shown by 'plusTable' -- see 'Plus' for what a value stands for.
+instance
+-- as for 'Sieve', the 'TestOb's are what pin @j@ and @k@
+  (HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestingEqShow (Plus t p a b)
+  where
+  eqP x y = pure (samePlus x y)
+  showP x = show (plusTable x)
+
+instance
+  (Testable j, Testable k, HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestableType (Plus t p a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Plus t p :: j +-> k)))
+
+instance
+  (Testable j, Testable k, HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k)
+  => TestableProfunctor (Plus t p :: j +-> k)
 
 -- | A hom-set of 'FINITARY' is enumerable, by 'natTransformations', so it can be generated -- which
 -- is the thing that makes a category of profunctors testable at all. Equality and display go through
@@ -577,11 +625,9 @@ instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestingEqShow (Su
   showP (Sub (Prof f)) = show (natTable @p @q f)
 
 instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestableType (Sub Prof (SUB p :: FINITARY j k) (SUB q)) where
-  gen = case elements @(Hom (FINITARY j k)) @(SUB p) @(SUB q) of
-    -- a hom-set is empty whenever @q@ runs out of elements where @p@ has some, and then the
-    -- properties discard rather than fail
-    [] -> GenEmpty \_ -> error "no natural transformations at these objects"
-    fs -> optGen fs
+  -- a hom-set is empty whenever @q@ runs out of elements where @p@ has some, and then the
+  -- properties discard rather than fail
+  gen = genElements @(Hom (FINITARY j k)) @(SUB p) @(SUB q)
 
 instance (Ob a, Ob b) => TestableType (Unit a b) where
   gen = oneElem Unit

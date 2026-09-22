@@ -5,9 +5,10 @@
 -- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'testCategory',
 -- 'testMonoidal', 'testBinaryProducts', 'testClosed', and friends. Wiring a new category into a
 -- test suite is a 'Testable' instance plus calls to these -- see proarrow's own test suite for
--- many examples. A 'Sheaf.Site' has five: 'testGluesBack' and 'testGluesBackAt' for the sheaf
--- condition at a profunctor, and 'testGeneratedSieveIsSieve', 'testDenseIsCovering' and
--- 'testLawvereTierney' for the coverage itself.
+-- many examples. A 'Sheaf.Site' has six: 'testGluesBack' and 'testGluesBackAt' for the sheaf
+-- condition at a profunctor, 'testGeneratedSieveIsSieve', 'testDenseIsCovering' and
+-- 'testLawvereTierney' for the coverage itself, and 'testSheafification' (with 'testPlusFixes')
+-- for the reflector.
 --
 -- The prefix tells you the return type. A @test@ returns a 'TestTree', ready to drop into a
 -- 'Test.Tasty.testGroup'; a @prop@ returns a @'Property' ()@, meant to be composed into a property
@@ -24,7 +25,7 @@ module Proarrow.Testing.Laws where
 
 import Control.Monad (unless, when)
 import Data.Foldable (for_)
-import Data.List (genericLength)
+import Data.List (genericLength, sort)
 import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
@@ -37,6 +38,8 @@ import Proarrow.Category.Enriched.Finitary.Sheaf qualified as FinSheaf
 import Proarrow.Category.Enriched.Finitary.Topos qualified as FinTopos
 import Proarrow.Category.Enriched.Thin qualified as Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Sub (Sub (..))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Cartesian qualified as Cartesian
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
@@ -348,7 +351,7 @@ testDenseIsCovering =
           [ expect
               ("sieve " ++ show (Finitary.toIndex s) ++ " at object " ++ show (Finitary.objIndex @a))
               (FinSheaf.isCovering @t s)
-              (FinSheaf.isMaximal (FinSheaf.closure @t s))
+              (FinSheaf.isDense @t s)
           | s <- Finitary.elements @(Sieve :: j +-> k) @a @b
           ]
       )
@@ -1203,6 +1206,79 @@ testGluesBackAt lbl c = testProperty ("glues back at " ++ lbl) do
   Some @b <- genOb @j
   x <- genNamed @(p a b) "x"
   obFromTestOb @a $ obFromTestOb @b $ propGluesBack @t c x
+
+-- | One plus leaves a sheaf as it was: 'FinSheaf.unitPlus' is a bijection at every pair of objects.
+-- Stated for any finitary @q@ -- the property needs no 'Sheaf.Sheaf' instance, only 'FinSheaf.isSheaf'
+-- to be true of @q@ -- so it also serves at a coverage no profunctor has an instance for, such as the
+-- trivial one, which fixes everything.
+testPlusFixes
+  :: forall t {j} {k} (q :: j +-> k)
+   . (Sheaf.HasFiniteCovers t k, Finitary.Finitary q, Finitary.FiniteCat j, Finitary.FiniteCat k)
+  => TestTree
+testPlusFixes =
+  testProperty "one plus fixes q" $
+    sequence_
+      ( Finitary.foreachOb @k @(Property ()) \ @a -> Finitary.foreachOb @j @(Property ()) \ @b ->
+          -- bound once for the hom-set: at 'FinSheaf.Plus' one 'Finitary.toIndex' is an enumeration
+          let ix = Finitary.toIndex @(FinSheaf.Plus t q) @a @b
+          in [ expect
+                 ("unit is a bijection at object " ++ show (Finitary.objIndex @a))
+                 (Finitary.indices (Finitary.size @(FinSheaf.Plus t q) @a @b))
+                 (sort [ix (FinSheaf.unitPlus @t x) | x <- Finitary.elements @q @a @b])
+             ]
+      )
+
+-- | Sheafification is the reflector into the sheaves, decided at a finite site. For a finitary @p@
+-- and a sheaf @q@:
+--
+-- * @'FinSheaf.unitPlus'@ is natural;
+-- * @'FinSheaf.Sheafify' t p@ is a sheaf, by 'FinSheaf.isSheaf';
+-- * one plus fixes @q@ ('testPlusFixes');
+-- * it is left adjoint to inclusion. The hom-sets of @'FinTopos.FINITARY' j k@ are finitary, so
+--   this is a count -- as many maps @'FinSheaf.Sheafify' t p ~> q@ as maps @p ~> q@ -- made a
+--   bijection by 'FinSheaf.extendSheafify': extending every map @p ~> q@ gives every map out of
+--   the sheafification exactly once, and restricting an extension along the unit gives the map back.
+--
+-- The last is the strongest thing the finite setting lets one say, and it is what makes
+-- 'FinSheaf.extendPlus'\'s choice of cover safe to leave unspecified: any other choice would show
+-- up here as an extension that is not one of the maps.
+testSheafification
+  :: forall t {j} {k} (p :: j +-> k) (q :: j +-> k)
+   . ( Sheaf.HasFiniteCovers t k
+     , Sheaf.Sheaf t q
+     , Finitary.Finitary p
+     , Finitary.Finitary q
+     , Finitary.FiniteCat j
+     , Finitary.FiniteCat k
+     , Testable j
+     , Testable k
+     , TestableProfunctor p
+     )
+  => TestTree
+testSheafification =
+  testGroup
+    "sheafification"
+    [ testProperty "unit is natural" $ propNaturalTransformation @p @(FinSheaf.Plus t p) (FinSheaf.unitPlus @t)
+    , testProperty "Sheafify p is a sheaf" $ expect "isSheaf" True (FinSheaf.isSheaf @t @(FinSheaf.Sheafify t p))
+    , testPlusFixes @t @q
+    , testProperty "left adjoint to inclusion" do
+        -- both enumerations once: each is a full walk of the finitary hom-set
+        let maps = FinTopos.natTransformations @p @q
+            exts = FinTopos.natElements @(FinSheaf.Sheafify t p) @q
+        -- a hom-set is empty whenever @q@ runs out of elements where @p@ has some, and then every
+        -- assertion below holds of nothing
+        expect "there are maps to extend" True (not (null maps))
+        expect "as many maps out of the sheafification as out of p" (length maps) (length exts)
+        expect
+          "the extensions are exactly the maps out of the sheafification"
+          (sort exts)
+          (sort [FinTopos.natTable @(FinSheaf.Sheafify t p) @q (FinSheaf.extendSheafify @t n) | Sub (Prof n) <- maps])
+        for_ maps \(Sub (Prof n)) ->
+          expect
+            "restricting an extension along the unit gives the map back"
+            (FinTopos.natTable @p @q n)
+            (FinTopos.natTable @p @q \x -> FinSheaf.extendSheafify @t n (FinSheaf.unitSheafify @t x))
+    ]
 
 -- | Laws of a lax monoidal profunctor: @'M.**'@ is natural in both arguments and coherent with the
 -- unitors and the associator. This is the law of 'M.MonoidalProfunctor', which is a property of a

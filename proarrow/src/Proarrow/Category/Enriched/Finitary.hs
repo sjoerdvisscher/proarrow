@@ -27,7 +27,8 @@
 module Proarrow.Category.Enriched.Finitary where
 
 import Data.Kind (Constraint)
-import Data.List (elemIndex, genericIndex, genericTake)
+import Data.List (elemIndex, find, genericIndex, genericTake)
+import Data.Maybe (isJust)
 import Data.Type.Nat (snat)
 import Data.Type.Nat qualified as N
 import Data.Universe.Class qualified as U
@@ -144,19 +145,27 @@ class (CategoryOf k, Finitary (Hom k)) => LocallyFinite k
 
 instance (CategoryOf k, Finitary (Hom k)) => LocallyFinite k
 
--- | Whether an arrow factors through another into the same object: @'factorsThrough' g f@ holds
--- when @g = f '.' h@ for some @h@. Only the hom-sets have to be finite, not the category, since the
--- search is over the one hom-set @x '~>' y@.
+-- | How an arrow factors through another into the same object: @'factorThrough' g f@ is an @h@
+-- with @g = f '.' h@, if there is one. Only the hom-sets have to be finite, not the category, since
+-- the search is over the one hom-set @x '~>' y@.
 --
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.generatedSieve' is the caller: a cover's sieve is the
--- arrows that factor through one of its legs. It answers the image-membership question too --
--- an element lands in the image of @f@ exactly when it factors through @f@ -- though nothing uses it
--- for that yet, and 'Proarrow.Category.Enriched.Finitary.Topos.preimage' does its own search.
-factorsThrough :: forall {k} (x :: k) y a. (LocallyFinite k, Ob x, Ob y, Ob a) => x ~> a -> y ~> a -> P.Bool
-factorsThrough g f = P.any (\h -> toIndex @(Hom k) @x @a (f . h) == gi) (elements @(Hom k) @x @y)
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.gluePlus' is the caller that needs the witness: to
+-- glue over a cover it has to find not just that an arrow factors through a leg but /how/, so as to
+-- ask that leg's family at the factor. It answers the image-membership question too -- an element
+-- lands in the image of @f@ exactly when it factors through @f@ -- though nothing uses it for that
+-- yet, and 'Proarrow.Category.Enriched.Finitary.Topos.preimage' does its own search.
+factorThrough
+  :: forall {k} (x :: k) y a. (LocallyFinite k, Ob x, Ob y, Ob a) => x ~> a -> y ~> a -> Maybe (x ~> y)
+factorThrough g f = find (\h -> toIndex @(Hom k) @x @a (f . h) == gi) (elements @(Hom k) @x @y)
   where
     -- hoisted out of the lambda, as 'toIndex' asks: an instance that searches only searches once
     gi = toIndex g
+
+-- | Whether an arrow factors through another, which is 'factorThrough' with the witness dropped.
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.generatedSieve' is the caller: a cover's sieve is the
+-- arrows that factor through one of its legs.
+factorsThrough :: forall {k} (x :: k) y a. (LocallyFinite k, Ob x, Ob y, Ob a) => x ~> a -> y ~> a -> P.Bool
+factorsThrough g f = isJust (factorThrough g f)
 
 -- | A finite category: finitely many objects, and finitely many arrows between them. The first is
 -- 'Enumerable', the second does not follow from it, and the enumeration below needs both.
