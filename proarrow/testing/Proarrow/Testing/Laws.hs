@@ -283,14 +283,16 @@ testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ d
   kernelPair <-
     eqP (Topos.classifyKernelPair f . (x BinaryProduct.&&& x')) (Topos.true . Terminal.terminate)
   expect "classifyKernelPair is true exactly when f identifies the pair" identified kernelPair
-  onImage <- eqP (Topos.classifyImage f . (f . x)) (Topos.true . Terminal.terminate)
+  -- bound once: in the sheaves this is a pushout, which sheafifies and tabulates its apex
+  let chi = Topos.classifyImage f
+  onImage <- eqP (chi . (f . x)) (Topos.true . Terminal.terminate)
   expect "classifyImage f is true on the image of f" True onImage
   -- The converse, and the law that makes this a /subobject/ classifier: anything the classifier
   -- calls true factors through the image mono. Mirrors the existence half of 'testEqualizers'.
   case Topos.factorize f of
     (:.:) _ m@Objs -> do
       w <- genNamed @(z ~> b) "w"
-      classifiedTrue <- eqP (Topos.classifyImage f . w) (Topos.true . Terminal.terminate)
+      classifiedTrue <- eqP (chi . w) (Topos.true . Terminal.terminate)
       when classifiedTrue $
         testEq
           "image factorization"

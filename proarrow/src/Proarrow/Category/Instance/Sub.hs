@@ -10,6 +10,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Prelude (type (~))
 
@@ -43,6 +45,37 @@ instance (c (UN SUB a)) => (c `On` ob) a
 
 class (ob (a ** b)) => IsObMult (ob :: OB k) a b
 instance (ob (a ** b)) => IsObMult (ob :: OB k) a b
+
+-- | The same for the /product/: that the subcategory contains the products of its objects, as a
+-- class with a single instance so that it can be the head of a quantified constraint.
+class (ob (a && b)) => IsObProd (ob :: OB k) a b
+
+instance (ob (a && b)) => IsObProd (ob :: OB k) a b
+
+-- | A full subcategory has the ambient category's finite products as soon as it contains them --
+-- which is what the quantified constraint says. Being full, it has nothing else to check: the
+-- projections and the pairing are the ambient ones under 'Sub'.
+--
+-- The exponential goes the same way, but not at an arbitrary kind. What a cartesian closed
+-- subcategory needs is @'Proarrow.Limit.BinaryProduct.PROD' k@\'s exponential read back at @k@,
+-- as @'Proarrow.Core.UN' PR (PR a '~~>' PR b)@, and neither @'withObExp'@ nor @curry@ discharges
+-- through that round trip. Stated for a subcategory of /profunctors/, where the exponential is a
+-- plain type constructor, it does: see
+-- @'Proarrow.Category.Monoidal.Closed.Closed' ('Proarrow.Limit.BinaryProduct.PROD' ('SUBCAT' ob))@
+-- in "Proarrow.Profunctor.Instance.Exponential".
+instance (HasTerminalObject k, ob (TerminalObject :: k)) => HasTerminalObject (SUBCAT (ob :: OB k)) where
+  type TerminalObject @(SUBCAT (ob :: OB k)) = SUB (TerminalObject :: k)
+  terminate = Sub terminate
+
+instance
+  (HasBinaryProducts k, forall a b. (ob a, ob b) => IsObProd ob a b)
+  => HasBinaryProducts (SUBCAT (ob :: OB k))
+  where
+  type (&&) @(SUBCAT (ob :: OB k)) a b = SUB (UN SUB a && UN SUB b)
+  withObProd @(SUB a) @(SUB b) r = withObProd @k @a @b r
+  fst @(SUB a) @(SUB b) = Sub (fst @k @a @b)
+  snd @(SUB a) @(SUB b) = Sub (snd @k @a @b)
+  Sub l &&& Sub r = Sub (l &&& r)
 
 instance (MonoidalProfunctor p, SubMonoidal ob) => MonoidalProfunctor (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   one = Sub one

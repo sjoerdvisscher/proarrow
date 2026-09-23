@@ -17,9 +17,11 @@ import Proarrow.Category.Enriched.Thin
 import Proarrow.Category.Instance.Bool (BoolLeq)
 import Proarrow.Category.Instance.Constraint (reifyExp, (:=>) (..), type (:-) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Sub (IsObProd, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (//), type (+->))
-import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
+import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), UN, (//), type (+->))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts, PROD (..), Prod (..))
+import Proarrow.Limit.Terminal (HasTerminalObject)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 
 data (p :~>: q) a b where
@@ -35,6 +37,36 @@ instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
   curry (Prod (Prof n)) = Prod (Prof \p -> p // Exp \ca bd q -> n (dimap ca bd p :*: q))
   apply = Prod (Prof \(Exp f :*: q) -> f id id q \\ q)
   Prod (Prof m) ^^^ Prod (Prof n) = Prod (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p)))
+
+-- | That a full subcategory of the profunctors contains the internal homs of its objects, as a
+-- class with a single instance, so that it can be the head of the quantified constraint below --
+-- 'Proarrow.Category.Instance.Sub.IsObProd' has the same shape for the product.
+class (ob (p :~>: q)) => IsObExp (ob :: OB (j +-> k)) p q
+
+instance (ob (p :~>: q)) => IsObExp ob p q
+
+-- | And then the subcategory is closed, with the ambient exponential and nothing of its own --
+-- just as its products are the ambient ones. @'Proarrow.Category.Enriched.Finitary.Topos.FINITARY'
+-- j k@ is one instance, 'Proarrow.Category.Enriched.Finitary.Sheaf.SHEAVES' another: for the
+-- first, a hom-set of natural transformations is finitary; for the second, an internal hom into a
+-- sheaf is a sheaf.
+instance
+  ( CategoryOf j
+  , CategoryOf k
+  , HasTerminalObject (SUBCAT ob)
+  , HasBinaryProducts (SUBCAT ob)
+  , -- the product one again, as a constraint: 'apply' needs @ob@ of a product whose left factor is
+    -- an internal hom, which no @'Ob' _@ in scope mentions
+    forall p q. (ob p, ob q) => IsObProd ob p q
+  , forall p q. (ob p, ob q) => IsObExp ob p q
+  )
+  => Closed (PROD (SUBCAT (ob :: OB (j +-> k))))
+  where
+  type p ~~> q = PR (SUB (UN SUB (UN PR p) :~>: UN SUB (UN PR q)))
+  withObExp r = r
+  curry (Prod (Sub (Prof n))) = Prod (Sub (Prof \p -> p // Exp \ca bd q -> n (dimap ca bd p :*: q)))
+  apply = Prod (Sub (Prof \(Exp f :*: q) -> f id id q \\ q))
+  Prod (Sub (Prof m)) ^^^ Prod (Sub (Prof n)) = Prod (Sub (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p))))
 
 instance (ThinProfunctor p, ThinProfunctor q, Discrete j, Discrete k) => ThinProfunctor (p :~>: q :: j +-> k) where
   type HasArrow (p :~>: q) a b = (HasArrow p a b :=> HasArrow q a b)

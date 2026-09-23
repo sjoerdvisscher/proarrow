@@ -44,7 +44,8 @@ import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb, objIndex, sizes)
 import Proarrow.Category.Enriched.Finitary.Sheaf
-  ( Plus
+  ( ClosedSieve
+  , Plus
   , SHEAVES
   , SHF
   , Sheafify
@@ -60,14 +61,15 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub)
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Sheaf (ByArrow, Canonical, Cover (..), Leg (..), Sheaf (..), Trivial, legArrow)
+import Proarrow.Category.Sheaf (ByArrow, Canonical, Cover (..), Leg (..), Overlapping, Sheaf (..), Trivial, legArrow)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), lmap, obj, type (+->))
 import Proarrow.Functor (Presheaf)
 import Proarrow.Limit.BinaryProduct (PROD)
-import Proarrow.Profunctor.Instance.Coproduct ((:+:))
+import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve)
-import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo)
 import Proarrow.Testing
   ( Some (..)
@@ -83,18 +85,24 @@ import Proarrow.Testing
   )
 import Proarrow.Testing.Laws
   ( propNaturalTransformation
+  , testBinaryCoproducts_
   , testBinaryProducts_
   , testCategory
+  , testClosed_
+  , testCoequalizers_
   , testDenseIsCovering
+  , testEpiMonoFactorization_
   , testEqualizersAreSheaves
   , testEqualizers_
   , testFinitary
   , testGeneratedSieveIsSieve
   , testGluesBack
+  , testInitialObject
   , testLawvereTierney_
   , testPlusFixes
   , testProfunctor
   , testPullbacks_
+  , testPushouts_
   , testSheafification
   , testSubobjectClassifier_
   , testTerminalObject
@@ -303,6 +311,15 @@ instance TestableProfunctor Sections
 type Const2 :: Presheaf (BOOL, BOOL)
 type Const2 = TerminalProfunctor :+: TerminalProfunctor
 
+-- | Gluing for 'Overlapping': a matching family over the two halves agrees on the intersection,
+-- and both halves are the same two-valued set, so the value at either leg is the glued one. The
+-- smallest instance in which an overlap does any work -- under 'Canonical' this same presheaf is
+-- no sheaf at all.
+instance Sheaf Overlapping Const2 where
+  glue ByHalves m = case m AtFst of
+    InjL TerminalProfunctor -> InjL TerminalProfunctor
+    InjR TerminalProfunctor -> InjR TerminalProfunctor
+
 -- | The kind of finitary presheaves on the two-point space, as a testable kind.
 type Sh2 = FINITARY () (BOOL, BOOL)
 
@@ -405,6 +422,22 @@ test =
             , testBinaryProducts_ @ShB
             , testEqualizers_ @ShB
             , testPullbacks_ @ShB
+            , -- the colimits, each the presheaf one sheafified
+              testInitialObject @ShB
+            , testBinaryCoproducts_ @ShB
+            , testCoequalizers_ @ShB
+            , testPushouts_ @ShB
+            , testEpiMonoFactorization_ @ShB
+            , -- the exponential is 'FINITARY'\'s, and a sheaf because the codomain is
+              testClosed_ @(PROD ShB)
+            , testSubobjectClassifier_ @(PROD ShB)
+            , testFinitary @(ClosedSieve ByArrow :: () +-> BOOL) "ClosedSieve ByArrow"
+            , -- 'TRU' is covered by 'FLS', so the sieve that cover generates is dense and its
+              -- closure is the maximal one: of the three sieves at 'TRU' only two are closed.
+              testProperty "the closed sieves" $ do
+                expect "all sieves" [2, 3] (sizes @(Sieve :: () +-> BOOL))
+                expect "closed ones" [2, 2] (sizes @(ClosedSieve ByArrow :: () +-> BOOL))
+                expect "and they are a sheaf" True (isSheaf @ByArrow @(ClosedSieve ByArrow :: () +-> BOOL))
             , testFinitary @(Sub Prof :: CAT ShB) "ShB"
             , testEqualizersAreSheaves @ByArrow @() @BOOL
             ]
@@ -418,6 +451,39 @@ test =
             expect "Sheafify Collapse keeps two elements at each object" [2, 2] (sizes @(Sheafify ByArrow Collapse))
             -- and two-sidedly
             expect "Plus (Yo FLS (OP TRU)) is a sheaf" True (isSheaf @ByArrow @(Plus ByArrow (Yo FLS (OP TRU) :: BOOL +-> BOOL)))
+        ]
+    , testGroup
+        "Overlapping"
+        [ -- The same four objects and the same cover as 'Canonical', with the empty cover dropped
+          -- so that the two legs meet at a section rather than at nothing. This is the only site
+          -- here whose gluing is an equalizer instead of a product.
+          testProperty "isSheaf" $ do
+            expect "the constant presheaf is a sheaf here" True (isSheaf @Overlapping @Const2)
+            expect "and is not for Canonical, which has an empty cover" False (isSheaf @Canonical @Const2)
+            expect "Sections is a sheaf too" True (isSheaf @Overlapping @Sections)
+        , testProperty "the overlap cuts the pairs down" $ do
+            -- four pairs of local sections over the top, of which the two that agree on the
+            -- intersection survive; under 'Canonical' the intersection is empty and all four do
+            expect "sheafified here" [2, 2, 2, 2] (sizes @(Sheafify Overlapping Const2))
+            expect "sheafified for Canonical" [1, 2, 2, 4] (sizes @(Sheafify Canonical Const2))
+        , testProperty "the closed sieves are the opens" $
+            -- the opens contained in each: the intersection has two, each half three, the union
+            -- five -- where 'Canonical' sees a discrete pair of points and counts subsets
+            expect "Omega" [2, 3, 3, 5] (sizes @(ClosedSieve Overlapping :: () +-> (BOOL, BOOL)))
+        , testLawvereTierney_ @(PROD Sh2) (lawvereTierney @Overlapping)
+        , testProperty "closure is natural" $
+            propNaturalTransformation @(Sieve :: BOOL +-> (BOOL, BOOL)) (closure @Overlapping)
+        , testGeneratedSieveIsSieve @Overlapping @() @(BOOL, BOOL)
+        , testDenseIsCovering @Overlapping @() @(BOOL, BOOL)
+        , testGluesBack @Overlapping @Const2
+        , -- The one place an /exponential/ is glued. Its 'Sheaf' instance searches its elements
+          -- for the one that restricts to the family, and no other site here can call it with a
+          -- cover whose legs overlap.
+          testProperty "the exponential of sheaves is a sheaf" $
+            expect "isSheaf" True (isSheaf @Overlapping @(Const2 :~>: Const2))
+        , testGluesBack @Overlapping @(Const2 :~>: Const2)
+        , -- and the other carrier with no 'glue' of its own: the classifier
+          testGluesBack @Overlapping @(ClosedSieve Overlapping :: () +-> (BOOL, BOOL))
         ]
     , testGroup
         "Canonical"
@@ -442,6 +508,7 @@ test =
               (isSheaf @Canonical @(Yo '(TRU, FLS) (OP TRU) :: BOOL +-> (BOOL, BOOL)))
         , testProperty "closure is natural" $
             propNaturalTransformation @(Sieve :: BOOL +-> (BOOL, BOOL)) (closure @Canonical)
+        , testGluesBack @Canonical @(ClosedSieve Canonical :: () +-> (BOOL, BOOL))
         , testGeneratedSieveIsSieve @Canonical @() @(BOOL, BOOL)
         , testDenseIsCovering @Canonical @() @(BOOL, BOOL)
         , testFinitary @(Plus Canonical Const2) "Plus Const2"
@@ -455,6 +522,26 @@ test =
             , testBinaryProducts_ @ShC
             , testEqualizers_ @ShC
             , testPullbacks_ @ShC
+            , testInitialObject @ShC
+            , testBinaryCoproducts_ @ShC
+            , testCoequalizers_ @ShC
+            , -- No 'testPushouts_' here: the apex is the sheafified coproduct, whose sections over
+              -- the whole space are the pairs, and the law draws three arrows out of it -- each an
+              -- enumeration over 15 points where a coequalizer's is over 6 (4.2s for the group).
+              -- Epi-mono factorization covers the same pushout at a quarter the cost.
+              testEpiMonoFactorization_ @ShC
+            , testClosed_ @(PROD ShC)
+            , testSubobjectClassifier_ @(PROD ShC)
+            , testFinitary @(ClosedSieve Canonical :: () +-> (BOOL, BOOL)) "ClosedSieve Canonical"
+            , -- The closed sieves on a space are its opens: over the empty set only the empty one,
+              -- where the presheaf of all sieves has two, and the four subsets over the whole.
+              testProperty "the closed sieves are the opens" $ do
+                expect "all sieves" [2, 3, 3, 6] (sizes @(Sieve :: () +-> (BOOL, BOOL)))
+                expect "closed ones" [1, 2, 2, 4] (sizes @(ClosedSieve Canonical :: () +-> (BOOL, BOOL)))
+                expect
+                  "and they are a sheaf"
+                  True
+                  (isSheaf @Canonical @(ClosedSieve Canonical :: () +-> (BOOL, BOOL)))
             , testFinitary @(Sub Prof :: CAT ShC) "ShC"
             , testEqualizersAreSheaves @Canonical @() @(BOOL, BOOL)
             ]

@@ -22,8 +22,9 @@ module Proarrow.Category.Enriched.Finitary.Topos where
 
 import Data.IntMap.Strict qualified as IM
 import Data.Kind (Constraint, Type)
-import Data.List (elemIndex, findIndex, genericIndex, genericLength, genericReplicate, partition, sort)
+import Data.List (elemIndex, find, findIndex, genericIndex, genericLength, genericReplicate, partition, sort)
 import Data.Map.Strict qualified as M
+import Data.Maybe (fromMaybe)
 import Data.Proxy (Proxy (..))
 import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (Nat (..), SNatI, reify, snat)
@@ -44,7 +45,6 @@ import Proarrow.Category.Enriched.Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Sheaf (Sheaf (..), Site (..), SomeLeg (..), Trivial)
 import Proarrow.Category.Topos
   ( ElementaryTopos
@@ -69,10 +69,9 @@ import Proarrow.Core
   , type (+->)
   , type (:~>)
   )
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
+import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
@@ -87,16 +86,10 @@ type FINITARY j k = SUBCAT (Finitary :: (j +-> k) -> Constraint)
 
 type FIN (p :: j +-> k) = SUB p :: FINITARY j k
 
-instance (CategoryOf j, CategoryOf k) => HasTerminalObject (FINITARY j k) where
-  type TerminalObject = FIN TerminalProfunctor
-  terminate = Sub terminate
-
-instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (FINITARY j k) where
-  type a && b = SUB (UN SUB a :*: UN SUB b)
-  withObProd r = r
-  fst @(SUB p) @(SUB q) = Sub (fst @(j +-> k) @p @q)
-  snd @(SUB p) @(SUB q) = Sub (snd @(j +-> k) @p @q)
-  Sub l &&& Sub r = Sub (l &&& r)
+-- The finite products and coproducts of 'FINITARY' -- and of the sheaves -- are the generic ones
+-- for a full subcategory in "Proarrow.Category.Instance.Sub": pointwise, under 'Sub'. All that is
+-- asked of the predicate is that it hold of the ambient (co)products, which the instances for
+-- ':*:', ':+:', 'TerminalProfunctor' and 'InitialProfunctor' supply.
 
 instance (CategoryOf j, CategoryOf k) => HasInitialObject (FINITARY j k) where
   type InitialObject = FIN InitialProfunctor
@@ -397,14 +390,16 @@ glueBySearch
   => Cover t k a c
   -> (forall x. Leg t k a c x -> p x b)
   -> p a b
-glueBySearch c m = case P.filter restrictsToTheFamily (elements @p @a @b) of
+glueBySearch c m = case P.filter (\x -> P.all ($ x) family) (elements @p @a @b) of
   [x] -> x
   [] -> P.error "glue: no element restricts to the family -- not a sheaf"
   _ -> P.error "glue: more than one element restricts to the family -- not a sheaf"
   where
-    restrictsToTheFamily x = P.all (\(SomeLeg l, i) -> (toIndex (lmap (legArrow l) x) == i) \\ legArrow l) family
-    family :: [(SomeLeg t k a c, Natural)]
-    family = [(SomeLeg l, toIndex (m l) \\ legArrow l) | SomeLeg l <- legs c]
+    -- One test per leg rather than one per leg and element: @ix@ is the leg source\'s 'toIndex',
+    -- bound before the element arrives, so an instance that searches for an index searches once
+    -- per leg and not once for every element it is asked about.
+    family :: [p a b -> P.Bool]
+    family = [(let ix = toIndex; i = ix (m l) in \x -> ix (lmap (legArrow l) x) == i) \\ legArrow l | SomeLeg l <- legs c]
 
 -- | A tabulated profunctor glues by search, since it knows nothing of the profunctor it presents.
 -- Only for the coverage its tag names: the tag is the whole of the evidence that the search will
@@ -416,17 +411,28 @@ instance (Site t k, FiniteCat j, FiniteCat k, KnownTables j k lm rm) => Sheaf t 
 
 -- * Equalizers and coequalizers
 
--- | The element of @p@ that @f@ sends to a given element of @q@, when @f@ is injective and the
--- element is in its image -- which is what both factorizations below need, in opposite directions.
+-- | The element of @p@ that @f@ sends to a given element of @q@, if the element is in @f@\'s
+-- image. The first one found, which for an injective @f@ -- an equalizer\'s inclusion -- is the
+-- only one; for a projection it is a choice of representative, and the caller is then relying on
+-- what it does with it not depending on which.
+preimageMaybe
+  :: forall {j} {k} (p :: j +-> k) q (a :: k) (b :: j)
+   . (Finitary p, Finitary q, Ob a, Ob b)
+  => (p a b -> q a b)
+  -> q a b
+  -> Maybe (p a b)
+preimageMaybe f y =
+  let toIndexQ = toIndex @q @a @b
+      iy = toIndexQ y
+  in find (\x -> toIndexQ (f x) == iy) (elements @p @a @b)
+
+-- | 'preimageMaybe' where the element has to be in the image, which is what both factorizations
+-- below need, in opposite directions.
 preimage
   :: forall {j} {k} (p :: j +-> k) q (a :: k) (b :: j)
    . (Finitary p, Finitary q, Ob a, Ob b)
   => P.String -> (p a b -> q a b) -> q a b -> p a b
-preimage msg f y =
-  let toIndexQ = toIndex @q @a @b
-  in case [x | x <- elements @p @a @b, toIndexQ (f x) == toIndexQ y] of
-       x : _ -> x
-       [] -> P.error msg
+preimage msg f y = fromMaybe (P.error msg) (preimageMaybe f y)
 
 -- | Partition a list of indices into the equivalence classes generated by a list of pairs. Both
 -- levels are sorted, so the classes come out ordered by their least member and the table is canonical.
@@ -474,15 +480,39 @@ factorThroughEqualizer incl h y = preimage "factorEqualizer: h's image must lie 
 -- natural transformations generate, and reify the table. Naturality makes the partition a
 -- congruence, so the quotient is again a profunctor.
 instance (Enumerable j, Enumerable k) => HasCoequalizers (FINITARY j k) where
-  coequalize (Sub (Prof @p @q f)) (Sub (Prof g)) k =
-    buildTable @j @k
-      ( \ @a @b ->
-          let toIndexQ = toIndex @q @a @b
-          in classes [(toIndexQ (f x), toIndexQ (g x)) | x <- elements @p @a @b] (P.map toIndexQ (elements @q @a @b))
-      )
-      \ @fs -> k (Sub (Prof @q @(Reindex Quotient q fs) Reindex))
-  factorCoequalizer (Sub (Prof @_ @c proj)) (Sub (Prof @_ @c' h)) =
-    Sub (Prof @c @c' \y -> h (preimage "factorCoequalizer: proj must be onto" proj y) \\ y)
+  coequalize (Sub (Prof f)) (Sub (Prof g)) k = coequalizeNat f g \proj -> k (Sub (Prof proj))
+  factorCoequalizer (Sub (Prof proj)) (Sub (Prof h)) = Sub (Prof (factorThroughCoequalizer proj h))
+
+-- | The coequalizer of two natural transformations: the target retabulated along the classes the
+-- two generate, handed on with its projection. The dual of 'equalizeNat', and shared the same way
+-- -- though the sheaves take only half of it, since a quotient of sheaves is no sheaf and has to be
+-- sheafified before it is the coequalizer /there/.
+coequalizeNat
+  :: forall {j} {k} (p :: j +-> k) q r
+   . (Finitary p, Finitary q, Enumerable j, Enumerable k)
+  => (p :~> q)
+  -> (p :~> q)
+  -> (forall fs. (KnownTable (Objects j) (Objects k) fs) => (q :~> Reindex Quotient q fs) -> r)
+  -> r
+coequalizeNat f g k =
+  buildTable @j @k
+    ( \ @a @b ->
+        let toIndexQ = toIndex @q @a @b
+        in classes [(toIndexQ (f x), toIndexQ (g x)) | x <- elements @p @a @b] (P.map toIndexQ (elements @q @a @b))
+    )
+    \ @fs -> k @fs Reindex
+
+-- | Factor through a coequalizer's projection, by 'preimage': the projection must be onto. The
+-- dual of 'factorThroughEqualizer', and stated apart from the instance for the same reason -- but
+-- not, unlike the dual, shared with the sheaves: a projection there is epi without being onto, and
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.factorThroughLocalEpi' is what they use instead.
+factorThroughCoequalizer
+  :: forall {j} {k} (c :: j +-> k) x c'
+   . (Finitary c, Finitary x, Profunctor c')
+  => (x :~> c)
+  -> (x :~> c')
+  -> c :~> c'
+factorThroughCoequalizer proj h y = h (preimage "factorCoequalizer: proj must be onto" proj y) \\ y
 
 -- * Pullbacks, pushouts and images
 
@@ -717,14 +747,10 @@ expAt
   -> (p :~>: q) a b
 expAt pos row = Exp \ca bd x -> ca // bd // fromIndex @q (atNatKey pos row (natKey (Yo ca bd :*: x)))
 
--- | Finitary profunctors are cartesian closed. The 'PROD' wrapper is what makes the tensor the
--- product rather than Day convolution, exactly as it does for @j '+->' k@ itself.
-instance (FiniteCat j, FiniteCat k) => Closed (PROD (FINITARY j k)) where
-  type p ~~> q = PR (SUB (UN SUB (UN PR p) :~>: UN SUB (UN PR q)))
-  withObExp r = r
-  curry (Prod (Sub (Prof n))) = Prod (Sub (Prof \p -> p // Exp \ca bd q -> n (dimap ca bd p :*: q)))
-  apply = Prod (Sub (Prof \(Exp f :*: q) -> f id id q \\ q))
-  Prod (Sub (Prof m)) ^^^ Prod (Sub (Prof n)) = Prod (Sub (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p))))
+-- Finitary profunctors are cartesian closed, and the sheaves are too, by the instance for any
+-- full subcategory closed under the internal hom in "Proarrow.Profunctor.Instance.Exponential".
+-- Here that is @'Finitary' (p ':~>:' q)@ just above: the hom-set is the natural transformations,
+-- enumerated.
 
 -- * The subobject classifier
 
@@ -756,13 +782,22 @@ sieveAt
   -> Sieve a b
 sieveAt pos row = Sieve \ca bd -> ca // bd // atNatKey pos row (natKey (Yo ca bd))
 
--- | The subobject classifier is the profunctor of sieves, and an arrow classifies its graph: the
--- sieve of all the ways an element of @p@ and one of @q@ can be carried to a matching pair.
+-- | All the ways an element of @p@ and one of @q@ can be carried to a matching pair: the sieve an
+-- arrow's graph is classified by. Shared with the sheaves, whose classifier is this closed.
+graphSieve
+  :: forall {j} {k} (p :: j +-> k) (q :: j +-> k) (a :: k) (b :: j)
+   . (Profunctor p, Finitary q)
+  => (p :~> q)
+  -> p a b
+  -> q a b
+  -> Sieve a b
+graphSieve f x y = x // Sieve \g h -> g // h // toIndex @q (f (dimap g h x)) == toIndex (dimap g h y)
+
+-- | The subobject classifier is the profunctor of sieves, and an arrow classifies its graph.
 instance (FiniteCat j, FiniteCat k) => HasSubobjectClassifier (PROD (FINITARY j k)) where
   type Omega = PR (SUB Sieve)
   true = Prod (Sub (Prof \TerminalProfunctor -> maximalSieve))
-  classifyGraph (Prod (Sub (Prof @_ @q f))) =
-    Prod (Sub (Prof \(x :*: y) -> x // Sieve \g h -> g // h // toIndex @q (f (dimap g h x)) == toIndex (dimap g h y)))
+  classifyGraph (Prod (Sub (Prof f))) = Prod (Sub (Prof \(x :*: y) -> graphSieve f x y))
 
 -- | Finitary profunctors between finite categories form an elementary topos: finite limits and
 -- colimits, cartesian closed, a subobject classifier, and image factorization.

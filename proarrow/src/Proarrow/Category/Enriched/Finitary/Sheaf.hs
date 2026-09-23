@@ -40,16 +40,22 @@ import Proarrow.Category.Enriched.Finitary
 import Proarrow.Category.Enriched.Finitary.Topos
   ( FINITARY
   , KnownTables
+  , Reindex
+  , Retabulation (..)
   , Tabulated
+  , coequalizeNat
   , equalizeNat
   , factorThroughEqualizer
+  , familyIndex
   , fromTabulated
+  , graphSieve
   , natDomain
   , natElements
   , natIndex
   , natKey
   , natPositionsBy
   , natTable
+  , preimageMaybe
   , sieveTable
   , toTabulated
   , withSubobject
@@ -59,8 +65,21 @@ import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Sheaf (HasFiniteCovers (..), Sheaf (..), Site (..), SomeCover (..), SomeLeg (..))
-import Proarrow.Category.Topos (HasSubobjectClassifier (..))
+import Proarrow.Category.Sheaf
+  ( Factors (..)
+  , HasFiniteCovers (..)
+  , PulledBack (..)
+  , Sheaf (..)
+  , Site (..)
+  , SomeCover (..)
+  , SomeLeg (..)
+  , StableSite (..)
+  )
+import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization, HasSubobjectClassifier (..))
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core
   ( CategoryOf (..)
   , OB
@@ -73,14 +92,18 @@ import Proarrow.Core
   , type (:&&:)
   , type (:~>)
   )
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
+import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
+import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..), maximalSieve, sieveMeet)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
+
+-- * Sieves and their closure
 
 -- | The sieve a cover generates at @(a, b)@: the arrows into @a@ that factor through a leg,
 -- paired with every arrow out of @b@.
@@ -142,11 +165,22 @@ closure
   -> Sieve a b
 closure s@Sieve{} = Sieve \g h -> isCovering @t (dimap g h s) \\ g \\ h
 
+-- | Whether a sieve is /closed/ for the topology: its own 'closure'. These are the truth values
+-- of the sheaf topos, as the sieves are of the presheaf one -- see 'ClosedSieve'.
+isClosed
+  :: forall t {j} {k} (a :: k) (b :: j)
+   . (HasFiniteCovers t k, FiniteCat j, FiniteCat k)
+  => Sieve a b
+  -> P.Bool
+isClosed s = sieveTable (closure @t s) P.== sieveTable s
+
 -- | The coverage as a Lawvere–Tierney topology on the topos of finitary profunctors: 'closure', as
 -- an arrow on the subobject classifier.
 lawvereTierney
   :: forall t j k. (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => (Omega :: PROD (FINITARY j k)) ~> Omega
 lawvereTierney = Prod (Sub (Prof \s@Sieve{} -> closure @t s))
+
+-- * Deciding the sheaf condition
 
 -- | Whether a finitary profunctor is a sheaf for the coverage: at every pair of objects and every
 -- cover, restriction is a bijection from the elements at the covered object to the matching
@@ -172,6 +206,31 @@ sheafAt
 sheafAt c = withSieve (generatedSieve @t @a @b c) \ @q incl ->
   sort [natTable @q @p (\y -> case incl y of Yo g h -> dimap g h x) | x <- elements @p @a @b]
     P.== sort (natElements @q @p)
+
+-- | A sieve as a subobject of the representable, handed on with its inclusion: the natural
+-- transformations out of that subobject are exactly the matching families on the sieve, with no
+-- separate treatment of the points outside it and no argument about which naturality conditions
+-- may be dropped. This is the one notion of matching family in the module; 'sheafAt' and 'Plus'
+-- both go through it.
+--
+-- 'withSubobject' checks the closure a sieve must have, and its failure branch is unreachable for
+-- any coverage, lawful or not: 'generatedSieve'\'s membership ignores its covariant argument and
+-- is closed under precomposition, and 'leastDenseSieve' is a meet of sieves. Reaching it would take
+-- a 'Finitary' instance on the hom-profunctor whose 'elements' omits an arrow, which
+-- 'Proarrow.Testing.Laws.testFinitary' rules out.
+withSieve
+  :: forall {j} {k} (a :: k) (b :: j) r
+   . (FiniteCat j, FiniteCat k)
+  => Sieve a b
+  -> (forall q. (Finitary q) => (q :~> Yo a (OP b)) -> r)
+  -> r
+withSieve (Sieve s) k =
+  withSubobject @(Yo a (OP b))
+    (\(Yo g h) -> s g h)
+    (\ @q (Sub (Prof incl)) -> k @q incl)
+    (P.error "withSieve: not a sieve")
+
+-- * Presenting a sheaf by its tables
 
 -- | Present a finitary profunctor by its tables, as
 -- 'Proarrow.Category.Enriched.Finitary.Topos.withTabulated' does, and tag the presentation with the
@@ -199,28 +258,75 @@ withTabulatedSheaf ok notSheaf = withTables @p \ @lm @rm ->
     then ok @(Tabulated t lm rm) toTabulated fromTabulated
     else notSheaf
 
--- | A sieve as a subobject of the representable, handed on with its inclusion: the natural
--- transformations out of that subobject are exactly the matching families on the sieve, with no
--- separate treatment of the points outside it and no argument about which naturality conditions
--- may be dropped. This is the one notion of matching family in the module; 'sheafAt' and 'Plus'
--- both go through it.
+-- | 'withTabulatedSheaf' where the profunctor is already a 'Sheaf': the tag is then justified by
+-- the instance, so there is nothing to decide and no failure branch. This is what the colimits
+-- below present their apex with -- it is a 'Sheafify', a sheaf by construction -- where the test
+-- palettes, which have the fact but no instance, need the deciding one.
 --
--- 'withSubobject' checks the closure a sieve must have, and its failure branch is unreachable for
--- any coverage, lawful or not: 'generatedSieve'\'s membership ignores its covariant argument and
--- is closed under precomposition, and 'leastDenseSieve' is a meet of sieves. Reaching it would take
--- a 'Finitary' instance on the hom-profunctor whose 'elements' omits an arrow, which
--- 'Proarrow.Testing.Laws.testFinitary' rules out.
-withSieve
-  :: forall {j} {k} (a :: k) (b :: j) r
-   . (FiniteCat j, FiniteCat k)
-  => Sieve a b
-  -> (forall q. (Finitary q) => (q :~> Yo a (OP b)) -> r)
+-- Presenting the apex matters rather more than it looks: it is handed to a continuation that will
+-- ask it for its elements many times over, and an unpresented 'Sheafify' re-runs the whole plus
+-- construction on each, one level for each colimit it is built from.
+withSheafTables
+  :: forall t {j} {k} (p :: j +-> k) r
+   . (Sheaf t p, Finitary p, FiniteCat j, FiniteCat k)
+  => ( forall {lm} {rm} (tab :: j +-> k)
+        . (tab ~ Tabulated t lm rm, KnownTables j k lm rm, Sheaf t tab)
+       => (p :~> tab)
+       -> (tab :~> p)
+       -> r
+     )
   -> r
-withSieve (Sieve s) k =
-  withSubobject @(Yo a (OP b))
-    (\(Yo g h) -> s g h)
-    (\ @q (Sub (Prof incl)) -> k @q incl)
-    (P.error "withSieve: not a sieve")
+withSheafTables ok = withTables @p \ @lm @rm -> ok @(Tabulated t lm rm) toTabulated fromTabulated
+
+-- * Descent
+
+-- | Extend a /partial/ natural transformation into a sheaf to a total one, by gluing: where the
+-- partial function is undefined at an element, it is defined on a cover of that element, and the
+-- values there glue.
+--
+-- This is the plus construction\'s descent step with the carrier left open, so 'extendPlus' is
+-- this at @'Plus' t p@, where the partial function is the value itself and the sieve below is its
+-- 'support'. The colimits further down need the same step for a different reason: an epimorphism
+-- of sheaves is only /locally/ surjective, so a projection having no preimage for an element is
+-- the normal case there, not an error.
+--
+-- One level of descent: the cover is one of the listed ones, and its legs must be where the
+-- partial function is already defined. The family glued there is matching whenever the partial
+-- function is -- for the callers below, that is the hypothesis that the arrow being factored is
+-- constant on the fibres it factors through -- so 'glue' is being used within its laws.
+factorLocally
+  :: forall t {j} {k} (p :: j +-> k) q
+   . (HasFiniteCovers t k, CategoryOf j, Profunctor p, Sheaf t q)
+  => (forall c d. (Ob c, Ob d) => p c d -> P.Maybe (q c d))
+  -> p :~> q
+factorLocally f y =
+  y // case f y of
+    P.Just v -> v
+    P.Nothing -> case coveringCover @t (domainSieve y) of
+      P.Just (SomeCover c) ->
+        -- the error is unreachable: 'coveringCover' returned this cover by testing these same legs
+        glue @t c \l -> fromMaybe (P.error "factorLocally: a leg outside the domain") (f (lmap (legArrow l) y) \\ legArrow l)
+      P.Nothing -> P.error "factorLocally: the partial transformation is not defined on a cover of this element"
+  where
+    -- where the partial function is defined on restrictions of @y@; a sieve, since a restriction
+    -- of a restriction is one. Taking the element as an argument is what pins its objects.
+    domainSieve :: forall (a :: k) (b :: j). (Ob a, Ob b) => p a b -> Sieve a b
+    domainSieve x = Sieve \g _ -> isJust (f (lmap g x)) \\ g
+
+-- | Factor through a map that is onto only locally: @'factorLocally'@ of the preimage search.
+-- Where 'Proarrow.Category.Enriched.Finitary.Topos.factorThroughCoequalizer' asks the map to be
+-- onto, this asks only what being epi in the sheaves actually gives.
+--
+-- A pushout wants this for its /pair/ of injections, which are jointly locally onto rather than
+-- separately: that is this at the coproduct, since two arrows into an object are one arrow out of
+-- @a ':+:' b@ -- and one search over that is also one 'toIndex' of the element rather than two.
+factorThroughLocalEpi
+  :: forall t {j} {k} (c :: j +-> k) x c'
+   . (HasFiniteCovers t k, CategoryOf j, Finitary c, Finitary x, Sheaf t c')
+  => (x :~> c)
+  -> (x :~> c')
+  -> c :~> c'
+factorThroughLocalEpi proj h = factorLocally @t \y -> P.fmap h (preimageMaybe proj y)
 
 -- * Sheafification
 
@@ -363,13 +469,7 @@ extendPlus
   :: forall t {j} {k} (p :: j +-> k) q
    . (HasFiniteCovers t k, Sheaf t q)
   => (p :~> q) -> Plus t p :~> q
-extendPlus n x@(Plus f) = case f id id of
-  P.Just v -> n v
-  P.Nothing -> case coveringCover @t (support x) of
-    -- the error is unreachable: 'coveringCover' returned this cover by testing these same legs. It
-    -- cannot be dropped either -- 'glue' wants a total function on legs, and they arrive packed.
-    P.Just (SomeCover c) -> glue @t c \l -> P.maybe (P.error "extendPlus: a leg outside the support") n (f (legArrow l) id)
-    P.Nothing -> P.error "extendPlus: the support is not dense"
+extendPlus n = factorLocally @t \(Plus f) -> P.fmap n (f id id)
 
 -- | Gluing for the plus construction: a matching family over a cover, assembled into one family.
 -- At @(g, h)@ it takes the first leg that @g@ factors through and whose family is defined at the
@@ -410,30 +510,102 @@ extendSheafify
   => (p :~> q) -> Sheafify t p :~> q
 extendSheafify n = extendPlus @t (extendPlus @t n)
 
+-- * The truth values of the topos
+
+-- | A sieve that is its own 'closure'. The subobject classifier of the sheaves for @t@, as 'Sieve'
+-- is of the presheaves: a subsheaf of @p@ is classified by sending an element to the sieve of
+-- arrows carrying it into the subsheaf, and that sieve is closed exactly because the subsheaf
+-- glues -- an element covered by ones that land in it lands in it.
+--
+-- As an object of @'FINITARY' j k@ this is the equalizer of 'lawvereTierney' and the identity on
+-- 'Omega', which 'equalizeNat' would build and
+-- 'Proarrow.Category.Enriched.Finitary.Topos.Reindex' would carry. It is a newtype instead
+-- because 'Omega' is a /type family/: the object has to be nameable, and the table
+-- 'withSubobject' carves along is bound existentially.
+--
+-- Being a classifier at all needs the coverage to be a Grothendieck topology -- 'closure'
+-- idempotent and meet-preserving, which is 'HasFiniteCovers'\'s Composition law.
+-- 'Proarrow.Testing.Laws.testLawvereTierney_' is where that is checked; where it fails this
+-- computes something that is not the classifier, rather than failing as 'leastDenseSieve' does.
+--
+-- __The constructor checks nothing__, as 'Sieve'\'s and 'Plus'\'s do not; 'elements' below
+-- produces only closed ones, and 'closedSieve' makes any sieve into one.
+type ClosedSieve :: forall {j} {k}. Type -> j +-> k
+newtype ClosedSieve t (a :: k) (b :: j) = ClosedSieve (Sieve a b)
+
+-- | Closure commutes with 'dimap' -- that is the Lawvere–Tierney axiom 'lawvereTierney' packages
+-- as an arrow on 'Omega' -- so a restriction of a closed sieve is closed.
+instance (CategoryOf j, CategoryOf k) => Profunctor (ClosedSieve t :: j +-> k) where
+  dimap l r (ClosedSieve s) = ClosedSieve (dimap l r s)
+  x \\ ClosedSieve s = x \\ s
+
+-- | The closed sieves at a pair of objects, in the order 'Sieve' lists them.
+closedSieves
+  :: forall t {j} {k} (a :: k) (b :: j)
+   . (HasFiniteCovers t k, FiniteCat j, FiniteCat k, Ob a, Ob b)
+  => [ClosedSieve t a b]
+closedSieves = [ClosedSieve s | s <- elements @(Sieve :: j +-> k) @a @b, isClosed @t s]
+
+instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => Finitary (ClosedSieve t :: j +-> k) where
+  size @a @b = genericLength (closedSieves @t @a @b)
+
+  -- the closed ones are found by filtering every sieve, so that walk is bound outside the lambda
+  toIndex @a @b =
+    let tables = P.map (\(ClosedSieve s) -> sieveTable s) (closedSieves @t @a @b)
+    in \(ClosedSieve s) -> familyIndex "toIndex: not a closed sieve" tables (sieveTable s)
+  fromIndex @a @b = genericIndex (closedSieves @t @a @b)
+  elements @a @b = closedSieves @t @a @b
+
+-- | Whether an arrow pair is in a closed sieve.
+inClosedSieve :: forall {j} {k} t (a :: k) (b :: j) c d. ClosedSieve t a b -> c ~> a -> b ~> d -> P.Bool
+inClosedSieve (ClosedSieve (Sieve s)) g h = s g h
+
+-- | The classifier is a sheaf, and like the internal hom it is built rather than found: the glued
+-- sieve, asked about an arrow @g@, pulls the cover back along @g@ and asks each leg of the
+-- pullback of the family member it factors through.
+--
+-- That reading is forced both ways, which is what makes it well defined. A sieve is closed under
+-- precomposition, so an arrow in the glued sieve has every restriction of it in there too; and the
+-- sieve is /closed/, so an arrow all of whose restrictions along a covering family are in it is in
+-- it. Hence: in, exactly when every leg of the pullback is.
+instance (StableSite t k, CategoryOf j) => Sheaf t (ClosedSieve t :: j +-> k) where
+  glue c m =
+    ClosedSieve
+      ( Sieve \g h ->
+          g // case pullbackCover c g of
+            AlreadyFactors (Factors l u) -> inClosedSieve (m l) u h
+            PulledBack c' factorsThroughLeg ->
+              P.all (\(SomeLeg l') -> case factorsThroughLeg l' of Factors l u -> inClosedSieve (m l) u h) (legs c')
+      )
+
+-- | Any sieve as a closed one: 'lawvereTierney' corestricted to its fixed points, which is the
+-- reflection of the presheaf classifier onto the sheaf one.
+closedSieve
+  :: forall t {j} {k} (a :: k) (b :: j)
+   . (HasFiniteCovers t k, FiniteCat j, FiniteCat k)
+  => Sieve a b
+  -> ClosedSieve t a b
+closedSieve s = ClosedSieve (closure @t s)
+
 -- * The category of sheaves
 
 -- | The full subcategory of @'FINITARY' j k@ on the sheaves for @t@: the finitary profunctors that
 -- have a 'Sheaf' instance. Its finite limits are computed exactly as 'FINITARY'\'s and are sheaves
 -- by the closure instances -- 'TerminalProfunctor', ':*:', and
 -- 'Proarrow.Category.Enriched.Finitary.Topos.Reindex' for the equalizers. Its colimits are /not/
--- computed as 'FINITARY'\'s: a quotient of sheaves is no sheaf, and they go through 'Sheafify'.
--- Its hom-sets are finitary by the conjunction instance in "Proarrow.Category.Enriched.Finitary.Topos".
+-- computed as 'FINITARY'\'s: a quotient of sheaves is no sheaf, so each is the 'FINITARY' colimit
+-- with 'Sheafify' applied, and its universal property descends by 'factorLocally', an epi of
+-- sheaves being onto only locally. The exponential is 'FINITARY'\'s again, unsheafified. Its
+-- hom-sets are finitary by the conjunction instance in
+-- "Proarrow.Category.Enriched.Finitary.Topos".
+--
+-- @'Proarrow.Category.Topos.Omega'@ is 'ClosedSieve', and with it the whole of
+-- @'Proarrow.Category.Topos.ElementaryTopos' ('PROD' ('SHEAVES' t j k))@ is above.
 type SHEAVES t j k = SUBCAT ((Finitary :&&: Sheaf t) :: OB (j +-> k))
 
 -- | A sheaf as an object of 'SHEAVES', as 'Proarrow.Category.Enriched.Finitary.Topos.FIN' names
 -- an object of 'FINITARY'.
 type SHF t (p :: j +-> k) = SUB p :: SHEAVES t j k
-
-instance (Site t k, CategoryOf j) => HasTerminalObject (SHEAVES t j k) where
-  type TerminalObject = SUB TerminalProfunctor
-  terminate = Sub terminate
-
-instance (Site t k, CategoryOf j) => HasBinaryProducts (SHEAVES t j k) where
-  type a && b = SUB (UN SUB a :*: UN SUB b)
-  withObProd r = r
-  fst @(SUB p) @(SUB q) = Sub (fst @(j +-> k) @p @q)
-  snd @(SUB p) @(SUB q) = Sub (snd @(j +-> k) @p @q)
-  Sub l &&& Sub r = Sub (l &&& r)
 
 -- | Equalizers as in 'FINITARY', by 'equalizeNat'; the result is a sheaf for every coverage, which
 -- 'Proarrow.Testing.Laws.testEqualizersAreSheaves' checks by enumeration.
@@ -442,3 +614,93 @@ instance (Site t k, Enumerable j, Enumerable k) => HasEqualizers (SHEAVES t j k)
   factorEqualizer (Sub (Prof incl)) (Sub (Prof h)) = Sub (Prof (factorThroughEqualizer incl h))
 
 instance (Site t k, Enumerable j, Enumerable k) => HasPullbacks (SHEAVES t j k)
+
+-- | The colimits are the presheaf colimits, sheafified. Each one is the same three lines: take the
+-- 'FINITARY' colimit, follow its cocone with 'unitSheafify', and let 'extendSheafify' do the
+-- universal property -- which is exactly the statement that sheafification is a left adjoint, and
+-- so preserves the colimits it is applied to.
+--
+-- The initial sheaf is /not/ the initial presheaf: 'Proarrow.Category.Sheaf.Canonical' covers the
+-- empty set by nothing at all, so a sheaf has one section there where the initial presheaf has
+-- none, and the sheafification supplies it.
+instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasInitialObject (SHEAVES t j k) where
+  type InitialObject @(SHEAVES t j k) = SUB (Sheafify t InitialProfunctor)
+  initiate @(SUB q) = case initiate @(j +-> k) @q of Prof n -> Sub (Prof (extendSheafify @t n))
+
+instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasBinaryCoproducts (SHEAVES t j k) where
+  type (||) @(SHEAVES t j k) a b = SUB (Sheafify t (UN SUB a :+: UN SUB b))
+  withObCoprod r = r
+  lft = Sub (Prof \x -> unitSheafify @t (InjL x))
+  rgt = Sub (Prof \y -> unitSheafify @t (InjR y))
+  Sub (Prof f) ||| Sub (Prof g) = Sub (Prof (extendSheafify @t \case InjL x -> f x; InjR y -> g y))
+
+-- | The quotient a coequalizer takes is 'coequalizeNat'\'s, sheafified. Its projection is epi in
+-- the sheaves but need not be onto -- the sheafification unit is not -- so 'factorCoequalizer' is
+-- /not/ 'FINITARY'\'s: it descends, by 'factorThroughLocalEpi'.
+instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasCoequalizers (SHEAVES t j k) where
+  coequalize (Sub (Prof @_ @q f)) (Sub (Prof g)) k =
+    coequalizeNat f g \ @fs proj ->
+      withSheafTables @t @(Sheafify t (Reindex Quotient q fs))
+        \toTab _ -> k (Sub (Prof \x -> toTab (unitSheafify @t (proj x))))
+  factorCoequalizer (Sub (Prof proj)) (Sub (Prof h)) = Sub (Prof (factorThroughLocalEpi @t proj h))
+
+-- | Not the default coproduct-then-coequalizer: that would sheafify the coproduct and then
+-- sheafify the quotient of /that/, and each 'Sheafify' pays for the one under it -- the plus
+-- construction re-runs on every 'toIndex'. Taking both steps in 'FINITARY' and sheafifying once
+-- at the end is the same object, since sheafification is a left adjoint and preserves the
+-- pushout, and on the palette of @Props.Sheaf@ it is the difference between 29 seconds and one.
+instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasPushouts (SHEAVES t j k) where
+  pushout (Sub (Prof @_ @a f)) (Sub (Prof @_ @b g)) k =
+    coequalizeNat (\x -> InjL (f x)) (\x -> InjR (g x)) \ @fs proj ->
+      withSheafTables @t @(Sheafify t (Reindex Quotient (a :+: b) fs))
+        \toTab _ ->
+          k
+            (Sub (Prof \x -> toTab (unitSheafify @t (proj (InjL x)))))
+            (Sub (Prof \y -> toTab (unitSheafify @t (proj (InjR y)))))
+  factorPushout (Sub (Prof p1)) (Sub (Prof p2)) (Sub (Prof k1)) (Sub (Prof k2)) =
+    Sub (Prof (factorThroughLocalEpi @t (\case InjL x -> p1 x; InjR y -> p2 y) (\case InjL x -> k1 x; InjR y -> k2 y)))
+
+-- | The image of an arrow of sheaves, by the same cokernel-pair construction as in 'FINITARY': the
+-- pushout is a colimit and so sheafified, the equalizer that follows it is not.
+instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasEpiMonoFactorization (SHEAVES t j k)
+
+-- | The internal hom of a sheaf is a sheaf, and it is the presheaf one -- unlike the colimits,
+-- nothing has to be sheafified. It is @q@\'s sheaf condition doing the work, once per point of
+-- @p@: a matching family of maps @p -> q@ over a cover of @a@ is a map over @a@ because their
+-- values glue in @q@. @p@ needs no condition at all.
+--
+-- Built rather than found, which is what 'StableSite' buys. The glued map, asked for its value at
+-- an arrow @g@ into @a@, pulls the cover back along @g@ and glues the legs\' answers in @q@ --
+-- each leg of the pullback factoring through one of the original legs, which is the family entry
+-- to ask. Neither @p@ nor @q@ has to be 'Finitary' for that; before 'pullbackCover' this was
+-- 'Proarrow.Category.Enriched.Finitary.Topos.glueBySearch' over every element of the exponential,
+-- which is an enumeration exponential in the size of @p@, and lawful only by the theorem above.
+instance (StableSite t k, Sheaf t q, Profunctor p, CategoryOf j) => Sheaf t (p :~>: q :: j +-> k) where
+  glue c m = Exp \g h x ->
+    g // h // case pullbackCover c g of
+      AlreadyFactors (Factors l u) -> case m l of Exp f -> f u h x
+      PulledBack c' factorsThroughLeg -> glue @t c' \l' ->
+        case factorsThroughLeg l' of
+          Factors l u -> case m l of Exp f -> f u h (lmap (legArrow l') x) \\ legArrow l'
+
+-- | The classifier of the sheaves is the closed sieves, and an arrow classifies the graph sieve
+-- 'FINITARY' classifies it by, reflected.
+--
+-- The reflection is belt and braces: the graph sieve of an arrow /of sheaves/ is closed already.
+-- If @'dimap' g h@ of it is covering then @f ('dimap' g h x)@ and @'dimap' g h y@ agree along
+-- every leg of a cover, so a separated codomain -- which a sheaf is -- makes them equal, putting
+-- @(g, h)@ in the sieve to begin with. What the call guards against is a 'Sheaf' instance
+-- asserted rather than decided; without it such an arrow would fail remotely, as 'familyIndex'\'s
+-- \"not a closed sieve\".
+instance (StableSite t k, HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasSubobjectClassifier (PROD (SHEAVES t j k)) where
+  type Omega @(PROD (SHEAVES t j k)) = PR (SUB (ClosedSieve t))
+  true = Prod (Sub (Prof \TerminalProfunctor -> ClosedSieve maximalSieve))
+  classifyGraph (Prod (Sub (Prof f))) = Prod (Sub (Prof \(x :*: y) -> closedSieve @t (graphSieve f x y)))
+
+-- | __The topos of sheaves.__ Finite limits and colimits, cartesian closed, a subobject
+-- classifier, and image factorization -- each of them above, and none of them postulated.
+--
+-- 'StableSite' is what the exponential asks for: a full subcategory is closed when it contains
+-- its internal homs, and an internal hom is a sheaf by gluing pointwise into the codomain, which
+-- needs the cover pulled back along the argument.
+instance (StableSite t k, HasFiniteCovers t k, FiniteCat j, FiniteCat k) => ElementaryTopos (PROD (SHEAVES t j k))

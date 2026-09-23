@@ -54,7 +54,7 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
 import Proarrow.Colimit.Initial (HasInitialObject)
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Instance.Product (fstP, sndP, (:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
@@ -115,6 +115,36 @@ class (Site t k) => HasFiniteCovers t k where
 type SomeCover :: Type -> forall (k :: Kind) -> k -> Type
 data SomeCover t k a where
   SomeCover :: Cover t k a c -> SomeCover t k a
+
+-- | How an arrow into @a@ factors through a cover of @a@: the leg it goes through, and the arrow
+-- to that leg\'s source. The equation @f = 'legArrow' g . h@ is the caller\'s to rely on and the
+-- instance\'s to respect.
+type Factors :: Type -> forall (k :: Kind) -> k -> Type -> k -> Type
+data Factors t k a c x where
+  Factors :: Leg t k a c y -> x ~> y -> Factors t k a c x
+
+-- | A cover pulled back along an arrow @f :: b '~>' a@: either @f@ itself factors through a leg --
+-- the pullback is @b@\'s implicit identity cover -- or some cover of @b@ has every leg factoring
+-- through one.
+type PulledBack :: Type -> forall (k :: Kind) -> k -> Type -> k -> Type
+data PulledBack t k a c b where
+  AlreadyFactors :: Factors t k a c b -> PulledBack t k a c b
+  PulledBack :: Cover t k b c' -> (forall x. Leg t k b c' x -> Factors t k a c x) -> PulledBack t k a c b
+
+-- | 'Site'\'s Stability law as an /operation/: not merely that covers pull back, but a pullback
+-- one can compute with, carrying the factorisation of each new leg through an old one.
+--
+-- This is what lets a sheaf be glued structurally rather than found. Without it, gluing into a
+-- carrier that has no 'glue' of its own -- an internal hom, the closed sieves -- means searching
+-- the carrier\'s elements for the one that restricts correctly
+-- ('Proarrow.Category.Enriched.Finitary.Topos.glueBySearch'), which needs the carrier to be
+-- finitary for a fact that has nothing to do with finiteness.
+--
+-- Separate from 'Site' because 'Sums' cannot implement it: a free bicartesian category is not
+-- extensive, so its covers do not pull back at all -- see 'Sums'. That a coverage /is/ stable is
+-- therefore visible in the instance list rather than in a paragraph.
+class (Site t k) => StableSite t k where
+  pullbackCover :: (Ob b) => Cover t k a c -> b ~> a -> PulledBack t k a c b
 
 -- * Sheaves
 
@@ -185,6 +215,9 @@ instance (CategoryOf k) => Site Trivial k where
 instance (CategoryOf k) => HasFiniteCovers Trivial k where
   covers = []
 
+instance (CategoryOf k) => StableSite Trivial k where
+  pullbackCover c _ = case c of {}
+
 -- | Every profunctor is a sheaf for 'Trivial', by the eliminator of an empty 'Cover'. This is a
 -- function rather than an @instance 'Sheaf' 'Trivial' p@ because that head and the two closure
 -- instances above overlap -- at @'Sheaf' 'Trivial' 'TerminalProfunctor'@, say -- with neither more
@@ -211,6 +244,12 @@ instance Site ByArrow BOOL where
     ViaF2T :: Leg ByArrow BOOL TRU TruByFls FLS
   legArrow ViaF2T = F2T
   legs TruByFls = [SomeLeg ViaF2T]
+
+-- | The one cover pulls back to the identity along 'F2T', which already factors through the leg,
+-- and to itself along the identity of 'TRU'.
+instance StableSite ByArrow BOOL where
+  pullbackCover TruByFls F2T = AlreadyFactors (Factors ViaF2T id)
+  pullbackCover TruByFls Tru = PulledBack TruByFls \ViaF2T -> Factors ViaF2T id
 
 instance HasFiniteCovers ByArrow BOOL where
   covers @a = case boolId @a of
@@ -250,10 +289,69 @@ instance Site Canonical (BOOL, BOOL) where
   legs ByPoints = [SomeLeg AtX, SomeLeg AtY]
   legs ByNothing = []
 
+-- | Every arrow into the whole space but its identity lands in one of the two points, and so
+-- factors through that leg; the identity pulls the cover back to itself. The empty cover pulls
+-- back to itself along the only arrow into the empty set, its identity.
+instance StableSite Canonical (BOOL, BOOL) where
+  pullbackCover ByPoints (Tru :**: Tru) = PulledBack ByPoints \case
+    AtX -> Factors AtX id
+    AtY -> Factors AtY id
+  pullbackCover ByPoints (Tru :**: F2T) = AlreadyFactors (Factors AtX id)
+  pullbackCover ByPoints (F2T :**: Tru) = AlreadyFactors (Factors AtY id)
+  pullbackCover ByPoints (F2T :**: F2T) = AlreadyFactors (Factors AtX (F2T :**: Fls))
+  pullbackCover ByNothing (Fls :**: Fls) = PulledBack ByNothing \case {}
+
 instance HasFiniteCovers Canonical (BOOL, BOOL) where
   covers @a = case obj @a of
     Tru :**: Tru -> [SomeCover ByPoints]
     Fls :**: Fls -> [SomeCover ByNothing]
+    _ -> []
+
+-- | The same four opens as 'Canonical', read as a space whose two halves /overlap/: @'(TRU, TRU)@
+-- is covered by @'(TRU, FLS)@ and @'(FLS, TRU)@ as before, but @'(FLS, FLS)@ is now their
+-- intersection rather than the empty set, and gets no cover of its own. Several coverages on one
+-- category is what the @t@ parameter is for, and this is the pair that shows why it earns its
+-- keep: same category, same cover, different sheaves.
+--
+-- The difference is the whole of what an overlap does. Under 'Canonical' the two legs meet only at
+-- the empty set, so a matching family is /any/ pair of sections and gluing is a product; here they
+-- meet at a section of @p '(FLS, FLS)@, so a matching family is a pair that /agrees/ there and
+-- gluing is an equalizer. The constant presheaf with two values is the shortest witness: it is no
+-- sheaf for 'Canonical' -- the empty cover wants one section over the empty set and it has two --
+-- and it is one here, its four pairs of local sections cut down to the two that agree.
+--
+-- Stable and composing, so this is a Grothendieck topology: a cover pulls back along any arrow
+-- into @'(TRU, TRU)@ to the target's identity cover, which factors through whichever leg the
+-- arrow already factors through.
+type data Overlapping
+
+-- | The name of 'Overlapping'\'s one cover, whose 'Cover' constructor is @ByHalves@ and whose
+-- 'Leg' constructors are @AtFst@ and @AtSnd@.
+type data Halves
+
+instance Site Overlapping (BOOL, BOOL) where
+  data Cover Overlapping (BOOL, BOOL) a c where
+    ByHalves :: Cover Overlapping (BOOL, BOOL) '(TRU, TRU) Halves
+  data Leg Overlapping (BOOL, BOOL) a c x where
+    AtFst :: Leg Overlapping (BOOL, BOOL) '(TRU, TRU) Halves '(TRU, FLS)
+    AtSnd :: Leg Overlapping (BOOL, BOOL) '(TRU, TRU) Halves '(FLS, TRU)
+  legArrow AtFst = Tru :**: F2T
+  legArrow AtSnd = F2T :**: Tru
+  legs ByHalves = [SomeLeg AtFst, SomeLeg AtSnd]
+
+-- | As 'Canonical', minus the empty cover: the intersection factors through either half, and
+-- through the first by choice.
+instance StableSite Overlapping (BOOL, BOOL) where
+  pullbackCover ByHalves (Tru :**: Tru) = PulledBack ByHalves \case
+    AtFst -> Factors AtFst id
+    AtSnd -> Factors AtSnd id
+  pullbackCover ByHalves (Tru :**: F2T) = AlreadyFactors (Factors AtFst id)
+  pullbackCover ByHalves (F2T :**: Tru) = AlreadyFactors (Factors AtSnd id)
+  pullbackCover ByHalves (F2T :**: F2T) = AlreadyFactors (Factors AtFst (F2T :**: Fls))
+
+instance HasFiniteCovers Overlapping (BOOL, BOOL) where
+  covers @a = case obj @a of
+    Tru :**: Tru -> [SomeCover ByHalves]
     _ -> []
 
 -- | The sum coverage on a free category with binary coproducts: a sum is covered by its two

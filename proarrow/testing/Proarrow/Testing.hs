@@ -88,7 +88,7 @@ import Control.Applicative (Alternative (..))
 import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, foreachOb)
-import Proarrow.Category.Enriched.Finitary.Sheaf (Plus, plusTable, samePlus)
+import Proarrow.Category.Enriched.Finitary.Sheaf (ClosedSieve (..), Plus, plusTable, samePlus)
 import Proarrow.Category.Enriched.Finitary.Topos (KnownTables, Tabulated (..), natTable, sieveTable)
 import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -103,6 +103,7 @@ import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Instance.Product (fstP, sndP, (:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
@@ -623,6 +624,50 @@ instance
   gen = obFromTestOb @a (obFromTestOb @b (genElements @(Sieve :: j +-> k)))
 
 instance (Testable j, Testable k, FiniteCat j, FiniteCat k) => TestableProfunctor (Sieve :: j +-> k)
+
+-- | An element of the internal hom is a natural transformation out of a weight, which 'Finitary'
+-- numbers; compare and show it by that number, as 'Tabulated' is. Drawing one enumerates them
+-- all, which is what makes an exponential an expensive thing to quantify over.
+instance
+  (Finitary p, Finitary q, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestingEqShow ((p :~>: q) a b)
+  where
+  -- matching on 'Exp' is what brings the objects into scope, as it does for 'Sieve'
+  eqP x@Exp{} y = pure (toIndex @(p :~>: q) x == toIndex y)
+  showP x@Exp{} = show (toIndex @(p :~>: q) x)
+
+instance
+  (Testable j, Testable k, Finitary p, Finitary q, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestableType ((p :~>: q) a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(p :~>: q)))
+
+instance
+  (Testable j, Testable k, Finitary p, Finitary q, FiniteCat j, FiniteCat k)
+  => TestableProfunctor (p :~>: q :: j +-> k)
+
+-- | A closed sieve is a sieve, and is compared and shown as one. Drawing one is dearer still than
+-- drawing a sieve: the closed ones are found by taking the 'closure' of every sieve at the pair.
+instance (FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (ClosedSieve t a b) where
+  eqP (ClosedSieve s) (ClosedSieve u) = eqP s u
+  showP (ClosedSieve s) = showP s
+
+instance
+  ( Testable j
+  , Testable k
+  , HasFiniteCovers t k
+  , FiniteCat j
+  , FiniteCat k
+  , TestOb (a :: k)
+  , TestOb (b :: j)
+  )
+  => TestableType (ClosedSieve t a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(ClosedSieve t :: j +-> k)))
+
+instance
+  (Testable j, Testable k, HasFiniteCovers t k, FiniteCat j, FiniteCat k)
+  => TestableProfunctor (ClosedSieve t :: j +-> k)
 
 -- | Compared by 'samePlus' and shown by 'plusTable' -- see 'Plus' for what a value stands for.
 instance
