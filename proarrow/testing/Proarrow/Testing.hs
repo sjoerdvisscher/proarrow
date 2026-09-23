@@ -89,7 +89,7 @@ import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, foreachOb)
 import Proarrow.Category.Enriched.Finitary.Sheaf (Plus, plusTable, samePlus)
-import Proarrow.Category.Enriched.Finitary.Topos (FINITARY, natTable, sieveTable)
+import Proarrow.Category.Enriched.Finitary.Topos (KnownTables, Tabulated (..), natTable, sieveTable)
 import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
@@ -97,7 +97,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Sheaf (HasFiniteCovers)
-import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
@@ -547,6 +547,33 @@ instance
   (TestableProfunctor p, TestableProfunctor q, TestableTypeP p, TestableTypeP q)
   => TestableProfunctor (p :+: q)
 
+-- | A 'Tabulated' value is its index, so equality and display are the index's.
+instance TestingEqShow (Tabulated t lm rm a b) where
+  eqP (Tabulated i) (Tabulated j) = pure (i == j)
+  showP (Tabulated i) = show i
+
+instance
+  ( Testable j
+  , Testable k
+  , FiniteCat j
+  , FiniteCat k
+  , KnownTables j k lm rm
+  , TestOb (a :: k)
+  , TestOb (b :: j)
+  )
+  => TestableType (Tabulated t lm rm a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Tabulated t lm rm)))
+
+instance
+  ( Testable j
+  , Testable k
+  , FiniteCat j
+  , FiniteCat k
+  , KnownTables j k lm rm
+  )
+  => TestableProfunctor (Tabulated t lm rm :: j +-> k)
+
 -- | The terminal profunctor has one element at every pair of objects.
 instance TestingEqShow (TerminalProfunctor a b) where
   -- forcing is the one thing left to check
@@ -616,18 +643,26 @@ instance
   (Testable j, Testable k, HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k)
   => TestableProfunctor (Plus t p :: j +-> k)
 
--- | A hom-set of 'FINITARY' is enumerable, by 'natTransformations', so it can be generated -- which
--- is the thing that makes a category of profunctors testable at all. Equality and display go through
--- the table of indices, there being nothing else to see of a natural transformation. (The table is
--- cheaper than the index into 'elements' would be, which has to search for it.)
-instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestingEqShow (Sub Prof (SUB p :: FINITARY j k) (SUB q)) where
+-- | A hom-set of a full subcategory of finitary profunctors -- 'FINITARY', or the sheaves of
+-- "Proarrow.Category.Enriched.Finitary.Sheaf" -- is enumerable, by 'natTransformations', so it can
+-- be generated: which is the thing that makes a category of profunctors testable at all. Equality
+-- and display go through the table of indices, there being nothing else to see of a natural
+-- transformation. (The table is cheaper than the index into 'elements' would be, which has to
+-- search for it.)
+instance
+  (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
+  => TestingEqShow (Sub Prof (SUB p :: SUBCAT (ob :: OB (j +-> k))) (SUB q))
+  where
   eqP (Sub (Prof f)) (Sub (Prof g)) = pure (natTable @p @q f == natTable @p @q g)
   showP (Sub (Prof f)) = show (natTable @p @q f)
 
-instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestableType (Sub Prof (SUB p :: FINITARY j k) (SUB q)) where
+instance
+  (Finitary (Sub Prof :: CAT (SUBCAT ob)), Finitary p, Finitary q, FiniteCat j, FiniteCat k, ob p, ob q)
+  => TestableType (Sub Prof (SUB p :: SUBCAT (ob :: OB (j +-> k))) (SUB q))
+  where
   -- a hom-set is empty whenever @q@ runs out of elements where @p@ has some, and then the
   -- properties discard rather than fail
-  gen = genElements @(Hom (FINITARY j k)) @(SUB p) @(SUB q)
+  gen = genElements @(Sub Prof) @(SUB p) @(SUB q)
 
 instance (Ob a, Ob b) => TestableType (Unit a b) where
   gen = oneElem Unit

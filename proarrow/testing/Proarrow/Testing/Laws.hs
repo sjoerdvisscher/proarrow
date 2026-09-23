@@ -1228,6 +1228,19 @@ testPlusFixes =
              ]
       )
 
+-- | An equalizer of sheaves is a sheaf, for every coverage: the 'Sheaf.Sheaf' instance for
+-- 'FinTopos.Reindex' presupposes that the table cuts out a /subsheaf/, and this decides it, by
+-- 'FinSheaf.isSheaf', on the equalizer of every pair of parallel arrows the palette of
+-- @'FinSheaf.SHEAVES' t j k@ can form.
+testEqualizersAreSheaves
+  :: forall t j k
+   . (Testable (FinSheaf.SHEAVES t j k), Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k)
+  => TestTree
+testEqualizersAreSheaves = testProperty "equalizers are sheaves" do
+  SomeP @a @b f <- genProfunctorElt @(Hom (FinSheaf.SHEAVES t j k)) "f"
+  g <- genNamed @(a ~> b) "g"
+  Equalizer.equalize f g \(Sub (Prof @e _)) -> expect "isSheaf of the equalizer" True (FinSheaf.isSheaf @t @e)
+
 -- | Sheafification is the reflector into the sheaves, decided at a finite site. For a finitary @p@
 -- and a sheaf @q@:
 --
@@ -1272,8 +1285,8 @@ testSheafification =
         expect
           "the extensions are exactly the maps out of the sheafification"
           (sort exts)
-          (sort [FinTopos.natTable @(FinSheaf.Sheafify t p) @q (FinSheaf.extendSheafify @t n) | Sub (Prof n) <- maps])
-        for_ maps \(Sub (Prof n)) ->
+          (sort [FinTopos.natTable @(FinSheaf.Sheafify t p) @q (FinSheaf.extendSheafify @t n) | Prof n <- maps])
+        for_ maps \(Prof n) ->
           expect
             "restricting an extension along the unit gives the map back"
             (FinTopos.natTable @p @q n)

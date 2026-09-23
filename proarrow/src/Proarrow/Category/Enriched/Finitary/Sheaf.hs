@@ -1,4 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+-- The instances on 'SHEAVES' are orphans for the reason "Proarrow.Category.Enriched.Finitary.Topos"
+-- gives for its own: the kind is 'SUBCAT' of a predicate, and both come from other modules.
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Sheaves on a finite site, decided by enumeration.
 --
@@ -23,6 +26,7 @@ import Data.List (find, genericIndex, genericLength, sort)
 import Data.Map.Strict qualified as M
 import Data.Maybe (fromMaybe, isJust, listToMaybe, mapMaybe)
 import Numeric.Natural (Natural)
+import Prelude (type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Finitary
@@ -35,6 +39,11 @@ import Proarrow.Category.Enriched.Finitary
   )
 import Proarrow.Category.Enriched.Finitary.Topos
   ( FINITARY
+  , KnownTables
+  , Tabulated
+  , equalizeNat
+  , factorThroughEqualizer
+  , fromTabulated
   , natDomain
   , natElements
   , natIndex
@@ -42,16 +51,35 @@ import Proarrow.Category.Enriched.Finitary.Topos
   , natPositionsBy
   , natTable
   , sieveTable
+  , toTabulated
   , withSubobject
+  , withTables
   )
+import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Instance.Sub (Sub (..))
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Sheaf (HasFiniteCovers (..), Sheaf (..), Site (..), SomeCover (..), SomeLeg (..))
 import Proarrow.Category.Topos (HasSubobjectClassifier (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (\\), type (+->), type (:~>))
-import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
+import Proarrow.Core
+  ( CategoryOf (..)
+  , OB
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , (//)
+  , (\\)
+  , type (+->)
+  , type (:&&:)
+  , type (:~>)
+  )
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
+import Proarrow.Limit.Equalizer (HasEqualizers (..))
+import Proarrow.Limit.Pullback (HasPullbacks)
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..), maximalSieve, sieveMeet)
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
 -- | The sieve a cover generates at @(a, b)@: the arrows into @a@ that factor through a leg,
@@ -144,6 +172,32 @@ sheafAt
 sheafAt c = withSieve (generatedSieve @t @a @b c) \ @q incl ->
   sort [natTable @q @p (\y -> case incl y of Yo g h -> dimap g h x) | x <- elements @p @a @b]
     P.== sort (natElements @q @p)
+
+-- | Present a finitary profunctor by its tables, as
+-- 'Proarrow.Category.Enriched.Finitary.Topos.withTabulated' does, and tag the presentation with the
+-- coverage -- which is to give it a 'Sheaf' instance. What that instance asserts is decided here,
+-- by 'isSheaf', so the assertion is backed by an enumeration and not by the caller\'s word; the
+-- failure continuation is taken when the profunctor is no sheaf for @t@.
+--
+-- This is how a sheaf with no 'Sheaf' instance of its own -- a representable, a sheafification --
+-- becomes an object of 'SHEAVES'. It is also the cheap way to be one: the condition is decided on
+-- the tables rather than on @p@, where a 'Sheafify' answers a single 'toIndex' by re-running the
+-- whole plus construction.
+withTabulatedSheaf
+  :: forall t {j} {k} (p :: j +-> k) r
+   . (HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k)
+  => ( forall {lm} {rm} (tab :: j +-> k)
+        . (tab ~ Tabulated t lm rm, KnownTables j k lm rm, Sheaf t tab)
+       => (p :~> tab)
+       -> (tab :~> p)
+       -> r
+     )
+  -> r
+  -> r
+withTabulatedSheaf ok notSheaf = withTables @p \ @lm @rm ->
+  if isSheaf @t @(Tabulated t lm rm :: j +-> k)
+    then ok @(Tabulated t lm rm) toTabulated fromTabulated
+    else notSheaf
 
 -- | A sieve as a subobject of the representable, handed on with its inclusion: the natural
 -- transformations out of that subobject are exactly the matching families on the sieve, with no
@@ -355,3 +409,36 @@ extendSheafify
    . (HasFiniteCovers t k, Sheaf t q)
   => (p :~> q) -> Sheafify t p :~> q
 extendSheafify n = extendPlus @t (extendPlus @t n)
+
+-- * The category of sheaves
+
+-- | The full subcategory of @'FINITARY' j k@ on the sheaves for @t@: the finitary profunctors that
+-- have a 'Sheaf' instance. Its finite limits are computed exactly as 'FINITARY'\'s and are sheaves
+-- by the closure instances -- 'TerminalProfunctor', ':*:', and
+-- 'Proarrow.Category.Enriched.Finitary.Topos.Reindex' for the equalizers. Its colimits are /not/
+-- computed as 'FINITARY'\'s: a quotient of sheaves is no sheaf, and they go through 'Sheafify'.
+-- Its hom-sets are finitary by the conjunction instance in "Proarrow.Category.Enriched.Finitary.Topos".
+type SHEAVES t j k = SUBCAT ((Finitary :&&: Sheaf t) :: OB (j +-> k))
+
+-- | A sheaf as an object of 'SHEAVES', as 'Proarrow.Category.Enriched.Finitary.Topos.FIN' names
+-- an object of 'FINITARY'.
+type SHF t (p :: j +-> k) = SUB p :: SHEAVES t j k
+
+instance (Site t k, CategoryOf j) => HasTerminalObject (SHEAVES t j k) where
+  type TerminalObject = SUB TerminalProfunctor
+  terminate = Sub terminate
+
+instance (Site t k, CategoryOf j) => HasBinaryProducts (SHEAVES t j k) where
+  type a && b = SUB (UN SUB a :*: UN SUB b)
+  withObProd r = r
+  fst @(SUB p) @(SUB q) = Sub (fst @(j +-> k) @p @q)
+  snd @(SUB p) @(SUB q) = Sub (snd @(j +-> k) @p @q)
+  Sub l &&& Sub r = Sub (l &&& r)
+
+-- | Equalizers as in 'FINITARY', by 'equalizeNat'; the result is a sheaf for every coverage, which
+-- 'Proarrow.Testing.Laws.testEqualizersAreSheaves' checks by enumeration.
+instance (Site t k, Enumerable j, Enumerable k) => HasEqualizers (SHEAVES t j k) where
+  equalize (Sub (Prof f)) (Sub (Prof g)) k = equalizeNat f g \incl -> k (Sub (Prof incl))
+  factorEqualizer (Sub (Prof incl)) (Sub (Prof h)) = Sub (Prof (factorThroughEqualizer incl h))
+
+instance (Site t k, Enumerable j, Enumerable k) => HasPullbacks (SHEAVES t j k)

@@ -17,7 +17,7 @@ import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), sizes)
-import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
+import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY, withTabulated)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -46,7 +46,8 @@ import Proarrow.Testing
   , optGen
   )
 import Proarrow.Testing.Laws
-  ( testBinaryCoproducts_
+  ( propNaturalTransformation
+  , testBinaryCoproducts_
   , testBinaryProducts_
   , testCategory
   , testClosed_
@@ -55,6 +56,7 @@ import Proarrow.Testing.Laws
   , testEqualizers_
   , testFinitary
   , testInitialObject
+  , testProfunctor
   , testPullbacks_
   , testPushouts_
   , testTerminalObject
@@ -112,6 +114,8 @@ instance (Ob u, IsBool b) => TestableType (Rows u b) where
   gen = case boolId @b of
     Fls -> optGen [R1, R2, R3]
     Tru -> optGen [S1, S2]
+
+instance TestableProfunctor Rows
 
 -- | The copresheaf with one element at 'TRU' and none at 'FLS' -- a lone \"vertex\" for the
 -- double-pushout tests. It is a subprofunctor of 'Rows' (nothing at 'FLS' can dangle off it).
@@ -266,6 +270,17 @@ test =
     , testPullbacks_ @Psh
     , testPushouts_ @Psh
     , testFinitary @Rows "Rows"
+    , -- A profunctor presented by its tables is the same profunctor: same numbering, same action.
+      -- Checked on 'Rows', whose 'F2T' action is not a bijection, so a wrong row would show.
+      withTabulated @Rows \ @tab toTab _ ->
+        testGroup
+          "Tabulated Rows"
+          [ testFinitary @tab "Tabulated Rows"
+          , testProfunctor @tab
+          , testProperty "the presentation is natural" $ propNaturalTransformation @Rows @tab toTab
+          , -- natural and size-preserving, so an isomorphism; the round trips are 'Rows'\'s own laws
+            testProperty "the presentation has the same sizes" $ expect "same sizes" (sizes @Rows) (sizes @tab)
+          ]
     , -- The enumeration of natural transformations is itself a numbering, and obeys the same laws.
       -- Its generator draws from that same enumeration, so this checks the table round trip --
       -- tabulate a transformation built from a row and get the row back -- and not whether the

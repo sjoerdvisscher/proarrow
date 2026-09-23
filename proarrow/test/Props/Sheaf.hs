@@ -43,7 +43,16 @@ import Test.Tasty.Falsify (Property, testProperty)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb, objIndex, sizes)
-import Proarrow.Category.Enriched.Finitary.Sheaf (Plus, Sheafify, closure, isSheaf, lawvereTierney)
+import Proarrow.Category.Enriched.Finitary.Sheaf
+  ( Plus
+  , SHEAVES
+  , SHF
+  , Sheafify
+  , closure
+  , isSheaf
+  , lawvereTierney
+  , withTabulatedSheaf
+  )
 import Proarrow.Category.Enriched.Finitary.Topos (FIN, FINITARY)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), IsBool (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -61,26 +70,34 @@ import Proarrow.Profunctor.Instance.Sieve (Sieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
 import Proarrow.Profunctor.Instance.Yoneda (Yo)
 import Proarrow.Testing
-  ( Testable (..)
+  ( Some (..)
+  , Testable (..)
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , expect
   , genSomeDef
+  , genSomeList
   , optGen
   , testEq
   )
 import Proarrow.Testing.Laws
   ( propNaturalTransformation
+  , testBinaryProducts_
+  , testCategory
   , testDenseIsCovering
+  , testEqualizersAreSheaves
+  , testEqualizers_
   , testFinitary
   , testGeneratedSieveIsSieve
   , testGluesBack
   , testLawvereTierney_
   , testPlusFixes
   , testProfunctor
+  , testPullbacks_
   , testSheafification
   , testSubobjectClassifier_
+  , testTerminalObject
   )
 import Props.Bool ()
 
@@ -185,6 +202,37 @@ instance Testable Sh where
   showOb @(SUB p) = show (sizes @p)
   genSome = genSomeDef @'[FIN Two, FIN (Yo TRU (OP '())), FIN (Yo FLS (OP '())), FIN (Sieve :: () +-> BOOL)]
 
+-- | The category of sheaves for 'ByArrow', as a testable kind. Its objects need a 'Sheaf' /instance/,
+-- not just a true 'isSheaf', which 'withTabulatedSheaf' supplies for anything that is one -- and
+-- decides the condition on the way, so the failure branches below are where this palette asserts
+-- that its members are sheaves at all. The representable at 'TRU' has no instance of its own and
+-- enters tabulated, and so does the sheafification, whose own 'toIndex' re-runs the plus
+-- construction (a minute at 'ShC' untabulated).
+-- No product in the palette: the pullback laws would form pullbacks of products of products
+-- (@'Two' ':*:' 'Two'@ here took the group from under 4s to 11s).
+type ShB = SHEAVES ByArrow () BOOL
+
+instance TestableProfunctor (Sub Prof :: CAT ShB)
+
+instance Testable ShB where
+  showOb @(SUB p) = show (sizes @p)
+  genSome =
+    withTabulatedSheaf @ByArrow @(Sheafify ByArrow Collapse)
+      ( \ @sheafified _ _ ->
+          withTabulatedSheaf @ByArrow @(Yo TRU (OP '()))
+            ( \ @yoTru _ _ ->
+                genSomeList
+                  "ShB"
+                  [ Some @(SHF ByArrow Two)
+                  , Some @(SHF ByArrow TerminalProfunctor)
+                  , Some @(SHF ByArrow sheafified)
+                  , Some @(SHF ByArrow yoTru)
+                  ]
+            )
+            (error "ShB: the representable at TRU is not a sheaf")
+      )
+      (error "ShB: the sheafification of Collapse is not a sheaf")
+
 -- * The two-point space
 
 -- | A sheaf on the discrete two-point space: one section over the empty set, two over @{x}@, one
@@ -264,6 +312,23 @@ instance Testable Sh2 where
   showOb @(SUB p) = show (sizes @p)
   genSome = genSomeDef @'[FIN Sections, FIN Const2, FIN (Yo '(TRU, TRU) (OP '())), FIN (Sieve :: () +-> (BOOL, BOOL))]
 
+-- | The category of sheaves for 'Canonical', as a testable kind -- see 'ShB', in particular for why
+-- the sheafification is tabulated.
+type ShC = SHEAVES Canonical () (BOOL, BOOL)
+
+instance TestableProfunctor (Sub Prof :: CAT ShC)
+
+instance Testable ShC where
+  showOb @(SUB p) = show (sizes @p)
+  genSome =
+    withTabulatedSheaf @Canonical @(Sheafify Canonical Const2)
+      ( \ @tab _ _ ->
+          genSomeList
+            "ShC"
+            [Some @(SHF Canonical Sections), Some @(SHF Canonical TerminalProfunctor), Some @(SHF Canonical tab)]
+      )
+      (error "ShC: the sheafification of Const2 is not a sheaf")
+
 test :: TestTree
 test =
   testGroup
@@ -333,6 +398,16 @@ test =
         , testSheafification @ByArrow @Collapse @Two
         , -- 'isSheaf' above decides the condition by enumeration; this runs the 'glue' itself
           testGluesBack @ByArrow @(Sheafify ByArrow Collapse)
+        , testGroup
+            "the category of sheaves"
+            [ testCategory @ShB
+            , testTerminalObject @ShB
+            , testBinaryProducts_ @ShB
+            , testEqualizers_ @ShB
+            , testPullbacks_ @ShB
+            , testFinitary @(Sub Prof :: CAT ShB) "ShB"
+            , testEqualizersAreSheaves @ByArrow @() @BOOL
+            ]
         , -- The one cover has no overlaps, so one plus is already a sheaf for /every/ presheaf here:
           -- P⁺(TRU) is the classes of (maximal, x) and ({F2T}, y), identified when x restricts to y,
           -- which is P(FLS) -- and restriction becomes the identity.
@@ -373,6 +448,16 @@ test =
         , testFinitary @(Sheafify Canonical Const2) "Sheafify Const2"
         , testSheafification @Canonical @Const2 @Sections
         , testGluesBack @Canonical @(Sheafify Canonical Const2)
+        , testGroup
+            "the category of sheaves"
+            [ testCategory @ShC
+            , testTerminalObject @ShC
+            , testBinaryProducts_ @ShC
+            , testEqualizers_ @ShC
+            , testPullbacks_ @ShC
+            , testFinitary @(Sub Prof :: CAT ShC) "ShC"
+            , testEqualizersAreSheaves @Canonical @() @(BOOL, BOOL)
+            ]
         , -- Every sieve at the empty set is dense, and the empty sieve is the meet of them all, so
           -- one plus leaves 'Const2' a single section over the empty set. But the whole space still
           -- has two, where a sheaf now needs a section per pair over the two points: four. The
@@ -381,5 +466,18 @@ test =
             expect "one plus: one section over the empty set" [1, 2, 2, 2] (sizes @(Plus Canonical Const2))
             expect "one plus is not yet a sheaf" False (isSheaf @Canonical @(Plus Canonical Const2))
             expect "two pluses: the constant sheaf" [1, 2, 2, 4] (sizes @(Sheafify Canonical Const2))
+        , -- the presentation that 'ShC' draws from is the same sheaf
+          withTabulatedSheaf @Canonical @(Sheafify Canonical Const2)
+            ( \ @tab _ _ ->
+                testGroup
+                  "the tabulated sheafification"
+                  [ testProperty "is the same sheaf" $ do
+                      expect "has the sheafification's sizes" [1, 2, 2, 4] (sizes @tab)
+                      expect "is a sheaf" True (isSheaf @Canonical @tab)
+                  , -- a 'Tabulated' glues by search; this is the law that search has to satisfy
+                    testGluesBack @Canonical @tab
+                  ]
+            )
+            (error "the tabulated sheafification is not a sheaf")
         ]
     ]
