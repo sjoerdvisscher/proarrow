@@ -22,7 +22,12 @@ jobs:
         id: setup
         with:
           ghc-version: ${{ matrix.ghc }}
-          cabal-version: 'latest'
+          # Pinned rather than 'latest': with cabal 3.17 or newer, the `cabal repl
+          # --with-compiler=doctest` below dies as `doctest: unrecognized option '--interactive'`
+          # (sol/doctest#487). That broke this job the day cabal 3.18.1.0 was released, with no
+          # change here or to doctest. haskell-ci.yml pins its cabal as well, so this is not the
+          # odd one out; drop the pin once the issue is fixed.
+          cabal-version: '3.16.1.0'
 
       - name: Update package index
         run: cabal update
