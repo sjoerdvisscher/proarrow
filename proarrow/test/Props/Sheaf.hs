@@ -45,7 +45,7 @@ import Data.Foldable (for_)
 import Data.List (genericIndex, genericLength)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, testProperty)
-import Prelude hiding (id, (.))
+import Prelude hiding (const, id, (.))
 
 import Examples.Graph (ByEnds, GRAPH (..))
 import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb, objIndex, sizes)
@@ -88,7 +88,7 @@ import Proarrow.Category.Topos (HasSubobjectClassifier (..), closedTopology, dou
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, type (+->))
 import Proarrow.Functor (Presheaf)
 import Proarrow.Limit.BinaryProduct (PROD)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (const)
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
@@ -500,10 +500,10 @@ test =
         , testNegation @(PROD Sh)
         , testNegation @(PROD Sh2)
         , testProperty "the open and closed topologies of true and false" $ do
-            let constTrue = true . terminate @(PROD Sh) @Omega
+            let constTrue = const @(Omega :: PROD Sh) true
             testEq "open true" "openTopology true" (openTopology @(PROD Sh) true) "id" id
-            testEq "open false" "openTopology false" (openTopology @(PROD Sh) false) "true . terminate" constTrue
-            testEq "closed true" "closedTopology true" (closedTopology @(PROD Sh) true) "true . terminate" constTrue
+            testEq "open false" "openTopology false" (openTopology @(PROD Sh) false) "const true" constTrue
+            testEq "closed true" "closedTopology true" (closedTopology @(PROD Sh) true) "const true" constTrue
             testEq "closed false" "closedTopology false" (closedTopology @(PROD Sh) false) "id" id
         ]
     , testGroup

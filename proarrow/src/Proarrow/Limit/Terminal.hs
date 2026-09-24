@@ -36,6 +36,10 @@ terminate' a = terminate @k @a' . a \\ a
 -- | The type of elements of `a`.
 type El a = TerminalObject ~> a
 
+-- | The constant arrow at an element: 'terminate', then the element.
+const :: forall {k} (a :: k) b. (HasTerminalObject k, Ob a) => El b -> a ~> b
+const u = u . terminate @k @a
+
 instance HasTerminalObject Type where
   type TerminalObject = ()
   terminate _ = ()

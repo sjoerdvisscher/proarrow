@@ -1515,7 +1515,7 @@ testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ d
   y <- genNamed @(z ~> b) "y"
   inGraph <- eqP (f . x) y
   classified <-
-    eqP (Topos.classifyGraph f . (x BinaryProduct.&&& y)) (Topos.true . Terminal.terminate)
+    eqP (Topos.classifyGraph f . (x BinaryProduct.&&& y)) (Terminal.const Topos.true)
   expect "classifyGraph is true exactly on the graph of f" inGraph classified
   g <- genNamed @(a ~> b) "g"
   withTestObProd @a @b @(Property ()) $ do
@@ -1524,18 +1524,18 @@ testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ d
   x' <- genNamed @(z ~> a) "x'"
   identified <- eqP (f . x) (f . x')
   kernelPair <-
-    eqP (Topos.classifyKernelPair f . (x BinaryProduct.&&& x')) (Topos.true . Terminal.terminate)
+    eqP (Topos.classifyKernelPair f . (x BinaryProduct.&&& x')) (Terminal.const Topos.true)
   expect "classifyKernelPair is true exactly when f identifies the pair" identified kernelPair
   -- bound once: in the sheaves this is a pushout, which sheafifies and tabulates its apex
   let chi = Topos.classifyImage f
-  onImage <- eqP (chi . (f . x)) (Topos.true . Terminal.terminate)
+  onImage <- eqP (chi . (f . x)) (Terminal.const Topos.true)
   expect "classifyImage f is true on the image of f" True onImage
   -- The converse, and the law that makes this a /subobject/ classifier: anything the classifier
   -- calls true factors through the image mono. Mirrors the existence half of 'testEqualizers'.
   case Topos.factorize f of
     (:.:) _ m@Objs -> do
       w <- genNamed @(z ~> b) "w"
-      classifiedTrue <- eqP (chi . w) (Topos.true . Terminal.terminate)
+      classifiedTrue <- eqP (chi . w) (Terminal.const Topos.true)
       when classifiedTrue $
         testEq
           "image factorization"
@@ -1559,7 +1559,7 @@ testSubobjectClassifier_ =
   testSubobjectClassifier @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
 
 -- | Negation is implication into false:
--- @'Topos.not' = 'Topos.implies' . (id '&&&' 'Topos.false' . 'Terminal.terminate')@. A theorem of
+-- @'Topos.not' = 'Topos.implies' . (id '&&&' 'Terminal.const' 'Topos.false')@. A theorem of
 -- every topos; 'Topos.not' is defined as the classifying map of 'Topos.false' instead, so this
 -- checks the two agree.
 testNegation :: forall k. (Testable k, Topos.ElementaryTopos k, TestOb (Topos.Omega :: k)) => TestTree
@@ -1569,8 +1569,8 @@ testNegation =
       "not"
       "not"
       (Topos.not @k)
-      "implies . (id &&& false . terminate)"
-      (Topos.implies . (id BinaryProduct.&&& (Topos.false . Terminal.terminate)))
+      "implies . (id &&& const false)"
+      (Topos.implies . (id BinaryProduct.&&& Terminal.const Topos.false))
 
 -- | The three equations a Lawvere–Tierney topology satisfies, for an arrow
 -- @j :: 'Topos.Omega' '~>' 'Topos.Omega'@: it fixes @true@, is idempotent, and preserves meets.

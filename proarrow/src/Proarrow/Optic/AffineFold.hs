@@ -9,14 +9,15 @@
 module Proarrow.Optic.AffineFold where
 
 import Data.Kind (Type)
-import Prelude (Maybe (..), const, either)
+import Prelude (Maybe (..), either)
+import Prelude qualified as P
 
 import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), const)
 import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), withLegs)
 import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -43,7 +44,7 @@ instance (AffineFoldFl f g, AffineFoldFl f' g') => AffineFoldFl (f :.: f') (g' :
 instance (HasCoproducts k, Ob t) => AffineFoldFl (Corep (Coproduct t) :: k +-> k) (Rep (Coproduct t)) where
   previewP @_ @a (Corep f) = lft @k @a @TerminalObject . f . rgt @k @t \\ f
 instance (CopyDiscard k, HasCoproducts k, Ob t) => AffineFoldFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
-  previewP @_ @a (Rep p) = ((rgt @k @a @TerminalObject . terminate @k @t) ||| lft @k @a @TerminalObject) . p
+  previewP @_ @a (Rep p) = (const @t (rgt @k @a @TerminalObject) ||| lft @k @a @TerminalObject) . p
 
 type AffineFold (s :: k) (t :: j) a b = Optic (Prostrong AffineFoldFl) s t a b
 
@@ -59,4 +60,4 @@ infixl 8 ^?
 
 -- | Preview the focus of a concrete, @Type@-level optic (a getter that might not match).
 (^?) :: forall s (t :: Type) a b c. (c (ExOptic AffineFoldFl a b)) => s -> Optic c s t a b -> Maybe a
-s ^? l = either Just (const Nothing) (preview l s)
+s ^? l = either Just (P.const Nothing) (preview l s)
