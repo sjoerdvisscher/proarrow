@@ -76,3 +76,47 @@ or = classifyImage (constTrue &&& id ||| id &&& constTrue)
 
 implies :: forall k. (ElementaryTopos k) => (Omega :: k) && Omega ~> Omega
 implies = equalize and (fst @k @Omega @Omega) classifyImage
+
+-- | Negation: the classifying map of 'false', which is a mono as every arrow out of the terminal
+-- object is. The same arrow as @u ⇒ false@.
+not :: forall k. (ElementaryTopos k) => (Omega :: k) ~> Omega
+-- Not through 'implies', which classifies a subobject of @Omega && Omega@ where this classifies
+-- one of 'Omega' -- and 'classifyImage' squares the cokernel pair of whatever it is given.
+not = classifyImage (false @k)
+
+-- * Lawvere–Tierney topologies
+
+-- $topologies
+-- A Lawvere–Tierney topology is an arrow @j :: 'Omega' '~>' 'Omega'@ that fixes 'true', is
+-- idempotent and preserves 'and'; its sheaves form a subtopos. Every topos has the two extremes,
+-- 'id' (every object a sheaf) and @'true' . 'terminate'@ (only the terminal one), and the internal
+-- logic gives the ones below. A coverage gives another, by closing sieves:
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.lawvereTierney'.
+-- @Proarrow.Testing.Laws.testLawvereTierney@ checks the three laws.
+
+-- | The double-negation topology @¬¬@, whose sheaves form the smallest dense subtopos, and a
+-- Boolean one. On a presheaf topos it is the dense topology: a sieve on @a@ covers when every arrow
+-- into @a@ can be extended to one in the sieve. When every cospan can be completed to a commuting
+-- square -- the Ore condition, which pullbacks provide -- that is the atomic topology, so there
+-- 'Proarrow.Category.Sheaf.Atomic' computes this by closing sieves. In a Boolean topos it is 'id'.
+doubleNegation :: forall k. (ElementaryTopos k) => (Omega :: k) ~> Omega
+doubleNegation = not @k . not @k
+
+-- | The open topology of a truth value @u@: @u ⇒ -@. Its sheaves are the open subtopos of the
+-- subterminal object @u@ classifies -- the part of the topos lying over @u@. @'openTopology' 'true'@
+-- is 'id' and @'openTopology' 'false'@ is constantly 'true'.
+openTopology :: forall k. (ElementaryTopos k) => TerminalObject ~> (Omega :: k) -> (Omega :: k) ~> Omega
+-- A lambda under the binding, so that 'implies' is built once and shared by every @u@: it is an
+-- image to classify, and a family of topologies is typically used at many truth values.
+openTopology = \u -> i . ((u . terminate) &&& id)
+  where
+    i = implies @k
+
+-- | The closed topology of a truth value @u@: @u ∨ -@, complementary to 'openTopology': its
+-- sheaves are the part of the topos lying away from @u@. @'closedTopology' 'true'@ is constantly
+-- 'true' and @'closedTopology' 'false'@ is 'id'.
+closedTopology :: forall k. (ElementaryTopos k) => TerminalObject ~> (Omega :: k) -> (Omega :: k) ~> Omega
+-- A lambda under the binding, so that 'or' is built once and shared, as in 'openTopology'.
+closedTopology = \u -> o . ((u . terminate) &&& id)
+  where
+    o = or @k

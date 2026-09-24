@@ -1558,6 +1558,20 @@ testSubobjectClassifier_
 testSubobjectClassifier_ =
   testSubobjectClassifier @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
 
+-- | Negation is implication into false:
+-- @'Topos.not' = 'Topos.implies' . (id '&&&' 'Topos.false' . 'Terminal.terminate')@. A theorem of
+-- every topos; 'Topos.not' is defined as the classifying map of 'Topos.false' instead, so this
+-- checks the two agree.
+testNegation :: forall k. (Testable k, Topos.ElementaryTopos k, TestOb (Topos.Omega :: k)) => TestTree
+testNegation =
+  testProperty "negation is implication into false" $
+    testEq
+      "not"
+      "not"
+      (Topos.not @k)
+      "implies . (id &&& false . terminate)"
+      (Topos.implies . (id BinaryProduct.&&& (Topos.false . Terminal.terminate)))
+
 -- | The three equations a Lawvere–Tierney topology satisfies, for an arrow
 -- @j :: 'Topos.Omega' '~>' 'Topos.Omega'@: it fixes @true@, is idempotent, and preserves meets.
 --
@@ -1574,11 +1588,40 @@ testLawvereTierney
 testLawvereTierney withTestObProd j =
   testGroup
     "Lawvere-Tierney topology"
-    [ testProperty "fixes true" $ testEq "true" "j . true" (j . Topos.true) "true" Topos.true
-    , testProperty "idempotent" $ testEq "idempotent" "j . j" (j . j) "j" j
-    , testProperty "preserves meets" $
+    [testProperty name (law j) | (name, law) <- lawvereTierneyLaws @k (\ @a @b r -> withTestObProd @a @b r)]
+
+-- | The three laws of 'testLawvereTierney', by name, for an arrow given later -- shared by it and
+-- 'testLawvereTierneyFamily'.
+lawvereTierneyLaws
+  :: forall k
+   . (Testable k, Topos.ElementaryTopos k, TestOb (Topos.Omega :: k), TestOb (Terminal.TerminalObject :: k))
+  => WithTestObProd k
+  -> [(String, (Topos.Omega :: k) ~> Topos.Omega -> Property ())]
+lawvereTierneyLaws withTestObProd =
+  [ ("fixes true", \j -> testEq "true" "j . true" (j . Topos.true) "true" Topos.true)
+  , ("idempotent", \j -> testEq "idempotent" "j . j" (j . j) "j" j)
+  ,
+    ( "preserves meets"
+    , \j ->
         withTestObProd @Topos.Omega @Topos.Omega @(Property ()) $
           testEq "meets" "j . and" (j . Topos.and) "and . (j *** j)" (Topos.and . (j BinaryProduct.*** j))
+    )
+  ]
+
+-- | 'testLawvereTierney' for a family of arrows indexed by the truth values, at a generated one:
+-- 'Topos.openTopology' and 'Topos.closedTopology' are the ones the internal logic gives.
+testLawvereTierneyFamily
+  :: forall k
+   . (Testable k, Topos.ElementaryTopos k, TestOb (Topos.Omega :: k), TestOb (Terminal.TerminalObject :: k))
+  => String
+  -> WithTestObProd k
+  -> ((Terminal.TerminalObject :: k) ~> Topos.Omega -> (Topos.Omega :: k) ~> Topos.Omega)
+  -> TestTree
+testLawvereTierneyFamily name withTestObProd family =
+  testGroup
+    name
+    [ testProperty lawName (genNamed "u" >>= law . family)
+    | (lawName, law) <- lawvereTierneyLaws @k (\ @a @b r -> withTestObProd @a @b r)
     ]
 
 testLawvereTierney_
@@ -1593,6 +1636,20 @@ testLawvereTierney_
   -> TestTree
 testLawvereTierney_ =
   testLawvereTierney @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (BinaryProduct.withObProd @k @a @b r)))
+
+testLawvereTierneyFamily_
+  :: forall k
+   . ( Testable k
+     , Topos.ElementaryTopos k
+     , TestObIsOb k
+     , TestOb (Topos.Omega :: k)
+     , TestOb (Terminal.TerminalObject :: k)
+     )
+  => String
+  -> ((Terminal.TerminalObject :: k) ~> Topos.Omega -> (Topos.Omega :: k) ~> Topos.Omega)
+  -> TestTree
+testLawvereTierneyFamily_ name =
+  testLawvereTierneyFamily @k name (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (BinaryProduct.withObProd @k @a @b r)))
 
 -- * Sites and sheaves
 
@@ -1694,6 +1751,28 @@ testGeneratedSieveIsSieve =
           | Sheaf.SomeCover c <- Sheaf.covers @t @k @a
           ]
       )
+
+-- | On a category with pullbacks -- which give the Ore condition -- the topology 'Sheaf.Atomic'
+-- generates is the double-negation one: 'FinSheaf.lawvereTierney' and 'Topos.doubleNegation' are
+-- the same arrow, one computed by closing sieves and one from the internal logic. At @j ~ ()@
+-- only: over a non-trivial @j@, @¬¬@ is the dense topology along @j@ as well, while the coverage
+-- acts on @k@ alone.
+testAtomicIsDoubleNegation
+  :: forall k
+   . ( Pullback.HasPullbacks k
+     , Finitary.FiniteCat k
+     , Testable (BinaryProduct.PROD (FinTopos.FINITARY () k))
+     , TestOb (Topos.Omega :: BinaryProduct.PROD (FinTopos.FINITARY () k))
+     )
+  => TestTree
+testAtomicIsDoubleNegation =
+  testProperty "double negation is the atomic topology" $
+    testEq
+      "¬¬"
+      "doubleNegation"
+      (Topos.doubleNegation @(BinaryProduct.PROD (FinTopos.FINITARY () k)))
+      "lawvereTierney @Atomic"
+      (FinSheaf.lawvereTierney @Sheaf.Atomic)
 
 -- | For every sieve at every pair of objects of a finite site: it is covering exactly when it is dense,
 -- that is when its 'FinSheaf.closure' is the maximal sieve. Two independent computations of one

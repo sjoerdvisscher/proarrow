@@ -84,9 +84,11 @@ import Proarrow.Category.Sheaf
   , factorThroughCover
   , pullbackAlongId
   )
+import Proarrow.Category.Topos (HasSubobjectClassifier (..), closedTopology, doubleNegation, false, openTopology)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, type (+->))
 import Proarrow.Functor (Presheaf)
 import Proarrow.Limit.BinaryProduct (PROD)
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
@@ -107,6 +109,7 @@ import Proarrow.Testing
   )
 import Proarrow.Testing.Laws
   ( propNaturalTransformation
+  , testAtomicIsDoubleNegation
   , testBinaryCoproducts_
   , testBinaryProducts_
   , testCategory
@@ -119,7 +122,9 @@ import Proarrow.Testing.Laws
   , testFinitary
   , testGluesBack
   , testInitialObject
+  , testLawvereTierneyFamily_
   , testLawvereTierney_
+  , testNegation
   , testPlusFixes
   , testProfunctor
   , testPullbacks_
@@ -482,6 +487,25 @@ test =
       -- classifier rather than by definition
       testSubobjectClassifier_ @(PROD Sh)
     , testSubobjectClassifier_ @(PROD Sh2)
+    , -- the topologies the internal logic gives, which no coverage here is written down for
+      testGroup
+        "Lawvere-Tierney topologies from the logic"
+        [ testLawvereTierney_ @(PROD Sh) doubleNegation
+        , testLawvereTierneyFamily_ @(PROD Sh) "open" openTopology
+        , testLawvereTierneyFamily_ @(PROD Sh) "closed" closedTopology
+        , testLawvereTierney_ @(PROD Sh2) doubleNegation
+        , -- the walking arrow has pullbacks, so the Ore condition holds and the dense topology is
+          -- the atomic one: two computations of one arrow, from the logic and from the coverage
+          testAtomicIsDoubleNegation @BOOL
+        , testNegation @(PROD Sh)
+        , testNegation @(PROD Sh2)
+        , testProperty "the open and closed topologies of true and false" $ do
+            let constTrue = true . terminate @(PROD Sh) @Omega
+            testEq "open true" "openTopology true" (openTopology @(PROD Sh) true) "id" id
+            testEq "open false" "openTopology false" (openTopology @(PROD Sh) false) "true . terminate" constTrue
+            testEq "closed true" "closedTopology true" (closedTopology @(PROD Sh) true) "true . terminate" constTrue
+            testEq "closed false" "closedTopology false" (closedTopology @(PROD Sh) false) "id" id
+        ]
     , testGroup
         "Trivial"
         [ -- With no covers, anything quantified over them asserts nothing while reporting successes,

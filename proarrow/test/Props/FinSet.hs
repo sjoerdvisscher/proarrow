@@ -9,10 +9,12 @@ import Data.Type.Equality (TestEquality (..), type (:~:) (..))
 import Data.Type.Nat (Nat0, Nat1, Nat2, Nat3, Nat4, SNat (..), SNatI, reflect, snat)
 import Data.Vec.Lazy (Vec (..), repeat)
 import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.Falsify (testProperty)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
-import Proarrow.Core (CategoryOf (..), UN)
+import Proarrow.Category.Topos (closedTopology, doubleNegation, openTopology)
+import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
 
 import Proarrow.Testing
   ( GenTotal (..)
@@ -24,6 +26,7 @@ import Proarrow.Testing
   , invmap
   , oneElem
   , optGen
+  , testEq
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
@@ -48,6 +51,16 @@ test =
     , testCoequalizers_ @FINSET
     , testEpiMonoFactorization_ @FINSET
     , testSubobjectClassifier_ @FINSET
+    , -- FINSET is Boolean, so its only topologies are the two extremes, and ¬¬ is the identity
+      testGroup
+        "Lawvere-Tierney topologies"
+        [ testLawvereTierney_ @FINSET doubleNegation
+        , testLawvereTierneyFamily_ @FINSET "open" openTopology
+        , testLawvereTierneyFamily_ @FINSET "closed" closedTopology
+        , testProperty "double negation is the identity" P.$
+            testEq "¬¬" "doubleNegation" (doubleNegation @FINSET) "id" id
+        , testNegation @FINSET
+        ]
     , testPullbacks_ @FINSET
     , testPushouts_ @FINSET
     , testComonoid_ @(FS Nat0)

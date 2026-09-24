@@ -52,7 +52,7 @@ import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
 import Proarrow.Profunctor.Instance.Yoneda (Yo)
 import Proarrow.Testing (Testable (..), TestableProfunctor, expect, genSomeDef)
-import Proarrow.Testing.Laws (testLawvereTierney_, testSiteLaws)
+import Proarrow.Testing.Laws (testAtomicIsDoubleNegation, testLawvereTierney_, testSiteLaws)
 
 -- | The bottom of the chain.
 type O0 :: ORDINAL3
@@ -137,6 +137,9 @@ test =
         , -- the payoff: idempotence and meet preservation on a site where composing covers
           -- actually produces a cover that was not one of the two being composed
           testLawvereTierney_ @(PROD PshChain) (lawvereTierney @Atomic)
+        , -- a chain has pullbacks, so here too the atomic topology is the double-negation one --
+          -- on a site where, unlike the walking arrow, covers nest
+          testAtomicIsDoubleNegation @ORDINAL3
         , testProperty "isSheaf" $ do
             expect
               "the terminal presheaf is a sheaf: every restriction of it is a bijection"
