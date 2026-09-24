@@ -2,7 +2,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Binary products: 'HasBinaryProducts' provides @a '&&' b@ with projections 'fst'\/'snd' and pairing
--- @('&&&')@, and 'HasProducts' adds the terminal object. Also 'Cartesian' (the monoidal tensor /is/ the
+-- @('&&&')@, and 'HasProducts' adds the terminal object. Also 'Cartesian' (the monoidal tensor is the
 -- product) and the 'PROD' kind wrapper, which makes @('&&')@ the tensor of a monoidal structure on the
 -- same objects.
 module Proarrow.Limit.BinaryProduct where
@@ -41,7 +41,7 @@ infixl 5 &&&
 infixl 5 ***
 
 -- | Binary products: an object @a '&&' b@ with projections 'fst' and 'snd', universal among all
--- pairs of arrows out of a common source -- each such pair factors through it uniquely via '(&&&)'.
+-- pairs of arrows out of a common source. Each such pair factors through it uniquely via '(&&&)'.
 --
 -- __Laws:__
 --

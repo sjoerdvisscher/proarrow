@@ -7,7 +7,7 @@
 -- coequalizer identifies the swapped pair; the kernel pair of the merge of two rows at 'FLS' relates
 -- exactly those two, its pushout along itself glues two copies of the rows at the merged ones, and its
 -- image is the two rows it lands on. The exponentials and the subobject classifier are enumerated
--- too, which is what makes this an elementary topos.
+-- too, completing the elementary topos structure.
 module Props.Finitary (test) where
 
 import Data.List (genericIndex, genericLength, sort)
@@ -109,7 +109,7 @@ instance (Ob u, Ob b) => TestingEqShow (Rows u b)
 
 -- | Spelled out rather than taken from 'elements', so that 'testFinitary' checks the numbering
 -- against something independent of it: a generator defined as @optGen elements@ can never produce a
--- row the instance has lost track of, which is exactly the mistake worth catching.
+-- row the instance has lost track of, and that is the mistake worth catching.
 instance (Ob u, IsBool b) => TestableType (Rows u b) where
   gen = case boolId @b of
     Fls -> optGen [R1, R2, R3]
@@ -117,7 +117,7 @@ instance (Ob u, IsBool b) => TestableType (Rows u b) where
 
 instance TestableProfunctor Rows
 
--- | The copresheaf with one element at 'TRU' and none at 'FLS' -- a lone \"vertex\" for the
+-- | The copresheaf with one element at 'TRU' and none at 'FLS': a lone \"vertex\" for the
 -- double-pushout tests. It is a subprofunctor of 'Rows' (nothing at 'FLS' can dangle off it).
 type Point :: Copresheaf BOOL
 data Point u b where
@@ -143,8 +143,8 @@ points = case boolId @b of
   Fls -> []
   Tru -> [Pt]
 
--- | One element at each object, the one at 'FLS' mapping to the one at 'TRU' -- the representable at
--- 'FLS', and the analogue of an edge together with its endpoint.
+-- | One element at each object, the one at 'FLS' mapping to the one at 'TRU'. This is the
+-- representable at 'FLS', and the analogue of an edge together with its endpoint.
 type Edge :: Copresheaf BOOL
 data Edge u b where
   Src :: Edge '() FLS
@@ -166,7 +166,7 @@ instance Finitary Edge where
     Fls -> [Src] !! fromIntegral i
     Tru -> [Tgt] !! fromIntegral i
 
--- | Two elements at 'FLS' sharing the one at 'TRU' -- two edges with a common endpoint.
+-- | Two elements at 'FLS' sharing the one at 'TRU': two edges with a common endpoint.
 type TwoEdges :: Copresheaf BOOL
 data TwoEdges u b where
   A1, A2 :: TwoEdges '() FLS
@@ -221,12 +221,12 @@ atS2 = Prof \Pt -> S2
 
 instance TestableProfunctor (Sub Prof :: CAT Psh)
 
--- | Objects are picked from a list, exactly as 'Proarrow.Category.Instance.FinHask.FINHASK' does:
+-- | Objects are picked from a list, as 'Proarrow.Category.Instance.FinHask.FINHASK' does, since
 -- generating an arbitrary finitary profunctor would mean generating a type.
 --
--- 'TestOb' is just 'Ob', with no 'Typeable': a profunctor is displayed by its table of sizes rather
--- than by a type name. That is what lets every property be used in its @prop..._@ form below: those
--- pass the constructions\' own object witnesses, which supply @Ob@ and nothing more, and @Ob@ is all
+-- 'TestOb' is just 'Ob', with no 'Typeable': a profunctor is displayed by its table of sizes, not
+-- by a type name. So every property can be used in its @prop..._@ form below. Those pass the
+-- constructions\' own object witnesses, which supply @Ob@ and nothing more, and @Ob@ is all
 -- 'TestOb' asks for.
 instance Testable Psh where
   showOb @(SUB p) = show (sizes @p)
@@ -244,7 +244,7 @@ swapRows = Prof \case
   S2 -> S2
 
 -- | Merge the first two rows at 'FLS'. As for 'swapRows', the component at 'TRU' is then forced to
--- be the identity -- not because every natural family is the identity there, but because this one is.
+-- be the identity. Not every natural family is the identity there, but this one is.
 mergeRows :: Prof Rows Rows
 mergeRows = Prof \case
   R2 -> R1
@@ -282,13 +282,13 @@ test =
             testProperty "the presentation has the same sizes" $ expect "same sizes" (sizes @Rows) (sizes @tab)
           ]
     , -- The enumeration of natural transformations is itself a numbering, and obeys the same laws.
-      -- Its generator draws from that same enumeration, so this checks the table round trip --
-      -- tabulate a transformation built from a row and get the row back -- and not whether the
-      -- enumeration is complete. The counts below are what check that.
+      -- Its generator draws from that same enumeration, so this checks the table round trip
+      -- (tabulate a transformation built from a row and get the row back), not whether the
+      -- enumeration is complete. The counts below check that.
       testFinitary @(Sub Prof :: CAT Psh) "Psh"
     , testProperty "the hom-sets have the sizes a hand count gives them" $ do
         -- 'F2T' is onto, so the component at TRU is forced; at FLS, R1 and R2 must land in a common
-        -- fibre of it -- four ways inside {R1, R2}, or both on R3 -- and R3 is free: 5 * 3.
+        -- fibre of it (four ways inside {R1, R2}, or both on R3), and R3 is free: 5 * 3.
         expect "Rows -> Rows" 15 (size @(Sub Prof) @(FIN Rows) @(FIN Rows))
         -- 'Edge' is the representable at 'FLS', so Yoneda says this is the size of 'Rows' there.
         expect "Edge -> Rows" 3 (size @(Sub Prof) @(FIN Edge) @(FIN Rows))

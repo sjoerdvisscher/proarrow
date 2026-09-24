@@ -87,7 +87,7 @@ otherPoint = Eq.Refl
 objectsCodiscrete :: Objects (CODISCRETE BOOL) :~: '[CD FLS, CD TRU]
 objectsCodiscrete = Eq.Refl
 
--- | Every point reaches every other, and the closure computes that by searching the points -- which
+-- | Every point reaches every other, and the closure computes that by searching the points. This
 -- only typechecks because the codiscrete category is enumerable.
 codiscreteReaches :: Holds (Closure (Codiscrete :: CAT (CODISCRETE BOOL))) (CD TRU) (CD FLS) :~: TRU
 codiscreteReaches = Eq.Refl

@@ -36,8 +36,8 @@ module Proarrow.Testing
 
     -- | @falsify@ generators, wrapped so that an empty type is a first-class case rather than a
     -- generator that fails at run time: match 'GenEmpty' first, then 'GenNonEmpty'. The two are a
-    -- @COMPLETE@ set. The representation behind 'GenNonEmpty' is deliberately not exported --
-    -- go through the pattern, which is total.
+    -- @COMPLETE@ set. The representation behind 'GenNonEmpty' is not exported on purpose. Go
+    -- through the pattern, which is total.
   , GenTotal (GenEmpty)
   , pattern GenNonEmpty
   , invmap
@@ -150,8 +150,7 @@ instance Alternative GenTotal where
 -- | Uniformly choose among any number of alternatives, dropping the empty ones. Plain '<|>'
 -- only combines two generators at 50\/50, so chaining it over more than two alternatives
 -- associates pairwise and skews weight towards whichever branch ends up outermost in the
--- resulting tree instead of splitting evenly — use this instead whenever there are more than
--- two alternatives to pick fairly among.
+-- resulting tree. Use this whenever there are more than two alternatives to pick fairly among.
 oneOfTotal :: [GenTotal a] -> GenTotal a
 oneOfTotal gts = case mapMaybe toGen gts of
   [] -> empty
@@ -241,10 +240,9 @@ genWithNamed nm f = genWith (fmap named . f)
   where
     named s = "for " ++ nm ++ ": " ++ s
 
--- | 'True' if a type's generator is non-empty. A pure check on 'TestableType's 'gen' — it
--- doesn't sample anything, so it's safe (and cheap) to call as many times as convenient, e.g.
--- once in a 'genSuchThat' predicate and again via the real 'gen'\/'genNamed' call that
--- actually produces a value.
+-- | 'True' if a type's generator is non-empty. A pure check on 'TestableType's 'gen'. It
+-- doesn't sample anything, so it is cheap to call as often as convenient, e.g. once in a
+-- 'genSuchThat' predicate and again in the 'gen'\/'genNamed' call that produces a value.
 isGenNonEmpty :: forall a. (TestableType a) => Bool
 isGenNonEmpty = case gen @a of
   GenEmpty _ -> False
@@ -253,14 +251,10 @@ isGenNonEmpty = case gen @a of
 -- | Resample @genKey@ (cheaply, within 'Gen') up to @maxTries@ times until @isUsable@ accepts
 -- the draw, before ever asking 'Property' to commit to a choice.
 --
--- 'Property'-level 'discard' restarts the *whole* property from scratch (and can trip
--- falsify's per-slot discard-ratio limit, aborting the entire test run early) — so when a
--- later, dependent draw (e.g. \"a morphism out of this object\") is likely to be empty for a
--- \"bad\" choice made here, it's far cheaper to reject that choice immediately, inside 'Gen',
--- than to commit to it via 'Property' and let the dependent draw discover the problem. A
--- choice that's still unusable after @maxTries@ attempts is returned anyway, so a genuinely
--- unsatisfiable requirement still falls through to whatever ordinary 'discard' the caller's
--- own dependent generation triggers.
+-- A 'Property'-level 'discard' restarts the whole property and can trip falsify's discard-ratio
+-- limit, aborting the run. So when a later dependent draw (e.g. \"a morphism out of this
+-- object\") is likely to be empty for a bad choice, reject that choice here. After @maxTries@ the
+-- last draw is returned anyway, and the caller's own 'discard' handles it.
 genSuchThat :: Gen key -> (key -> Bool) -> Gen key
 genSuchThat genKey isUsable = go maxTries
   where
@@ -268,12 +262,12 @@ genSuchThat genKey isUsable = go maxTries
       k <- genKey
       if isUsable k || n <= (0 :: Int) then pure k else go (n - 1)
 
--- | How many times 'genSuchThat' resamples before giving up. There's no principled formula
--- for this — it depends on how sparse the specific requirement being searched for is, which
--- 'genSuchThat' has no way to know in advance. 100 is a pragmatic default: comfortably more
--- than the number of candidates a small test object palette usually offers (so a single
--- unlucky pick is very unlikely to exhaust it), while still cheap, since each attempt is a
--- plain 'Gen' sample rather than a 'Property'-level 'discard'.
+-- | How many times 'genSuchThat' resamples before giving up. There is no principled formula
+-- for this, since it depends on how sparse the requirement being searched for is, which
+-- 'genSuchThat' cannot know in advance. 100 is comfortably more than the number of candidates a
+-- small test object palette usually offers, so a single unlucky pick is very unlikely to exhaust
+-- it. It is still cheap, since each attempt is a plain 'Gen' sample and not a 'Property'-level
+-- 'discard'.
 maxTries :: Int
 maxTries = 100
 
@@ -320,18 +314,14 @@ class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor (Hom k), Testabl
   showOb :: forall (a :: k). (TestOb a) => String
   genSome :: Gen (Some k)
 
-  -- | The palette for properties whose cost grows steeply in the size of the objects drawn -- in
-  -- practice the ones that enumerate an internal hom, which is brute force over candidate tables
-  -- and so doubly exponential. @Props.Finitary.Graph@ has the measured figure: one object whose own
-  -- hom-sizes are @[2,4,2,4]@ has the hom /into/ it at @[1024,256,1024,256]@, and enumerating a
-  -- single such hom-set took 13.6s and 36.6GB. Defaults to 'genSome', and should be overridden only by a kind whose
-  -- 'genSome' carries objects too big for that: the point is to let 'genSome' be widened for the
-  -- benefit of every other property without making
-  -- 'Proarrow.Testing.Laws.testClosed' stop terminating.
+  -- | The palette for properties whose cost grows steeply with object size: in practice those
+  -- that enumerate an internal hom, which is brute force over tables and doubly exponential (an
+  -- object with hom-sizes @[2,4,2,4]@ has the hom into it at @[1024,256,1024,256]@). Defaults to
+  -- 'genSome'. Override it only when 'genSome' draws objects too big for
+  -- 'Proarrow.Testing.Laws.testClosed' to terminate.
   --
-  -- An instance that wraps another kind's palette must forward this alongside 'genSome', or the
-  -- default silently hands 'Proarrow.Testing.Laws.testClosed' the wide one. The wrapper instances
-  -- below are the model.
+  -- An instance that wraps another kind's palette must forward this too, as the wrapper instances
+  -- below do, or 'Proarrow.Testing.Laws.testClosed' silently gets the wide one.
   genSomeSmall :: Gen (Some k)
   genSomeSmall = genSome
 
@@ -398,11 +388,12 @@ instance (forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
 -- function so that call sites with other quantified givens in scope (e.g. the comonoid supply of a
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category, whose head has @Ob@ as a
 -- superclass) don't have to rely on GHC expanding superclasses of quantified-constraint heads.
--- Observed on GHC 9.10.3: with such a given in scope, @\\r -> r@ at this type fails with "Could not
--- deduce Ob a", while the same lambda compiles without it (cf. 'Proarrow.Testing.Laws.testSymMonoidal_'
--- versus 'Proarrow.Testing.Laws.testCopyDiscard_'). Likely a solver limitation; retry dropping this
--- helper after a GHC upgrade.
+-- With such a given in scope, @\\r -> r@ at this type fails with "Could not deduce Ob a", while
+-- the same lambda compiles without it (cf. 'Proarrow.Testing.Laws.testSymMonoidal_' versus
+-- 'Proarrow.Testing.Laws.testCopyDiscard_').
 obFromTestOb :: forall {k} (a :: k) r. (Testable k, TestOb a) => ((Ob a) => r) -> r
+-- Seen on GHC 9.10.3, likely a solver limitation. Worth retrying without this helper after a
+-- GHC upgrade.
 obFromTestOb r = r
 
 data Some k where
@@ -434,9 +425,9 @@ genSomeDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Gen (Some
 genSomeDef = genSomeList "the palette is empty" (mkSomeList @k @obs)
 
 -- | The palette of a category that already knows its own objects: @'Proarrow.Category.Enriched.Thin.Objects' k@
--- is exactly the list 'genSomeDef' would otherwise be given by hand, so writing it twice is how the
--- two drift apart. Only for kinds that really are finite categories -- a palette like \"four
--- cardinalities out of infinitely many\" is a sample rather than an enumeration, and has to stay
+-- is the list 'genSomeDef' would otherwise be given by hand, and writing it twice lets the two
+-- drift apart. Only for kinds that really are finite categories. A palette like \"four
+-- cardinalities out of infinitely many\" is a sample, not an enumeration, and has to stay
 -- hand-picked.
 genSomeFinite :: forall k. (Enumerable k, TestObIsOb k) => Gen (Some k)
 genSomeFinite = genSomeList "the category has no objects" (foreachOb @k \ @a -> [Some @a])
@@ -449,7 +440,7 @@ genSomeList _ (x : xs) = elem (x :| xs)
 -- pair, and otherwise the two are drawn independently.
 --
 -- 'GenEmpty' carries its proof of emptiness as a function out of the empty type, so reusing a
--- component's proof for the pair means getting at that component first -- hence the two projections
+-- component's proof for the pair means getting at that component first. Hence the two projections
 -- alongside the constructor.
 genBoth
   :: forall a b c. (TestableType a, TestableType b) => (a -> b -> c) -> (c -> a) -> (c -> b) -> GenTotal c
@@ -464,7 +455,7 @@ optGen (x : xs) = GenNonEmpty (elem (x :| xs))
 
 -- | Draw from a finitary profunctor's own enumeration, an empty hom-set being 'GenEmpty' rather than
 -- an error: a profunctor built by the library can be empty at a pair of objects with nothing wrong.
--- For a hand-written fixture prefer a palette of its own -- 'Proarrow.Testing.Laws.testFinitary'
+-- For a hand-written fixture prefer a palette of its own. 'Proarrow.Testing.Laws.testFinitary'
 -- says why a generator that /is/ the enumeration makes the round-trip law vacuous.
 genElements :: forall {j} {k} (p :: j +-> k) (a :: k) (b :: j). (Finitary p, Ob a, Ob b) => GenTotal (p a b)
 genElements = case elements @p @a @b of
@@ -587,8 +578,8 @@ instance (Testable j, Testable k, TestOb (a :: k), TestOb (b :: j)) => TestableT
 instance (Testable j, Testable k) => TestableProfunctor (TerminalProfunctor :: j +-> k)
 
 -- | An element of the Yoneda embedding is an arrow into @x@ paired with an arrow out of @b@, so it
--- is testable wherever both categories are: this is what makes a representable usable as a test
--- fixture, at either variance.
+-- is testable wherever both categories are. So a representable can be used as a test fixture, at
+-- either variance.
 instance
   (Testable j, Testable k, TestOb (a :: k), TestOb (x :: k), TestOb (b :: j), TestOb (c :: j))
   => TestingEqShow (Yo x (OP b) a c)
@@ -605,14 +596,14 @@ instance
 instance (Testable j, Testable k, TestOb (x :: k), TestOb (b :: j)) => TestableProfunctor (Yo x (OP b))
 
 -- | A sieve is a table of booleans over the points of the representable, and 'Finitary' numbers the
--- sieves at each pair of objects -- so a sieve can be generated by picking one, and compared and
--- shown by its table. Without this, nothing that quantifies over sieves as /elements of a
--- profunctor/ -- 'Proarrow.Testing.Laws.propNaturalTransformation', in particular -- can run at
--- 'Sieve'.
+-- sieves at each pair of objects. So a sieve can be generated by picking one, and compared and
+-- shown by its table. Without this, nothing that quantifies over sieves as elements of a
+-- profunctor (such as 'Proarrow.Testing.Laws.propNaturalTransformation') can run at 'Sieve'.
 --
 -- Drawing one enumerates /every/ sieve at that pair of objects, a count exponential in the size of
 -- the representable, so this is the generator to look at first if a suite gets slow.
--- the 'TestOb's are what pin @j@ and @k@, which @'Sieve' a b@ does not mention
+--
+-- The 'TestOb' constraints pin @j@ and @k@, which @'Sieve' a b@ does not mention.
 instance (FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (Sieve a b) where
   eqP s t = pure (sieveTable s == sieveTable t)
   showP s = show (sieveTable s)
@@ -627,12 +618,12 @@ instance (Testable j, Testable k, FiniteCat j, FiniteCat k) => TestableProfuncto
 
 -- | An element of the internal hom is a natural transformation out of a weight, which 'Finitary'
 -- numbers; compare and show it by that number, as 'Tabulated' is. Drawing one enumerates them
--- all, which is what makes an exponential an expensive thing to quantify over.
+-- all, so an exponential is expensive to quantify over.
 instance
   (Finitary p, Finitary q, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
   => TestingEqShow ((p :~>: q) a b)
   where
-  -- matching on 'Exp' is what brings the objects into scope, as it does for 'Sieve'
+  -- matching on 'Exp' brings the objects into scope, as it does for 'Sieve'
   eqP x@Exp{} y = pure (toIndex @(p :~>: q) x == toIndex y)
   showP x@Exp{} = show (toIndex @(p :~>: q) x)
 
@@ -669,7 +660,7 @@ instance
   (Testable j, Testable k, HasFiniteCovers t k, FiniteCat j, FiniteCat k)
   => TestableProfunctor (ClosedSieve t :: j +-> k)
 
--- | Compared by 'samePlus' and shown by 'plusTable' -- see 'Plus' for what a value stands for.
+-- | Compared by 'samePlus' and shown by 'plusTable'. See 'Plus' for what a value stands for.
 instance
 -- as for 'Sieve', the 'TestOb's are what pin @j@ and @k@
   (HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
@@ -688,10 +679,10 @@ instance
   (Testable j, Testable k, HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k)
   => TestableProfunctor (Plus t p :: j +-> k)
 
--- | A hom-set of a full subcategory of finitary profunctors -- 'FINITARY', or the sheaves of
--- "Proarrow.Category.Enriched.Finitary.Sheaf" -- is enumerable, by 'natTransformations', so it can
--- be generated: which is the thing that makes a category of profunctors testable at all. Equality
--- and display go through the table of indices, there being nothing else to see of a natural
+-- | A hom-set of a full subcategory of finitary profunctors ('FINITARY', or the sheaves of
+-- "Proarrow.Category.Enriched.Finitary.Sheaf") is enumerable, by 'natTransformations', so it can
+-- be generated. Without that a category of profunctors would not be testable at all. Equality and
+-- display go through the table of indices, there being nothing else to see of a natural
 -- transformation. (The table is cheaper than the index into 'elements' would be, which has to
 -- search for it.)
 instance

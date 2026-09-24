@@ -35,12 +35,12 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
--- | A grate is a "residual lens" whose residual @m@ sits under an exponential rather than a
+-- | A grate is a "residual lens" whose residual @m@ sits under an exponential instead of a
 -- tensor: @s ~> (m ~~> a)@ and @(m ~~> b) ~> t@. Unlike a 'Proarrow.Optic.Traversal.Traversal',
--- this needs no 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' machinery
--- at all -- 'zipWithP' is built directly out of 'Closed'\/'SymMonoidal' algebra
--- (curry\/apply\/swap), since we're manipulating morphisms directly rather than lifting an
--- arbitrary effect through a witness functor. 'Proarrow.Optic.Kaleidoscope.KaleidoFl' is a
+-- this needs no 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' machinery.
+-- 'zipWithP' is built directly out of 'Closed'\/'SymMonoidal' algebra (curry\/apply\/swap),
+-- since it manipulates morphisms directly and does not lift an arbitrary effect through a
+-- witness functor. 'Proarrow.Optic.Kaleidoscope.KaleidoFl' is a
 -- superclass: the residual is a comonoid, so @m ~~> -@ is an applicative functor.
 type GrateFl :: forall {k}. FLAVOR k k
 class (KaleidoFl p q, GlassFl p q) => GrateFl (p :: k +-> k) (q :: k +-> k) where
@@ -87,7 +87,7 @@ withGrate o k = withLegs @GrateFl o \ @p @q p q -> k (\ @x kk -> zipWithP @p @q 
 
 -- | The canonical\/atomic grate constructor: the residual is the self-referential @s ~~> a@
 -- (the "logarithm" of the get side), whose own get-map @m ~> (s ~~> a)@ trivializes to 'id' once
--- @m@ is fixed to be exactly @s ~~> a@. That residual must be a comonoid; in a
+-- @m@ is fixed to be @s ~~> a@. That residual must be a comonoid; in a
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category every object is.
 grate
   :: forall {k} (s :: k) (t :: k) a b

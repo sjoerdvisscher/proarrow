@@ -4,24 +4,21 @@
 -- /Seven Sketches in Compositionality/ (arXiv:1803.05316), section 3.4.3.
 --
 -- A database __schema__ is a category, an __instance__ of it is a copresheaf, and a functor between
--- schemas induces three migrations: restriction @'Delta'@, and its left and right adjoints
--- @'Sigma'@ and @'Pi'@. None of them needs new machinery here. A functor between kinds is a
--- 'FunctorForRep', which comes with an adjoint pair of profunctors: its conjoint 'Rep' and its
--- companion 'Corep'. Restriction and the left pushforward are then just profunctor composition,
--- and the right pushforward is the right Kan extension that composition is already adjoint to.
+-- schemas induces three migrations: restriction @'Delta'@ and its left and right adjoints
+-- @'Sigma'@ and @'Pi'@. None needs new machinery. A functor is a 'FunctorForRep', with conjoint
+-- 'Rep' and companion 'Corep'; restriction and the left pushforward are profunctor composition,
+-- and the right pushforward is the right Kan extension.
 --
 -- The schemas are the book's: @A@ tells economy seats from first class ones, @B@ does not. Each is
--- the free category on a graph ('PATHS'), so writing one down is writing down its generating arrows
--- and nothing else, and the functor between them is a graph map that 'foldPaths' turns into a
--- functor. Neither carries path equations, and neither can: every arrow lands in an attribute
--- object, and attribute objects have no arrows out, so there are no composable pairs.
+-- a free category on a graph ('PATHS'), and the functor between them is a graph map that
+-- 'foldPaths' turns into a functor. Neither has path equations: every arrow lands in an attribute
+-- object, which has no arrows out.
 --
--- A second pair, @GraphSch@ and @Dds@, is section 3.4.1, the one migration the book works through
--- with tables on both sides. @Dds@ is one point with one arrow looping on it, so it has infinitely
--- many morphisms, one per number of steps; that is the shape a free category is really for.
+-- A second pair, @GraphSch@ and @Dds@, is section 3.4.1, which the book works through with tables
+-- on both sides. @Dds@ is one point with a loop, so it has one morphism per number of steps.
 --
--- The book's own schema, which carries equations, is in "Props.Paths" instead, since what it
--- exercises is the free category's laws rather than migration.
+-- The book's own schema, which has equations, is in "Props.Paths", since it exercises the free
+-- category's laws rather than migration.
 module Examples.Database (test) where
 
 import Control.Monad (unless)
@@ -58,9 +55,9 @@ type FirstClass' = D FirstClassP :: A'
 type DollarsA' = D DollarsAP :: A'
 type StringA' = D StringAP :: A'
 
--- | A singleton for the points. The right pushforward is an end, so 'matchSeats' has to /produce/ a
--- seat at an arbitrary point of this kind, and 'Ob' is what carries which point it has been handed
--- -- so this kind cannot be @(\':~:\')@-arrowed like @B'@, whose 'Ob' is vacuous. 'memberIndex'
+-- | A singleton for the points. The right pushforward is an end, so 'matchSeats' has to produce a
+-- seat at an arbitrary point of this kind, and 'Ob' carries which point it has been handed. So
+-- this kind cannot be @(\':~:\')@-arrowed like @B'@, whose 'Ob' is vacuous. 'memberIndex'
 -- already refines a point to the one it is, but positionally, so the four positions get names.
 type SA (a :: A') = Member a (Objects A')
 
@@ -195,12 +192,10 @@ type Delta f g = g :.: Rep f
 
 -- | The left pushforward: composition with the companion. The coend is the existential of ':.:'.
 --
--- That existential does not impose the coend's quotient, which identifies a row with its image
--- under every arrow. Here that costs nothing, because merging the two seat classes relates nothing
--- that was not already equal. It would show for the functor to the one-point schema, section 3.4.4:
--- the book's left pushforward there is the connected components of the emails, and this one would
--- give the plain disjoint union of every row instead. Quotienting by hand is the price of using an
--- existential for a coend, which is the same compromise ':.:' itself documents.
+-- That existential skips the coend's quotient, which identifies a row with its image under every
+-- arrow. Here nothing is lost, since merging the seat classes relates nothing new. For the functor
+-- to the one-point schema (section 3.4.4) it would matter: the book gets the connected components
+-- of the emails, this gives the disjoint union of all rows.
 type Sigma :: a +-> b -> Copresheaf a -> Copresheaf b
 type Sigma f i = i :.: Corep f
 
@@ -218,16 +213,15 @@ toDelta :: forall {a} {b} (x :: a) (f :: a +-> b) j u. (FunctorForRep f, Ob x) =
 toDelta j = j :.: repUniv
 
 -- | Every row of an instance turns up in its left pushforward, sitting at the image of the object
--- it came from. This is the unit of @'Sigma' f ⊣ 'Delta' f@ read through 'fromDelta', and it is the
--- whole reason the pushforward is a union: two objects with the same image land in the same table.
+-- it came from. This is the unit of @'Sigma' f ⊣ 'Delta' f@ read through 'fromDelta', and it is why
+-- the pushforward is a union: two objects with the same image land in the same table.
 toSigma :: forall {a} {b} (x :: a) (f :: a +-> b) i u. (FunctorForRep f, Ob x) => i u x -> Sigma f i u (f @ x)
 toSigma i = i :.: corepUniv
 
 -- | Reading one component out of a right pushforward, at the image of the object asked for. This is
 -- the counit of @'Delta' f ⊣ 'Pi' f@, so it runs from the pushforward back to the instance, where
--- 'toSigma' runs the other way. Neither direction is a choice: a unit points into its pushforward
--- and a counit out of one, and which of the two a pushforward gets is fixed by the side of
--- restriction it is adjoint on.
+-- 'toSigma' runs the other way. A unit points into its pushforward and a counit out of one, and
+-- which of the two a pushforward gets is fixed by the side of restriction it is adjoint on.
 fromPi :: forall {a} {b} (x :: a) (f :: a +-> b) i u. (FunctorForRep f, Ob x) => Pi f i u (f @ x) -> i u x
 fromPi = runRan repUniv
 
@@ -273,9 +267,9 @@ readRow = seatName . fromDelta
 -- | A pair of seats, one of each class, as an element of the right pushforward at @AirlineSeat@.
 --
 -- Only the pair is data. The two attribute components are forced: they are read off the economy
--- seat by the instance's own functoriality. What makes reading them off the first class seat give
--- the same answer is the end condition, and that is exactly the agreement tested for here, so this
--- returns 'Nothing' for a pair that does not agree rather than building an ill-formed element.
+-- seat by the instance's own functoriality. The end condition says that reading them off the first
+-- class seat gives the same answer. That agreement is tested for here, so this returns 'Nothing'
+-- for a pair that does not agree instead of building an ill-formed element.
 matchSeats :: Seats '() Economy -> Seats '() FirstClass -> Maybe (Pi Merge Seats '() AirlineSeat)
 matchSeats e f
   | dimap Unit (emb PriceE) e == dimap Unit (emb PriceF) f

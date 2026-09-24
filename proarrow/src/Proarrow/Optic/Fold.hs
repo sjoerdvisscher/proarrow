@@ -1,8 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | The __fold__: the weakest read-side optic, reducing the foci to any 'Monoid' object of the
--- category ('FoldFl' \/ 'foldMapP'). It sits at the read-only top of the subtyping lattice --
--- everything that can view, preview or traverse is a fold -- so it has no builder of its own
+-- category ('FoldFl' \/ 'foldMapP'). It sits at the read-only top of the subtyping lattice
+-- (everything that can view, preview or traverse is a fold), so it has no builder of its own
 -- (reach it by 'Proarrow.Optic.convert' from a stronger optic). Its canonical eliminator is
 -- 'foldMapOf', via the generic 'Proarrow.Optic.ExOptic' carrier, with 'unfold' as the 'Proarrow.Optic.re'-mirror that
 -- builds from a 'Comonoid' seed.
@@ -33,7 +33,7 @@ import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar, Representable (..))
 
 -- | A fold is a getter or traversal that forgets everything except the ability to reduce the
--- @a@'s it can see into any monoid object of @k@ -- it can never reconstruct a @t@.
+-- @a@'s it can see into any monoid object of @k@. It can never reconstruct a @t@.
 type FoldFl :: forall {j} {k}. FLAVOR j k
 class (Profunctor p, Profunctor q) => FoldFl (p :: k +-> k) (q :: j +-> j) where
   foldMapP :: (Monoid m) => p s a -> (a ~> m) -> (s ~> m)
@@ -49,8 +49,8 @@ instance (FoldFl f g, FoldFl f' g') => FoldFl (f :.: f') (g' :.: g) where
 instance (Bicartesian k, Traversable t, Representable t) => FoldFl (t :: k +-> k) (RepCostar t) where
   foldMapP @m @_ @a l am = (case repTraverse @t @(Rep (Constant m)) (Rep @a am) of Rep sm -> sm . index l) \\ am
 
--- | The corepresentable-cotraversable witness folds by cotraversing at the fold profunctor @'Rep' ('Constant' m)@
--- -- the residual shape is simply discarded.
+-- | The corepresentable-cotraversable witness folds by cotraversing at the fold profunctor
+-- @'Rep' ('Constant' m)@ and discarding the residual shape.
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => FoldFl (CorepStar t) (t :: k +-> k) where
   foldMapP @m @_ @a (CorepStar l) am = (case corepTraverse @t @(Rep (Constant m)) (Rep @a am) of Rep sm -> sm . l) \\ am
 

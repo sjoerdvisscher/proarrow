@@ -1,19 +1,17 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | The __tracer__: the write-only optic whose residual sits on the /source and target/ side,
+-- | The __tracer__: the write-only optic whose residual sits on the source and target side,
 --
 -- > Tracer s t a b = exists m. (m ** s ~> a, b ~> m ** t)
 --
--- witnessed by @'Corep'@\/@'Rep'@ @('ActionAt' 'Tensor' m)@ ('TracerFl' \/
--- 'withTracerP') -- a setter witness pair read the other way round, equivalently an 'ActFl'
--- @Tensor@ pair with the roles of the two witnesses swapped. Running it forwards closes a feedback loop through the
--- residual, so it distributes any 'Costrong' profunctor ('tracerP') and is a
--- 'Proarrow.Optic.Setter.Setter' exactly in a 'TracedMonoidal' category; run backwards
--- ('Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re') it needs no trace at all. Build with
--- 'tracer', eliminate with 'tracerOf' (or 'Proarrow.Optic.Setter.over' at the hom) or recover the
--- legs with 'withTracer'; 'fromPTracer'\/'toPTracer' mediate with the profunctor-class-flavored
--- 'PTracer' (@'Optic' ('Costrong' 'Tensor')@).
+-- witnessed by @'Corep'@\/@'Rep'@ @('ActionAt' 'Tensor' m)@ ('TracerFl'), a setter witness pair
+-- read the other way round. Running it forwards closes a feedback loop through the residual, so it
+-- distributes any 'Costrong' profunctor ('tracerP') and is a 'Proarrow.Optic.Setter.Setter'
+-- exactly in a 'TracedMonoidal' category. Run backwards
+-- ('Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re') it needs no trace. Build with 'tracer',
+-- eliminate with 'tracerOf' or recover the legs with 'withTracer'. 'fromPTracer'\/'toPTracer'
+-- mediate with 'PTracer' (@'Optic' ('Costrong' 'Tensor')@).
 module Proarrow.Optic.Tracer where
 
 import Prelude (($))
@@ -40,24 +38,20 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
--- | The tracer flavor: a witness pair whose legs are @m ** s ~> a@ and @b ~> m ** t@ for an
--- existential residual @m@ -- the residual functor is applied to the source and target rather
--- than to the foci, i.e. an @'ActFl' 'Tensor'@ pair with the roles of the two witnesses swapped.
--- 'withTracerP' recovers the legs (the 'Proarrow.Optic.MonoidalLens.withMonLensP' of tracers), and
--- distributing a 'Costrong' profunctor ('tracerP') is derived from them. This is the @'Prostrong'@
--- counterpart of @'Costrong' 'Tensor'@ the way 'Proarrow.Optic.MonoidalLens.MonLensFl' is of
+-- | The tracer flavor: a witness pair with legs @m ** s ~> a@ and @b ~> m ** t@ for an
+-- existential residual @m@, an @'ActFl' 'Tensor'@ pair with the witnesses' roles swapped. It is
+-- the @'Prostrong'@ counterpart of @'Costrong' 'Tensor'@, as
+-- 'Proarrow.Optic.MonoidalLens.MonLensFl' is of
 -- @'Proarrow.Category.Monoidal.Strength.Strong' 'Tensor'@.
 --
--- Every tracer witness pair is a setter pair ('SetterFl' superclass, so 'Proarrow.Optic.Setter.over',
--- 'Proarrow.Optic.Setter.set', '(Proarrow.Optic.Setter.%~)' all work) and its flip is one too
--- (@'SetterFl' q p@, so @'Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re'@ works without a trace, and
--- @'convert' t :: 'Optic' ('Prostrong' ('Flip' 'SetterFl')) s t a b@ -- the converse fails, since a
--- flipped setter need not have a trace, e.g. a flipped lens witness, so tracers are the subflavor of
--- flipped setters that can also run /forwards/);
--- 'TracedMonoidal' rides in the instance context of the tensor-action witness, not in the
--- method, so ordinary setters keep their honest constraints. 'Monoidal' sits on the method rather
--- than the class so that the identity witness needs only 'CategoryOf' and 'Proarrow.Optic.Iso.IsoFl'
--- can include this flavor.
+-- A tracer pair and its flip are both setter pairs, so 'Proarrow.Optic.Setter.over' works on a
+-- tracer and on its 'Proarrow.Optic.re', and
+-- @'convert' t :: 'Optic' ('Prostrong' ('Flip' 'SetterFl')) s t a b@ typechecks. The converse
+-- fails: a flipped setter (e.g. a flipped lens witness) need not have a trace.
+--
+-- 'TracedMonoidal' sits in the instance context of the tensor-action witness, so ordinary setters
+-- don't pick up the constraint. 'Monoidal' sits on the method so that the identity witness needs
+-- only 'CategoryOf' and 'Proarrow.Optic.Iso.IsoFl' can include this flavor.
 type TracerFl :: forall {k}. FLAVOR k k
 class (SetterFl p q, SetterFl q p) => TracerFl (p :: k +-> k) (q :: k +-> k) where
   -- | Recover the two legs, with the residual @m@ existential.
@@ -122,7 +116,7 @@ tracerOf o rab = withLegs @TracerFl o \l r -> tracerP l r rab
 
 -- | The generic carrier absorbs the residual of a 'Costrong' action whenever the flavor contains the
 -- tracer generator: one more tensor-action layer, composed onto the witnesses.
--- This is what lets profunctor-class-flavored tracers ('PTracer') eliminate through 'ExOptic' too.
+-- With it, profunctor-class-flavored tracers ('PTracer') eliminate through 'ExOptic' too.
 instance
   ( Monoidal k
   , Ob (a :: k)

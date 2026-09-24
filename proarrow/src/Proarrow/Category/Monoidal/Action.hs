@@ -44,7 +44,7 @@ type MonoidalAction :: forall {m} {k}. (m, k) +-> k -> Constraint
 
 -- | An action of a monoidal category @m@ on a category @k@, given by a representable profunctor
 -- @t@ whose functor is @'Act' t@. This is 'Monoidal' with the two sides allowed to differ: taking
--- @k = m@ and @t@ the tensor recovers it exactly.
+-- @k = m@ and @t@ the tensor recovers it.
 --
 -- __Laws:__
 --
@@ -59,7 +59,7 @@ type MonoidalAction :: forall {m} {k}. (m, k) +-> k -> Constraint
 -- * Pentagon: @'actHom' 'id' 'multiplicator' . 'multiplicator'
 --   = 'multiplicator' . 'actHom' ('associator') 'id'@
 --
--- There is no @propMonoidalAction@ yet; these laws are currently unchecked.
+-- "Proarrow.Testing.Laws" has no check for these laws.
 class (Representable t, Monoidal m) => MonoidalAction (t :: (m, k) +-> k) where
   -- | Acting by the 'Unit' does nothing.
   unitor :: (Ob x) => Act t Unit x ~> x

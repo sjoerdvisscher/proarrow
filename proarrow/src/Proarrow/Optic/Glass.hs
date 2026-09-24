@@ -6,13 +6,11 @@
 -- > Glass s t a b = exists c d. (s ~> c && (d ~~> a), (c && (d ~~> b)) ~> t)
 --
 -- which collapses to the single leg @(s && ((s ~~> a) ~~> b)) ~> t@: given the source and a way
--- to turn any /selector/ @s ~~> a@ into a @b@, produce a @t@. A lens is the case @d = Unit@ (it
--- applies the selector to the source it was given), a grate the case @c = Unit@ (it ignores the
--- source and feeds the selector through its exponent), so 'GlassFl' is the join of
--- 'Proarrow.Optic.Lens.LensFl' and 'Proarrow.Optic.Grate.GrateFl' -- what
--- 'Proarrow.Optic.AffineTraversal.AffineTravFl' is to lenses and prisms, one column over. Like
--- that flavor it has no witnesses of its own: its generating pairs are the product pair and the
--- exponential pair, and 'glass' packs its single leg as their composite.
+-- to turn any selector @s ~~> a@ into a @b@, produce a @t@. A lens is the case @d = Unit@, a grate
+-- the case @c = Unit@, so 'GlassFl' is the join of 'Proarrow.Optic.Lens.LensFl' and
+-- 'Proarrow.Optic.Grate.GrateFl'. Like 'Proarrow.Optic.AffineTraversal.AffineTravFl' it has no
+-- witnesses of its own: its generating pairs are the product pair and the exponential pair, and
+-- 'glass' packs its single leg as their composite.
 --
 -- It sits directly below 'Proarrow.Optic.Setter.SetterFl': a glass sets, but it neither folds
 -- (grates do not) nor distributes an applicative (lenses do not).

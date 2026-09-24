@@ -4,8 +4,8 @@
 -- | The __setter__: the weakest write-side optic, applying a morphism to every focus ('SetterFl'
 -- \/ 'overP'). It sits at the write-only top of the subtyping lattice alongside
 -- 'Proarrow.Optic.Fold.Fold', so it has no builder of its own ('Proarrow.Optic.convert' a stronger
--- optic); its canonical eliminator is 'over' -- with 'set', '(%~)' and '(.~)' as shorthands -- via
--- the generic 'ExOptic' carrier.
+-- optic). Its canonical eliminator is 'over', via the generic 'ExOptic' carrier, with 'set',
+-- '(%~)' and '(.~)' as shorthands.
 --
 -- This module also hosts the 'SetterFl' instance of the tensor-action witness pair
 -- @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' a)@, shared by "Proarrow.Optic.MonoidalTraversal" and
@@ -31,17 +31,18 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
 
--- | A setter can only apply a pure function to the @a@'s it can see -- it can neither view nor
+-- | A setter can only apply a pure function to the @a@'s it can see. It can neither view nor
 -- fold them. A traversal is both a setter and a fold.
 type SetterFl :: forall {k}. FLAVOR k k
 class (Profunctor p, Profunctor q) => SetterFl (p :: k +-> k) (q :: k +-> k) where
   overP :: p s a -> q b t -> (a ~> b) -> (s ~> t)
 
 -- | Every /representable/ residual is a setter: map the focus through the residual functor with
--- 'repMap'. This needs only 'Representable' @t@ -- no 'Proarrow.Category.Monoidal.Distributive.Traversable' -- which is exactly why
+-- 'repMap'. This needs only 'Representable' @t@, not
+-- 'Proarrow.Category.Monoidal.Distributive.Traversable', which is why
 -- 'Proarrow.Optic.Setter.Setter' sits at the top of the lattice: functoriality of the residual is
--- all @over@ ever uses. Richer optics ('Proarrow.Optic.Lens.Lens', 'Proarrow.Optic.Traversal.Traversal', ...)
--- are this witness plus extra algebra on @t@.
+-- all @over@ ever uses. Richer optics ('Proarrow.Optic.Lens.Lens',
+-- 'Proarrow.Optic.Traversal.Traversal', ...) are this witness plus extra algebra on @t@.
 instance (Representable t) => SetterFl (t :: k +-> k) (RepCostar t) where
   overP l (RepCostar r) f = r . repMap @t f . index l
 

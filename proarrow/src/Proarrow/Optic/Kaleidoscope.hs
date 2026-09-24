@@ -1,35 +1,32 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | The __cotraversal__ and the __kaleidoscope__: two flavors with the same witnesses -- the
+-- | The __cotraversal__ and the __kaleidoscope__: two flavors with the same witnesses (the
 -- representable 'StrongDistributiveProfunctor's, i.e. applicative functors rendered as profunctors,
--- with their 'RepCostar's -- that differ in what they can be eliminated through.
+-- with their 'RepCostar's) that differ in what they can be eliminated through.
 --
--- Both are the mirror image of 'Proarrow.Optic.Traversal.MonTravFl'. All three rest on the same
--- square @t :.: p ~> p :.: t@ between a functor @t@ and a 'StrongDistributiveProfunctor' @p@ -- in
--- @Type@, @sequenceA :: t (f a) -> f (t a)@. A monoidal traversal fixes the traversable @t@ as the
--- witness and quantifies over the applicative carrier @p@; the optics here fix the applicative @p@
--- as the witness and quantify over the carriers it passes through:
+-- Both mirror 'Proarrow.Optic.Traversal.MonTravFl'. All three rest on the square
+-- @t :.: p ~> p :.: t@ between a functor @t@ and a 'StrongDistributiveProfunctor' @p@ (in @Type@,
+-- @sequenceA :: t (f a) -> f (t a)@). A monoidal traversal takes @t@ as the witness and quantifies
+-- over @p@; the optics here take @p@ as the witness and quantify over @t@.
 --
--- * A 'Cotraversal' passes through every 'Cotraversable' carrier -- the class whose law is that
---   square with @p@ /arbitrary/. That is the literal mirror of a traversal, and it holds for
---   finite shapes ('Proarrow.Category.Monoidal.Distributive.Cotraversable' @('RepCostar' t)@ for a
---   traversable representable @t@, 'Id', products, sums).
+-- * A 'Cotraversal' passes through every 'Cotraversable' carrier: the square for /arbitrary/ @p@.
+--   This holds for finite shapes ('Proarrow.Category.Monoidal.Distributive.Cotraversable'
+--   @('RepCostar' t)@ for a traversable representable @t@, 'Id', products, sums).
 --
--- * A 'Kaleidoscope' passes through every 'Kaleidoscopic' carrier -- the same square, but only for
---   /representable/ @p@, which is exactly the kaleidoscope of Clarke et al. (/Profunctor optics: a
---   categorical update/): the optic for the action of applicative functors,
---   @∫^{F applicative} C(S, F A) × C(F B, T)@, eliminated by @Traversable@ carriers through
---   @sequenceA@. In @Type@ this admits the unbounded shapes: @'Costar' t@ for a @Traversable t@,
---   the @Aggregating@ module of the literature. Those are not 'Cotraversable': a
---   list can only pass a strong distributive profunctor through by /knowing it is an applicative/
---   -- a generic structural recursion diverges on strict witnesses such as 'Rep'.
+-- * A 'Kaleidoscope' passes through every 'Kaleidoscopic' carrier: the square for /representable/
+--   @p@ only. This is the kaleidoscope of Clarke et al. (/Profunctor optics: a categorical update/),
+--   @∫^{F applicative} C(S, F A) × C(F B, T)@. In @Type@ it admits unbounded shapes such as
+--   @'Costar' t@ for a @Traversable t@ (the @Aggregating@ module of the literature). Those are not
+--   'Cotraversable': a generic structural recursion over a list diverges on strict witnesses such
+--   as 'Rep'.
 --
--- Every 'Cotraversable' carrier is 'Kaleidoscopic' ('cotravAct'), so @'KaleidoFl' <: 'CotravFl'@: the
--- kaleidoscope is the stronger flavor. Both sit below 'Proarrow.Optic.Setter.SetterFl' only --
--- one can @over@ through an applicative, but not fold out of one. 'Proarrow.Optic.PowerGrate.PowerGrateFl'
--- (tensor powers, the reader applicative) is a subflavor of 'KaleidoFl', and so is the tensor-action pair
--- for a /monoid/ residual (the writer applicative) -- which is how an algebraic lens for the list
--- monad composes with a kaleidoscope to a kaleidoscope again ('Proarrow.Optic.Action.ClassifyFl').
+-- Every 'Cotraversable' carrier is 'Kaleidoscopic' ('cotravAct'), so @'KaleidoFl' <: 'CotravFl'@:
+-- the kaleidoscope is the stronger flavor. Both sit below 'Proarrow.Optic.Setter.SetterFl' only,
+-- since one can @over@ through an applicative but not fold out of one.
+-- 'Proarrow.Optic.PowerGrate.PowerGrateFl' (the reader applicative) and the tensor-action pair for
+-- a monoid residual (the writer applicative) are subflavors of 'KaleidoFl', which is how an
+-- algebraic lens for the list monad composes with a kaleidoscope
+-- ('Proarrow.Optic.Action.ClassifyFl').
 module Proarrow.Optic.Kaleidoscope
   ( -- * The cotraversal
     CotravFl (..)
@@ -74,11 +71,12 @@ import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representabl
 -- * Carriers
 
 -- | The carriers of the kaleidoscope: profunctors that every representable
--- 'StrongDistributiveProfunctor' @p@ -- i.e. every applicative functor @p % -@ -- acts on by
+-- 'StrongDistributiveProfunctor' @p@ (i.e. every applicative functor @p % -@) acts on by
 -- application. Where a traversal's carriers are the applicatives themselves, a kaleidoscope's
--- carriers are the things applicatives can be sequenced through: every 'Cotraversable' profunctor
--- ('cotravAct'), and in @Type@ also @'Costar' t@ for any @Traversable t@: @'Costar' []@ directly,
--- and @'Costar' ('Prelude' t)@ for a @t@ that has no 'Proarrow.Functor.Functor' instance of its own.
+-- carriers are the things applicatives can be sequenced through. These are every 'Cotraversable'
+-- profunctor ('cotravAct'), and in @Type@ also @'Costar' t@ for any @Traversable t@ (@'Costar' []@
+-- directly, and @'Costar' ('Prelude' t)@ for a @t@ that has no 'Proarrow.Functor.Functor' instance
+-- of its own).
 type Kaleidoscopic :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor r) => Kaleidoscopic (r :: k +-> k) where
   kaleidoAct :: forall p a b. (Representable p, StrongDistributiveProfunctor (p :: k +-> k)) => r a b -> r (p % a) (p % b)
@@ -90,8 +88,8 @@ cotravAct
   => r a b -> r (p % a) (p % b)
 cotravAct rab = rab // case cotraverse (repUniv @p @a :.: rab) of x :.: y -> rmap (index y) x
 
--- | A 'Cotraversable' carrier, tagged as the 'Kaleidoscopic' carrier it also is. This is what makes
--- every kaleidoscope witness a cotraversal witness (the default 'cotravP').
+-- | A 'Cotraversable' carrier, tagged as the 'Kaleidoscopic' carrier it also is. With it every
+-- kaleidoscope witness is a cotraversal witness (the default 'cotravP').
 newtype CotravAs r a b = CotravAs {unCotravAs :: r a b}
 
 instance (Profunctor r) => Profunctor (CotravAs r) where
@@ -126,7 +124,7 @@ instance Kaleidoscopic (Costar []) where
 
 -- * The cotraversal
 
--- | The cotraversal flavor: pass any 'Cotraversable' carrier through the witness pair. The exact
+-- | The cotraversal flavor: pass any 'Cotraversable' carrier through the witness pair. The
 -- mirror of 'Proarrow.Optic.Traversal.MonTravFl', with witness and carrier swapped.
 type CotravFl :: forall {k}. FLAVOR k k
 class (SetterFl p q) => CotravFl (p :: k +-> k) (q :: k +-> k) where
@@ -139,8 +137,8 @@ type KaleidoFl :: forall {k}. FLAVOR k k
 class (CotravFl p q) => KaleidoFl (p :: k +-> k) (q :: k +-> k) where
   kaleidoP :: (Kaleidoscopic r) => p s a -> q b t -> r a b -> r s t
 
--- | The generating witnesses: any representable 'StrongDistributiveProfunctor' -- any applicative
--- functor -- with its 'RepCostar'; the legs are @s ~> p % a@ and @p % b ~> t@.
+-- | The generating witnesses: any representable 'StrongDistributiveProfunctor' (any applicative
+-- functor) with its 'RepCostar'. The legs are @s ~> p % a@ and @p % b ~> t@.
 instance (Representable p, StrongDistributiveProfunctor p) => CotravFl (p :: k +-> k) (RepCostar p)
 
 instance (Representable p, StrongDistributiveProfunctor p) => KaleidoFl (p :: k +-> k) (RepCostar p) where
@@ -157,8 +155,8 @@ instance
   where
   kaleidoP (Rep h) (Corep i) rab = dimap h i (kaleidoAct @_ @(Rep (ActionAt Tensor m)) rab)
 
--- | The exponential pair for a comonoid exponent: @m ~~> -@ is the reader applicative. This is
--- what makes every 'Proarrow.Optic.Grate.Grate' a kaleidoscope.
+-- | The exponential pair for a comonoid exponent: @m ~~> -@ is the reader applicative. So every
+-- 'Proarrow.Optic.Grate.Grate' is a kaleidoscope.
 instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (m :: k)) => CotravFl (Rep (Exp m) :: k +-> k) (Corep (Exp m))
 
 instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (m :: k)) => KaleidoFl (Rep (Exp m) :: k +-> k) (Corep (Exp m)) where

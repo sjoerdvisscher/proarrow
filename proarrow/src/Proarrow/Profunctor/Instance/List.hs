@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | The category @'LIST' k@ of lists of objects of @k@, whose arrows are componentwise lists of arrows;
+-- | The category @'LIST' k@ of lists of objects of @k@, whose arrows are componentwise lists of arrows.
 -- @'List' p@ lifts a profunctor @p@ componentwise to lists. Lists of objects are the arity-indexing used by
 -- promonoidal categories ("Proarrow.Category.Promonoidal") and by cones and cocones.
 module Proarrow.Profunctor.Instance.List where
@@ -95,37 +95,3 @@ instance (Representable p) => Representable (List p) where
 instance (DaggerProfunctor p) => DaggerProfunctor (List p) where
   dagger Nil = Nil
   dagger (Cons f fs) = Cons (dagger f) (dagger fs)
-
--- instance (MonoidalAction m k) => MonoidalAction m (LIST k) where
---   type Act (a :: m) (L '[] :: LIST k) = L '[]
---   type Act (a :: m) (L (b ': bs) :: LIST k) = L (Act a b ': UN L (Act a (L bs)))
---   withObAct @a @(L xs) r = case Str.sList @xs of
---     Str.SNil -> r
---     Str.SSing @x -> withObAct @m @k @a @x r
---     Str.SCons @x @(y ': ys) -> withObAct @m @(LIST k) @a @(L ys) (withObAct @m @(LIST k) @a @(L (y ': ys)) (withObAct @m @k @a @x r))
---   unitor @(L xs) = case Str.sList @xs of
---     Str.SNil -> Nil
---     Str.SSing @x -> Cons (unitor @m @k @x) Nil
---     Str.SCons @x @xs' -> mkCons (unitor @m @k @x) (unitor @m @(LIST k) @(L xs'))
---   unitorInv @(L xs) = case Str.sList @xs of
---     Str.SNil -> Nil
---     Str.SSing @x -> Cons (unitorInv @m @k @x) Nil
---     Str.SCons @x @xs' -> mkCons (unitorInv @m @k @x) (unitorInv @m @(LIST k) @(L xs'))
---   multiplicator @a @b @(L xs) = case Str.sList @xs of
---     Str.SNil -> Nil
---     Str.SSing @x -> Cons (multiplicator @m @k @a @b @x) Nil
---     Str.SCons @x @xs' -> mkCons (multiplicator @m @k @a @b @x) (multiplicator @m @(LIST k) @a @b @(L xs'))
---   multiplicatorInv @a @b @(L xs) = case Str.sList @xs of
---     Str.SNil -> Nil
---     Str.SSing @x -> Cons (multiplicatorInv @m @k @a @b @x) Nil
---     Str.SCons @x @xs' -> mkCons (multiplicatorInv @m @k @a @b @x) (multiplicatorInv @m @(LIST k) @a @b @(L xs'))
-
--- instance (Strong m p) => Strong m (List p) where
---   act _ Nil = Nil
---   act f (Cons g Nil) = Cons (act f g) Nil
---   act f (Cons g gs@Cons{}) = mkCons (act f g) (act f gs)
-
--- instance (Strong m (Id :: k +-> k)) => Strong m (Id :: LIST k +-> LIST k) where
---   act _ (Id Nil) = Id Nil
---   act f (Id (Cons g Nil)) = Id (Cons (act f g) Nil)
---   act f (Id (Cons g gs@Cons{})) = Id (mkCons (act f g) (act f gs))

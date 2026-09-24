@@ -4,7 +4,7 @@
 -- | The same topos laws as "Props.Finitary", but over a category with something going on in both
 -- variances: @'FINITARY' 'GRAPH' 'BOOL'@. A profunctor @'GRAPH' '+->' 'BOOL'@ is a graph for each
 -- object of the walking arrow together with a graph homomorphism between them, so this kind is the
--- arrow category of graphs -- and, being a presheaf category, an elementary topos like any other.
+-- arrow category of graphs. Being a presheaf category, it is an elementary topos like any other.
 module Props.Finitary.Graph (test) where
 
 import Data.List (genericIndex, genericLength)
@@ -58,8 +58,7 @@ type GHom = FINITARY GRAPH BOOL
 -- * Three graph homomorphisms to test over
 
 -- | The identity on the graph with one edge and two distinct endpoints. Nothing happens in the
--- 'BOOL' direction, and the two incidence maps disagree, which is what makes 'Src' and 'Tgt'
--- distinguishable at all.
+-- 'BOOL' direction, and the two incidence maps disagree, so 'Src' and 'Tgt' are distinguishable.
 type Same :: GRAPH +-> BOOL
 data Same a b where
   SameE :: (IsBool a) => Same a E
@@ -108,7 +107,7 @@ deriving instance Eq (Fold a b)
 deriving instance Show (Fold a b)
 
 -- | The 'FLS' layer has one element over each object, so an element there is determined by which
--- object the arrow lands on -- which is what makes the action on it forced.
+-- object the arrow lands on. So the action on it is forced.
 atLoop :: GraphHom b d -> Fold FLS d
 atLoop IdE = LoopE
 atLoop IdV = LoopV
@@ -144,7 +143,7 @@ instance Finitary Fold where
 instance (Ob a, Ob b) => TestingEqShow (Same a b)
 instance (Ob a, Ob b) => TestingEqShow (Fold a b)
 
--- | Spelled out rather than taken from 'elements', so that 'testFinitary' compares the numbering
+-- | Spelled out instead of taken from 'elements', so that 'testFinitary' compares the numbering
 -- against something independent of it, as in "Props.Finitary".
 instance (Ob a, Ob b) => TestableType (Same a b) where
   gen = case obj @b of
@@ -159,7 +158,7 @@ instance (Ob a, Ob b) => TestableType (Fold a b) where
     (Fls, IdV) -> optGen [LoopV]
 
 -- | The identity on the graph with one vertex and no edges. Empty over 'E', so hom-sets out of it
--- are the ones that go empty, and the properties discard rather than fail.
+-- are the ones that go empty, and the properties discard instead of failing.
 type Dot :: GRAPH +-> BOOL
 data Dot a b where
   DotV :: (IsBool a) => Dot a V
@@ -185,11 +184,11 @@ instance Finitary Dot where
 instance TestableProfunctor (Sub Prof :: CAT GHom)
 
 -- | As in "Props.Finitary": objects come from a fixed palette, and are displayed by their table of
--- sizes -- here the four numbers @[FLS\/E, FLS\/V, TRU\/E, TRU\/V]@.
+-- sizes, here the four numbers @[FLS\/E, FLS\/V, TRU\/E, TRU\/V]@.
 instance Testable GHom where
   showOb @(SUB p) = show (sizes @p)
 
-  -- 'Same' twice over gives a palette object of size 2 at every point: without one, nine of the
+  -- 'Same' twice over gives a palette object of size 2 at every point. Without one, nine of the
   -- ten non-empty hom-sets are singletons, where an equation between parallel arrows holds by
   -- type-correctness alone and the run asserts nothing. Built from the library's ':+:', whose
   -- 'Finitary' instance supplies the numbering.
@@ -197,8 +196,8 @@ instance Testable GHom where
 
   -- The internal hom enumerates candidate tables by brute force, so it cannot afford the object
   -- above: @sizes \@(Same :+: Same)@ is @[2,4,2,4]@, but the hom /into/ it is @[1024,256,1024,256]@,
-  -- and enumerating one such hom-set measured 13.6s and 36.6GB. 'genSomeSmall' is what
-  -- 'testClosed' draws from, so the two coexist.
+  -- and enumerating one such hom-set measured 13.6s and 36.6GB. 'testClosed' draws from
+  -- 'genSomeSmall', so the two coexist.
   genSomeSmall = genSomeDef @'[FIN Same, FIN Fold, FIN Dot, FIN TerminalProfunctor]
 
 -- | The sizes of @1 ~~> p@ and of @p@ over one object, which Yoneda says must agree.
@@ -220,9 +219,9 @@ test =
     , testPullbacks_ @GHom
     , testPushouts_ @GHom
     , -- 'GRAPH' is the only non-thin finite category here, so it is the only place
-      -- 'factorThrough' has anything to decide: in a thin one @f . h@ and @g@ are both the unique
+      -- 'factorThrough' has anything to decide. In a thin one @f . h@ and @g@ are both the unique
       -- arrow of their hom-set, so the check succeeds whenever the hom-set is non-empty. The sheaf
-      -- sites are both thin, which is why @Props.Sheaf@ cannot exercise this.
+      -- sites are both thin, so @Props.Sheaf@ cannot exercise this.
       testProperty "factorThrough decides, where there is a choice of arrow" $ do
         expect "Src factors through itself" (Just IdE) (factorThrough Src Src)
         expect "Tgt does not factor through Src" Nothing (factorThrough Tgt Src)
@@ -254,19 +253,19 @@ test =
         expect "Dot" [(0, 0), (1, 1), (0, 0), (1, 1)] (yoneda @Dot)
     , testProperty "the Yoneda embedding is numbered as a mixed radix" $ do
         -- The weight of every end here. Neither testable kind exercises its two factors together,
-        -- 'BOOL' being thin, but over the schema alone both can exceed one: @Yo V (OP E)@ has
+        -- 'BOOL' being thin, but over the schema alone both can exceed one. @Yo V (OP E)@ has
         -- @(c -> V)@ paired with @(E -> d)@, which is 2 * 1, 2 * 2, 1 * 1 and 1 * 2.
         expect
           "sizes"
           [2, 4, 1, 2]
           (sizes @(Yo V (OP E)))
-        -- and the index agrees with the enumeration where the radix actually carries -- which is the
-        -- invariant the internal hom depends on, since it tabulates families against one and reads
-        -- them back with the other
+        -- and the index agrees with the enumeration where the radix actually carries. The internal
+        -- hom depends on this invariant, since it tabulates families against one and reads them
+        -- back with the other
         expect "indices" [0, 1, 2, 3] (map (toIndex @(Yo V (OP E)) @E @V) (elements @(Yo V (OP E)) @E @V))
     , testProperty "the subobject classifier counts the sieves of the index category" $
         -- A sieve over @(a, b)@ is a set of pairs @(g : c -> a, h : b -> d)@ closed under
-        -- precomposition. Over 'FLS' there is one @g@; over 'TRU' there are two, ordered. Over 'V'
+        -- precomposition. Over 'FLS' there is one @g@, over 'TRU' there are two, ordered. Over 'V'
         -- there is one @h@; over 'E' there are three, with 'IdE' above 'Src' and 'Tgt'. Counting the
         -- down-closed subsets of each product gives 5, 2, 14 and 3.
         expect

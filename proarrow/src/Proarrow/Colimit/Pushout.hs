@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | Pushouts: 'HasPushouts' with 'pushout' in continuation-passing style -- the apex type depends on the
--- given arrows, so it is hidden behind an existential -- and 'factorPushout' for the universal property,
+-- | Pushouts: 'HasPushouts' with 'pushout' in continuation-passing style (the apex type depends on the
+-- given arrows, so it is hidden behind an existential), and 'factorPushout' for the universal property,
 -- defaulting to coproduct-then-coequalizer where those exist.
 module Proarrow.Colimit.Pushout where
 
@@ -31,7 +31,7 @@ class (CategoryOf k) => HasPushouts k where
   pushout = pushoutDefault
 
   -- | @factorPushout p1 p2 k1 k2@ requires @k1, k2@ to be a compatible cocone for whichever cospan
-  -- @p1, p2@ happen to be a pushout of -- @p1, p2@ need not literally be @pushout@'s own output.
+  -- @p1, p2@ happen to be a pushout of. @p1, p2@ need not literally be @pushout@'s own output.
   factorPushout :: forall (a :: k) b p q. a ~> p -> b ~> p -> a ~> q -> b ~> q -> p ~> q
   default factorPushout
     :: forall (a :: k) b p q. (HasCoequalizers k, HasCoproducts k) => a ~> p -> b ~> p -> a ~> q -> b ~> q -> p ~> q

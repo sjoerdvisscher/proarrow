@@ -27,8 +27,8 @@ instance (CategoryOf k) => Promonad (Cont (r :: k)) where
 
 -- | At @Type@ the continuation promonad is the continuation /monad/: @(b -> r) -> (a -> r)@ is
 -- @a -> (b -> r) -> r@ by flipping the arguments, so @'Cont' r '%' b@ is the double-negation
--- @(b -> r) -> r@. This is what gives @'KLEISLI' ('Cont' r)@ its initial object and coproducts,
--- which hold for the Kleisli category of a monad but not of an arbitrary promonad.
+-- @(b -> r) -> r@. This gives @'KLEISLI' ('Cont' r)@ its initial object and coproducts, which
+-- hold for the Kleisli category of a monad but not of an arbitrary promonad.
 instance Representable (Cont (r :: Type)) where
   type Cont r % b = (b -> r) -> r
   index (Cont f) a k = f k a

@@ -32,8 +32,8 @@ pattern Obj <- (objDicts -> (ObjDict, ObjDict))
 
 {-# COMPLETE Obj #-}
 
--- | Matching a profunctor value @p a b@ against 'Objs' brings @('Ob' a, 'Ob' b)@ into scope --
--- the pattern form of '(\\)', handy in function equations.
+-- | Matching a profunctor value @p a b@ against 'Objs' brings @('Ob' a, 'Ob' b)@ into scope. This
+-- is the pattern form of '(\\)', handy in function equations.
 pattern Objs :: (Profunctor p) => (Ob a, Ob b) => p a b
 pattern Objs <- (objDicts -> (ObjDict, ObjDict))
 

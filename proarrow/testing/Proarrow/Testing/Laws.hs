@@ -4,21 +4,17 @@
 
 -- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'testCategory',
 -- 'testMonoidal', 'testBinaryProducts', 'testClosed', and friends. Wiring a new category into a
--- test suite is a 'Testable' instance plus calls to these -- see proarrow's own test suite for
--- many examples. The checks are grouped by the structure they are about, from categories and
--- profunctors through limits and monoidal structure to toposes and sites.
+-- test suite is a 'Testable' instance plus calls to these; the @test/Props@ directory of
+-- proarrow's source repository has many examples.
 --
--- The prefix tells you the return type. A @test@ returns a 'TestTree', ready to drop into a
--- 'Test.Tasty.testGroup'; a @prop@ returns a @'Property' ()@, meant to be composed into a property
--- of your own -- at a chosen object, or under a witness the caller has just brought into scope.
--- Where both exist the @test@ one is the ready-made wrapper (e.g. 'testMonoid' around
--- 'propMonoid'), and is what to reach for unless you are assembling a property yourself.
+-- A @test@ returns a 'TestTree', ready for a 'Test.Tasty.testGroup'. A @prop@ returns a
+-- @'Property' ()@, to be composed into a property of your own. Where both exist (e.g. 'testMonoid'
+-- and 'propMonoid'), the @test@ one wraps the @prop@ one.
 --
 -- Many of these take an explicit witness that 'TestOb' is closed under the structure being tested
--- (e.g. that @'TestOb' (a '**' b)@ follows from @'TestOb' a@ and @'TestOb' b@), since in general a
--- category may restrict which objects are testable. The @_@-suffixed variant (e.g. 'testMonoidal_')
--- supplies that witness for free, and so carries a 'TestObIsOb' constraint: it applies exactly when
--- every object is a 'TestOb' -- typically a category that leaves 'TestOb' at its @'Ob'@ default.
+-- (e.g. that @'TestOb' (a '**' b)@ follows from @'TestOb' a@ and @'TestOb' b@). The @_@-suffixed
+-- variant (e.g. 'testMonoidal_') supplies it from a 'TestObIsOb' constraint, for categories where
+-- every object is a 'TestOb', typically those that leave 'TestOb' at its @'Ob'@ default.
 module Proarrow.Testing.Laws where
 
 import Control.Monad (unless, when)
@@ -100,8 +96,8 @@ import Proarrow.Testing
 --
 -- Every @prop@\/@test@ below that needs one takes it as an explicit rank-2 argument, since in
 -- general a category may make only some of its objects testable; the @_@-suffixed variants supply
--- the trivial witness. These synonyms only name the shapes -- spelled out, they are repeated
--- verbatim in forty-odd signatures.
+-- the trivial witness. These synonyms only name the shapes, which would otherwise be spelled out
+-- in forty-odd signatures.
 type WithTestOb k = forall (a :: k) r. (Ob a) => ((TestOb a) => r) -> r
 
 -- | @'TestOb'@ is closed under the tensor.
@@ -182,8 +178,8 @@ testCategory = testProperty "Category" $ do
   testEq "associativity" "(h . g) . f" ((h . g) . f) "h . (g . f)" (h . (g . f))
 
 -- | Laws of a dagger category: 'Dagger.dagger' is an identity-on-objects involution, and a
--- contravariant functor. Identity-on-objects is what makes this statable without any objecthood
--- witness -- the dagger of an @a '~>' b@ is a @b '~>' a@, never landing on a new object.
+-- contravariant functor. Being identity-on-objects, it needs no objecthood witness: the dagger of
+-- an @a '~>' b@ is a @b '~>' a@, never landing on a new object.
 testDagger :: forall k. (Testable k, Dagger.Dagger k) => TestTree
 testDagger = testProperty "Dagger" $ do
   Some @a <- genOb @k
@@ -211,8 +207,8 @@ testProfunctor = testProperty "Profunctor" (propProfunctor @p)
 propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => Property ()
 propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)
 
--- | The profunctor laws -- @'dimap' id id = id@, 'lmap' and 'rmap' commute, and 'dimap' respects
--- composition -- at elements drawn from the given generator, compared through the given
+-- | The profunctor laws (@'dimap' id id = id@, 'lmap' and 'rmap' commute, and 'dimap' respects
+-- composition) at elements drawn from the given generator, compared through the given
 -- 'TestingEqShow' witness. For a profunctor whose elements are not a 'TestableProfunctor' of their
 -- own, such as 'testClosed'\'s exponential.
 propProfunctorWith
@@ -276,10 +272,11 @@ propNaturalTransformation n = do
 
 -- | The numbering laws of a 'Finitary.Finitary' profunctor: 'Finitary.elements' has
 -- 'Finitary.size' entries and is numbered in order, and 'Finitary.fromIndex' recovers any element
--- from its index -- including elements the instance did not itself produce, which is what makes
--- 'Finitary.size' honest rather than merely self-consistent -- but only as far as the 'TestableType'
--- generator is independent of the instance: one defined as @optGen 'Finitary.elements'@ makes the
--- last law vacuous. The label names the profunctor, which nothing in its type can supply.
+-- from its index, including elements the instance did not itself produce. That last law checks
+-- that 'Finitary.size' is correct and not merely self-consistent, but only as far as the
+-- 'TestableType' generator is independent of the instance. One defined as
+-- @optGen 'Finitary.elements'@ makes it vacuous. The label names the profunctor, which nothing in
+-- its type can supply.
 testFinitary
   :: forall {j} {k} (p :: j +-> k)
    . (Testable j, Testable k, Finitary.Finitary p, TestableTypeP p)
@@ -295,8 +292,8 @@ testFinitary nm = testProperty ("Finitary " ++ nm) $ do
   unless (map (Finitary.toIndex @p @a @b) es == Finitary.indices n) $
     testFailed ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
   x <- genNamed @(p a b) "x"
-  -- That every index is below 'Finitary.size' is what the numbering claims and what a @Fin@-typed
-  -- index would have given for free; without it an undersized 'Finitary.size' goes unnoticed, since
+  -- The numbering claims every index is below 'Finitary.size', which a @Fin@-typed index would
+  -- have given for free. Without this check an undersized 'Finitary.size' goes unnoticed, since
   -- the other laws only ever look at the elements it admits.
   unless (Finitary.toIndex x < n) $
     testFailed ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
@@ -350,8 +347,8 @@ testFunctor_
 testFunctor_ = testFunctor @f (\r -> r)
 
 -- | Check the 'Representable' laws of @p@: 'index' and 'tabulate' are mutually inverse (@p a b@ is
--- naturally isomorphic to @a '~>' p '%' b@), and that iso is natural --
--- @'index' ('dimap' f g p) = 'repMap' g '.' 'index' p '.' f@ -- which is what pins 'repMap' down as
+-- naturally isomorphic to @a '~>' p '%' b@), and that iso is natural,
+-- @'index' ('dimap' f g p) = 'repMap' g '.' 'index' p '.' f@, which pins 'repMap' down as
 -- the functorial action of the representing functor @p '%' -@. The witness lifts 'TestOb' along
 -- @p '%' -@. Unlike the hom-level 'propAdjunction', this generates @p a b@ elements, so it needs @p@
 -- to be an element-generatable 'TestableProfunctor'.
@@ -391,7 +388,7 @@ testRepresentable_ = testRepresentable @p (\ @b r -> withObRep @p @b r)
 
 -- | Check the 'Corepresentable' laws of @p@, dual to 'propRepresentable': 'coindex' and 'cotabulate'
 -- are mutually inverse (@p a b@ is naturally isomorphic to @p '%%' a '~>' b@), and that iso is
--- natural -- @'coindex' ('dimap' f g p) = g '.' 'coindex' p '.' 'corepMap' f@, pinning down 'corepMap'
+-- natural, @'coindex' ('dimap' f g p) = g '.' 'coindex' p '.' 'corepMap' f@, pinning down 'corepMap'
 -- as the functorial action of the corepresenting functor @p '%%' -@. The witness lifts 'TestOb' along
 -- @p '%%' -@.
 propCorepresentable
@@ -431,11 +428,11 @@ testCorepresentable_
   => TestTree
 testCorepresentable_ = testCorepresentable @p (\ @a r -> withObCorep @p @a r)
 
--- | Check the adjunction laws of an 'Adjunction' @p@. An adjunction here is exactly a profunctor that
--- is both 'Representable' and 'Corepresentable' -- its left adjoint is @L = p '%%' -@ and its right
--- adjoint @R = p '%' -@ -- and it carries no laws of its own beyond theirs ('leftAdjunct'\/'rightAdjunct'
--- are just @'index' '.' 'cotabulate'@ and @'coindex' '.' 'tabulate'@). So this simply delegates to
--- 'propCorepresentable' (for @L@) and 'propRepresentable' (for @R@); the two witnesses lift 'TestOb'
+-- | Check the adjunction laws of an 'Adjunction' @p@. An adjunction here is a profunctor that is
+-- both 'Representable' and 'Corepresentable', with left adjoint @L = p '%%' -@ and right adjoint
+-- @R = p '%' -@. It carries no laws of its own beyond theirs ('leftAdjunct'\/'rightAdjunct' are just
+-- @'index' '.' 'cotabulate'@ and @'coindex' '.' 'tabulate'@), so this delegates to
+-- 'propCorepresentable' (for @L@) and 'propRepresentable' (for @R@). The two witnesses lift 'TestOb'
 -- along @L@ and @R@ respectively.
 propAdjunction
   :: forall {j} {k} (p :: j +-> k)
@@ -545,13 +542,10 @@ propReflectsEq label desc eqComposed k1 k2 = do
       "Failed " ++ label ++ ": (" ++ desc ++ ") = " ++ show eqComposed ++ " but (k1 == k2) = " ++ show eqDirect
 
 -- | Checks the equalizer laws: the equalizer arrow @e@ equalizes @f@ and @g@; any @h@ that factors
--- through @e@ (built here as @e . p@ for an arbitrary @p@, so the precondition holds by construction)
--- is correctly recovered by 'Equalizer.factorEqualizer'; and @e@ is mono (composing with it on the
--- left reflects equality).
+-- through @e@ (generated as @e . p@) is recovered by 'Equalizer.factorEqualizer'; and @e@ is mono.
 --
--- Unlike 'testBinaryProducts', the equalizer object isn't computed from @a@, @b@ by a type family --
--- it's an arbitrary object revealed at runtime, whose 'Ob' evidence 'Objs' recovers generically from
--- the equalizer arrow. So @withTestOb@ only ever needs to bridge that single recovered 'Ob' to 'TestOb'.
+-- The equalizer object is not computed by a type family, so its 'Ob' comes from the arrow via
+-- 'Objs', and @withTestOb@ only has to bridge that one 'Ob' to 'TestOb'.
 testEqualizers :: forall k. (Testable k, Equalizer.HasEqualizers k) => WithTestOb k -> TestTree
 testEqualizers withTestOb = testProperty "Equalizers" $ do
   Some @a <- genOb @k
@@ -566,7 +560,7 @@ testEqualizers withTestOb = testProperty "Equalizers" $ do
         factored = Equalizer.factorEqualizer ee h
     testEq "factorization" "e . factored" (ee . factored) "h" h
     -- The half the constructed @h@ cannot reach: an /arbitrary/ arrow that happens to equalize
-    -- must factor too. Without it an undersized equalizer -- one keeping too few elements --
+    -- must factor too. Without it an undersized equalizer (one keeping too few elements)
     -- satisfies everything above, since every arrow it is ever handed was built through it.
     m <- genNamed @(z ~> a) "m"
     equalizes <- eqP (f . m) (g . m)
@@ -718,7 +712,7 @@ testEpiMonoFactorization_ = testEpiMonoFactorization @k (\r -> r)
 
 -- | The monoidal laws, split so that each half only establishes the objecthood it uses: the
 -- unitors and the triangle need seven instances of @withTestOb2@, the associator and the pentagon
--- the other twelve. Stated as one chain they were an undifferentiated eighteen-deep prologue.
+-- the other twelve.
 testMonoidal :: forall k. (Testable k, M.Monoidal k, TestOb (M.Unit @k)) => WithTestOb2 k -> TestTree
 testMonoidal withTestOb2 =
   testGroup
@@ -837,15 +831,11 @@ testSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $ do
 testSymMonoidal_ :: forall k. (Testable k, M.SymMonoidal k, TestObIsOb k) => TestTree
 testSymMonoidal_ = testSymMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
 
--- | Laws of a lax monoidal profunctor: @'M.**'@ is natural in both arguments and coherent with the
--- unitors and the associator. This is the law of 'M.MonoidalProfunctor', which is a property of a
--- profunctor, not of a kind -- so it applies to any monoidal profunctor, and to a monoidal
--- /category/ by taking @p = 'Hom' k@.
---
--- At @'Hom' k@, 'dimap' is pre- and postcomposition, so naturality reads
--- @(g ** g\') . (f ** f\') == (g . f) ** (g\' . f\')@: the bifunctoriality of the tensor, saying the
--- two arrows are combined rather than sequenced. A /premonoidal/ @**@ satisfies every coherence law
--- in 'testMonoidal' and fails exactly this one.
+-- | Laws of a lax monoidal profunctor ('M.MonoidalProfunctor'): @'M.**'@ is natural in both
+-- arguments and coherent with the unitors and the associator. For a monoidal category take
+-- @p = 'Hom' k@; there naturality is bifunctoriality of the tensor,
+-- @(g ** g\') . (f ** f\') == (g . f) ** (g\' . f\')@, which a /premonoidal/ @**@ fails while
+-- passing 'testMonoidal'.
 propMonoidalProfunctor
   :: forall {j} {k} (p :: j +-> k)
    . (M.MonoidalProfunctor p, TestableProfunctor p, TestOb (M.Unit @k), TestOb (M.Unit @j))
@@ -937,8 +927,8 @@ testCopyDiscard withCoco withTestOb2 = testProperty "CopyDiscard" $ do
 
 -- | The cocommutative comonoid on each object is supplied by 'CopyDiscard.CopyDiscard' itself (its
 -- @'Monoid.Supplies' 'Monoid.CocommutativeComonoid' k@ superclass), so only @'Ob' a@ has to be
--- recovered from @'TestOb' a@ -- through 'obFromTestOb', because with that quantified superclass in
--- scope GHC no longer finds the @TestOb a => Ob' a => Ob a@ route on its own.
+-- recovered from @'TestOb' a@. That goes through 'obFromTestOb', because with that quantified
+-- superclass in scope GHC does not find the @TestOb a => Ob' a => Ob a@ route on its own.
 testCopyDiscard_ :: forall k. (Testable k, CopyDiscard.CopyDiscard k, TestObIsOb k) => TestTree
 testCopyDiscard_ =
   testCopyDiscard @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
@@ -1198,7 +1188,7 @@ testStarAutonomous_ =
 -- | Laws of a compact closed category: 'CC.distribDual'\/'CC.combineDual' establish an
 -- isomorphism @Dual (a ** b) ≅ Dual a ** Dual b@ and 'CC.dualUnit'\/'CC.dualUnitInv' establish
 -- @Dual Unit ≅ Unit@ (i.e. 'SA.Dual' is a strong monoidal functor); and the yanking\/zigzag
--- identities witness that @a@ and @Dual a@ are genuinely dual to one another via
+-- identities witness that @a@ and @Dual a@ are dual to one another via
 -- 'CC.dualityUnit'\/'CC.dualityCounit'.
 testCompactClosed
   :: forall k
@@ -1362,8 +1352,8 @@ propCocommutativeComonoid withTestOb2 = do
 -- | Check that the object @m@ is a special commutative 'Hypergraph.Frobenius' algebra: it is a
 -- 'Monoid.CommutativeMonoid' (via 'propCommutativeMonoid') and a 'Monoid.CocommutativeComonoid'
 -- (via 'propCocommutativeComonoid'), and satisfies speciality (@mappend . comult = id@) and the
--- Frobenius condition. This is the structure a 'Hypergraph.Hypergraph' category supplies -- @'testHypergraph'@
--- samples an object and delegates here.
+-- Frobenius condition. A 'Hypergraph.Hypergraph' category supplies this structure, and
+-- @'testHypergraph'@ samples an object and delegates here.
 propFrobenius
   :: forall {k} m
    . ( Testable k
@@ -1473,28 +1463,22 @@ testFrobenius_ = testFrobenius @m (\ @a @b r -> M.withOb2 @k @a @b r)
 
 -- * Toposes
 
--- | Checks the subobject classifier. Four laws, of which the first is the defining one for the
--- class\'s primitive:
+-- | Checks the subobject classifier @'Topos.Omega'@, the object of truth values: a map into it is a
+-- predicate, and each mono @m@ has one classifying map, 'Topos.true' on @m@ and nowhere else. The
+-- laws quantify over generalized elements (arrows into the object):
 --
--- * @'Topos.classifyGraph' f@ applied to a pair @(x, y)@ is 'Topos.true' exactly when @y@ is
---   @f . x@. A generalized element factors through the graph @\<id, f\>@ precisely when it lies on
---   it, so this is the pullback condition for that square, not merely a commuting check. The
---   @f = 'id'@ case is 'Topos.isEq', so equality testing in the topos is pinned down too.
--- * Distinct arrows get distinct classifiers. Full uniqueness -- that the classifying map is the
---   /only/ one making the square a pullback -- is not checkable from generalized elements one at a
---   time; this injectivity is its testable consequence.
--- * @'Topos.classifyKernelPair' f@ is true at @(x, x\')@ exactly when @f@ identifies the two, which
---   is decidable here and so checked in both directions.
--- * @'Topos.classifyImage' f@ is true exactly on the image of @f@, in both directions. The
---   converse is the pullback property proper: an element the classifier calls true must factor
---   through the image mono, and 'Pullback.factorPullback' produces that factorization -- the cone
---   being @(m, 'Terminal.terminate')@ over the cospan @('Topos.classifyImage' f, 'Topos.true')@.
---   This is the one law that says the classifier classifies /monos/, which is what makes it a
---   subobject classifier rather than just a map into 'Topos.Omega'.
+-- * @'Topos.classifyGraph' f@ is 'Topos.true' at @(x, y)@ iff @y = f . x@. This is the pullback
+--   condition for the graph @\<id, f\>@. At @f = 'id'@ it is 'Topos.isEq', so equality testing is
+--   pinned down too.
+-- * Distinct arrows get distinct classifiers, the testable consequence of the classifying map
+--   being unique.
+-- * @'Topos.classifyKernelPair' f@ is true at @(x, x\')@ iff @f@ identifies them, in both directions.
+-- * @'Topos.classifyImage' f@ is true on the image of @f@ and nowhere else: every element it calls
+--   true factors through the image mono, by 'Pullback.factorPullback'. This is the law that
+--   separates a subobject classifier from an arbitrary map into 'Topos.Omega'.
 --
--- All of these quantify over generalized elements drawn from the 'Testable' palette, which is
--- sound exactly when that palette generates -- true for the concrete finite categories, not for a
--- presheaf topos.
+-- The elements come from the 'Testable' palette, which is sound iff that palette generates: true
+-- for the concrete finite categories, not for a presheaf topos.
 testSubobjectClassifier
   :: forall k
    . ( Testable k
@@ -1530,8 +1514,8 @@ testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ d
   let chi = Topos.classifyImage f
   onImage <- eqP (chi . (f . x)) (Terminal.const Topos.true)
   expect "classifyImage f is true on the image of f" True onImage
-  -- The converse, and the law that makes this a /subobject/ classifier: anything the classifier
-  -- calls true factors through the image mono. Mirrors the existence half of 'testEqualizers'.
+  -- The converse, which makes this a /subobject/ classifier: anything the classifier calls true
+  -- factors through the image mono. Mirrors the existence half of 'testEqualizers'.
   case Topos.factorize f of
     (:.:) _ m@Objs -> do
       w <- genNamed @(z ~> b) "w"
@@ -1575,7 +1559,7 @@ testNegation =
 -- | The three equations a Lawvere–Tierney topology satisfies, for an arrow
 -- @j :: 'Topos.Omega' '~>' 'Topos.Omega'@: it fixes @true@, is idempotent, and preserves meets.
 --
--- Such a @j@ is the same data as a Grothendieck topology -- the covering sieves are the ones @j@
+-- Such a @j@ is the same data as a Grothendieck topology: the covering sieves are the ones @j@
 -- sends to @true@. 'FinSheaf.lawvereTierney' is the @j@ a coverage induces, so this is how a
 -- coverage's stability and composition get checked, without quantifying over arrows the coverage
 -- was never handed.
@@ -1590,7 +1574,7 @@ testLawvereTierney withTestObProd j =
     "Lawvere-Tierney topology"
     [testProperty name (law j) | (name, law) <- lawvereTierneyLaws @k (\ @a @b r -> withTestObProd @a @b r)]
 
--- | The three laws of 'testLawvereTierney', by name, for an arrow given later -- shared by it and
+-- | The three laws of 'testLawvereTierney', by name, for an arrow given later. Shared by it and
 -- 'testLawvereTierneyFamily'.
 lawvereTierneyLaws
   :: forall k
@@ -1654,15 +1638,12 @@ testLawvereTierneyFamily_ name =
 -- * Sites and sheaves
 
 -- | The three laws a listable, stable coverage owes, as one group: 'testStableSite',
--- 'testGeneratedSieveIsSieve' and 'testDenseIsCovering'. Every site wants all three, and running
--- them through one call is what stops a site quietly acquiring only two.
+-- 'testGeneratedSieveIsSieve' and 'testDenseIsCovering'. Checking a site starts here.
 --
--- This is where checking a site starts. What is built on the coverage is checked by the rest of
--- this section -- 'testGluesBack' and 'testGluesBackAt' for the sheaf condition at a profunctor,
--- 'testEqualizersAreSheaves' for the category of sheaves, 'testSheafification' (with
--- 'testPlusFixes') for the reflector -- and by 'testLawvereTierney', under Toposes, for the
--- topology the coverage generates, which is where 'Sheaf.HasFiniteCovers'\'s Composition law is
--- checked.
+-- The rest of this section checks what is built on the coverage: 'testGluesBack' and
+-- 'testGluesBackAt' the sheaf condition, 'testEqualizersAreSheaves' the category of sheaves, and
+-- 'testSheafification' (with 'testPlusFixes') the reflector. 'testLawvereTierney', under Toposes,
+-- checks the generated topology and with it 'Sheaf.HasFiniteCovers'\'s Composition law.
 testSiteLaws
   :: forall t j k
    . (Sheaf.StableSite t k, Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k)
@@ -1672,25 +1653,17 @@ testSiteLaws =
     "site laws"
     [testStableSite @t @k, testGeneratedSieveIsSieve @t @j @k, testDenseIsCovering @t @j @k]
 
--- | 'Sheaf.StableSite'\'s law, which is 'Sheaf.Site'\'s Stability turned into an operation: the
--- cover 'Sheaf.pullbackCover' hands back really is the given one pulled back. Each of its legs
--- must factor the arrow through a leg of the original --
--- @f '.' 'Sheaf.legArrow' l' = 'Sheaf.legArrow' l '.' u@ -- and the instance supplies both the leg
--- @l@ and the factor @u@, so the composite is what gets checked. And it must be a cover: a
--- 'Sheaf.Cover' value is only a claim, and one built rather than listed -- as
--- 'Proarrow.Category.Sheaf.Joins' builds its meets -- is checked here to generate a covering sieve.
--- Covering, not dense, so that the check does not lean on the covers composing; and at @j ~ ()@,
--- since whether a sieve covers does not depend on @j@.
+-- | 'Sheaf.StableSite'\'s law: pulling a cover back along @f@ gives a cover. For every leg @l'@ of
+-- the cover 'Sheaf.pullbackCover' returns, the instance names a leg @l@ of the original and a
+-- factor @u@ with @f '.' 'Sheaf.legArrow' l' = 'Sheaf.legArrow' l '.' u@. This checks that
+-- equation, and that the pulled-back legs generate a covering sieve, which matters for covers that
+-- are built instead of listed, like the meets of 'Proarrow.Category.Sheaf.Joins'. Covering is
+-- checked instead of dense so that the check does not assume covers compose. It runs at
+-- @j ~ ()@, since whether a sieve covers does not depend on @j@.
 --
--- __On a thin site this is vacuous.__ Where a hom-set has at most one arrow, @f@ and
--- @'Sheaf.legArrow' l '.' u@ are equal as soon as they have the same type, so the type checker
--- rejects every wrong factorisation before this runs -- naming the other leg in
--- @Props.Sheaf@\'s @Overlapping@ instance is a type error, not a test failure. So the
--- poset coverages run it for nothing, and it bites only where two legs can share a source.
--- @Examples.Graph.ByEnds@ is one, where the legs are two constructors of the same type and naming
--- the wrong one compiles; 'Proarrow.Category.Sheaf.ByElements' is the other, where a leg is named
--- by the element it carries, so a wrong instance takes a wrong /element/ rather than a wrong
--- constructor -- harder to write by accident, and caught here just the same.
+-- On a thin site (at most one arrow between two objects) the equation holds as soon as it
+-- typechecks. It bites only where two legs share a source and target: the ends of an edge in the
+-- graph schema @E ⇉ V@, or 'Proarrow.Category.Sheaf.ByElements', whose legs are named by elements.
 testStableSite
   :: forall t k. (Sheaf.StableSite t k, Sheaf.HasFiniteCovers t k, Finitary.FiniteCat k) => TestTree
 testStableSite =
@@ -1728,14 +1701,11 @@ propFactorsThroughLeg f (Sheaf.Factors l u) =
       (Finitary.toIndex @(Hom k) @x @a f)
       (Finitary.toIndex (Sheaf.legArrow l . u))
 
--- | A cover's generated sieve really is a sieve -- closed under composing on either side, which is
--- what 'FinTopos.closedUnder' decides.
---
--- The closure holds for any coverage, lawful or not -- membership ignores the covariant argument
--- and is closed under precomposition -- so this is not a check on the 'Sheaf.Site'. It is a check
--- on 'Finitary.factorsThrough' and on the hom-profunctor's 'Finitary.elements', which every verdict
--- in "Proarrow.Category.Enriched.Finitary.Sheaf" is read off. An argument-swapped
--- 'Finitary.factorsThrough' is the mistake it catches.
+-- | A cover's generated sieve (the arrows that factor through one of its legs) is a sieve: closed
+-- under composing on either side, as 'FinTopos.closedUnder' decides. That holds for any coverage,
+-- lawful or not, so this checks 'Finitary.factorsThrough' and the hom-profunctor's
+-- 'Finitary.elements', which every verdict in "Proarrow.Category.Enriched.Finitary.Sheaf" is read
+-- off. It catches, for instance, an argument-swapped 'Finitary.factorsThrough'.
 testGeneratedSieveIsSieve
   :: forall t j k. (Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
 testGeneratedSieveIsSieve =
@@ -1752,7 +1722,7 @@ testGeneratedSieveIsSieve =
           ]
       )
 
--- | On a category with pullbacks -- which give the Ore condition -- the topology 'Sheaf.Atomic'
+-- | On a category with pullbacks (which give the Ore condition), the topology 'Sheaf.Atomic'
 -- generates is the double-negation one: 'FinSheaf.lawvereTierney' and 'Topos.doubleNegation' are
 -- the same arrow, one computed by closing sieves and one from the internal logic. At @j ~ ()@
 -- only: over a non-trivial @j@, @¬¬@ is the dense topology along @j@ as well, while the coverage
@@ -1778,7 +1748,6 @@ testAtomicIsDoubleNegation =
 -- that is when its 'FinSheaf.closure' is the maximal sieve. Two independent computations of one
 -- fact: 'FinSheaf.isCovering' reads it off the coverage, 'FinSheaf.closure' off the induced
 -- topology.
--- The test runs both at every sieve.
 testDenseIsCovering
   :: forall t j k. (Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
 testDenseIsCovering =
@@ -1793,21 +1762,14 @@ testDenseIsCovering =
           ]
       )
 
--- | The uniqueness half of the sheaf condition at one cover: an element at the covered object is
--- the gluing of its own restrictions.
+-- | The uniqueness half of the sheaf condition at one cover: an element @x@ at the covered object
+-- is the gluing of its own restrictions to the legs.
 --
--- The restriction half is not here, because a generic version of it would assert nothing. It needs
--- a matching family, and the only family this code can build is an element's own restrictions --
--- at which restriction reads @'lmap' ('Sheaf.legArrow' g) ('Sheaf.glue' c (restrictions of x)) =
--- 'lmap' ('Sheaf.legArrow' g) x@, which is uniqueness with @'lmap' ('Sheaf.legArrow' g)@ applied to
--- both sides. A family not of that shape has to come from the site, so @Props.Sheaf@ and
--- @Props.Free@ each write their restriction test by hand. (Comparing @p x b@ would also want
--- @'TestOb' x@ for the existential source of @'Sheaf.Leg' t k a c x@, which 'Sheaf.legArrow'
--- recovers only as @'Ob' x@ -- free at a 'TestObIsOb' kind, not in general.)
---
--- At a finite site neither half needs a property test:
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.isSheaf' says restriction is a /bijection/ onto the
--- matching families, which is both halves at once.
+-- The other half (a glued element restricts back to the family) has no generic test: the only
+-- matching family generic code can build is an element's own restrictions, and there it follows
+-- from uniqueness. Other families come from the site, so that test is written per site. At a
+-- finite site 'Proarrow.Category.Enriched.Finitary.Sheaf.isSheaf' decides both halves at once, by
+-- checking that restriction is a bijection onto the matching families.
 propGluesBack
   :: forall {j} {k} t (p :: j +-> k) (a :: k) (b :: j) c
    . (Sheaf.Sheaf t p, Ob a, Ob b, TestingEqShow (p a b))
@@ -1823,7 +1785,7 @@ propGluesBack c x =
     x
 
 -- | 'propGluesBack' at every cover of a random element's object. Named for the law and not for the
--- class, since it is half of what 'Sheaf.Sheaf' asks for -- see 'propGluesBack' for the other half.
+-- class, since it is half of what 'Sheaf.Sheaf' asks for (see 'propGluesBack' for the other half).
 --
 -- The object is drawn from those that actually have a cover: on a site where only some objects are
 -- covered, drawing uniformly would leave most runs asserting nothing while reporting successes.
@@ -1865,20 +1827,20 @@ testEqualizersAreSheaves = testProperty "equalizers are sheaves" do
   g <- genNamed @(a ~> b) "g"
   Equalizer.equalize f g \(Sub (Prof @e _)) -> expect "isSheaf of the equalizer" True (FinSheaf.isSheaf @t @e)
 
--- | Sheafification is the reflector into the sheaves, decided at a finite site. For a finitary @p@
--- and a sheaf @q@:
+-- | Sheafification is the reflector into the sheaves: it turns a presheaf @p@ into the closest
+-- sheaf, and every map from @p@ to a sheaf factors uniquely through it. For a finitary @p@ and a
+-- sheaf @q@, decided at a finite site:
 --
 -- * @'FinSheaf.unitPlus'@ is natural;
 -- * @'FinSheaf.Sheafify' t p@ is a sheaf, by 'FinSheaf.isSheaf';
--- * one plus fixes @q@ ('testPlusFixes');
--- * it is left adjoint to inclusion. The hom-sets of @'FinTopos.FINITARY' j k@ are finitary, so
---   this is a count -- as many maps @'FinSheaf.Sheafify' t p ~> q@ as maps @p ~> q@ -- made a
---   bijection by 'FinSheaf.extendSheafify': extending every map @p ~> q@ gives every map out of
---   the sheafification exactly once, and restricting an extension along the unit gives the map back.
+-- * one plus construction fixes @q@ ('testPlusFixes');
+-- * maps @'FinSheaf.Sheafify' t p ~> q@ correspond to maps @p ~> q@. The hom-sets of
+--   @'FinTopos.FINITARY' j k@ are finite, so this is a count, made a bijection by
+--   'FinSheaf.extendSheafify': extending every map @p ~> q@ gives every map out of the
+--   sheafification once, and restricting an extension along the unit gives the map back.
 --
--- The last is the strongest thing the finite setting lets one say, and it is what makes
--- 'FinSheaf.extendPlus'\'s choice of cover safe to leave unspecified: any other choice would show
--- up here as an extension that is not one of the maps.
+-- This also makes 'FinSheaf.extendPlus'\'s choice of cover safe to leave unspecified: another
+-- choice would show up here as an extension that is not one of the maps.
 testSheafification
   :: forall t {j} {k} (p :: j +-> k) (q :: j +-> k)
    . ( Sheaf.HasFiniteCovers t k
@@ -1918,8 +1880,8 @@ testSheafification =
     ]
 
 -- | One plus leaves a sheaf as it was: 'FinSheaf.unitPlus' is a bijection at every pair of objects.
--- Stated for any finitary @q@ -- the property needs no 'Sheaf.Sheaf' instance, only 'FinSheaf.isSheaf'
--- to be true of @q@ -- so it also serves at a coverage no profunctor has an instance for, such as the
+-- Stated for any finitary @q@ (the property needs no 'Sheaf.Sheaf' instance, only 'FinSheaf.isSheaf'
+-- to be true of @q@), so it also serves at a coverage no profunctor has an instance for, such as the
 -- trivial one, which fixes everything.
 testPlusFixes
   :: forall t {j} {k} (q :: j +-> k)

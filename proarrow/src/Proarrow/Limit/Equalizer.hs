@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | Equalizers: 'HasEqualizers' with 'equalize' in continuation-passing style -- the equalizer object's
--- type depends on the given arrows, so it is hidden behind an existential -- and 'factorEqualizer' for
+-- | Equalizers: 'HasEqualizers' with 'equalize' in continuation-passing style (the equalizer object's
+-- type depends on the given arrows, so it is hidden behind an existential) and 'factorEqualizer' for
 -- the universal property.
 module Proarrow.Limit.Equalizer where
 
@@ -29,11 +29,11 @@ instance HasEqualizers () where
   equalize Unit Unit k = k Unit
   factorEqualizer Unit Unit = Unit
 
--- | @factorEqualizer incl h@ requires @h@'s image to lie within @incl@'s -- i.e. (since @BOOL@ is the
--- 2-element total order @FLS <= TRU@) that @h@'s domain is @<=@ @incl@'s domain. That's always true
--- when @incl@ actually came from 'equalize' (which only ever produces the identity), but 'BOOL' being
--- totally ordered lets us just case on the (at most 5 reachable, since both share a codomain) shapes
--- directly instead of appealing to that.
+-- | @factorEqualizer incl h@ requires @h@'s image to lie within @incl@'s. Since @BOOL@ is the
+-- 2-element total order @FLS <= TRU@, that means @h@'s domain is @<=@ @incl@'s domain. That's always
+-- true when @incl@ came from 'equalize' (which only ever produces the identity), but since 'BOOL' is
+-- totally ordered we can case on the shapes directly (at most 5 are reachable, since both share a
+-- codomain).
 instance HasEqualizers BOOL where
   equalize = thinEqualize
   factorEqualizer Fls Fls = Fls
@@ -56,8 +56,8 @@ thinEqualize :: forall {k} (a :: k) b r. (Thin k) => a ~> b -> a ~> b -> (forall
 thinEqualize Objs _ k = k id
 
 -- | Standalone helper (not a class method) usable as the @default@ implementation of
--- 'Proarrow.Limit.Pullback.pullback' wherever @(HasEqualizers k, HasProducts k)@ happen to hold --
--- not needed by (or required of) every 'Proarrow.Limit.Pullback.HasPullbacks' instance.
+-- 'Proarrow.Limit.Pullback.pullback' wherever @(HasEqualizers k, HasProducts k)@ happen to hold.
+-- Not every 'Proarrow.Limit.Pullback.HasPullbacks' instance needs it or is required to have it.
 pullbackDefault
   :: forall {k} (o :: k) a b r
    . (HasEqualizers k, HasProducts k) => a ~> o -> b ~> o -> (forall p. p ~> a -> p ~> b -> r) -> r
@@ -67,7 +67,7 @@ pullbackDefault f@Objs g@Objs k = equalize (f . fst @k @a @b) (g . snd @k @a @b)
 -- @f . k1 == g . k2@ for whichever cospan @p1, p2@ are a pullback of), produces the unique
 -- @q ~> p@ through which the cone factors. Standalone helper (not a class method), usable as the
 -- @default@ implementation of 'Proarrow.Limit.Pullback.factorPullback' wherever
--- @(HasEqualizers k, HasProducts k)@ happen to hold, exactly like 'pullbackDefault' itself.
+-- @(HasEqualizers k, HasProducts k)@ happen to hold, like 'pullbackDefault' itself.
 factorPullbackDefault
   :: forall {k} (a :: k) b p q
    . (HasEqualizers k, HasProducts k)

@@ -1,17 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | The laws of "Proarrow.Category.Instance.Paths", exercised on a schema that carries equations:
--- the Employee and Department schema of Fong and Spivak, /Seven Sketches in Compositionality/
--- (arXiv:1803.05316), section 3.1.
+-- | The laws of "Proarrow.Category.Instance.Paths" on a schema with equations: the Employee and
+-- Department schema of Fong and Spivak, /Seven Sketches in Compositionality/ (arXiv:1803.05316),
+-- section 3.1.
 --
--- A quiver with no equations generates a free category and the laws hold structurally. The
--- interesting case is a quiver with a 'Rewrite' instance, where composition normalises and
--- associativity holds only if that rewriting system is confluent. Nothing checks confluence, so
--- 'testCategory' below is what stands between a plausible-looking set of equations and a category
--- that is not one.
---
--- The instance then carries the second, separate obligation: that the data satisfies the
--- constraints the equations state. See the last two properties.
+-- With a 'Rewrite' instance, composition normalises and associativity holds only if the rewriting
+-- system is confluent. Nothing else checks confluence, so 'testCategory' below does. The last two
+-- properties check the separate obligation that the data satisfies the equations.
 module Props.Paths (test) where
 
 import Control.Monad (unless)
@@ -55,7 +50,7 @@ type Department' = D DepartmentP :: HR'
 type Str' = D StrP :: HR'
 
 -- | A singleton for the points. 'memberIndex' already refines a point to the one it is, but
--- positionally -- @There (There Here)@ says nothing about which point that is -- so the three
+-- positionally (@There (There Here)@ says nothing about which point that is), so the three
 -- positions get names, as pattern synonyms rather than as a separate type with a dispatcher.
 type SHR (a :: HR') = Member a (Objects HR')
 
@@ -215,7 +210,7 @@ test =
           (testFailed "a manager followed by where they work should be just where they work")
     , -- Normalisation makes the equations hold of the /schema/ whatever the data says, so this is
       -- not implied by the test above: it is the separate, unchecked obligation that the instance
-      -- satisfies the constraints, which is the property the whole approach is sold on.
+      -- satisfies the constraints, and that is the property the approach is sold on.
       testProperty "and the instance satisfies them, which is a separate matter" $ do
         unless
           (all (\d -> staffStep WorksIn (staffStep Secr d) == d) allDepartments)

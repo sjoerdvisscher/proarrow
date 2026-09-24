@@ -56,17 +56,13 @@ instance (ActFl act f g, ActFl act f' g') => ActFl act (f :.: f') (g' :.: g) whe
         withOb2 @_ @x @y $
           k @(x ** y) (composeActs @act @x @y @a f1 f2) (decomposeActs @act @x @y @b g2 g1)
 
--- | An Eilenberg-Moore algebra for the monad @m@ -- a representable 'Promonad' on @k@, acting as
--- the functor @m '%' -@ ("Proarrow.Promonad"): a structure map @m % a ~> a@, coherent with the
--- monad's unit and multiplication. The free algebras @m % s@ are the ones an algebraic lens is
--- built from ('algebraicLens').
+-- | An Eilenberg-Moore algebra for the monad @m@ (a representable 'Promonad' on @k@, acting as
+-- the functor @m '%' -@, see "Proarrow.Promonad"): a structure map @m % a ~> a@, coherent with the
+-- monad's unit and multiplication. The free algebras @m % s@ are the ones 'algebraicLens' uses.
 --
--- There are deliberately no instances for the unit or for products of algebras, and there cannot be:
--- @Unit@ and @('**')@ are type families, which may not head an instance. That is why 'withAlgP'
--- passes the structure map as a /value/ -- the composition instance pairs two algebras with
--- 'unparRep' and the identity witness supplies the unit one with 'unpar0Rep', neither needing an
--- 'Algebra' instance. A witness pair whose residual is the unit is the identity optic up to the
--- unitors, so nothing is lost.
+-- @Unit@ and @('**')@ are type families, which may not head an instance, so there are no
+-- instances for the unit or for products of algebras. 'withAlgP' passes the structure map as a
+-- value instead, and the witnesses combine those with 'unparRep' and 'unpar0Rep'.
 type Algebra :: forall {k}. (k +-> k) -> k -> Constraint
 class (Monad m, Ob a) => Algebra (m :: k +-> k) (a :: k) where
   algebra :: m % a ~> a
@@ -76,15 +72,13 @@ instance (Monad (Star m), Ob (m a), Ob a) => Algebra (Star m) (m a) where
   algebra = bind @(Star m) id
 
 -- | The algebraic-lens flavor (Riley, /Categories of Optics/; Clarke et al.): the tensor-action
--- witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' x)@ of "Proarrow.Optic.MonoidalLens" --
--- legs @s ~> x ** a@ and @x ** b ~> t@ -- with the residual @x@ an 'Algebra' for @m@. The flavor
--- itself asks only that the functor @m '%'@ be oplax monoidal, enough to pair and discard residuals;
--- the monad structure arrives with each 'Algebra' witness, not with the flavor.
--- The algebra is what lets @put@ see a whole @m@-computation of sources rather than one:
--- 'classifyOf' collapses @m % s@ to a single residual through it. Every algebraic lens is a
--- 'Proarrow.Optic.MonoidalLens.MonoidalLens' (the 'MonLensFl' superclass: the residual is a
--- comonoid), so it views, sets, folds and traverses as a lens does. 'withAlgP' hands the algebra
--- over as a value, so composites pair algebras without an instance for the product.
+-- witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' x)@ of "Proarrow.Optic.MonoidalLens"
+-- (legs @s ~> x ** a@ and @x ** b ~> t@), with the residual @x@ an 'Algebra' for @m@. Through the
+-- algebra @put@ sees a whole @m@-computation of sources: 'classifyOf' collapses @m % s@ to a single
+-- residual. The flavor asks only that @m '%'@ be oplax monoidal, to pair and discard residuals;
+-- the monad structure comes with each 'Algebra' witness. Every algebraic lens is a
+-- 'Proarrow.Optic.MonoidalLens.MonoidalLens' ('MonLensFl' superclass), so it views, sets, folds
+-- and traverses as a lens does.
 type AlgLensFl :: forall {k}. (k +-> k) -> FLAVOR k k
 class (OplaxMonoidalRep m, MonLensFl p q) => AlgLensFl (m :: k +-> k) (p :: k +-> k) (q :: k +-> k) where
   -- | Recover the two legs and the algebra of the (existential) residual @x@.
@@ -114,7 +108,7 @@ instance
           )
 
 -- | An algebraic lens: like a 'Proarrow.Optic.Lens.Lens', but @put@ is allowed to combine
--- information monadically -- @get :: s ~> a@, @put :: m % s ** b ~> t@ -- rather than only ever
+-- information monadically (@get :: s ~> a@, @put :: m % s ** b ~> t@) instead of only ever
 -- seeing the /last/ @s@.
 type AlgebraicLens m (s :: k) (t :: k) a b = Optic (Prostrong (AlgLensFl m)) s t a b
 
@@ -130,8 +124,8 @@ algebraicLens v u =
     (Corep @b @(ActionAt Tensor (m % s)) u)
 
 -- | Classify a monadic computation of @s@'s through an 'AlgebraicLens' (or any stronger optic,
--- in any encoding), given a replacement focus @b@ -- generalizing "set" to combine every @s@ the
--- computation might produce (via its residual's 'Algebra') rather than only ever seeing the last one.
+-- in any encoding), given a replacement focus @b@. This generalizes "set" to combine every @s@ the
+-- computation might produce (via its residual's 'Algebra') instead of only ever seeing the last one.
 -- The focus @a@ is discarded under the monad, hence must be a comonoid.
 classifyOf
   :: forall {k} m c (s :: k) (t :: k) a b
@@ -153,12 +147,10 @@ infixl 8 .?
 
 -- | The __classifying lens__ (Clarke et al., Example 3.11): the algebraic lens for the list monad,
 -- here for any monad @l@ whose algebras are monoids. Tensoring with a monoid is an applicative
--- functor (the writer applicative) -- so a classifying lens is also a kaleidoscope
--- ('Proarrow.Optic.Kaleidoscope.KaleidoFl'), the meet of the two flavors. This is what lets it compose
--- with a kaleidoscope to a kaleidoscope again (Clarke et al., Remark 3.28): a lens composed
--- with a kaleidoscope is not a kaleidoscope, since a product functor is not applicative, but a
--- product /by a monoid/ is. The algebra and the monoid on the residual are assumed to agree, as
--- they do for the free algebra @l % s@ of the list monad (@join@ and @++@) that 'classifyingLens' uses.
+-- functor (the writer applicative), so a classifying lens is also a kaleidoscope
+-- ('Proarrow.Optic.Kaleidoscope.KaleidoFl'), and composes with a kaleidoscope to a kaleidoscope
+-- (Clarke et al., Remark 3.28), which a plain lens does not. The algebra and the monoid on the
+-- residual are assumed to agree, as they do for the free list algebra @l % s@ (@join@ and @++@).
 type ClassifyFl :: forall {k}. (k +-> k) -> FLAVOR k k
 class (AlgLensFl l p q, KaleidoFl p q) => ClassifyFl (l :: k +-> k) (p :: k +-> k) (q :: k +-> k)
 

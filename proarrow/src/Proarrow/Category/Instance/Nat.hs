@@ -3,7 +3,7 @@
 -- | Functor categories: 'Nat' is the type of natural transformations between functors @j -> k@,
 -- and the kind @j -> 'Data.Kind.Type'@ carries the category of 'Functor's with 'Nat' as its
 -- morphisms and pointwise (co)limits. On @'Data.Kind.Type' -> 'Data.Kind.Type'@, functor
--- composition additionally gives a (closed) monoidal structure -- the home of monads-as-monoids.
+-- composition additionally gives a (closed) monoidal structure, the home of monads as monoids.
 module Proarrow.Category.Instance.Nat where
 
 import Data.Bifunctor qualified as P
@@ -131,19 +131,6 @@ instance MonoidalAction ApplyAction where
   multiplicator = getCompose
   multiplicatorInv = Compose
 
--- instance (ob Identity, forall a b. (ob a, ob b) => ob (Compose a b)) => Strong (SUBCAT (ob :: OB (Type -> Type))) (->) where
---   act (Sub (Nat n)) f = n . map f
--- instance
---   (Monoidal (SUBCAT (ob :: OB (Type -> Type))), Strong (SUBCAT (ob :: OB (Type -> Type))) ((~>) :: CAT Type))
---   => MonoidalAction (SUBCAT (ob :: OB (Type -> Type))) Type
---   where
---   type Act (p :: SUBCAT ob) (x :: Type) = UN SUB p x
---   withObAct r = r
---   unitor = runIdentity
---   unitorInv = Identity
---   multiplicator = getCompose
---   multiplicatorInv = Compose
-
 type Ran :: (j -> k) -> (j -> Type) -> k -> Type
 newtype Ran j h a = Ran {runRan :: forall b. (a ~> j b) -> h b}
 instance (CategoryOf k) => Functor (Ran j h :: k -> Type) where
@@ -214,7 +201,7 @@ instance (Comonoid w) => Promonad (ComonoidAsCat w) where
   ComonoidAsCat f . ComonoidAsCat g = ComonoidAsCat (f . map g . getCompose . unNat comult)
 
 -- | The category of functors with target category @k2 -> k3 -> Type@.
--- Note that @CategoryOf (k1 -> k2 -> Type)@ is reserved for profunctors.
+-- @CategoryOf (k1 -> k2 -> Type)@ is reserved for profunctors.
 instance CategoryOf (k1 -> k2 -> k3 -> Type) where
   type (~>) = Nat
   type Ob f = Functor f

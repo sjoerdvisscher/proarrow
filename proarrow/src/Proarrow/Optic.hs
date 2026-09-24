@@ -60,8 +60,8 @@ type Optic' c s a = Optic c s s a a
 infixl 9 %
 
 -- | Compose two optics, of any (possibly different) flavors or encodings. The composite's constraint
--- is the conjunction ':&&:', so the composite is automatically usable at exactly the meet of the two
--- flavors' capabilities: a lens composed with a prism previews, folds, traverses and sets, but
+-- is the conjunction ':&&:', so the composite is usable at the meet of the two flavors'
+-- capabilities: a lens composed with a prism previews, folds, traverses and sets, but
 -- no longer views or reviews. Use 'convert' to name the composite at a single flavor for
 -- storage, e.g. @'convert' (l % p) :: 'Proarrow.Optic.AffineTraversal.AffineTraversal' s t a b@.
 (%) :: Optic c1 s t a b -> Optic c2 a b c d -> Optic (c1 :&&: c2) s t c d
@@ -75,8 +75,8 @@ type PIso s t a b = Optic Profunctor s t a b
 
 type PIso' s a = PIso s s a a
 
--- | Create an isomorphism from two arrows, at any optic constraint. Note that this doesn't
--- enforce that the arrows are actually inverses!
+-- | Create an isomorphism from two arrows, at any optic constraint. This doesn't check that the
+-- arrows are inverses!
 --
 -- The same @iso@ builds a 'Proarrow.Optic.Iso.Iso', a 'PIso', a
 -- 'Proarrow.Optic.Traversal.PTraversal', ... depending on the type it is used at; since @c@ is
@@ -90,7 +90,7 @@ iso sa bt = Optic (dimap sa bt) \\ sa \\ bt
 type FLAVOR j k = (k +-> k) -> (j +-> j) -> Constraint
 
 -- | A flavor: a class of witness pairs that is closed under composition and contains the identity
--- pair -- the monoidal structure of the residuals, with @(Id, Id)@ as unit and
+-- pair. This is the monoidal structure of the residuals, with @(Id, Id)@ as unit and
 -- @(f :.: g, g' :.: f')@ (note the reversal on the right) as tensor.
 type Flavor :: forall {j} {k}. FLAVOR j k -> Constraint
 class (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w where
@@ -100,17 +100,14 @@ instance (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id
   composeFlavor r = r
 
 -- | @w p q@, as a class with a single instance instead of a bare constraint. The subtyping
--- quantified constraint is spelled @forall p q. v p q => Sub w p q@ rather than
--- @forall p q. v p q => w p q@ because GHC refuses to solve the head of a quantified constraint
--- from a superclass of its premise unless that superclass is strictly smaller than the head (its
--- safeguard against superclass loops in instance declarations), and @w p q@ is never smaller
--- than itself; behind the 'Sub' instance @w p q@ is an ordinary wanted, solved from the
--- superclasses of @v p q@ as usual. 'sub' hands @w p q@ back as an ordinary given (see 'Flavor').
+-- quantified constraint is spelled @forall p q. v p q => Sub w p q@ because GHC solves the head of
+-- a quantified constraint from a superclass of its premise only when that superclass is strictly
+-- smaller than the head, which a bare @w p q@ head never is. Behind the 'Sub' instance @w p q@ is
+-- an ordinary wanted, solved from the superclasses of @v p q@. 'sub' hands it back as a given.
 --
--- Deliberately without @w p q@ as a superclass: with it, a quantified given @forall p q. w p q =>
--- Sub IsoFl p q@ would reach @'Profunctor' p@ through the flavor superclasses, which makes GHC
--- treat it as a potential match for every @Profunctor@ wanted in scope and reject the ordinary
--- instances as overlapping.
+-- 'Sub' has no superclass @w p q@: with one, a quantified given
+-- @forall p q. w p q => Sub IsoFl p q@ would reach @'Profunctor' p@ through the flavor
+-- superclasses, and GHC would reject the ordinary @Profunctor@ instances as overlapping.
 type Sub :: forall {j} {k}. FLAVOR j k -> FLAVOR j k
 class Sub w p q where
   sub :: ((w p q) => r) -> r
@@ -119,8 +116,8 @@ instance (w p q) => Sub w p q where
   sub r = r
 
 -- | The carrier @p@ is @w@-strong: a Tambara module for the flavor @w@. 'proact' absorbs a
--- @w@-witness pair @(f, g)@ sandwiching @p@ back into @p@, which is exactly what lets an optic
--- built from that witness distribute the carrier. The name is the profunctor (\"pro\") version of
+-- @w@-witness pair @(f, g)@ sandwiching @p@ back into @p@, so that an optic built from that
+-- witness can distribute the carrier. The name is the profunctor (\"pro\") version of
 -- "Proarrow.Category.Monoidal.Strength"'s 'Proarrow.Category.Monoidal.Strength.Strong': its
 -- @proact@ specializes to @act@ for certain 'Rep'/'Corep' pairs and to @coact@ for
 -- certain 'Corep'/'Rep' ones.
@@ -139,9 +136,9 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (ExOptic w a b :: j +-> k) w
   dimap l r (ExOptic p q) = ExOptic (lmap l p) (rmap r q)
   r \\ ExOptic p q = r \\ p \\ q
 
--- | The free @w@-strong profunctor is @v@-strong for every subflavor @v@ of @w@; this is what
--- lets 'convert' and 'withLegs' accept optics of any encoding (composites included). It is the one
--- bridge instance that replaces a per-carrier one for each flavor.
+-- | The free @w@-strong profunctor is @v@-strong for every subflavor @v@ of @w@. With it 'convert'
+-- and 'withLegs' accept optics of any encoding (composites included). This one bridge instance
+-- replaces a per-carrier one for each flavor.
 instance (CategoryOf j, CategoryOf k, forall p q. (v p q) => Sub w p q, Flavor w) => Prostrong v (ExOptic w a b :: j +-> k) where
   proact @f @g (f :.: ExOptic @p @q p q :.: g) = sub @w @f @g (composeFlavor @w @f @g @p @q (ExOptic (f :.: p) (q :.: g)))
 
@@ -162,8 +159,8 @@ ex2prof (ExOptic p q) = legs2prof @w p q
 
 -- | Run an optic, in any encoding, at its own witness pair (the Pastro-Street move): a
 -- 'Prostrong'-flavored optic discharges @c ('ExOptic' w a b)@ through the bridge instance above
--- (i.e. @forall p q. v p q => 'Sub' w p q@), a '(%)'-composite one conjunct at a time, and a profunctor-class-flavored
--- one through the carrier's own instances of its class.
+-- (i.e. @forall p q. v p q => 'Sub' w p q@), a '(%)'-composite one conjunct at a time, and a
+-- profunctor-class-flavored one through the carrier's own instances of its class.
 prof2ex
   :: forall {j} {k} w c (s :: k) (t :: j) a b
    . (CategoryOf j, CategoryOf k, Flavor w, (Ob a, Ob b) => c (ExOptic w a b))
@@ -177,19 +174,16 @@ withLegs
   => Optic c s t a b -> (forall p q. (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> r) -> r
 withLegs o k = case prof2ex @w o of ExOptic p q -> k p q
 
--- | Convert an optic to a chosen flavor @w@, by running it at its existential encoding
--- @'ExOptic' w a b@ and wrapping the resulting witness pair back around the carrier: this works for
--- any input encoding. A 'Prostrong'-flavored optic converts along the subtyping lattice (via the
--- bridge instance of 'ExOptic'; an invalid conversion fails with @Could not deduce (w p q)@ for the
--- missing superclass), a ':&&:'-composite converts when both conjuncts do, and a
--- profunctor-class-flavored optic converts when @'ExOptic' w a b@ has an instance of its class -- which
--- it does for every class whose generating witnesses @w@ contains (cf. 'Proarrow.Optic.Iso.fromPIso',
+-- | Convert an optic to a chosen flavor @w@, by running it at @'ExOptic' w a b@ and wrapping the
+-- resulting witness pair back around the carrier. A 'Prostrong'-flavored optic converts along the
+-- subtyping lattice (an invalid conversion fails with @Could not deduce (w p q)@), a
+-- ':&&:'-composite when both conjuncts do, and a profunctor-class-flavored optic when
+-- @'ExOptic' w a b@ has an instance of its class (cf. 'Proarrow.Optic.Iso.fromPIso',
 -- 'Proarrow.Optic.MonoidalTraversal.fromPTraversal', 'Proarrow.Optic.Tracer.fromPTracer').
 --
--- Consumers accept any sufficiently strong optic directly, so this is rarely needed to /use/ an
--- optic; but constructors and '%' return their exact type monomorphically, so it is the way to
--- /store/ an optic at a weaker type, e.g. @convert ('Proarrow.Optic.Lens.lens' f g) ::
--- 'Proarrow.Optic.Traversal.Traversal'' s a@.
+-- Consumers accept any sufficiently strong optic directly, but constructors and '%' return their
+-- exact type, so 'convert' is how to store an optic at a weaker type, e.g.
+-- @convert ('Proarrow.Optic.Lens.lens' f g) :: 'Proarrow.Optic.Traversal.Traversal'' s a@.
 convert
   :: forall {j} {k} c (w :: FLAVOR j k) (s :: k) (t :: j) a b
    . (CategoryOf j, CategoryOf k, Flavor w, (Ob a, Ob b) => c (ExOptic w a b))

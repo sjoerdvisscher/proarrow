@@ -20,8 +20,8 @@ import Proarrow.Core (CategoryOf (..))
 --   @('coevalUniv' f '**' 'id') . 'coeval' = f@ and @'coevalUniv' ((g '**' 'id') . 'coeval') = g@
 -- * and natural in all three variables, dually to 'Proarrow.Category.Monoidal.Closed.curry'.
 --
--- There is no @propCoclosed@ yet; unlike 'Proarrow.Category.Monoidal.Closed.Closed' these laws are
--- currently unchecked.
+-- Unlike those of 'Proarrow.Category.Monoidal.Closed.Closed', these laws have no check in
+-- "Proarrow.Testing.Laws".
 class (Monoidal k) => Coclosed k where
   -- | The coexponential object.
   type (a :: k) <~~ (b :: k) :: k

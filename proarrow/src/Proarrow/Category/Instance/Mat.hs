@@ -3,7 +3,7 @@
 -- | The category of __matrices__ over a numeric type @a@: objects are natural numbers (dimensions,
 -- @'M' n@ of kind @'MatK' a@) and a morphism is an @n@-by-@m@ matrix, composed by matrix
 -- multiplication. A dagger (conjugate-transpose) category with biproducts, whose Kronecker-product
--- tensor makes it compact closed -- the linear-algebra playground of the library. The compact
+-- tensor makes it compact closed. It is the library's linear-algebra playground. The compact
 -- structure's 'Proarrow.Category.Monoidal.StarAutonomous.dual' is the plain 'transpose', distinct
 -- from 'dagger' once the entries are complex.
 module Proarrow.Category.Instance.Mat where
@@ -119,9 +119,8 @@ instance (IsNat n) => IsNat (S n) where
 -- Three operations on a matrix are easy to confuse, and at @'MatK' ('Complex' a)@ they differ:
 -- this one, the entrywise 'Conjugate' functor, and 'dagger', which is their composite (the
 -- conjugate-transpose). Composition and the compact-closed structure are /bilinear/ and must not
--- conjugate, so they are written in terms of 'transpose' rather than 'dagger'. They read the same
--- at a real element type -- where 'dagger' /is/ 'transpose' -- which is what makes the distinction
--- easy to lose.
+-- conjugate, so they are written in terms of 'transpose' rather than 'dagger'. At a real element
+-- type 'dagger' /is/ 'transpose', so the distinction is easy to lose.
 transpose :: Mat (n :: MatK a) m -> Mat m n
 transpose (Mat m) = Mat (P.sequenceA m)
 
@@ -199,7 +198,7 @@ instance (P.Fractional a, P.Eq a) => HasEqualizers (MatK a) where
 
   -- @incl@ need not literally be the RREF-derived basis 'equalize' produces; any mono @incl@ works,
   -- since we row-reduce the columns of @incl@ and @h@ concatenated (bounding pivot search to just
-  -- @incl@'s width): full column rank turns @incl@'s part into an identity submatrix for free, and
+  -- @incl@'s width). Full column rank turns @incl@'s part into an identity submatrix for free, and
   -- Gaussian elimination carries the same row operations through @h@'s columns alongside it.
   factorEqualizer (Mat @e @_ incl) (Mat @e' j) =
     let
@@ -212,10 +211,8 @@ instance (P.Fractional a, P.Eq a) => HasEqualizers (MatK a) where
     in
       Mat (tabulate hRow)
 
--- | The coequalizer of @f, g :: M m ~> M n@ is the cokernel of @f - g@, i.e. the quotient of @M n@ by
--- its image. Rather than a separate algorithm, this reuses the equalizer machinery via @dagger@: since
--- @dagger@ is a contravariant involution on 'Mat', a coequalizer of @f, g@ is exactly an equalizer of
--- @dagger f, dagger g@ transported back across @dagger@.
+-- | The coequalizer of @f, g :: M m ~> M n@ is the cokernel of @f - g@. Since @dagger@ is a
+-- contravariant involution on 'Mat', it is the equalizer of @dagger f, dagger g@ transported back.
 --
 -- >>> let f = Mat @(S Z) @(S (S Z)) ((2 ::: VNil) ::: (0 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
 -- >>> let g = Mat @(S Z) @(S (S Z)) ((0 ::: VNil) ::: (3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
@@ -227,7 +224,7 @@ instance (P.Fractional a, P.Eq a) => HasCoequalizers (MatK a) where
   factorCoequalizer q h = dagger (factorEqualizer (dagger q) (dagger h))
 
 -- | Pullbacks are computed via 'pullbackDefault', as the equalizer of @f . fst@ and @g . snd@ on the
--- product @a && b@ -- the standard linear-algebra construction of a fiber product of vector spaces.
+-- product @a && b@, the standard linear-algebra construction of a fiber product of vector spaces.
 --
 -- >>> let f = Mat @(S Z) @(S Z) ((2 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
 -- >>> let g = Mat @(S Z) @(S Z) ((3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
@@ -236,7 +233,7 @@ instance (P.Fractional a, P.Eq a) => HasCoequalizers (MatK a) where
 instance (P.Fractional a, P.Eq a) => HasPullbacks (MatK a)
 
 -- | Pushouts are computed via 'pushoutDefault', as the coequalizer of @lft . f@ and @rgt . g@ on the
--- coproduct @a || b@ -- the standard linear-algebra construction of a cofiber product of vector spaces.
+-- coproduct @a || b@, the standard linear-algebra construction of a cofiber product of vector spaces.
 --
 -- >>> let f = Mat @(S Z) @(S Z) ((2 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
 -- >>> let g = Mat @(S Z) @(S Z) ((3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)

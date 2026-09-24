@@ -69,7 +69,7 @@ instance Finitary Ambient where
 type Incl g = FIN g ~> FIN Ambient
 
 -- | A graph given as a list of vertices and a list of edges. Rejects a list of edges whose endpoints
--- are not all listed, that being exactly what stops it from being a subgraph.
+-- are not all listed, since such a graph is not a subgraph.
 withGraph :: [Node] -> [(Node, Node)] -> (forall g. (Finitary g) => Incl g -> r) -> r -> r
 withGraph vs es = withSubobject @Ambient \case
   Vtx v -> v `elem` vs

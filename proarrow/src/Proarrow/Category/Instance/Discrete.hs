@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | The __discrete__ category on an 'Thin.Indexed' kind @k@ (@'DISCRETE' k@): the numbered inhabitants
--- of @k@ are the objects and the only arrows are identities ('Refl'). Numbering is what makes the
+-- of @k@ are the objects and the only arrows are identities ('Refl'). The numbering makes the
 -- category decidable, and a 'Thin.Finite' kind gives an enumerable one, so that reachability along
 -- a graph on a bare set of points can be computed. Its mirror image, the __codiscrete__ category
 -- @CODISCRETE k@, has exactly one arrow between any two objects. All (co)limits that exist are
@@ -142,7 +142,7 @@ data Codiscrete a b where
   Arr :: (Ob a, Ob b) => Codiscrete a b
 
 -- | The codiscrete category has exactly one arrow between any two objects, the numbered inhabitants
--- of @k@. Numbering them is what makes it enumerable, so that its closure can be computed.
+-- of @k@. The numbering makes it enumerable, so its closure can be computed.
 instance (Thin.Indexed k) => CategoryOf (CODISCRETE k) where
   type (~>) = Codiscrete
   type Ob (a :: CODISCRETE k) = Thin.KnownIndex a

@@ -38,8 +38,8 @@ class (a ** b ~ a && b) => TensorIsProduct a b
 instance (a ** b ~ a && b) => TensorIsProduct a b
 
 -- | A cartesian monoidal category: the tensor is the product and the unit the terminal object.
--- By Fox's theorem this is exactly a 'CopyDiscard' category whose 'copy' and 'discard' are
--- natural, so 'CopyDiscard' is a superclass: every cartesian category supplies its diagonals as
+-- By Fox's theorem this is the same as a 'CopyDiscard' category whose 'copy' and 'discard' are
+-- natural, so 'CopyDiscard' is a superclass. Every cartesian category supplies its diagonals as
 -- comonoids, and anything asking only for copying and discarding (prisms, for instance) accepts
 -- a cartesian category directly. The law relating the two is @copy = id &&& id@ and
 -- @discard = terminate@.
@@ -52,7 +52,7 @@ instance
   => Cartesian k
 
 -- | In a category with products every object is a comonoid via the diagonal and the terminal
--- map -- the natural comonoid structure that makes 'PROD' 'CopyDiscard' and 'Cartesian'.
+-- map. With this comonoid structure 'PROD' is 'CopyDiscard' and 'Cartesian'.
 instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
   counit = Prod terminate
   comult = Prod diag
@@ -65,9 +65,8 @@ instance (HasProducts k) => CopyDiscard (PROD k)
 -- | In a cartesian category the tensor /is/ the product ('TensorIsProduct'), but GHC only applies
 -- that equation at the top of a type, never under another type family such as @('||')@, and
 -- using the quantified form of it directly sends the solver in circles. These two identities take
--- the equation as an ordinary given -- discharged at the call site from the quantified superclass
--- of 'Cartesian' -- and let it be applied exactly where a product-typed leg meets tensor-typed
--- plumbing.
+-- the equation as an ordinary given (discharged at the call site from the quantified superclass
+-- of 'Cartesian'), so it can be applied where a product-typed leg meets tensor-typed plumbing.
 tensorToProduct :: forall {k} (a :: k) b. (HasBinaryProducts k, TensorIsProduct a b, Ob a, Ob b) => (a ** b) ~> (a && b)
 tensorToProduct = withObProd @k @a @b id
 
@@ -139,8 +138,8 @@ ap pf px = dimap diag (apply @j @x @y) (pf ** px) \\ px
 -- | The free-category structure for 'Cartesian'. The free category cannot satisfy the /type
 -- equality/ @tensor = product@ ('TensorIsProduct' fails on it, see "Proarrow.Category.Instance.Free"),
 -- but it can carry the corresponding isomorphisms as formal arrows, interpreted to the identity in
--- any cartesian target ('productToTensor' and friends). This is what lets a free category serve
--- as syntax for cartesian (closed) categories without collapsing its object grammar.
+-- any cartesian target ('productToTensor' and friends). So a free category can serve as syntax
+-- for cartesian (closed) categories without collapsing its object grammar.
 instance
   ('[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal] `Elems` cs)
   => HasStructure cs (p :: CAT k) Cartesian

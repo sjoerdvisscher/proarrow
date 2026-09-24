@@ -59,7 +59,7 @@ class (Distributive j, Functor f) => Alternative (f :: j -> k) where
   empty :: (Ob a) => Unit ~> f a
   alt :: (Ob a, Ob b) => (a || b ~> c) -> f a ** f b ~> f c
 
--- Note: Comonoid (COPR x) means we need x ~> InitialObject.
+-- Comonoid (COPR x) means we need x ~> InitialObject.
 instance (DistributiveProfunctor (p :: j +-> k), Distributive j, Comonoid (COPR x)) => Alternative (FromProfunctor p x) where
   empty () = FromProfunctor (dimap (unCoprod (counit @(COPR x))) initiate (nil @p))
   alt abc (FromProfunctor pxa, FromProfunctor pyb) =

@@ -1,8 +1,8 @@
 -- | Checks that optic subtyping works: any optic can be used directly where a weaker flavor is
 -- needed (iso -> lens/prism -> affine traversal -> traversal -> setter, and the fold side),
 -- because the consumers only ask for @c ('ExOptic' need a b)@, which a 'Prostrong'-flavored optic
--- discharges through the quantified constraint @forall p q. w p q => 'O.Sub' need p q@ -- the role of the
--- @Is k l@ class of the @optics@ library, played by the flavor superclasses.
+-- discharges through the quantified constraint @forall p q. w p q => 'O.Sub' need p q@. The flavor
+-- superclasses play the role of the @Is k l@ class of the @optics@ library.
 --
 -- The conversion functions below are compile-time tests: each one only typechecks if the
 -- corresponding superclass entailment holds. The 'TestTree' then checks at runtime that a lens,
@@ -74,7 +74,7 @@ isoToLens :: (CategoryOf k) => Iso (s :: k) t a b -> Lens s t a b
 isoToLens = O.convert
 
 -- | Compile-time proof of the theorem "every representable residual is a Setter": 'overP' for
--- the @(t, RepCostar t)@ witness resolves from just 'Representable' t -- no 'Traversable'. If the
+-- the @(t, RepCostar t)@ witness resolves from just 'Representable' t, with no 'Traversable'. If the
 -- old @Traversable t@ constraint were re-added to that instance, this would stop compiling.
 representableResidualIsSetter
   :: forall {k} (t :: k +-> k) s a b t'
@@ -173,7 +173,7 @@ traversalToFold :: (CategoryOf k) => Traversal (s :: k) t a b -> Fold s t a b
 traversalToFold = O.convert
 
 -- | Compile-time proof that 'traverseOf' distributes an /arbitrary/ 'StrongDistributiveProfunctor'
--- (Traversable-style), not just a @'Star' f@: this only typechecks because the carrier @p@ is
+-- (Traversable-style), not only a @'Star' f@. This only typechecks because the carrier @p@ is
 -- fully polymorphic.
 traverseOfIsGeneric
   :: (StrongDistributiveProfunctor p, Strong ProdAction p) => p Bool Bool -> p (Bool, Bool) (Bool, Bool)
@@ -215,7 +215,7 @@ reIsoIsGetter = O.convert . O.re
 reReLens :: (CategoryOf k, Ob (s :: k), Ob t, Ob a, Ob b) => Lens s t a b -> Lens s t a b
 reReLens = O.convert . O.re . O.re
 
--- * Honest constraints
+-- * Minimal constraints
 
 -- | Compile-time check: building and eliminating a lens needs only binary products, never
 -- 'Proarrow.Category.Monoidal.Distributive.Bicartesian', even though 'AffineTravFl' sits above
@@ -462,7 +462,7 @@ test =
         (over (fromPTraversal (toPTraversal (O.convert _Just :: MonoidalTraversal (Maybe Bool) (Maybe Bool) Bool Bool))) not)
         (fmap not)
     , -- Step 4: monTraverseOf distributes an SDP carrier through a prism (a MonoidalTraversal) with
-      -- NO product-strength constraint on the carrier -- that's the point of the MonTravFl split.
+      -- NO product-strength constraint on the carrier. The MonTravFl split exists for this.
       propFnEq @(Maybe Bool)
         "monTraverseOf a prism (MonoidalTraversal) with a list effect"
         (\m -> unPrelude (unStar (monTraverseOf _Just (Star (Prelude . ((\b -> [b, not b]) :: Bool -> [Bool])))) m))

@@ -33,8 +33,8 @@ frontReturn = return @m
 frontExtract :: forall w a. (Comonad w, Ob a) => w %% a ~> a
 frontExtract = extract @w
 
--- The monoid section is usable from here alone: at a concrete category @Unit@ and @**@ reduce --
--- to @()@ and @(,)@ in Hask -- so neither name has to be written and the monoidal vocabulary does
+-- The monoid section is usable from here alone. At a concrete category @Unit@ and @**@ reduce
+-- (to @()@ and @(,)@ in Hask), so neither name has to be written and the monoidal vocabulary does
 -- not have to be imported, even though 'Proarrow' exports none of it.
 frontMempty :: () -> [Int]
 frontMempty = mempty

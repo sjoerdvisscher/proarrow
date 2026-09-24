@@ -260,8 +260,8 @@ instance Distributive COST where
   absorbL = Inf
   absorbR = Inf
 
--- | @COST@ is thin and totally ordered, so equalizers are trivial; @factorEqualizer incl h@ just
--- compares @e@ and @e'@ directly (their common bound @x@ turns out not to matter), erroring exactly
+-- | @COST@ is thin and totally ordered, so equalizers are trivial. @factorEqualizer incl h@ just
+-- compares @e@ and @e'@ directly (their common bound @x@ does not matter), erroring when and only
 -- when @e'@ is finite and strictly less than @e@, or @e@ is 'INF' while @e'@ is finite.
 instance HasEqualizers COST where
   equalize = thinEqualize

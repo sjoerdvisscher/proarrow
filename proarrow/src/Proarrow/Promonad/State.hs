@@ -38,7 +38,7 @@ pattern State f <- (runStateT &&& objDicts -> (Id f, (ObjDict, ObjDict)))
     State f = StateT (Reader id :.: Id f :.: Writer id) \\ f
 {-# COMPLETE State #-}
 
--- | Note: This is only premonoidal, not monoidal.
+-- | This is only premonoidal, not monoidal.
 instance (SymMonoidal k, Ob s) => MonoidalProfunctor (State (s :: k)) where
   one = State (obj @s ** one) \\ (one :: (Unit :: k) ~> Unit)
   State @a1 @b1 f ** State @a2 @b2 g =

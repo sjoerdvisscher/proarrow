@@ -43,17 +43,14 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..), withObRep)
 
 -- | How a composite @p ':.:' q@ of thin profunctors decides its arrows. In general
--- @'HasArrow' (p :.: q) a c@ is an /existential/ over the objects @b@ of the middle category
--- (the join @⋁_b p(a,b) ∧ q(b,c)@ in the enriching @Bool@), which a 'Constraint' cannot express.
--- But when the left leg is corepresented (@f a ≤ b@, a companion) or the right leg represented
--- (@b ≤ g c@, a conjoint) the middle object is determined and the existential collapses to a
--- substitution: @q (f a) c@, respectively @p a (g c)@. The strategy is chosen by the closed
--- family 'ThinCompStrategy' from the shape of the legs, so that the one 'ThinProfunctor'
--- instance for ':.:' never overlaps with anything; a composite of two non-representable legs
--- falls back to 'BySearch', which enumerates the middle category and decides both legs at each
--- object ('Search'). ('Proarrow.Profunctor.Instance.Star.Star' and
--- 'Proarrow.Profunctor.Instance.Costar.Costar' have the same two shapes, but functors between thin
--- kinds are written as 'FunctorForRep's here, so 'Rep'\/'Corep' cover them.)
+-- @'HasArrow' (p :.: q) a c@ is an existential over the middle objects @b@ (the join
+-- @⋁_b p(a,b) ∧ q(b,c)@), which a 'Constraint' cannot express. When the left leg is corepresented
+-- (@f a ≤ b@) or the right leg represented (@b ≤ g c@) the middle object is determined, and the
+-- existential becomes @q (f a) c@, respectively @p a (g c)@. The closed family 'ThinCompStrategy'
+-- picks the strategy from the shape of the legs, so the one 'ThinProfunctor' instance for ':.:'
+-- overlaps nothing. Other composites use 'BySearch', which tries every middle object ('Search').
+-- ('Proarrow.Profunctor.Instance.Star.Star' and 'Proarrow.Profunctor.Instance.Costar.Costar' have
+-- the same shapes, but functors between thin kinds are 'FunctorForRep's here.)
 type data ThinComp = ByLeft | ByRight | BySearch
 
 type ThinCompStrategy :: forall {i} {j} {k}. (j +-> k) -> (i +-> j) -> ThinComp
@@ -102,8 +99,8 @@ instance (ComposeThin (ThinCompStrategy p q) p q) => ThinProfunctor (p :.: q) wh
 -- The objects and the vector are walked in step, so @ws@ is always the vector cut down to @bs@.
 --
 -- This is the module's one join. Composing two profunctors multiplies by a column read off the
--- right-hand one ('MatMul'); the closure multiplies by the previous iterate ('Walks'), which is
--- what lets that iterate be computed once instead of once per pair.
+-- right-hand one ('MatMul'). The closure multiplies by the previous iterate ('Walks'), so that
+-- iterate is computed once instead of once per pair.
 type MatVec :: forall {j} {k}. forall (v :: Kind) -> [j] -> [v] -> (j +-> k) -> k -> v
 type family MatVec v bs ws p a where
   MatVec v '[] ws p a = InitialObject
@@ -165,8 +162,8 @@ found p q r = toHolds p (toHolds q (go (member @b) r))
     go (There m) r' = go m r'
 
 -- | Whether a composite decides its arrows, by the same strategy as 'ComposeThin': a representable
--- leg is substituted away and the other leg decided, a search is decided by running it. This is
--- what makes composites decidable in turn, so that searches can nest.
+-- leg is substituted away and the other leg decided, a search is decided by running it. So
+-- composites are decidable in turn, and searches can nest.
 type DecideComp :: forall {i} {j} {k}. ThinComp -> (j +-> k) -> (i +-> j) -> Constraint
 class (ComposeThin s p q) => DecideComp s (p :: j +-> k) (q :: i +-> j) where
   type HoldsComp s p q (a :: k) (c :: i) :: BOOL
@@ -236,7 +233,7 @@ instance (Profunctor p) => Profunctor (Walk n p) where
 
 -- | The hom-object of a walk of at most @n@ steps, in any enriching category @v@: an arrow of the
 -- base, or an edge followed by one entry of the previous iterate ('WalkRow'). Naming the whole
--- iterate rather than a shorter walk per pair is what keeps this affordable. At 'BOOL' it is the
+-- iterate, instead of a shorter walk per pair, keeps this affordable. At 'BOOL' it is the
 -- truth of 'Walk', at 'COST' the shortest distance, computed by GHC at the type level and by 'row'
 -- at the value level.
 type Walks :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> k -> k -> v
@@ -244,14 +241,12 @@ type family Walks v n p a b where
   Walks v 'Z (p :: k +-> k) a b = HomObj v a b
   Walks v ('S n) (p :: k +-> k) a b = HomObj v a b || MatVec v (Objects k) (WalkRow v n p b) p a
 
--- | The @n@-th iterate of the fixed point for a fixed target @b@: the hom-object of the walks of at
--- most @n@ steps into @b@, one entry per object, in the order of 'Objects'. It starts as the column
--- of the base hom-objects, there being no step to take yet, and grows by 'NextRow'.
+-- | The @n@-th iterate of the fixed point for a fixed target @b@: the hom-objects of the walks of
+-- at most @n@ steps into @b@, one per object, in the order of 'Objects'. It starts as the column of
+-- base hom-objects and grows by 'NextRow'.
 --
--- Each iterate is written in terms of the whole previous one, so it is computed once and read by
--- every object. That sharing is what makes the fixed point affordable: the work is the number of
--- steps times the square of the number of objects, where a recursion per pair of objects would
--- instead cost the number of objects to the power of the number of steps.
+-- Each iterate is built from the whole previous one, so it is computed once and shared by every
+-- object: steps × objects² work, where a recursion per pair of objects costs objects^steps.
 type WalkRow :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> k -> [v]
 type family WalkRow v n p b where
   WalkRow v 'Z (p :: k +-> k) b = MatCol v (Objects k) (Hom k) b
@@ -282,7 +277,7 @@ type Closing v n (p :: k +-> k) = (SNatI n, Quantale v, EnrichedProfunctor v p, 
 -- | A walk graded by its cost: each piece comes with a budget, an arrow of @v@ into the piece's
 -- hom-object, and the grade of the walk is the tensor of the budgets. A walk at grade @d@ is a
 -- generalised element of the closure, @d ~> 'Walks' v n p a b@ ('underlyingAt'), and 'shortest'
--- produces one at grade exactly the hom-object.
+-- produces one whose grade is the hom-object itself.
 type GradedWalk :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> v -> k -> k -> Type
 data GradedWalk v n p d a b where
   DoneAt :: forall {k} v n (p :: k +-> k) d a b. (Ob a, Ob b) => (d ~> HomObj v a b) -> GradedWalk v n p d a b
@@ -291,8 +286,8 @@ data GradedWalk v n p d a b where
      . (Ob a, Ob b, Ob c, Ob e, Ob d)
     => (e ~> ProObj v p a c) -> GradedWalk v n p d c b -> GradedWalk v ('S n) p (e ** d) a b
 
--- | The @n@-th iterate reflected to the value level: every object paired with its own entry, which
--- is exactly the hom-object of the walks from it. 'row' builds one and everything that needs a
+-- | The @n@-th iterate reflected to the value level: every object paired with its own entry, the
+-- hom-object of the walks from it. 'row' builds one and everything that needs a
 -- shorter walk reads it, so the value level shares its work the same way the type level does.
 type Row :: forall {k}. forall (v :: Kind) -> Nat -> (k +-> k) -> k -> [k] -> [v] -> Type
 data Row v n p b as ws where
@@ -429,7 +424,7 @@ underlyingWalk (Done f@Objs) = underlyingAt @v @n @p @Unit @a @b (DoneAt @v @n @
 underlyingWalk (Step @_ @_ @_ @c e@Objs w@Objs) = case snat @n of
   SS @n' -> stepAt @v @n' @p @a @c @b (underlying @v @p e) (underlyingWalk @v w) . leftUnitorInv @v @Unit
 
--- | The best walk between two points, graded by exactly their hom-object: a shortest path at
+-- | The best walk between two points, graded by their hom-object itself: a shortest path at
 -- 'COST', a path or the absence of one at 'BOOL'. At every join it keeps the summand the join is
 -- ('minIs'); a pair no walk connects gets the empty walk at 'InitialObject'.
 shortest

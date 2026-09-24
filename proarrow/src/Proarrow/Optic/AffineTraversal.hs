@@ -5,7 +5,8 @@
 -- legs are 'affineMatch' @:: s ~> (t || a)@ and 'affineSet' @:: (s && b) ~> t@ ('AffineTravFl').
 -- Its witnesses only ever arise by composing lens and prism witnesses, so it is built with
 -- 'Proarrow.Optic.Prism.affineTraversal' (a 'Proarrow.Optic.Lens.Lens' followed by a
--- 'Proarrow.Optic.Prism.Prism') and eliminated with 'matching', via the generic 'Proarrow.Optic.ExOptic' carrier.
+-- 'Proarrow.Optic.Prism.Prism') and eliminated with 'matching', via the generic
+-- 'Proarrow.Optic.ExOptic' carrier.
 module Proarrow.Optic.AffineTraversal where
 
 import Prelude (($))

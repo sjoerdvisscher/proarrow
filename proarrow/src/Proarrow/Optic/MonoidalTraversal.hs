@@ -1,9 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | The __monoidal traversal__ optic and its free-profunctor apparatus, split out of
--- "Proarrow.Optic.Traversal" (which keeps the mutually-recursive 'TravFl'\/'MonTravFl' flavor
--- classes and their leaf instances). A 'MonoidalTraversal' distributes any
+-- | The __monoidal traversal__ optic and its free-profunctor apparatus. The mutually recursive
+-- 'TravFl'\/'MonTravFl' flavor classes and their leaf instances live in
+-- "Proarrow.Optic.Traversal". A 'MonoidalTraversal' distributes any
 -- 'StrongDistributiveProfunctor' with no product-strength requirement; the profunctor-class
 -- encoding 'PTraversal' converts to and from it via 'toPTraversal'\/'fromPTraversal', the latter
 -- through the generic carrier @'ExOptic' 'MonTravFl'@, made an SDP here by generators (the Day
@@ -62,14 +62,13 @@ type MonoidalTraversal' s a = MonoidalTraversal s s a a
 
 -- * The generic carrier is a strong distributive profunctor, by generators
 
--- Every piece of 'StrongDistributiveProfunctor' structure on the generic carrier @'ExOptic' w a b@ is
--- "compose one more generating witness pair onto the legs", so each instance below holds for
--- /any/ closed flavor @w@ that contains the relevant generator: the Day halves 'UnitW'\/'Beside'
--- for the tensor, 'ZeroW'\/'BesideSum' for the coproduct, the tensor-action pair for tensor strength and the
--- coproduct\/product prism and lens witnesses for the two action strengths. This is what lets a
--- profunctor-class-flavored optic ('PTraversal', 'PTraversalFull') be eliminated through 'ExOptic'
--- by the encoding-agnostic eliminators ('Proarrow.Optic.Setter.over', 'Proarrow.Optic.Fold.foldMapOf', ...),
--- and what 'fromPTraversal' \/ 'traversal' instantiate at.
+-- Each piece of 'StrongDistributiveProfunctor' structure on @'ExOptic' w a b@ composes one more
+-- generating witness pair onto the legs, so each instance holds for any closed flavor @w@ containing
+-- that generator: 'UnitW'\/'Beside' for the tensor, 'ZeroW'\/'BesideSum' for the coproduct, the
+-- tensor-action pair for tensor strength, and the prism and lens witnesses for the action
+-- strengths. So 'PTraversal' and 'PTraversalFull' can be eliminated through 'ExOptic' by the
+-- generic eliminators ('Proarrow.Optic.Setter.over', 'Proarrow.Optic.Fold.foldMapOf', ...), and
+-- 'fromPTraversal' instantiates at this carrier.
 
 exBeside
   :: forall {k} (w :: FLAVOR k k) (a :: k) b s1 t1 s2 t2
@@ -166,22 +165,21 @@ instance
       withObProd @k @(UN PR px) @z $
         ExOptic @(Rep (Product (UN PR px)) :.: p) @(q :.: Corep (Product (UN PR px))) (repUniv :.: l) (r :.: corepUniv)
 
--- | The other half of the equivalence between the encodings: instantiate the
--- profunctor-class-flavored traversal at the generic carrier @'ExOptic' 'MonTravFl' a b@, which is
--- an SDP by the by-generator instances above. Because its tensor strength comes from the
--- tensor-action witness @'Rep' ('ActionAt' 'Tensor' _)@ (not a product lens), this needs no
--- 'Proarrow.Category.Monoidal.Cartesian.Cartesian' (@tensor = product@), only 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (a discard @a '~>' 'Unit' for the residual) -- which is
--- exactly what the coproduct-prism witness already demanded -- enabling e.g. the biproduct
--- categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal' is
--- recovered for free wherever one is needed, since @'MonTravFl'@ is a subflavor of 'TravFl'.
+-- | The other half of the equivalence between the encodings: instantiate the profunctor-class
+-- traversal at @'ExOptic' 'MonTravFl' a b@, an SDP by the instances above. Its tensor strength
+-- comes from the tensor-action witness @'Rep' ('ActionAt' 'Tensor' _)@, so this needs only
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard', already demanded by the coproduct prism,
+-- and no 'Proarrow.Category.Monoidal.Cartesian.Cartesian'. So @Mat@ and @FinRel@ qualify, but
+-- @LINEAR@, which cannot discard, does not. A 'Traversal' follows since 'MonTravFl' is a subflavor
+-- of 'TravFl'.
 fromPTraversal
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k, CopyDiscard k, SymMonoidal k)
   => PTraversal s t a b -> MonoidalTraversal s t a b
 fromPTraversal = convert
 
--- | Like 'Proarrow.Optic.Traversal.traverseOf', but for a 'MonoidalTraversal' -- distributes any 'StrongDistributiveProfunctor'
--- with /no/ product-strength requirement on the carrier. Every non-lens traversal (prism,
+-- | Like 'Proarrow.Optic.Traversal.traverseOf', but for a 'MonoidalTraversal': distributes any
+-- 'StrongDistributiveProfunctor' with /no/ product-strength requirement on the carrier. Every non-lens traversal (prism,
 -- 'Proarrow.Category.Monoidal.Distributive.Traversable' functor, ...) is a monoidal traversal, so this accepts carriers like @'Proarrow.Promonad.Writer.Writer' w@
 -- that are tensor-strong but not product-strong.
 --
@@ -209,7 +207,7 @@ toPTraversal
 toPTraversal o = withLegs @MonTravFl o \l@Objs r@Objs -> Optic (monTravP l r)
 
 -- | A full traversal in the profunctor-class encoding: distributes any profunctor carrying both
--- distributive strength and __product__ strength -- exactly the constraint 'travP' demands. This is
+-- distributive strength and __product__ strength, the constraint 'travP' demands. This is
 -- the 'Traversal' analog of 'PTraversal', which drops the product strength (all it needs for a
 -- 'MonoidalTraversal'). Equivalent to 'Traversal' via 'toPTraversalFull' and 'traversal'.
 type PTraversalFull s t a b = Optic (StrongDistributiveProfunctor :&&: Strong ProdAction) s t a b

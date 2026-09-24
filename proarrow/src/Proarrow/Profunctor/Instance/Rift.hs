@@ -1,7 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The right Kan lift of a profunctor @p@ along @j@, written @p '<|' j@: the universal @g@ with
--- @j ':.:' g ~> p@. (Note: 'Proarrow.Profunctor.Instance.Ran.Ran' and 'Rift' are swapped compared to the @profunctors@ package.)
+-- @j ':.:' g ~> p@. 'Proarrow.Profunctor.Instance.Ran.Ran' and 'Rift' are swapped compared to the
+-- @profunctors@ package.
 module Proarrow.Profunctor.Instance.Rift where
 
 import Prelude (type (~))
@@ -18,12 +19,9 @@ import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..), RepCostar, Representable (..), repUniv, withObRep)
 import Proarrow.Promonad (Procomonad (..), RelativeComonad (..))
 
--- Note: Ran and Rift are swapped compared to the profunctors package.
-
 type p <| j = Rift (OP j) p
 
--- | The right Kan lift of @p@ along @j@, written @p <| j@: the universal @g@ with
--- @j ':.:' g ~> p@ ('riftUniv' and 'runRiftProf').
+-- | The data type behind @p '<|' j@. Its universal property is 'riftUniv' and 'runRiftProf'.
 type Rift :: OPPOSITE (k +-> i) -> j +-> i -> j +-> k
 data Rift j p a b where
   Rift :: (Ob a, Ob b) => {unRift :: forall x. j x a -> p x b} -> Rift (OP j) p a b

@@ -3,16 +3,12 @@
 
 -- | Property tests for the cost category.
 --
--- 'GTE' is thin: there is at most one arrow between any two objects, so arrow
--- equality is trivially true and the law properties cannot fail on a mismatch.
--- What they *do* establish is that every arrow the laws ask for can be built and
--- forced without hitting one of the supposedly-unreachable @error@ branches in
--- "Proarrow.Category.Instance.Cost", and that the type-level arithmetic lines up
--- at every object triple. 'eqP' below forces both sides for exactly that reason.
---
--- The paths worth covering are @associator@ \/ @associatorInv@ \/ @swap@, which
--- bridge associativity and commutativity of @+@ with 'unsafeCoerce', and
--- @distL@ \/ @distR@, whose branches rely on monotonicity of @+@.
+-- 'GTE' is thin, so arrow equality is trivially true and the laws cannot fail on a mismatch. What
+-- they check is that every arrow the laws ask for can be built and forced without hitting an
+-- unreachable @error@ branch in "Proarrow.Category.Instance.Cost", and that the type-level
+-- arithmetic lines up at every object triple; 'eqP' forces both sides for that reason. The paths
+-- that matter are @associator@ \/ @associatorInv@ \/ @swap@, which use 'unsafeCoerce' for
+-- associativity and commutativity of @+@, and @distL@ \/ @distR@, which rely on monotonicity of @+@.
 module Props.Cost where
 
 import Control.Monad (unless)
@@ -92,8 +88,8 @@ instance (Ob a, Ob b) => TestableType (GTE a b) where
       GTI -> GenEmpty \case {}
 
 instance (Ob a, Ob b) => TestingEqShow (GTE a b) where
-  -- Thin, so any two arrows with the same endpoints are equal -- but force both
-  -- sides, so that a wrongly-taken error branch surfaces as a test failure.
+  -- Thin, so any two arrows with the same endpoints are equal. Force both sides
+  -- anyway, so that a wrongly-taken error branch surfaces as a test failure.
   eqP l r = l `seq` r `seq` pure True
   showP Inf = "Inf"
   showP GTE = "GTE"

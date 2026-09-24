@@ -2,7 +2,7 @@
 
 -- | The __collage__ (or cograph) of a profunctor @p@: a category on the disjoint union of @p@'s
 -- two base categories ('L'- and 'R'-tagged objects, via the kind @'COLLAGE' p@), whose
--- cross-arrows @'L' a '~>' 'R' b@ are exactly the elements @p a b@ (the 'L2R' constructor).
+-- cross-arrows @'L' a '~>' 'R' b@ are the elements @p a b@ (the 'L2R' constructor).
 -- The injections 'InjL'\/'InjR' present a profunctor as a single category sitting over the
 -- walking arrow 'Proarrow.Category.Instance.Bool.BOOL'.
 module Proarrow.Category.Instance.Collage where
@@ -229,13 +229,10 @@ instance (Finite j, Finite k) => Finite (COLLAGE (p :: k +-> j)) where
       goR (FCons @y ys) = withCollageR @p @y (FCons @(R y) (goR ys))
 
 -- | The collage of a finitary profunctor between finite categories is a finite category: a
--- hom-set is one of the two base hom-sets, or an element set of @p@ for a cross-arrow, or empty
--- going back the other way. Numbering it is numbering whichever of those it is.
+-- hom-set is a base hom-set, an element set of @p@ for a cross-arrow, or empty going back.
 --
--- A collage is the cheapest source of a category that is /not a poset/: @p@ can have several
--- elements between one pair of objects, and those are parallel arrows, while the base categories
--- supply whatever else is wanted. That is what a coverage on one is good for, and enumerating the
--- hom-sets is what any decision procedure over it needs.
+-- This is the cheapest source of a finite category that is /not a poset/: elements of @p@
+-- between one pair of objects are parallel arrows.
 instance
   (Finitary (Hom j), Finitary (Hom k), Finitary p)
   => Finitary (Collage :: CAT (COLLAGE (p :: k +-> j)))

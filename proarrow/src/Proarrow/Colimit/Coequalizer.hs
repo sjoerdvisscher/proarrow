@@ -1,8 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | Coequalizers: 'HasCoequalizers' with 'coequalize' in continuation-passing style -- the apex type
--- depends on the given arrows, so it is hidden behind an existential -- and 'factorCoequalizer' for the
+-- | Coequalizers: 'HasCoequalizers' with 'coequalize' in continuation-passing style (the apex type
+-- depends on the given arrows, so it is hidden behind an existential) and 'factorCoequalizer' for the
 -- universal property.
 module Proarrow.Colimit.Coequalizer where
 
@@ -56,8 +56,8 @@ thinCoequalize :: forall {k} (a :: k) b r. (Thin k) => a ~> b -> a ~> b -> (fora
 thinCoequalize Objs _ k = k id
 
 -- | Standalone helper (not a class method) usable as the @default@ implementation of
--- 'Proarrow.Colimit.Pushout.pushout' wherever @(HasCoequalizers k, HasCoproducts k)@ happen to hold --
--- not needed by (or required of) every 'Proarrow.Colimit.Pushout.HasPushouts' instance.
+-- 'Proarrow.Colimit.Pushout.pushout' wherever @(HasCoequalizers k, HasCoproducts k)@ happen to hold.
+-- Not every 'Proarrow.Colimit.Pushout.HasPushouts' instance needs it or is required to have it.
 pushoutDefault
   :: forall {k} (o :: k) a b r
    . (HasCoequalizers k, HasCoproducts k) => o ~> a -> o ~> b -> (forall p. a ~> p -> b ~> p -> r) -> r

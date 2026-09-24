@@ -1,17 +1,13 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | Squares, specialized to profunctors.
+-- | Squares, specialized to profunctors: the counterpart of "Proarrow.Equipment.Squares" in
+-- @proarrow-equipment@. Horizontal legs are 'Proarrow.Path.Path's of profunctors, vertical legs
+-- 'Representable' profunctors (the tight morphisms of the @Prof@ equipment).
 --
--- This is the profunctor-specific counterpart of "Proarrow.Equipment.Squares" in
--- @proarrow-equipment@: instead of squares over an arbitrary proarrow equipment, the
--- legs here are 'Proarrow.Path.Path's of plain profunctors (horizontal) or
--- 'Representable' profunctors (vertical, playing the role of the tight morphisms of the
--- @Prof@ equipment). "Proarrow.Path" does the associator\/unitor bookkeeping once, by
--- induction over the path, so the combinators below never have to. A square's payload is
--- stated as @'Fold' (p '+++' f) :~> 'Fold' (g '+++' q)@ (the fold of each side's
--- concatenated path) rather than @'Fold' f ':.:' 'Fold' p :~> 'Fold' q ':.:' 'Fold' g@: it
--- means combinators whose legs are trivial (@'Nil'@ or a single element) need no unitors
--- at all, since e.g. @'Nil' '+++' ps@ and @ps '+++' 'Nil'@ both reduce to @ps@ for free.
+-- A square's payload is @'Fold' (p '+++' f) :~> 'Fold' (g '+++' q)@, the fold of each side's
+-- concatenated path, instead of @'Fold' f ':.:' 'Fold' p :~> 'Fold' q ':.:' 'Fold' g@.
+-- "Proarrow.Path" does the associator\/unitor bookkeeping once, and since @'Nil' '+++' ps@ and
+-- @ps '+++' 'Nil'@ both reduce to @ps@, combinators with trivial legs need no unitors.
 module Proarrow.Squares where
 
 import Data.Kind (Type)

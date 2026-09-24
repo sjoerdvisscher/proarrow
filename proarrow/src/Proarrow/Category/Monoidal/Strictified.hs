@@ -4,7 +4,7 @@
 -- | The strictification of a monoidal category: objects are /lists/ of objects of @k@, tensoring is
 -- list concatenation, and a morphism @as ~> bs@ is a @'Fold' as ~> 'Fold' bs@ in @k@ (the
 -- 'Strictified' arrow). Unitors and associators become identities, which makes composing long
--- tensor expressions -- string diagrams in particular -- much more convenient.
+-- tensor expressions, string diagrams in particular, much more convenient.
 module Proarrow.Category.Monoidal.Strictified where
 
 import Data.Kind (Constraint)
@@ -152,7 +152,7 @@ instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
       withOb2 @[k] @bs @ds $
         Str (concatFold @bs @ds . (f ** g) . splitFold @as @cs)
 
--- | List concattenation as monoidal tensor.
+-- | List concatenation as monoidal tensor.
 instance (Monoidal k) => Monoidal [k] where
   type Unit = '[]
   type as ** bs = as ++ bs

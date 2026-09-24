@@ -72,7 +72,7 @@ instance (Promonad p) => Promonad (Kleisli :: CAT (KLEISLI p)) where
 
 -- | The terminal object lifts to the co-Kleisli category of a 'Comonad': there @p a b@ is
 -- @p '%%' a '~>' b@, so @p a (-)@ is representable and preserves limits. A bare 'Promonad' is not
--- enough -- at the constant promonad @'Proarrow.Profunctor.Instance.HaskValue.HaskValue' c@ every
+-- enough. At the constant promonad @'Proarrow.Profunctor.Instance.HaskValue.HaskValue' c@ every
 -- element of @c@ is an arrow into the terminal object, so uniqueness fails.
 instance (HasTerminalObject k, Comonad p) => HasTerminalObject (KLEISLI (p :: k +-> k)) where
   type TerminalObject @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
@@ -85,7 +85,7 @@ instance (HasInitialObject k, Monad p) => HasInitialObject (KLEISLI (p :: k +-> 
   initiate = arr initiate
 
 -- | Products lift for the same reason as the terminal object: for a 'Comonad' @p a (-)@ is
--- representable, and @'lmap' 'diag' (f '**' g)@ is then exactly the canonical mediating map.
+-- representable, and @'lmap' 'diag' (f '**' g)@ is then the canonical mediating map.
 instance (Cartesian k, Comonad p, MonoidalProfunctor p) => HasBinaryProducts (KLEISLI (p :: k +-> k)) where
   type a && b = KL (UN KL a && UN KL b)
   withObProd @(KL a) @(KL b) r = withObProd @k @a @b r
@@ -153,7 +153,7 @@ instance (DecidableProfunctor p, Promonad p) => DecidableProfunctor (Kleisli :: 
   toHolds (Kleisli p) r = toHolds p r
 
 -- | The Kleisli category has the objects of @k@, numbered the same way, so a Kleisli category of a
--- decidable promonad on an enumerable category is itself enumerable -- and so can be searched, or
+-- decidable promonad on an enumerable category is itself enumerable, and so can be searched, or
 -- closed ("Proarrow.Category.Enriched.Thin.Composition").
 instance (T.Indexed k) => T.Indexed (KLEISLI (p :: CAT k)) where
   type Index (a :: KLEISLI p) = T.Index (UN KL a)

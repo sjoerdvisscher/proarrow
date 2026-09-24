@@ -8,8 +8,8 @@
 -- and matches, sitting below 'Proarrow.Optic.Getter.Review',
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' and
 -- 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal' in the lattice. Build with 'prism',
--- eliminate to the two legs with 'withPrism' via the generic 'ExOptic' carrier;
--- 'toOpLens'\/'fromOpLens' witness the equivalence with the op-lens encoding, and this module also
+-- eliminate to the two legs with 'withPrism' via the generic 'ExOptic' carrier.
+-- 'toOpLens'\/'fromOpLens' witness the equivalence with the op-lens encoding. This module also
 -- hosts 'affineTraversal', the lens-then-prism builder for affine traversals.
 module Proarrow.Optic.Prism where
 
@@ -44,8 +44,8 @@ import Proarrow.Profunctor.Representable (Rep (..))
 -- ('getP' on the swapped pair): @'Proarrow.Optic.re' prism@ is a getter.
 type PrismFl :: forall {k}. FLAVOR k k
 class (AffineTravFl p q, GetterFl q p, MonTravFl p q) => PrismFl (p :: k +-> k) (q :: k +-> k) where
-  -- | Like 'affineMatch', but with an honest constraint: prism witnesses only ever need binary
-  -- coproducts, so prisms stay usable in categories without products.
+  -- | Like 'affineMatch', but asking only for binary coproducts. Prism witnesses never need more,
+  -- so prisms stay usable in categories without products.
   matchingP :: (HasBinaryCoproducts k) => p (s :: k) a -> q (b :: k) t -> s ~> (t || a)
 
 instance (CopyDiscard k, HasCoproducts k, Ob t) => PrismFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
@@ -66,8 +66,8 @@ prism bt sta =
 
 -- | Build an 'AffineTraversal' by composing a 'Lens' with a 'Prism': focus a field with the lens,
 -- then match a case of that field with the prism. There is no from-legs builder for a bare affine
--- traversal (its witness only ever arises by composition), so this is the design-aligned way to
--- make one -- the same @'convert' (l '%' p)@ idiom the test suite uses.
+-- traversal (its witness only ever arises by composition), so this is the way to make one. It is
+-- @'convert' (l '%' p)@.
 affineTraversal
   :: forall {k} (s :: k) t x y a b. (CategoryOf k) => Lens s t x y -> Prism x y a b -> AffineTraversal s t a b
 affineTraversal l p = convert (l % p)
@@ -82,7 +82,7 @@ withPrism
 withPrism o k = withLegs @PrismFl o \ @p @q p q -> k (getP @q @p q) (matchingP @p @q p q)
 
 -- | A 'Prism' and its op-lens encoding ('Proarrow.Optic.Lens.Prism', a 'Proarrow.Optic.Lens.Lens'
--- over the opposite category) carry the same data -- the two legs @(b '~>' t, s '~>' t '||' a)@ --
+-- over the opposite category) carry the same data, the two legs @(b '~>' t, s '~>' t '||' a)@,
 -- so they are equivalent. 'toOpLens' eliminates a 'PrismFl' prism to its legs (via 'withPrism') and
 -- rebuilds the op-lens; 'fromOpLens' eliminates the op-lens (via 'Proarrow.Optic.Lens.withLens' on
 -- 'opOptic', i.e. as a lens over 'Proarrow.Category.Instance.Opposite.OPPOSITE') and rebuilds the 'PrismFl' prism.

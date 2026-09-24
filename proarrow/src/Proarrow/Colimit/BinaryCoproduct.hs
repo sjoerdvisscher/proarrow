@@ -48,7 +48,7 @@ infixl 4 +++
 
 -- | Binary coproducts, dual to 'Proarrow.Limit.BinaryProduct.HasBinaryProducts': an object
 -- @a '||' b@ with injections 'lft' and 'rgt', universal among all pairs of arrows into a common
--- target -- each such pair factors through it uniquely via '(|||)'.
+-- target. Each such pair factors through it uniquely via '(|||)'.
 --
 -- __Laws:__
 --
@@ -98,7 +98,7 @@ swapCoprod' a b = rgt' (tgt b) a ||| lft' b (tgt a)
 swapCoprod :: forall {k} (a :: k) b. (HasBinaryCoproducts k, Ob a, Ob b) => a || b ~> b || a
 swapCoprod = swapCoprod' (obj @a) (obj @b)
 
--- | The coproduct as a functor from the product category, @'(a, b) ↦ a || b@ -- the coproduct
+-- | The coproduct as a functor from the product category, @'(a, b) ↦ a || b@. The coproduct
 -- analogue of 'Proarrow.Category.Monoidal.MultRep'.
 data PlusRep :: (k, k) +-> k
 

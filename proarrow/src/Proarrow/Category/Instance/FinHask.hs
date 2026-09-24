@@ -172,12 +172,12 @@ position x = case P.elemIndex x universeF of
   P.Just i -> P.fromIntegral i
   P.Nothing -> P.error "position: not in the universe of its type"
 
--- | The hom-sets of 'FINHASK' are finite, so its hom-profunctor is finitary, and it is numbered by
--- the same 'universe' the 'Finite' instance above enumerates -- but arithmetically rather than by
--- searching it. A morphism is a table of values indexed by @'universeF' \@a@, so reading that table
--- as a numeral in base @|b|@, most significant digit first, gives exactly @universe@\'s own order:
--- @universe@ is @'P.traverse' (\a -> (a,) '<$>' universe) universe@, and for lists @'<*>'@ varies
--- its right operand fastest, so it is the /last/ element of @a@ that varies fastest.
+-- | The hom-sets of 'FINHASK' are finite, so its hom-profunctor is finitary. It is numbered in the
+-- order of the 'universe' the 'Finite' instance above enumerates, but arithmetically instead of by
+-- searching it. A morphism is a table of values indexed by @'universeF' \@a@. Reading that table
+-- as a numeral in base @|b|@, most significant digit first, gives @universe@\'s own order, since
+-- @universe@ is @'P.traverse' (\a -> (a,) '<$>' universe) universe@ and for lists @'<*>'@ varies
+-- its right operand fastest. So it is the /last/ element of @a@ that varies fastest.
 instance Finitary FinHask where
   size @a @b = finiteSize @FinHask @a @b
   toIndex @(FH a) @(FH b) f = P.foldl (\acc x -> acc P.* card @b P.+ position (f ! x)) 0 (universeF @a)

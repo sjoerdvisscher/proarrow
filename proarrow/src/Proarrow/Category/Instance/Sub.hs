@@ -52,15 +52,13 @@ class (ob (a && b)) => IsObProd (ob :: OB k) a b
 
 instance (ob (a && b)) => IsObProd (ob :: OB k) a b
 
--- | A full subcategory has the ambient category's finite products as soon as it contains them --
--- which is what the quantified constraint says. Being full, it has nothing else to check: the
--- projections and the pairing are the ambient ones under 'Sub'.
+-- | A full subcategory has the ambient finite products as soon as it contains them, as the
+-- quantified constraint says. The projections and pairing are the ambient ones under 'Sub'.
 --
--- The exponential goes the same way, but not at an arbitrary kind. What a cartesian closed
--- subcategory needs is @'Proarrow.Limit.BinaryProduct.PROD' k@\'s exponential read back at @k@,
--- as @'Proarrow.Core.UN' PR (PR a '~~>' PR b)@, and neither @'withObExp'@ nor @curry@ discharges
--- through that round trip. Stated for a subcategory of /profunctors/, where the exponential is a
--- plain type constructor, it does: see
+-- There is no exponential at an arbitrary kind: neither @'withObExp'@ nor @curry@ discharges
+-- through @'Proarrow.Limit.BinaryProduct.PROD' k@\'s round trip
+-- @'Proarrow.Core.UN' PR (PR a '~~>' PR b)@.
+-- For subcategories of profunctors see
 -- @'Proarrow.Category.Monoidal.Closed.Closed' ('Proarrow.Limit.BinaryProduct.PROD' ('SUBCAT' ob))@
 -- in "Proarrow.Profunctor.Instance.Exponential".
 instance (HasTerminalObject k, ob (TerminalObject :: k)) => HasTerminalObject (SUBCAT (ob :: OB k)) where

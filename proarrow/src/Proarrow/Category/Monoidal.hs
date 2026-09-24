@@ -3,7 +3,7 @@
 -- | Monoidal categories, as kinds with a tensor: 'Monoidal' provides 'Unit', the tensor @('**')@,
 -- and the unitor and associator isomorphisms; 'SymMonoidal' adds the symmetry 'swap'. A
 -- 'MonoidalProfunctor' is a lax monoidal profunctor with 'one' and a value-level @('**')@, and a
--- category is 'Monoidal' precisely when its hom-profunctor is.
+-- category is 'Monoidal' if and only if its hom-profunctor is.
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
@@ -92,9 +92,9 @@ unparCorep :: (OplaxMonoidal p, Ob x, Ob y) => p %% (x ** y) ~> (p %% x) ** (p %
 unparCorep @p @x @y = coindex @p (corepUniv @p @x ** corepUniv @p @y)
 
 -- | A __representable__ profunctor whose functor @p '%'@ is /oplax/ monoidal. Stating the oplax
--- structure of a representable functor means naming that same functor in its other variance, which
--- is what 'RepCostar' is for, so the postfix here says which presentation @p@ is in, not which
--- structure it carries. Weaker than 'StrongMonoidalRep', which additionally asks @p@ itself to be
+-- structure of a representable functor means naming that same functor in its other variance, as
+-- 'RepCostar' does. So the postfix here says which presentation @p@ is in, not which structure it
+-- carries. Weaker than 'StrongMonoidalRep', which additionally asks @p@ itself to be
 -- 'LaxMonoidal'.
 type OplaxMonoidalRep p = (Representable p, OplaxMonoidal (RepCostar p))
 
@@ -217,12 +217,10 @@ withObNFold r = case snat @n of
 -- | If your monoidal category is a strict monoidal category, add 'Strictly' to your 'Ob' constraint.
 -- This will let GHC know that the unitors and associators are strict, so you won't have to provide proof of that.
 --
--- The four unitors then need no definition at all: each defaults to 'id' under its own equality
--- (@'Unit' '**' a ~ a@ or @a '**' 'Unit' ~ a@), which is what strictness gives you. Note those
--- defaults are keyed on the equalities rather than on 'Strictly' itself, so they also fire for a
--- category whose tensor is strictly unital but not strictly associative -- 'Proarrow.Category.Instance.Mat.MatK'
--- and 'Proarrow.Category.Instance.ZX.ZX' are both in that position. Only the associators are left,
--- and 'associatorDefault' serves for both:
+-- The four unitors then default to 'id'. The defaults need only @'Unit' '**' a ~ a@ and
+-- @a '**' 'Unit' ~ a@, so they also fire for a strictly unital category such as
+-- 'Proarrow.Category.Instance.Mat.MatK' or 'Proarrow.Category.Instance.ZX.ZX'. Both associators
+-- can use 'associatorDefault':
 --
 -- @
 -- associator \@a \@b \@c = associatorDefault \@a \@b \@c

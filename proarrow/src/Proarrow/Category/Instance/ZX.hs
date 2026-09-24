@@ -4,7 +4,7 @@
 
 -- | The __ZX calculus__ for reasoning about quantum computations: objects are numbers of qubits
 -- and a morphism @'ZX' i o@ is a complex matrix between the corresponding state spaces, stored
--- sparsely. Provides the generators -- 'zSpider', 'xSpider' and 'hadamard' -- as a dagger monoidal
+-- sparsely. Provides the generators ('zSpider', 'xSpider' and 'hadamard') as a dagger monoidal
 -- category.
 module Proarrow.Category.Instance.ZX where
 
@@ -194,10 +194,9 @@ instance (MonoidalAction (t :: (Nat, Nat) +-> Nat)) => Costrong t ZX where
   coact @x = coactCC @t @x
 
 -- No terminal or initial object: @hom(n, m)@ is the space of @2^m x 2^n@ complex matrices, which
--- is a singleton for no @n@ and @m@ at all. @0@ came close enough to look like one -- it is the
--- monoidal unit -- but the arrow into it was the zero matrix, and @zSpider 0 :: ZX 1 0@ is a
--- second, different arrow @1 ~> 0@. What the zero matrix actually gives is a zero /morphism/,
--- which wants a class of its own rather than a fake zero object.
+-- is a singleton for no @n@ and @m@ at all. @0@, the monoidal unit, is not terminal either: the
+-- zero matrix is an arrow @1 ~> 0@, but so is @zSpider 0 :: ZX 1 0@, and the two differ. The zero
+-- matrix is a zero morphism, which wants a class of its own, not a fake zero object.
 
 -- No binary(co)products, since that would need 2^n + 2^m = 2^(x :: nat)
 

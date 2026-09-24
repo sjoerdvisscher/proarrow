@@ -23,16 +23,14 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Promonad (..), obj)
 import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 
--- | As much of a quantale as a closure needs, and a totally ordered, integral one at that: a
--- 'Semicartesian' 'Distributive' category, so that the unit is the top element and the bottom
--- absorbs, in which the join of two objects is one of them ('minIs') and the order is decidable.
--- Totality is what makes a single best walk exist; in a quantale of, say, sets of paths, a join is
--- attained by no one summand. Infinite joins are not needed, since there are finitely many objects.
+-- | As much of a quantale as a closure needs: a totally ordered, integral one. It is a
+-- 'Semicartesian' 'Distributive' category, so the unit is the top element and the bottom absorbs,
+-- the join of two objects is one of them ('minIs'), and the order is decidable. Totality makes a
+-- single best walk exist. Infinite joins are not needed, since there are finitely many objects.
 --
--- The methods reflect to the value level facts that GHC cannot see through the type families:
--- 'minIs' is totality, and 'unitIsNotBottom' and 'unitIsTop' say the order is nondegenerate and
--- skeletal -- the latter is antisymmetry at the unit, since 'Semicartesian' already gives the
--- arrow the other way.
+-- The methods reflect to the value level facts GHC cannot see through the type families: 'minIs'
+-- is totality, 'unitIsNotBottom' says the order is nondegenerate, and 'unitIsTop' is antisymmetry
+-- at the unit ('Semicartesian' gives the arrow the other way).
 class (Semicartesian v, Distributive v, Decidable v) => Quantale v where
   minIs :: forall (x :: v) y. (Ob x, Ob y) => MinIs x y
   unitIsNotBottom :: forall r. (Unit :: v) ~> InitialObject -> r
@@ -54,7 +52,7 @@ bottomTensor :: forall {v} (x :: v) y. (Quantale v, Ob x, Ob y) => (InitialObjec
 bottomTensor = initiate @v @y . absorbR @v @x
 
 -- | The arrow between two objects of a decidable order, when the caller knows it exists but its
--- existence is not derived structurally -- the triangle inequality for closures, for instance. As
+-- existence is not derived structurally (the triangle inequality for closures, for instance). As
 -- elsewhere in "Proarrow.Category.Instance.Cost", it is checked at runtime.
 checkedArrow :: forall v (x :: v) y. (Decidable v, Ob x, Ob y) => x ~> y
 checkedArrow = case decide @(Hom v) @x @y of

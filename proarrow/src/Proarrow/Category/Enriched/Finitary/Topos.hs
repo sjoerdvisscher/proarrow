@@ -8,16 +8,16 @@
 -- | __The topos of finitary profunctors.__ Everything built on the numbering in
 -- "Proarrow.Category.Enriched.Finitary": a hom-set is an initial segment of the naturals, so a
 -- subobject or a quotient of one is a table of indices, and a computation can produce such a table
--- and reify it into a fresh object. That is 'Reindex', and it gives equalizers, coequalizers,
+-- and reify it into a fresh object. This is 'Reindex', and it gives equalizers, coequalizers,
 -- pullbacks, pushouts and epi-mono factorization.
 --
--- The internal hom and the subobject classifier are the same construction one level up: both are
+-- The internal hom and the subobject classifier are the same construction one level up. Both are
 -- ends, enumerated by choosing a value at every point of a domain and keeping the choices that
--- commute with the action. Neither count is a formula in the sizes it is built from -- they depend
--- on how the arrows of @j@ and @k@ compose -- which is exactly why the numbering is a value.
+-- commute with the action. Neither count is a formula in the sizes it is built from, since they
+-- depend on how the arrows of @j@ and @k@ compose. That is why the numbering is a value.
 --
--- The punchline is @'ElementaryTopos' ('PROD' ('FINITARY' j k))@ at the end. 'PROD' is what makes
--- the tensor the product rather than Day convolution, as it does for @j '+->' k@ itself.
+-- The module ends with @'ElementaryTopos' ('PROD' ('FINITARY' j k))@. With 'PROD' the tensor is the
+-- product instead of Day convolution, as it is for @j '+->' k@ itself.
 module Proarrow.Category.Enriched.Finitary.Topos where
 
 import Data.IntMap.Strict qualified as IM
@@ -86,9 +86,9 @@ type FINITARY j k = SUBCAT (Finitary :: (j +-> k) -> Constraint)
 
 type FIN (p :: j +-> k) = SUB p :: FINITARY j k
 
--- The finite products and coproducts of 'FINITARY' -- and of the sheaves -- are the generic ones
--- for a full subcategory in "Proarrow.Category.Instance.Sub": pointwise, under 'Sub'. All that is
--- asked of the predicate is that it hold of the ambient (co)products, which the instances for
+-- The finite products and coproducts of 'FINITARY' (and of the sheaves) are the generic ones
+-- for a full subcategory in "Proarrow.Category.Instance.Sub", pointwise under 'Sub'. The predicate
+-- only has to hold of the ambient (co)products, which the instances for
 -- ':*:', ':+:', 'TerminalProfunctor' and 'InitialProfunctor' supply.
 
 instance (CategoryOf j, CategoryOf k) => HasInitialObject (FINITARY j k) where
@@ -157,8 +157,8 @@ buildTable cell = rows (finite @k)
 -- * Reindexing along a table of fibres
 
 -- | What a table of fibres does to the profunctor it relabels. The relabelling is the same either
--- way; what differs is what may be concluded from it, and that is why this is in the type at all --
--- see the 'Sheaf' instance below, which is for 'Subobject' alone.
+-- way. What differs is what may be concluded from it, which is why this is in the type at all (see
+-- the 'Sheaf' instance below, which is for 'Subobject' alone).
 --
 -- ['Subobject'] singleton fibres: the elements kept, renumbered. What 'withSubobject' and
 --   'equalizeNat' build.
@@ -169,8 +169,8 @@ type data Retabulation = Subobject | Quotient
 
 -- | @p@ relabelled, at each pair of objects, along a partial surjection onto an initial segment of
 -- the naturals, given by its fibres: index @i@ of the new hom-set stands for the elements of @p@ in
--- the @i@-th fibre. Well behaved exactly when the fibres are respected by @p@'s 'dimap', which is
--- the case for the tables 'equalize' and 'coequalize' build; 'dimap' delegates to @p@ and relies on
+-- the @i@-th fibre. Well behaved when and only when the fibres are respected by @p@'s 'dimap', as
+-- they are for the tables 'equalize' and 'coequalize' build. 'dimap' delegates to @p@ and relies on
 -- it.
 type Reindex :: forall {j} {k}. Retabulation -> (j +-> k) -> [[[[Nat]]]] -> j +-> k
 newtype Reindex r p fs a b = Reindex (p a b)
@@ -210,17 +210,14 @@ instance
     rep : _ -> Reindex (fromIndex @p rep)
     [] -> P.error "Reindex: empty fibre"
 
--- | A retabulation of a sheaf glues as the sheaf does -- for a 'Subobject' table. Not for a
--- 'Quotient' one, where 'glue' would not even be well defined: it would read a class through
--- whichever representative it was handed, and the element it glues need not be in the class the
--- family came from. A quotient of a sheaf is no sheaf, which is why colimits of sheaves go through
--- sheafification -- and why the marker has to be in the type, since 'coequalize' builds exactly
--- such a quotient out of objects that are sheaves.
+-- | Restricting a sheaf to a subobject gives a sheaf, provided the subobject is a /subsheaf/: the
+-- element glued from a family of kept elements must be kept too. The tables of 'equalize' and the
+-- pullbacks are subsheaves. This is a precondition, and a violation fails loudly: 'toIndex' finds
+-- the glued element in no fibre.
 --
--- A 'Subobject' table is still not enough on its own: what is asked is that it cut out a
--- /subsheaf/, as the tables of 'equalize' and the pullbacks do. That much stays a precondition, of
--- the same shape as the two instances above and failing the same loud way -- a glued element
--- outside every fibre is what 'toIndex' reports.
+-- There is no instance for 'Quotient'. A quotient of a sheaf is no sheaf in general ('glue' would
+-- depend on which representative of each class it was handed), so colimits of sheaves go through
+-- sheafification.
 instance (Sheaf t p) => Sheaf t (Reindex Subobject p fs) where
   glue c m = Reindex (glue @t c \l -> case m l of Reindex x -> x)
 
@@ -229,7 +226,7 @@ instance (Sheaf t p) => Sheaf t (Reindex Subobject p fs) where
 -- out a set that is.
 --
 -- @'dimap' l r@ is @'lmap' l . 'rmap' r@, so closure under the two whiskerings separately is closure
--- under the action: two walks over three objects rather than one over four.
+-- under the action. That takes two walks over three objects instead of one over four.
 closedUnder
   :: forall {j} {k} (p :: j +-> k)
    . (Finitary p, FiniteCat j, FiniteCat k)
@@ -244,9 +241,9 @@ closedUnder keep =
     )
 
 -- | Carve a subprofunctor out of @p@, the caller choosing which elements to keep, and receiving the
--- new object\'s inclusion. This is what 'equalize' does with the elements two transformations agree
--- on, exposed so that a caller can pick out a subobject of its own: it is how a value -- a graph read
--- off a file, say -- becomes an object of @'FINITARY' j k@, as a subobject of a big enough ambient
+-- new object\'s inclusion. 'equalize' does this with the elements two transformations agree on.
+-- Exposed so that a caller can pick out a subobject of its own. This is how a value (a graph read
+-- off a file, say) becomes an object of @'FINITARY' j k@, as a subobject of a big enough ambient
 -- one. The failure continuation is taken when the kept set is not 'closedUnder' the action, and so
 -- is no subobject.
 withSubobject
@@ -272,24 +269,18 @@ type KnownTables j k lm rm = (KnownTable (Objects j) (Objects k) lm, KnownTable 
 -- into @a@ and each arrow out of @b@, the function the arrow induces on element indices. A value is
 -- its index, and 'dimap' is two lookups.
 --
--- Where 'Reindex' is a /view/ of a profunctor it keeps underneath -- built for free, delegating to
--- @p@ on every use, inheriting @p@'s instances -- this is the /skeleton/: 'withTabulated' pays one
--- full enumeration to build it and nothing is paid afterwards, but nothing is inherited either, which
--- is why the 'Sheaf' instance below has to search. Every finitary profunctor tabulates, so a costly
--- one -- 'Proarrow.Category.Enriched.Finitary.Sheaf.Sheafify' re-runs its whole enumeration on every
--- 'toIndex', since a 'Finitary' instance cannot memoise -- can be replaced by its tables where it is
--- used often.
+-- Unlike 'Reindex', a view that delegates to @p@, this is the skeleton: 'withTabulated' pays one
+-- full enumeration to build it and nothing afterwards. Use it in place of a costly profunctor that
+-- is used often, such as 'Proarrow.Category.Enriched.Finitary.Sheaf.Sheafify', whose 'toIndex'
+-- re-runs its whole enumeration since a 'Finitary' instance cannot memoise.
 --
 -- The @lm@ table has, at @(a, b)@, one row per arrow @g :: c '~>' a@ in 'arrowSlot' order, listing
--- @'toIndex' ('lmap' g x)@ for each element @x@ in index order; @rm@ has one row per @h :: b '~>' d@
--- in 'coarrowSlot' order for 'rmap'. A row's length is the size at @(a, b)@, so no third table.
+-- @'toIndex' ('lmap' g x)@ for each element @x@ in index order. @rm@ has one row per @h :: b '~>' d@
+-- in 'coarrowSlot' order for 'rmap'. A row's length is the size at @(a, b)@.
 --
--- The @t@ parameter is the coverage the presentation has been /checked/ to be a sheaf for. The
--- tables cannot say whether it is one -- the 'Sheaf' instance below can only assert it -- so the
--- assertion is left to the two builders, which are the only things that should ever apply a tag.
--- 'withTabulated' asserts nothing, taking 'Trivial', which has no covers;
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf' decides the condition by
--- enumeration first.
+-- @t@ is the coverage the tables have been checked to be a sheaf for, which the tables cannot say.
+-- Only the builders apply it: 'withTabulated' uses 'Trivial', which has no covers, and
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf' decides the condition first.
 type Tabulated :: forall {j} {k}. Type -> [[[[Nat]]]] -> [[[[Nat]]]] -> j +-> k
 data Tabulated t lm rm a b where
   Tabulated :: (Ob a, Ob b) => Natural -> Tabulated t lm rm a b
@@ -312,8 +303,8 @@ instance (FiniteCat j, FiniteCat k, KnownTables j k lm rm) => Profunctor (Tabula
       look cell slot = genericIndex (genericIndex cell slot)
   r \\ Tabulated{} = r
 
--- | The numbering is the value: 'size' is a row's length and the rest is the identity -- but for
--- the range check, which an index that /is/ the value has nowhere else to fail: stored unchecked it
+-- | The numbering is the value. 'size' is a row's length and the rest is the identity, except for
+-- the range check. An index that /is/ the value has nowhere else to fail. Stored unchecked, it
 -- would surface much later, as 'genericIndex' running off a row inside 'dimap'.
 instance (FiniteCat j, FiniteCat k, KnownTables j k lm rm) => Finitary (Tabulated t lm rm :: j +-> k) where
   size @a @b = case cellVal @lm @a @b of
@@ -324,10 +315,10 @@ instance (FiniteCat j, FiniteCat k, KnownTables j k lm rm) => Finitary (Tabulate
     | i P.< size @(Tabulated t lm rm) @a @b = Tabulated i
     | P.otherwise = P.error "Tabulated: index out of range"
 
--- | The two tables of @p@, reified, with nothing said about what they present. The enumeration --
--- every element, every arrow, one 'toIndex' per pair -- is paid here and never again. The two
+-- | The two tables of @p@, reified, with nothing said about what they present. The enumeration
+-- (every element, every arrow, one 'toIndex' per pair) is paid here and never again. The two
 -- builders differ only in the tag they hand the tables to, so the enumeration is written once,
--- here; the other builder is 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf', which
+-- here. The other builder is 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf', which
 -- lives over there because deciding the sheaf condition needs what is built on this module.
 withTables
   :: forall {j} {k} (p :: j +-> k) r
@@ -352,15 +343,13 @@ toTabulated x = Tabulated (toIndex x) \\ x
 fromTabulated :: forall {j} {k} t lm rm (p :: j +-> k). (Finitary p) => Tabulated t lm rm :~> p
 fromTabulated (Tabulated i) = fromIndex i
 
--- | Present a finitary profunctor by its tables, once, and hand on the presentation with the
--- isomorphism both ways.
+-- | Present a finitary profunctor by its tables, once, with the isomorphism both ways.
 --
--- The continuation receives the presentation as a named profunctor @tab@ of the right kind, equal to
--- @'Tabulated' 'Trivial' lm rm@: the tables alone do not fix @j@ and @k@, so a caller who wrote that
--- out would have to annotate every mention. Bind it as @\\ \@tab toTab fromTab -> ...@.
+-- The continuation receives the presentation as a named @tab ~ 'Tabulated' 'Trivial' lm rm@, since
+-- the tables alone do not fix @j@ and @k@. Bind it as @\\ \@tab toTab fromTab -> ...@.
 --
--- The presentation is a sheaf for 'Trivial' and says nothing about any other coverage. To present
--- a sheaf /as/ one, use 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf'.
+-- The presentation is a sheaf only for 'Trivial'. To present a sheaf /as/ one, use
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf'.
 withTabulated
   :: forall {j} {k} (p :: j +-> k) r
    . (Finitary p, FiniteCat j, FiniteCat k)
@@ -373,17 +362,13 @@ withTabulated
   -> r
 withTabulated k = withTables @p \ @lm @rm -> k @(Tabulated Trivial lm rm) toTabulated fromTabulated
 
--- | Glue by search: the element whose restrictions along the legs are the family. This is
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.isSheaf'\'s bijection read backwards, and it is what
--- makes a sheaf without 'glue' of its own -- a 'Tabulated' one, or a subsheaf cut out of a
--- profunctor that is no sheaf, like the closed sieves -- an instance. Lawful exactly when @p@ is a
--- sheaf, which is then a fact about where @p@ came from; 'isSheaf' decides it.
+-- | Glue by search: find the element whose restrictions along the legs are the family. This gives a
+-- 'Sheaf' instance to a sheaf with no 'glue' of its own, such as a 'Tabulated' one or a subsheaf of
+-- a profunctor that is no sheaf (like the closed sieves). Lawful iff @p@ is a sheaf, which
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.isSheaf' decides.
 --
--- A bijection has two ways to fail and both are caught here, since a search that answers at all
--- answers silently: no element restricting to the family, and more than one. The second is not a
--- corner case -- over a cover with no legs every element matches, so it is the whole of what being
--- /separated/ asks at that cover, and without the check an unseparated profunctor would glue to
--- whichever element came first.
+-- Errors if no element matches, and also if more than one does: over a cover with no legs every
+-- element matches, so an unseparated @p@ would otherwise glue silently to the first one.
 glueBySearch
   :: forall t {j} {k} (p :: j +-> k) (a :: k) c (b :: j)
    . (Site t k, Finitary p, Ob a, Ob b)
@@ -395,14 +380,14 @@ glueBySearch c m = case P.filter (\x -> P.all ($ x) family) (elements @p @a @b) 
   [] -> P.error "glue: no element restricts to the family -- not a sheaf"
   _ -> P.error "glue: more than one element restricts to the family -- not a sheaf"
   where
-    -- One test per leg rather than one per leg and element: @ix@ is the leg source\'s 'toIndex',
-    -- bound before the element arrives, so an instance that searches for an index searches once
-    -- per leg and not once for every element it is asked about.
+    -- One test per leg, not one per leg and element. @ix@ is the leg source\'s 'toIndex', bound
+    -- before the element arrives, so an instance that searches for an index searches once per leg
+    -- instead of once for every element it is asked about.
     family :: [p a b -> P.Bool]
     family = [(let ix = toIndex; i = ix (m l) in \x -> ix (lmap (legArrow l) x) == i) \\ legArrow l | SomeLeg l <- legs c]
 
 -- | A tabulated profunctor glues by search, since it knows nothing of the profunctor it presents.
--- Only for the coverage its tag names: the tag is the whole of the evidence that the search will
+-- Only for the coverage its tag names. The tag is the only evidence that the search will
 -- find its element, so a presentation may be used as a sheaf for the coverage it was checked
 -- against and for no other. At 'Trivial', which 'withTabulated' applies and which has no covers,
 -- the instance is vacuous and 'glueBySearch' is unreachable.
@@ -412,9 +397,9 @@ instance (Site t k, FiniteCat j, FiniteCat k, KnownTables j k lm rm) => Sheaf t 
 -- * Equalizers and coequalizers
 
 -- | The element of @p@ that @f@ sends to a given element of @q@, if the element is in @f@\'s
--- image. The first one found, which for an injective @f@ -- an equalizer\'s inclusion -- is the
--- only one; for a projection it is a choice of representative, and the caller is then relying on
--- what it does with it not depending on which.
+-- image. The first one found. For an injective @f@ (an equalizer\'s inclusion) it is the only one.
+-- For a projection it is a choice of representative, and the caller is then relying on what it does
+-- with it not depending on which.
 preimageMaybe
   :: forall {j} {k} (p :: j +-> k) q (a :: k) (b :: j)
    . (Finitary p, Finitary q, Ob a, Ob b)
@@ -426,8 +411,8 @@ preimageMaybe f y =
       iy = toIndexQ y
   in find (\x -> toIndexQ (f x) == iy) (elements @p @a @b)
 
--- | 'preimageMaybe' where the element has to be in the image, which is what both factorizations
--- below need, in opposite directions.
+-- | 'preimageMaybe' where the element has to be in the image. Both factorizations below need this,
+-- in opposite directions.
 preimage
   :: forall {j} {k} (p :: j +-> k) q (a :: k) (b :: j)
    . (Finitary p, Finitary q, Ob a, Ob b)
@@ -451,7 +436,7 @@ instance (Enumerable j, Enumerable k) => HasEqualizers (FINITARY j k) where
 
 -- | The equalizer of two natural transformations: the source retabulated along the points where
 -- they agree, handed on with its inclusion. 'FINITARY' and its subcategories of sheaves equalize
--- alike; only the wrapper around the result differs, so the construction lives here once.
+-- alike. Only the wrapper around the result differs, so the construction lives here once.
 equalizeNat
   :: forall {j} {k} (p :: j +-> k) q r
    . (Finitary p, Finitary q, Enumerable j, Enumerable k)
@@ -484,8 +469,8 @@ instance (Enumerable j, Enumerable k) => HasCoequalizers (FINITARY j k) where
   factorCoequalizer (Sub (Prof proj)) (Sub (Prof h)) = Sub (Prof (factorThroughCoequalizer proj h))
 
 -- | The coequalizer of two natural transformations: the target retabulated along the classes the
--- two generate, handed on with its projection. The dual of 'equalizeNat', and shared the same way
--- -- though the sheaves take only half of it, since a quotient of sheaves is no sheaf and has to be
+-- two generate, handed on with its projection. The dual of 'equalizeNat', and shared the same way,
+-- though the sheaves take only half of it. A quotient of sheaves is no sheaf and has to be
 -- sheafified before it is the coequalizer /there/.
 coequalizeNat
   :: forall {j} {k} (p :: j +-> k) q r
@@ -503,9 +488,9 @@ coequalizeNat f g k =
     \ @fs -> k @fs Reindex
 
 -- | Factor through a coequalizer's projection, by 'preimage': the projection must be onto. The
--- dual of 'factorThroughEqualizer', and stated apart from the instance for the same reason -- but
--- not, unlike the dual, shared with the sheaves: a projection there is epi without being onto, and
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.factorThroughLocalEpi' is what they use instead.
+-- dual of 'factorThroughEqualizer', and stated apart from the instance for the same reason. Unlike
+-- the dual it is not shared with the sheaves. A projection there is epi without being onto, and
+-- they use 'Proarrow.Category.Enriched.Finitary.Sheaf.factorThroughLocalEpi' instead.
 factorThroughCoequalizer
   :: forall {j} {k} (c :: j +-> k) x c'
    . (Finitary c, Finitary x, Profunctor c')
@@ -529,10 +514,10 @@ instance (Enumerable j, Enumerable k) => HasEpiMonoFactorization (FINITARY j k)
 
 -- | Enumerate a set of families by brute force: every way of choosing a value at each point of the
 -- domain, kept when it satisfies every condition. A condition is checked as soon as both of its
--- points have been chosen, so a violation prunes the whole subtree of completions rather than
--- rejecting each of them in turn -- which is what keeps the candidate space from being the full
--- product. Families come out in the same order as @'P.sequence' choices@ would give them: the
--- earliest point varies slowest.
+-- points have been chosen, so a violation prunes the whole subtree of completions instead of
+-- rejecting each of them in turn. This keeps the candidate space from being the full product.
+-- Families come out in the same order as @'P.sequence' choices@ would give them, with the earliest
+-- point varying slowest.
 familiesSatisfying :: [[v]] -> [(P.Int, P.Int, v -> v -> P.Bool)] -> [[v]]
 familiesSatisfying choices laws = go 0 [] choices
   where
@@ -556,8 +541,8 @@ familyIndex msg fams row = case elemIndex row fams of
 
 -- | One point of the domain of the end @∫ Set(p c d, q c d)@ whose elements are the natural
 -- transformations @p -> q@: an object pair and an element of @p@ there. Every end below is one of
--- these: the internal hom only changes the weight @p@, and the subobject classifier also changes
--- what the conditions are read as. So this is the single enumeration the topos is built on.
+-- these. The internal hom only changes the weight @p@, and the subobject classifier also changes
+-- what the conditions are read as. So the whole topos is built on this one enumeration.
 type NatKey = (Natural, Natural, Natural)
 
 -- | Visit every point of that domain, in one fixed order.
@@ -579,8 +564,8 @@ natPositions
 natPositions = natPositionsBy @p natKey
 
 -- | 'natPositions' with the key chosen by the caller, for a weight whose points are addressed by
--- another object's keys -- a subobject carved out by 'withSubobject', whose inclusion says which
--- point of the ambient object each of its own points is.
+-- another object's keys. For example a subobject carved out by 'withSubobject', whose inclusion
+-- says which point of the ambient object each of its own points is.
 natPositionsBy
   :: forall {j} {k} (p :: j +-> k)
    . (Finitary p, FiniteCat j, FiniteCat k)
@@ -606,7 +591,7 @@ natElements =
     (natConditions @p @q \tr i j -> j == genericIndex tr i)
 
 -- | The conditions as positions in a tabulated family, with @q@\'s transport handed to the
--- relation. Only the internal hom reads that transport; the sieves below ignore it, and pass
+-- relation. Only the internal hom reads that transport. The sieves below ignore it, and pass
 -- 'TerminalProfunctor' for @q@ so that computing it costs nothing.
 natConditions
   :: forall {j} {k} (p :: j +-> k) (q :: j +-> k) v
@@ -619,8 +604,8 @@ natConditions rel = [(at src, at tgt, rel tr) | (src, tgt, tr) <- natLaws @p @q]
 
 -- | The naturality conditions on a transformation. As in 'closedUnder', @'dimap' g h@ is
 -- @'lmap' g . 'rmap' h@, so commuting with the two whiskerings separately is commuting with the
--- action: two walks over three objects rather than one over four, and the transport table depends
--- on the arrow alone rather than on each element.
+-- action. That takes two walks over three objects instead of one over four, and the transport
+-- table depends on the arrow alone, not on each element.
 natLaws
   :: forall {j} {k} (p :: j +-> k) (q :: j +-> k)
    . (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
@@ -635,8 +620,8 @@ natLaws =
            ( \ @d -> [(natKey x, natKey (rmap h x), tr) | h <- elements @(Hom j) @b @d, let tr = P.map (toIndex . rmap h) qs, x <- xs]
            )
 
--- | A natural transformation as its table of @q@-indices, in 'natDomain' order. That is everything
--- there is to see of one, so it serves for both comparing and showing.
+-- | A natural transformation as its table of @q@-indices, in 'natDomain' order. There is nothing
+-- else to see of one, so it serves for both comparing and showing.
 natTable
   :: forall {j} {k} (p :: j +-> k) (q :: j +-> k)
    . (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
@@ -646,7 +631,7 @@ natTable f = natDomain @p (toIndex P.. f)
 
 -- | Which of the natural transformations @p -> q@ a given one is: 'familyIndex' of its 'natTable' in
 -- 'natElements'. The enumeration is bound before the transformation arrives, so a partial
--- application shares it across a hom-set; every 'toIndex' that numbers transformations is this one.
+-- application shares it across a hom-set. Every 'toIndex' that numbers transformations uses this.
 natIndex
   :: forall {j} {k} (p :: j +-> k) (q :: j +-> k)
    . (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
@@ -657,10 +642,10 @@ natIndex msg = \f -> familyIndex msg es (natTable @p @q f)
   where
     es = natElements @p @q
 
--- | Every natural transformation @p -> q@, as an arrow of @j '+->' k@. This is what makes the
--- category of finitary profunctors -- and each of its full subcategories -- testable: its hom-sets
--- are enumerable, so a generator can pick from them, where in general a natural transformation is
--- not something one can generate.
+-- | Every natural transformation @p -> q@, as an arrow of @j '+->' k@. With this the category of
+-- finitary profunctors, and each of its full subcategories, is testable. Its hom-sets are
+-- enumerable, so a generator can pick from them, where in general a natural transformation is not
+-- something one can generate.
 natTransformations
   :: forall {j} {k} (p :: j +-> k) (q :: j +-> k)
    . (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
@@ -677,9 +662,9 @@ natAt
 natAt pos row = Prof \x -> x // fromIndex @q (atNatKey pos row (natKey x))
 
 -- | @'Finitary' p@ as a class with a single instance, so that a quantified constraint can ask for
--- it without 'Finitary' being the head; 'subFinitary' hands it back as an ordinary given. The
+-- it without 'Finitary' being the head. 'subFinitary' hands it back as an ordinary given. The
 -- instance below says what this is for. 'Proarrow.Optic.Sub' is the same device for flavors, and
--- documents the GHC restriction behind it at more length -- including why neither of them carries
+-- documents the GHC restriction behind it at more length, including why neither of them carries
 -- the constraint it wraps as a superclass.
 type SubFinitary :: forall {j} {k}. (j +-> k) -> Constraint
 class SubFinitary p where
@@ -688,19 +673,14 @@ class SubFinitary p where
 instance (Finitary p) => SubFinitary p where
   subFinitary r = r
 
--- | @'FINITARY' j k@ is locally finite: its own hom-profunctor is finitary, by 'natTransformations'.
--- So the numbering above is not just a testing device, it is the skeleton of each hom-set, and the
--- 'Finitary' laws apply to it like to any other. (It is not a 'FiniteCat' -- there are unboundedly
--- many finitary profunctors -- which is exactly the difference between finite and locally finite.)
+-- | @'FINITARY' j k@ is locally finite: its own hom-profunctor is finitary, by 'natTransformations',
+-- so the numbering is the skeleton of each hom-set and the 'Finitary' laws apply to it. (It is not
+-- a 'FiniteCat': there are unboundedly many finitary profunctors.)
 --
--- Every full subcategory of it is locally finite the same way, whatever predicate cuts it out --
--- @'FINITARY' j k@ itself, or the sheaves of "Proarrow.Category.Enriched.Finitary.Sheaf" -- so long
--- as that predicate implies 'Finitary'. Asking for it as the bare @forall p. ob p => 'Finitary' p@
--- would cover the first and not the second: GHC will not solve the head of a quantified constraint
--- from a superclass of its premise unless the superclass is strictly smaller than the head, and
--- @'Finitary' p@ out of @('Finitary' :&&: 'Sheaf' t) p@ is not smaller. Behind 'SubFinitary' the
--- head is a class of its own and @'Finitary' p@ is an ordinary wanted, solved from the premise\'s
--- superclasses as usual.
+-- The same holds for any full subcategory whose predicate implies 'Finitary', such as the sheaves
+-- of "Proarrow.Category.Enriched.Finitary.Sheaf". The premise goes through 'SubFinitary' because a
+-- bare @forall p. ob p => 'Finitary' p@ cannot be discharged for a conjunction such as
+-- @'Finitary' :&&: 'Sheaf' t@: GHC will not solve the head from a superclass that is not smaller.
 instance
   (FiniteCat j, FiniteCat k, forall p. (ob p) => SubFinitary p)
   => Finitary (Sub Prof :: CAT (SUBCAT (ob :: OB (j +-> k))))
@@ -719,15 +699,15 @@ instance
   elements @f @g = subFinitary @(UN SUB f) $ subFinitary @(UN SUB g) $ P.map Sub (natTransformations @(UN SUB f) @(UN SUB g))
 
 -- | What the internal hom at @a@\/@b@ is a set of natural transformations /out of/. An element of
--- it over @c@\/@d@ is an arrow into @a@, an arrow out of @b@ and an element of @p@ -- exactly the
--- three arguments an 'Exp' takes.
+-- it over @c@\/@d@ is an arrow into @a@, an arrow out of @b@ and an element of @p@, the three
+-- arguments an 'Exp' takes.
 type ExpWeight :: forall {j} {k}. (j +-> k) -> k -> j -> j +-> k
 type ExpWeight p a b = Yo a (OP b) :*: p
 
 -- | The internal hom of finitary profunctors is finitary: its elements are the natural
--- transformations out of 'ExpWeight', enumerated. Nothing here is a formula in the sizes of @p@ and
--- @q@ -- the count depends on how the arrows of @j@ and @k@ compose -- which is why 'size' is a
--- value and not a type family.
+-- transformations out of 'ExpWeight', enumerated. The count is not a formula in the sizes of @p@
+-- and @q@, since it depends on how the arrows of @j@ and @k@ compose. So 'size' is a value and
+-- not a type family.
 instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => Finitary (p :~>: q :: j +-> k) where
   size @a @b = genericLength (natElements @(ExpWeight p a b) @q)
 
@@ -749,21 +729,21 @@ expAt pos row = Exp \ca bd x -> ca // bd // fromIndex @q (atNatKey pos row (natK
 
 -- Finitary profunctors are cartesian closed, and the sheaves are too, by the instance for any
 -- full subcategory closed under the internal hom in "Proarrow.Profunctor.Instance.Exponential".
--- Here that is @'Finitary' (p ':~>:' q)@ just above: the hom-set is the natural transformations,
--- enumerated.
+-- Here that is @'Finitary' (p ':~>:' q)@ just above, where the hom-set is the natural
+-- transformations, enumerated.
 
 -- * The subobject classifier
 
 -- | Every sieve at @a@\/@b@, as the points of @'Yo' a ('OP' b)@ it contains, in 'natDomain' order:
 -- all subsets, kept when closed. This is the same end again, at the weight @'Yo' a ('OP' b)@ and
--- valued in booleans, with the naturality conditions read as implications rather than equations.
+-- valued in booleans, with the naturality conditions read as implications instead of equations.
 sieveElements :: forall {j} {k} (a :: k) (b :: j). (FiniteCat j, FiniteCat k, Ob a, Ob b) => [[P.Bool]]
 sieveElements =
   familiesSatisfying
     (natDomain @(Yo a (OP b)) (P.const [P.False, P.True]))
     (natConditions @(Yo a (OP b)) @TerminalProfunctor \_ s t -> P.not s P.|| t)
 
--- | A sieve as the tabulation of its membership, in 'natDomain' order -- the inverse of 'sieveAt'.
+-- | A sieve as the tabulation of its membership, in 'natDomain' order. The inverse of 'sieveAt'.
 sieveTable :: forall {j} {k} (a :: k) (b :: j). (FiniteCat j, FiniteCat k) => Sieve a b -> [P.Bool]
 sieveTable (Sieve s) = natDomain @(Yo a (OP b)) \(Yo ca bd) -> s ca bd
 

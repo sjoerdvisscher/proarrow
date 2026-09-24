@@ -70,9 +70,9 @@ type FREECS =
 type FREEKIND = FREE FREECS (InitialProfunctor :: CAT ())
 
 -- | The free category has no generating morphisms to interpret (@'InitialProfunctor'@ is
--- uninhabited), so any object at all works as the interpretation of @'()@ — a small finite set
--- ('FINREL', rather than 'Type', since 'StarAutonomous'\/'CompactClosed' need a target that
--- actually has dual objects) gives 'retract' below plenty to sample from.
+-- uninhabited), so any object at all works as the interpretation of @'()@. A small finite set
+-- gives 'retract' below plenty to sample from. It is in 'FINREL', not 'Type', since
+-- 'StarAutonomous'\/'CompactClosed' need a target that has dual objects.
 data family Interp :: () +-> FINREL
 
 instance FunctorForRep Interp where
@@ -100,13 +100,13 @@ test =
     , testDistributive @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObCoprod @FINREL @(LowerT a) @(LowerT b) r)
-    , -- 'testStarAutonomous' isn't wired in here: its naturality checks need e.g. an arbitrary
-      -- @a ** b ~> Dual c@ for independently-drawn a,b,c, but in a *free* category that hom-set is
-      -- genuinely empty for most palette triples (no unitor/associator-driven bridge connects a
-      -- plain tensor shape to an unrelated dualized one) — 'genTerm' can't conjure a morphism that
-      -- doesn't exist, so every sample gets discarded. 'testCompactClosed' avoids this: none of its
-      -- checks need to *generate* a random Dual-involving morphism, only compose the fixed ones
-      -- 'CompactClosed' already provides.
+    , -- 'testStarAutonomous' isn't wired in here. Its naturality checks need e.g. an arbitrary
+      -- @a ** b ~> Dual c@ for independently-drawn a,b,c, but in a free category that hom-set is
+      -- empty for most palette triples (no unitor/associator-driven bridge connects a plain
+      -- tensor shape to an unrelated dualized one). 'genTerm' can't conjure a morphism that
+      -- doesn't exist, so every sample gets discarded. 'testCompactClosed' avoids this, since none
+      -- of its checks need to generate a random Dual-involving morphism, only compose the fixed
+      -- ones 'CompactClosed' already provides.
       testCompactClosed @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
@@ -176,8 +176,8 @@ instance (KnownFree a, KnownFree b) => KnownFree (a --> b) where
 instance (KnownFree a) => KnownFree (DualF a) where
   theFree = SDual theFree
 
--- | Decides whether two object shapes are the same, structurally — 'genTerm' uses this to
--- check whether a generator branch's source\/target actually lines up with the shape it wants
+-- | Decides whether two object shapes are the same, structurally. 'genTerm' uses this to
+-- check whether a generator branch's source\/target lines up with the shape it wants
 -- to produce, without needing runtime type reflection.
 eqSFree :: SFree a -> SFree b -> Maybe (a :~: b)
 eqSFree SInit SInit = Just Refl
@@ -212,19 +212,19 @@ showSFree (SExp a b) = "(" ++ showSFree a ++ " --> " ++ showSFree b ++ ")"
 showSFree (SDual a) = "(Dual " ++ showSFree a ++ ")"
 
 -- | The finite palette of shapes 'Testable' picks 'Some' objects from as the /endpoints/ of a
--- generated term. 'Intermediates' is what @composeB@ routes through.
+-- generated term. @composeB@ routes through 'Intermediates'.
 --
--- Every shape is built from 'UnitF', and none from 'TermF' or 'InitF': terms are compared by
+-- Every shape is built from 'UnitF', and none from 'TermF' or 'InitF'. Terms are compared by
 -- interpretation into 'FINREL', where the terminal and initial objects are both the empty set, so
 -- at any object built from them alone every hom-set has one element and every comparison is
 -- vacuous. The unit interprets to a one-element set, and the shapes over it do not collapse.
 type Palette = '[UnitF, UnitF *! UnitF, UnitF + UnitF, UnitF **! UnitF, UnitF --> UnitF]
 
--- | The shapes @composeB@ routes intermediates through. It is 'Palette' plus 'TermF' and 'InitF':
--- as /endpoints/ those two are useless (every hom-set at them is a singleton in 'FINREL', so a
+-- | The shapes @composeB@ routes intermediates through. It is 'Palette' plus 'TermF' and 'InitF'.
+-- As /endpoints/ those two are useless (every hom-set at them is a singleton in 'FINREL', so a
 -- comparison there cannot fail), but as /waypoints/ they are not. Going through 'TermF' builds
 -- @'counit' '.' 'terminate' :: 'UnitF' '~>' 'UnitF'@, which interprets to the empty relation and is
--- the only non-identity endomorphism of 'UnitF' the generator can reach -- without it every law
+-- the only non-identity endomorphism of 'UnitF' the generator can reach. Without it every law
 -- comparison landing at @'UnitF' '~>' 'UnitF'@ is a single fixed instance.
 type Intermediates = TermF ': InitF ': Palette
 
@@ -290,15 +290,15 @@ genTerm fuel sa sb =
     curryB = case sb of
       SExp b1 b2 -> curry <$> genTerm (fuel - 1) (STen sa b1) b2
       _ -> empty
-    -- Route through every palette shape as a possible intermediate object. This is what lets
-    -- the generator ever compose two otherwise-unrelated terms together.
+    -- Route through every palette shape as a possible intermediate object. Without this the
+    -- generator could never compose two otherwise-unrelated terms.
     composeB =
       oneOfTotal
         [ (.) <$> genTerm (fuel - 1) (theFree @mid) sb <*> genTerm (fuel - 1) sa (theFree @mid)
         | Some @mid <- intermediates
         ]
 
--- | Bridges straight to 'FINREL'\'s 'Ob' rather than its 'TestOb' — 'Testable FINREL' leaves
+-- | Bridges straight to 'FINREL'\'s 'Ob' instead of its 'TestOb'. 'Testable FINREL' leaves
 -- 'TestOb' at its class default ('type TestOb a = Ob a'), and an unrestated default associated
 -- type equation doesn't get unfolded through an abstract type variable the way an explicit
 -- instance override (like 'CategoryOf FINREL'\'s own 'Ob' equation) does.
@@ -308,7 +308,7 @@ instance Testable FREEKIND where
   genSome = genSomeDef @Palette
 
 -- | Two terms are equal iff they denote the same relation once interpreted into 'FINREL' via
--- 'retract' — decided by 'FinRel'\'s own 'Eq'. Structural equality on 'Free' terms would be too
+-- 'retract', decided by 'FinRel'\'s own 'Eq'. Structural equality on 'Free' terms would be too
 -- strict for testing categorical laws: e.g. @'terminate' . f@ and @'terminate'@ are built from
 -- different 'Free' constructors even though uniqueness of the terminal object makes them denote
 -- the same morphism.
@@ -326,15 +326,15 @@ boolCover :: Cover Sums FREEKIND (UnitF + UnitF) (Summands (UnitF :: FREEKIND) U
 boolCover = BySummands
 
 -- | The sum coverage on the free category, at the cover of the booleans by their two points: the
--- representables glue by @'|||'@, so restriction along either injection gives the branch back, and
+-- representables glue by @'|||'@. So restriction along either injection gives the branch back, and
 -- an element is the gluing of its restrictions.
 sheafTests :: TestTree
 sheafTests =
   testGroup
     "Sums"
     [ testGluesBackAt @Sums @(Yo (UnitF + UnitF) (OP '())) "BySummands, sum representable" boolCover
-    , -- the two-sided representable's own profunctor laws: this is what exercises 'Yo'\'s action on
-      -- the covariant component, which the presheaf cases above leave at the identity
+    , -- the two-sided representable's own profunctor laws. These exercise 'Yo'\'s action on the
+      -- covariant component, which the presheaf cases above leave at the identity
       testProfunctor @(Yo (UnitF + UnitF) (OP Bool) :: Type +-> FREEKIND)
     , testGluesBackAt
         @Sums
@@ -342,15 +342,11 @@ sheafTests =
         "BySummands, representable over Hask"
         boolCover
     , -- The gluing keeps one covariant component where the family supplies two, so it is only well
-      -- defined because a matching family cannot supply two different ones. Restricting along the
-      -- overlap is what decides that: the two legs become equal there exactly when their covariant
-      -- components agree.
-      --
-      -- Note what each half of the comparison is doing. After restricting along the overlap the
-      -- /contravariant/ components are always equal, 'InitF' being initial -- so it is the covariant
-      -- half that carries the verdict. The un-restricted
-      -- pair below is the other way round, and is here so that both halves of @'eqP'@ on 'Yo' are
-      -- exercised rather than just one.
+      -- The gluing keeps one covariant component of the two the family supplies, which is well
+      -- defined because the two agree on the overlap. After restricting along the overlap the
+      -- contravariant components are always equal ('InitF' is initial), so the covariant ones
+      -- decide. The un-restricted pair below is the other way round, so both halves of 'eqP' on
+      -- 'Yo' are exercised.
       testProperty "the overlap decides the covariant component" do
         let overlap = initiate @FREEKIND @UnitF
             at
@@ -364,14 +360,14 @@ sheafTests =
           expect "un-restricted: the differing contravariant halves separate them" False apart
     , -- The commuting conversion, in sheaf vocabulary: a map of sheaves carries a gluing to the
       -- gluing of the mapped family. At the representable, gluing is @'|||'@ and the map is
-      -- post-composition, so this is @h '.' (t '|||' e) = (h '.' t) '|||' (h '.' e)@ -- the
+      -- post-composition, so this is @h '.' (t '|||' e) = (h '.' t) '|||' (h '.' e)@, the
       -- equation that makes @f (if b then x else y)@ and @if b then f x else f y@ the same
       -- program. It follows from restriction and uniqueness together with @h@\'s naturality, so it
       -- is not a new law but a demonstration.
       testProperty "a map of sheaves commutes with the gluing" do
         t <- genNamed @(Free (UnitF :: FREEKIND) (UnitF + UnitF)) "t"
         e <- genNamed @(Free (UnitF :: FREEKIND) (UnitF + UnitF)) "e"
-        -- @h@ has to land somewhere it can be injective: every term @(UnitF + UnitF) ~> UnitF@ the
+        -- @h@ has to land somewhere it can be injective. Every term @(UnitF + UnitF) ~> UnitF@ the
         -- generator can build collapses the two summands, and then @h . t = h . e@ for almost any
         -- branches and the equation holds for the wrong reason.
         h <- genNamed @(Free ((UnitF :: FREEKIND) + UnitF) (UnitF + UnitF)) "h"

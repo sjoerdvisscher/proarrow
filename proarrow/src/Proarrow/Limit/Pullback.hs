@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | Pullbacks: 'HasPullbacks' with 'pullback' in continuation-passing style -- the pullback object's
--- type depends on the given arrows, so it is hidden behind an existential -- and 'factorPullback' for
+-- | Pullbacks: 'HasPullbacks' with 'pullback' in continuation-passing style (the pullback object's
+-- type depends on the given arrows, so it is hidden behind an existential) and 'factorPullback' for
 -- the universal property, defaulting to product-then-equalizer where those exist.
 module Proarrow.Limit.Pullback where
 
@@ -28,7 +28,7 @@ class (CategoryOf k) => HasPullbacks k where
   pullback = pullbackDefault
 
   -- | @factorPullback p1 p2 k1 k2@ requires @k1, k2@ to be a compatible cone for whichever cospan
-  -- @p1, p2@ happen to be a pullback of -- @p1, p2@ need not literally be @pullback@'s own output.
+  -- @p1, p2@ happen to be a pullback of. @p1, p2@ need not be @pullback@'s own output.
   factorPullback :: forall (a :: k) b p q. p ~> a -> p ~> b -> q ~> a -> q ~> b -> q ~> p
   default factorPullback
     :: forall (a :: k) b p q. (HasEqualizers k, HasProducts k) => p ~> a -> p ~> b -> q ~> a -> q ~> b -> q ~> p

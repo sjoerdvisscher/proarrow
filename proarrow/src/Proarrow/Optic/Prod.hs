@@ -10,9 +10,9 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 -- | Two flavors combine into one over the product of their (possibly heterogeneous) categories,
--- by pairing up their witness profunctors componentwise via ':**:' rather than sharing a single
--- object (@:*:@ doesn't work here: it forces both witnesses onto the *same* index kind, so it
--- can't combine optics over genuinely different categories/objects).
+-- by pairing up their witness profunctors componentwise via ':**:' instead of sharing a single
+-- object. (@:*:@ doesn't work here. It forces both witnesses onto the same index kind, so it
+-- can't combine optics over different categories/objects.)
 type ProdFl :: forall {j1} {k1} {j2} {k2}. FLAVOR j1 k1 -> FLAVOR j2 k2 -> FLAVOR (j1, j2) (k1, k2)
 class ProdFl w1 w2 (p :: (k1, k2) +-> (k1, k2)) (q :: (j1, j2) +-> (j1, j2)) where
   -- | Recover the two component witnesses from an opaque, possibly-composite 'ProdFl' pair.

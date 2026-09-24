@@ -57,7 +57,7 @@ test =
           testInitialObject @(KLEISLI (Cont Void))
         , testBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
         , testClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
-        , -- Note this group is close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
+        , -- This group is close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
           -- and every object in the palette is inhabited, so every hom-set here is a singleton and
           -- every law holds trivially. A non-empty answer type would make it meaningful, but the
           -- generator for @(b -> r) -> (a -> r)@ does not currently support one.

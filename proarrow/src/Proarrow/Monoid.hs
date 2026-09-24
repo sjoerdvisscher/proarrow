@@ -3,7 +3,7 @@
 
 -- | Monoids and comonoids internal to a monoidal category: a 'Monoid' @m@ has @'mempty' :: 'Unit' '~>' m@
 -- and @'mappend' :: m '**' m '~>' m@; dually a 'Comonoid' has 'counit' and 'comult'. Monoids in
--- 'Data.Kind.Type' are exactly Prelude monoids, and in a cartesian category every object is a comonoid.
+-- 'Data.Kind.Type' are the Prelude monoids, and in a cartesian category every object is a comonoid.
 module Proarrow.Monoid where
 
 import Data.Kind (Constraint, Type)
@@ -112,8 +112,8 @@ comultS = Str comult
 
 -- | A comonoid structure on @c@ carried as a value. @Unit@ and @('**')@ are type families and so
 -- cannot head a 'Comonoid' instance, yet the unit is a comonoid and, in a symmetric monoidal
--- category, so is a tensor of comonoids: 'unitComonoid' and 'tensorComonoid' say so at the value
--- level, which is what lets 'Proarrow.Optic.MonoidalLens.withMonLens' hand back the comonoid of a
+-- category, so is a tensor of comonoids. 'unitComonoid' and 'tensorComonoid' say so at the value
+-- level, so that 'Proarrow.Optic.MonoidalLens.withMonLens' can hand back the comonoid of a
 -- composite residual (cf. 'Proarrow.Optic.Action.withAlgP', which passes algebras the same way).
 type ComonoidOn :: forall {k}. k -> Type
 data ComonoidOn (c :: k) = ComonoidOn {counitOn :: c ~> Unit, comultOn :: c ~> c ** c}
@@ -158,7 +158,7 @@ comultAct
   :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> Act t a (Act t a n)
 comultAct = multiplicator @t @a @a @n . actHom @t (comult @a) (obj @n)
 
--- | @'Supplies' c k@ says that every object of the category @k@ satisfies the constraint @c@ --
+-- | @'Supplies' c k@ says that every object of the category @k@ satisfies the constraint @c@,
 -- e.g. @'Supplies' 'Comonoid' k@ for a category in which every object can be copied and discarded.
 -- The constraint comes first (at a higher-rank kind) so that a partial application like
 -- @'Supplies' 'Comonoid'@ has kind @Kind -> Constraint@ and can appear in a free category's
@@ -229,8 +229,8 @@ instance (Monoidal k, HasCoproducts k, Monoid (m :: k)) => Strong CoprodAction (
 -- | The exponential by a comonoid, @m ~~> -@, is an applicative functor (the reader applicative):
 -- @pure@ discards the argument with the counit and @<*>@ duplicates it with the comultiplication.
 -- Rendered on @'Rep' ('Exp' m)@ (legs @a ~> (m ~~> b)@) this is a
--- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', which is what makes a
--- 'Proarrow.Optic.Grate.Grate' a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope'.
+-- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', so a
+-- 'Proarrow.Optic.Grate.Grate' is a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope'.
 instance (Closed k, SymMonoidal k, Comonoid (m :: k)) => MonoidalProfunctor (Rep (Exp m) :: k +-> k) where
   one = Rep (curry @k @Unit @m (leftUnitor @k @Unit . (obj @Unit ** counit @m)))
   Rep @x2 @_ @x1 l ** Rep @y2 @_ @y1 r =

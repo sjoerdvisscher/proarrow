@@ -1,15 +1,14 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | Monoidal categories in which every object can be copied and discarded coherently:
--- 'CopyDiscard' supplies @'copy' :: a ~> a ** a@ and @'discard' :: a ~> 'Unit'@, giving the
--- projections 'fst'\/'snd' without requiring @tensor = product@ -- e.g. the biproduct categories
--- "Proarrow.Category.Instance.Mat" and "Proarrow.Category.Instance.FinRel". Concretely it is a
--- __cocommutative comonoid supply__: every object is a 'Proarrow.Monoid.CocommutativeComonoid'
--- (the @'Supplies' 'CocommutativeComonoid' k@ superclass) and @copy@\/@discard@ default to its
--- comult\/counit. Unlike in 'Proarrow.Category.Monoidal.Cartesian.Cartesian' (which has this class as a
--- superclass, by Fox's theorem) the comonoids need not be /natural/, so morphisms may
--- duplicate\/delete resources non-uniformly.
+-- | Monoidal categories in which every object carries a cocommutative comonoid (the
+-- @'Supplies' 'CocommutativeComonoid' k@ superclass), with @'copy' :: a ~> a ** a@ and
+-- @'discard' :: a ~> 'Unit'@ defaulting to its comult\/counit. This gives projections
+-- 'fst'\/'snd' without @tensor = product@, e.g. in the biproduct categories
+-- "Proarrow.Category.Instance.Mat" and "Proarrow.Category.Instance.FinRel". Unlike in
+-- 'Proarrow.Category.Monoidal.Cartesian.Cartesian' (which has this class as a superclass, by Fox's
+-- theorem) the comonoids need not be /natural/, so morphisms may duplicate\/delete resources
+-- non-uniformly.
 module Proarrow.Category.Monoidal.CopyDiscard where
 
 import Data.Kind (Type)

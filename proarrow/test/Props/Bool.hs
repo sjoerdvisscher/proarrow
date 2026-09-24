@@ -94,8 +94,8 @@ test =
 
 -- * Composition of thin profunctors, checked at the type level
 
--- | Coherence law: a corepresented left leg followed by a represented right leg is 'Direp' --
--- both constraints reduce to @f a ≤ g c@, so the identity typechecks in either direction.
+-- | Coherence law: a corepresented left leg followed by a represented right leg is 'Direp'.
+-- Both constraints reduce to @f a ≤ g c@, so the identity typechecks in either direction.
 compIsDirep
   :: forall {i} {j} {k} (f :: j +-> k) (g :: i +-> k) (a :: j) (c :: i) r
    . ((HasArrow (Direp f g) a c) => r) -> ((HasArrow (Corep f :.: Rep g) a c) => r)

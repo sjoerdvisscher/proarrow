@@ -4,7 +4,7 @@
 --
 -- > Lens s t a b = (s ~> a, (s && b) ~> t)
 --
--- witnessed by @'Rep'@\/@'Corep'@ @('Product' s)@ ('LensFl' \/ 'putP') -- the product residual is
+-- witnessed by @'Rep'@\/@'Corep'@ @('Product' s)@ ('LensFl' \/ 'putP'). The product residual is
 -- the whole source @s@. A lens both views and sets, sitting below 'Proarrow.Optic.Getter.Getter'
 -- and 'Proarrow.Optic.AffineTraversal.AffineTraversal' in the lattice. Build with 'lens' (or from
 -- the van-Laarhoven form with 'lensVL'), eliminate to the two legs with 'withLens', via the
@@ -39,7 +39,7 @@ import Proarrow.Profunctor.Representable (Rep (..))
 
 type LensFl :: forall {k}. FLAVOR k k
 class (AffineTravFl p q, GetterFl p q, GlassFl p q) => LensFl (p :: k +-> k) (q :: k +-> k) where
-  -- | Like 'affineSet', but with an honest constraint: lens witnesses only ever need binary
+  -- | Like 'affineSet', but with a weaker constraint. Lens witnesses only ever need binary
   -- products, so lenses stay usable in categories without coproducts.
   putP :: (HasBinaryProducts k) => p (s :: k) a -> q b t -> (s && b) ~> t
 instance (HasBinaryProducts k, Ob (s :: k)) => LensFl (Rep (Product s)) (Corep (Product s)) where

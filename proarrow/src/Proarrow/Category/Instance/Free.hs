@@ -8,28 +8,23 @@
 -- interprets such an arrow in any category supporting the same structures, making this the basis
 -- for deeply embedded categorical DSLs.
 --
--- For a quiver with no structures at all, "Proarrow.Category.Instance.Paths" is the better fit: its
--- objects are the vertices themselves, so they keep the base kind's 'Ob' and can still be taken
--- apart, which an 'IsFreeOb' shape cannot.
+-- For a quiver with no structures, "Proarrow.Category.Instance.Paths" fits better: its objects are
+-- the vertices themselves, which keep the base kind's 'Ob' and can be taken apart.
 --
--- __No equations__: only the category laws hold structurally (composition is a normalized spine);
--- the /structure/ laws do not — @'Proarrow.Limit.BinaryProduct.fst' . (f
--- 'Proarrow.Limit.BinaryProduct.&&&' g)@ and @f@ are different 'Free' values. Equality of 'Free'
--- arrows is semantic: two arrows are equal when every 'fold' identifies them, which is also how
--- the test suite decides it (by interpreting into a concrete category). Don't pattern-match
--- expecting normal forms.
+-- __No equations__: only the category laws hold structurally (composition is a normalized spine).
+-- For example @'Proarrow.Limit.BinaryProduct.fst' . (f 'Proarrow.Limit.BinaryProduct.&&&' g)@ and
+-- @f@ are different 'Free' values. Two arrows are equal when every 'fold' identifies them, so
+-- decide equality by interpreting into a concrete category, not by pattern matching.
 --
--- An object of @'FREE' cs p@ is a /shape/ ('IsFreeOb'): the free category asks nothing of @k@
--- beyond being a category, as a free construction must. Every shape has a denotation
--- @'Lower' f a@ along any functor @f@ out of @k@ into a category with the structures @cs@, and
--- 'withLowerOb' recovers that denotation's 'Ob' when interpreting ('fold').
+-- An object is a /shape/ ('IsFreeOb'), asking nothing of @k@ beyond being a category. Its
+-- denotation along a functor @f@ out of @k@ is @'Lower' f a@, and 'withLowerOb' recovers that
+-- denotation's 'Ob' in 'fold'.
 --
--- The same applies one level up: classes imposing structural /type equalities/ (like
--- 'Proarrow.Category.Monoidal.Cartesian.Cartesian'\'s @tensor = product@) do not hold on the free category
--- as currently encoded -- each class's carrier is fixed, e.g. @**@ is always the formal tensor --
--- and cannot be listed in @cs@. Sometimes re-choosing structure with a kind wrapper recovers the
--- instance: @'Proarrow.Limit.BinaryProduct.PROD' ('FREE' '[HasTerminalObject, HasBinaryProducts] p)@
--- /is/ a free cartesian category.
+-- Classes imposing type equalities (like 'Proarrow.Category.Monoidal.Cartesian.Cartesian'\'s
+-- @tensor = product@) cannot be listed in @cs@, since each carrier is fixed (@**@ is always the
+-- formal tensor). A kind wrapper can recover the instance:
+-- @'Proarrow.Limit.BinaryProduct.PROD' ('FREE' '[HasTerminalObject, HasBinaryProducts] p)@ /is/ a
+-- free cartesian category.
 module Proarrow.Category.Instance.Free where
 
 import Data.Kind (Constraint)
@@ -82,8 +77,8 @@ type family ds `Elems` cs where
 type data FREE (cs :: [Kind -> Constraint]) (p :: CAT k) = EMB k
 
 -- | Arrows of the free category: a right-associated composition spine ending in 'Nil', with a
--- generator ('Emb') or structure morphism ('St') precomposed onto the rest at each step -- which
--- is what makes the category laws hold definitionally. The fields are linear (@%1@) so that DSL
+-- generator ('Emb') or structure morphism ('St') precomposed onto the rest at each step, so
+-- the category laws hold definitionally. The fields are linear (@%1@) so that DSL
 -- helpers built on 'Free' can offer HOAS-style binders whose bound variable must be used exactly
 -- once.
 type Free :: CAT (FREE cs p)
@@ -110,7 +105,7 @@ showPostComp :: (Show p, WithShow a) => P.Int -> p -> Free a b -> P.ShowS
 showPostComp d p Nil = P.showsPrec d p
 showPostComp d p g = P.showParen (d P.> 9) (P.showsPrec 10 p . P.showString " . " . P.showsPrec 10 g)
 
--- | The shape of an object of the free category, by object former -- this /is/ 'Ob' for the free
+-- | The shape of an object of the free category, by object former. This is 'Ob' for the free
 -- category. It carries the shape's denotation 'Lower' along any functor out of @k@, and how to
 -- recover that denotation's 'Ob' from the leaves' ('lowerOb', normally used through
 -- 'withLowerOb' and 'withLowerIdOb').
@@ -157,8 +152,8 @@ class
     -> Lower f a ~> Lower f b
 
 -- | Interpret a free arrow along a functor @f@ into any category @k'@ supporting the structures
--- @cs@, given an interpretation of the generators between the images of their objects -- the
--- universal property of the free category. The interpreter is handed @('Ob' x, 'Ob' y)@ explicitly
+-- @cs@, given an interpretation of the generators between the images of their objects. This is
+-- the universal property of the free category. The interpreter is handed @('Ob' x, 'Ob' y)@ explicitly
 -- (the evidence bundled on 'Emb'), because a bare quiver @p@ is not a 'Profunctor', so the 'Ob's
 -- cannot be recovered from the value.
 fold
@@ -207,7 +202,7 @@ instance (Discrete k) => FunctorForRep (Embed :: k +-> FREE ds (p :: CAT k)) whe
 -- | Widen a free arrow into a free category over a larger structure list: 'fold' along 'Embed',
 -- so each structural object is rebuilt as itself in the larger category (e.g. the terminal object
 -- lowers to the target's terminal object) and generators embed as generators. The
--- @'All' cs ('FREE' ds p)@ constraint is exactly the evidence that every structure in @cs@ is
+-- @'All' cs ('FREE' ds p)@ constraint is the evidence that every structure in @cs@ is
 -- also available in @ds@.
 widen
   :: forall ds {k} {cs} {p :: CAT k} (a :: FREE cs p) b

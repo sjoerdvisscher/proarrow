@@ -1,14 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | A profunctor-specific counterpart of "Proarrow.Bicategory.Strictified", hardcoded to
--- @:.:@\/'Id' instead of an arbitrary 'Proarrow.Bicategory.Bicategory'. A 'Path' is a
--- type-level list of profunctors; 'Fold' collapses one down to the single profunctor its
--- elements compose to. Unlike the general (strictified) version, we don't need to track
--- identity 2-cells through the induction -- since our 2-cells are just plain Haskell
--- functions (@:~>@), the identity of any composite is always definitionally @\\x -> x@.
--- The only real work is 'concatFold'\/'splitFold', which do the actual
--- associator\/unitor reshuffling once, by induction, so that "Proarrow.Squares" never has
--- to.
+-- @:.:@\/'Id'. A 'Path' is a type-level list of profunctors; 'Fold' composes one down to a single
+-- profunctor. Identity 2-cells need no tracking, since 2-cells are plain functions (@:~>@).
+-- 'concatFold'\/'splitFold' do the associator\/unitor reshuffling once, by induction, so that
+-- "Proarrow.Squares" never has to.
 module Proarrow.Path where
 
 import Data.Kind (Constraint, Type)
@@ -58,9 +54,9 @@ type instance Nil +++ qs = qs
 type instance (p ::: ps) +++ qs = p ::: (ps +++ qs)
 
 -- | @(as +++ bs) +++ cs@ and @as +++ (bs +++ cs)@ are the same 'Path'. Proved once, up
--- front, by (mutual) induction with 'IsOb'\'s superclasses -- see there for how the
--- induction actually goes through -- so that every other associativity fact needed
--- anywhere in "Proarrow.Squares" is a free @~@ coercion instead of a function call.
+-- front, by (mutual) induction with 'IsOb'\'s superclasses (see there for how the
+-- induction goes through), so that every other associativity fact needed anywhere in
+-- "Proarrow.Squares" is a free @~@ coercion instead of a function call.
 class ((as +++ bs) +++ cs ~ as +++ (bs +++ cs)) => Assoc as bs cs
 
 instance (as +++ (bs +++ cs) ~ (as +++ bs) +++ cs) => Assoc as bs cs
@@ -78,19 +74,18 @@ type instance Fold (p ::: (q ::: ps)) = Fold (q ::: ps) :.: p
 data Tag = Prof | Tight
 
 -- | The per-element constraint a 'Tag' stands for. @c@ is applied homogeneously at every
--- element of a path, each of a (potentially) different @i +-> j@ kind -- a genuinely
+-- element of a path, each of a (potentially) different @i +-> j@ kind. That is an
 -- impredicative use GHC's kind system can't express with @c@ itself as the parameter, so
--- 'Tag' is the (monomorphic, first-order) proxy for it instead. Mirrors
+-- 'Tag' is the (monomorphic, first-order) proxy for it. Mirrors
 -- "Proarrow.Bicategory.Sub"'s @IsOb@\/@SUBCAT@ tag mechanism.
 type family Sat (t :: Tag) (p :: i +-> j) :: Constraint
 
 type instance Sat Prof p = Profunctor p
 type instance Sat Tight p = Representable p
 
--- | Runtime witness that every element of a 'Path' satisfies @'Sat' t@. Replaces having a
--- separate witness type per tag (what used to be @SPath@\/@TPath@), so
--- '(Proarrow.Squares.|||)'\/'(Proarrow.Squares.===)' only need one append lemma
--- ('withObAppend'), not one per kind of leg.
+-- | Runtime witness that every element of a 'Path' satisfies @'Sat' t@. One witness type serves
+-- every tag, so '(Proarrow.Squares.|||)'\/'(Proarrow.Squares.===)' need only one append lemma
+-- ('withObAppend').
 type SPath :: Tag -> Path a b -> Type
 data SPath t ps where
   SNil :: (CategoryOf k) => SPath t (Nil :: Path k k)
@@ -99,7 +94,7 @@ data SPath t ps where
 -- | @ps@ is a path all of whose elements satisfy @'Sat' t@. Only two cases (@Nil@\/@Cons@)
 -- are needed: the head @p@ stays concrete at each step of 'withObAppend'\'s recursion, so
 -- GHC's own instance resolution reattaches it to the recursively-derived
--- @'IsOb' t (ps +++ qs)@ for free -- it never needs to reduce @ps +++ qs@ itself, just
+-- @'IsOb' t (ps +++ qs)@ for free. It never needs to reduce @ps +++ qs@ itself, only
 -- match the @(':::')@ shape.
 class
   (ps +++ Nil ~ ps, forall b c (qs :: Path k b) (rs :: Path b c). Assoc ps qs rs) =>
@@ -112,8 +107,8 @@ instance (CategoryOf k) => IsOb t (Nil :: Path k k) where
 instance (Sat t p, IsOb t ps) => IsOb t (p ::: ps) where
   singPath = SCons singPath
 
--- | Concatenate two witnesses. Plain recursion, no constraint solving -- unlike
--- 'withObAppend', which additionally proves @'IsOb' t (ps +++ qs)@.
+-- | Concatenate two witnesses. Plain recursion with no constraint solving, unlike
+-- 'withObAppend', which also proves @'IsOb' t (ps +++ qs)@.
 appendPath :: SPath t ps -> SPath t qs -> SPath t (ps +++ qs)
 appendPath SNil qs = qs
 appendPath (SCons ps) qs = SCons (appendPath ps qs)
@@ -152,10 +147,9 @@ withFoldOb (SCons SNil) r = r
 withFoldOb (SCons cs@(SCons _)) r = withFoldOb cs r
 
 -- | Extract 'Representable' evidence for @'Fold' ps@ from a runtime witness. The body is
--- identical to 'withFoldOb'\'s -- both just extract @'Sat' t ('Fold' ps)@, which needs the
--- same single-vs-multi-element case split 'Fold' itself has -- but there's no polymorphic
--- @t@ anywhere that would let one definition serve both: every call site already knows
--- its tag concretely, so there's nothing to be generic over.
+-- identical to 'withFoldOb'\'s. Both extract @'Sat' t ('Fold' ps)@, which needs the same
+-- single-vs-multi-element case split 'Fold' itself has. There is no polymorphic @t@ that would
+-- let one definition serve both, since every call site knows its tag concretely.
 withFoldRep :: SPath Tight ps -> ((Representable (Fold ps)) => r) -> r
 withFoldRep SNil r = r
 withFoldRep (SCons SNil) r = r

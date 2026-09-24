@@ -2,7 +2,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The right Kan extension of a profunctor @p@ along @j@, written @j '|>' p@: the universal @g@ with
--- @g ':.:' j ~> p@. (Note: 'Ran' and 'Proarrow.Profunctor.Instance.Rift.Rift' are swapped compared to the @profunctors@ package.)
+-- @g ':.:' j ~> p@. 'Ran' and 'Proarrow.Profunctor.Instance.Rift.Rift' are swapped compared to the
+-- @profunctors@ package.
 module Proarrow.Profunctor.Instance.Ran where
 
 import Prelude (type (~))
@@ -19,12 +20,9 @@ import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), repUniv, withObRep)
 import Proarrow.Promonad (Procomonad (..), RelativeMonad (..))
 
--- Note: Ran and Rift are swapped compared to the profunctors package.
-
 type j |> p = Ran (OP j) p
 
--- | The right Kan extension of @p@ along @j@, written @j |> p@: the universal @g@ with
--- @g ':.:' j ~> p@ ('ranUniv' and 'runRanProf').
+-- | The data type behind @j '|>' p@. Its universal property is 'ranUniv' and 'runRanProf'.
 type Ran :: OPPOSITE (i +-> j) -> i +-> k -> j +-> k
 data Ran j p a b where
   Ran :: (Ob a, Ob b) => {unRan :: forall x. j b x -> p a x} -> Ran (OP j) p a b

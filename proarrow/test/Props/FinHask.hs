@@ -95,16 +95,12 @@ test =
         expect "elements should be the universe, in order" universeF (elements @FinHask @a @b)
     ]
 
--- | Only ever pass this to 'testEqualizers', 'testCoequalizers', 'testPullbacks', or 'testPushouts':
--- it exploits the fact that 'HasEqualizers'\'s 'factorEqualizer', 'HasCoequalizers'\'s
--- 'factorCoequalizer', and 'HasPullbacks'\'s 'pullback' for 'FINHASK' all produce an object of the
--- form @FH (Fin n)@ (see their shared @reifyList@-based construction, which 'HasPushouts'\'s
--- @pushoutDefault@-based 'pushout' also goes through indirectly) -- a fact the type system has no way
--- to check. @n@ is recovered here from @e@'s cardinality, which must match since @Fin n@ has exactly
--- @n@ elements; the resulting (unsafely obtained) equality then borrows @Fin@'s existing
--- 'Typeable'/'TestableType' instances. Passing this to any other combinator (whose produced object
--- need not be 'Fin'-shaped, e.g. 'testBinaryProducts') would be unsound: same cardinality doesn't mean
--- same runtime representation.
+-- | Only for 'testEqualizers', 'testCoequalizers', 'testPullbacks' and 'testPushouts': it assumes
+-- the object is @FH (Fin n)@, as the 'FINHASK' equalizer, coequalizer, pullback and pushout
+-- constructions (all via @reifyList@) produce, which the types cannot check. @n@ is recovered from
+-- @e@'s cardinality and the equality is coerced, borrowing @Fin@'s 'Typeable'\/'TestableType'
+-- instances. Elsewhere (e.g. 'testBinaryProducts') this is unsound: same cardinality is not same
+-- runtime representation.
 withTestObFinHaskViaFin :: forall (e :: FINHASK) r. (Ob e) => ((TestOb e) => r) -> r
 withTestObFinHaskViaFin body = case cardinality @(UN FH e) of
   Tagged n -> withSomeSNat n \ @m snat -> withKnownNat snat (case sameAsFin @m of Refl -> body)

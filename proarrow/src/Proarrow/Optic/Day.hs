@@ -1,10 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | A third way to combine two flavors, alongside 'Proarrow.Optic.Prod.ProdFl' and
--- 'Proarrow.Optic.Sum.SumFl': via the Day convolution, which -- unlike those two -- keeps both
--- witnesses in the *same* ambient categories @j@\/@k@ (it needs 'Monoidal' structure there to
--- split objects across the two witnesses, rather than pairing\/summing two independent
--- categories).
+-- 'Proarrow.Optic.Sum.SumFl': via the Day convolution. Unlike those two, it keeps both witnesses
+-- in the same ambient categories @j@\/@k@. It needs 'Monoidal' structure there to split objects
+-- across the two witnesses, where the others pair\/sum two independent categories.
 module Proarrow.Optic.Day where
 
 import Prelude (($))

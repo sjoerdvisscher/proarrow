@@ -7,7 +7,7 @@
 
 -- | The category of Haskell types and __linear functions__: the kind 'LINEAR' wraps 'Data.Kind.Type'
 -- in 'L', and a morphism is a @a %1 -> b@ function. Symmetric monoidal closed with
--- @'L' a '**' 'L' b = 'L' (a, b)@; the categorical product is 'With' and only comonoid objects
+-- @'L' a '**' 'L' b = 'L' (a, b)@. The categorical product is 'With', and only comonoid objects
 -- (such as @'L' ('Ur' a)@) can be copied or discarded, so it is deliberately not
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard'.
 module Proarrow.Category.Instance.Linear where
@@ -63,7 +63,7 @@ instance MonoidalProfunctor Linear where
   one = id
   Linear f ** Linear g = Linear \(x, y) -> (f x, g y)
 
--- | Tuples as monoidal tensor. Note that tuples are not the binary product in LINEAR.
+-- | Tuples as monoidal tensor. Tuples are not the binary product in LINEAR.
 instance Monoidal LINEAR where
   type Unit = L ()
   type L a ** L b = L (a, b)
@@ -124,9 +124,9 @@ instance Comonoid (L (Ur a)) where
   counit = Linear \(Ur _) -> ()
   comult = Linear \(Ur a) -> (Ur a, Ur a)
 
--- | @L Bool@ is a comonoid: a @Bool@ is duplicated and discarded by /case-analysis/, which is
--- perfectly linear (it consumes the input exactly once). The same holds for any finite,
--- pattern-matchable classical type; only the @Bool@ instance is spelled out here.
+-- | @L Bool@ is a comonoid: a @Bool@ is duplicated and discarded by case analysis, which is
+-- linear (it consumes the input exactly once). The same holds for any finite, pattern-matchable
+-- classical type. Only the @Bool@ instance is spelled out here.
 instance Comonoid (L Bool) where
   counit = Linear \case True -> (); False -> ()
   comult = Linear \case True -> (True, True); False -> (False, False)

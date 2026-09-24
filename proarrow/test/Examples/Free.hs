@@ -2,8 +2,8 @@
 {-# LANGUAGE LinearTypes #-}
 
 -- | A small free category on a two-object quiver, folded through an interpretation, plus a lambda
--- term built in the free cartesian closed category. Most of this is checked by compiling it -- the
--- types are the point -- but the fold does produce a value, so that much is asserted at the end.
+-- term built in the free cartesian closed category. Most of this is checked just by compiling it,
+-- since the types are what matter, but the fold does produce a value, which is asserted at the end.
 module Examples.Free where
 
 import Data.Kind (Constraint, Type)
@@ -61,7 +61,7 @@ instance FunctorForRep Interp where
   type Interp @ StringTy = P.String
   fmap Refl = id
 
--- | Read the string as an int, increment, show it, and duplicate -- alongside the untouched input.
+-- | Read the string as an int, increment, show it, and duplicate, alongside the untouched input.
 testFold :: P.String -> (P.String, P.String)
 testFold = fold @'[HasBinaryProducts] @(Rep Interp) interp (pipelineWithInput Nil)
   where

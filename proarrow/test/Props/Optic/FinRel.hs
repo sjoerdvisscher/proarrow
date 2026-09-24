@@ -1,9 +1,9 @@
 -- | Running optics in the __non-cartesian__ @FINREL@ category (the category of relations between
 -- finite sets), which is 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' but /not/
 -- 'Proarrow.Limit.Terminal.Semicartesian' (its monoidal unit @FR 1@ is not the terminal object
--- @FR 0@). Folding a prism must discard the non-matching residual; that discard now comes from
--- 'Proarrow.Category.Monoidal.CopyDiscard.discard' rather than @terminate@, so prism/fold optics
--- instantiate here at all -- which they could not while the witnesses required @Semicartesian@.
+-- @FR 0@). Folding a prism must discard the non-matching residual, and that discard is
+-- 'Proarrow.Category.Monoidal.CopyDiscard.discard', which needs only @CopyDiscard@ and not
+-- @Semicartesian@, so prism/fold optics instantiate here.
 module Props.Optic.FinRel (test) where
 
 import Test.Tasty (TestTree, testGroup)

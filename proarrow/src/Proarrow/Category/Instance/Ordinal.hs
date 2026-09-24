@@ -1,6 +1,7 @@
 -- | The finite ordinal @n@ as a thin category: the kind @'ORDINAL' n@ has objects @'OZ', 'OS' 'OZ',
--- ...@ (@n@ of them), with an arrow @a '~>' b@ exactly when @a <= b@ ('LTE') -- the linear order
--- on @n@ elements. Small enough that (co)equalizers can be computed by explicit case analysis.
+-- ...@ (@n@ of them), with an arrow @a '~>' b@ when and only when @a <= b@ ('LTE'). This is the
+-- linear order on @n@ elements. Small enough that (co)equalizers can be computed by explicit case
+-- analysis.
 module Proarrow.Category.Instance.Ordinal where
 
 import Data.Kind (Constraint, Type)
@@ -146,7 +147,7 @@ withOrdObjects i k =
     )
 
 -- | The ordinal at an index, if there is one. 'Enumerable' cannot go through the generic 'atOb',
--- which is defined in terms of the very 'withOb' being given here, so the walk is done by recursion
+-- which is defined in terms of the 'withOb' being given here, so the walk is done by recursion
 -- on the index instead of on the object list.
 ordAtOb :: forall n i. (SNatI n) => SNat i -> AtOb (ORDINAL n) (OrdAt n i)
 ordAtOb i =
@@ -310,15 +311,15 @@ instance (HasBinaryProducts (ORDINAL (S n))) => HasBinaryProducts (ORDINAL (S (S
   SLT a &&& SLT b = SLT (a &&& b)
 
 -- | The meet as tensor and the top as unit: the cartesian monoidal structure. Like the products it
--- is made of, only for a syntactically concrete @n@; 'MonoidalOrdinal' names the context.
+-- is made of, only for a syntactically concrete @n@. 'MonoidalOrdinal' names the context.
 type MonoidalOrdinal :: Nat -> Constraint
 type MonoidalOrdinal n = (HasProducts (ORDINAL n), Ob (TerminalObject :: ORDINAL n))
 
 -- The second conjunct looks redundant, since 'Ob' 'TerminalObject' is a superclass of
 -- 'HasTerminalObject'. It is not: 'Monoidal' needs @'Ob' 'Unit'@ as a superclass of the instance
 -- /declaration/, and GHC does not discharge an instance's own superclasses from the superclasses
--- of its context (see "Undecidable instances and loopy superclasses" in the GHC user's guide), so
--- without it the instance fails with @Could not deduce IsOrdinal TerminalObject@.
+-- of its context (see "Undecidable instances and loopy superclasses" in the GHC user's guide).
+-- Without it the instance fails with @Could not deduce IsOrdinal TerminalObject@.
 
 instance (MonoidalOrdinal n) => MonoidalProfunctor (LTE :: CAT (ORDINAL n)) where
   one = id
@@ -338,8 +339,8 @@ instance (MonoidalOrdinal n) => Monoidal (ORDINAL n) where
 instance (MonoidalOrdinal n) => SymMonoidal (ORDINAL n) where
   swap @a @b = swapProd @a @b
 
--- | Every object is a comonoid by the diagonal and the map to the top, which is what makes the
--- chain 'CopyDiscard' and so 'Proarrow.Category.Monoidal.Cartesian.Cartesian'.
+-- | Every object is a comonoid by the diagonal and the map to the top. So the chain is
+-- 'CopyDiscard', and hence 'Proarrow.Category.Monoidal.Cartesian.Cartesian'.
 instance (MonoidalOrdinal n, Ob a) => Comonoid (a :: ORDINAL n) where
   counit = terminate
   comult = diag
@@ -355,7 +356,7 @@ instance Distributive (ORDINAL (S Z)) where
   absorbR @a = case singOrdinal @a of SOZ -> ZEQ
 
 -- | A chain is a distributive lattice: the meet is the minimum and the join the maximum. By
--- recursion on the objects, as the products and coproducts are: a bottom on either side makes
+-- recursion on the objects, as the products and coproducts are. A bottom on either side makes
 -- both sides the same object, and otherwise both sides are a successor.
 instance (Distributive (ORDINAL (S n)), MonoidalOrdinal (S n)) => Distributive (ORDINAL (S (S n))) where
   distL @a @b @c = case singOrdinal @a of
@@ -375,8 +376,8 @@ instance (Distributive (ORDINAL (S n)), MonoidalOrdinal (S n)) => Distributive (
   absorbL = ZEQ
   absorbR = ZEQ
 
--- | @LTE@ is thin, so equalizers are trivial; @factorEqualizer incl h@ just needs @h@'s domain to be
--- @<=@ @incl@'s domain, which -- since both share the codomain @x@ -- can only fail when @incl@'s
+-- | @LTE@ is thin, so equalizers are trivial. @factorEqualizer incl h@ just needs @h@'s domain to be
+-- @<=@ @incl@'s domain. Since both share the codomain @x@, this can only fail when @incl@'s
 -- domain is @OZ@ (nothing below it) but @h@'s domain is a successor (necessarily above @OZ@).
 instance HasEqualizers (ORDINAL n) where
   equalize = thinEqualize
@@ -395,9 +396,10 @@ instance HasCoequalizers (ORDINAL n) where
   factorCoequalizer (ZLT q) (ZLT h) = SLT (factorCoequalizer q h)
   factorCoequalizer (SLT q) (SLT h) = SLT (factorCoequalizer q h)
 
--- | Pullbacks in a thin category are just meets; computed directly (rather than via 'Proarrow.Limit.Pullback.thinPullback',
--- which would need @HasProducts (ORDINAL n)@ -- unavailable for an abstract @n@, since 'HasBinaryProducts'
--- and 'HasTerminalObject' are only resolvable for a syntactically concrete @n@).
+-- | Pullbacks in a thin category are just meets. Computed directly, not via
+-- 'Proarrow.Limit.Pullback.thinPullback', which would need @HasProducts (ORDINAL n)@. That is
+-- unavailable for an abstract @n@, since 'HasBinaryProducts' and 'HasTerminalObject' are only
+-- resolvable for a syntactically concrete @n@.
 instance HasPullbacks (ORDINAL n) where
   pullback (ZLT _) (ZLT _) k = k ZEQ ZEQ
   pullback (ZLT _) (SLT @b' g) k = k ZEQ (ZLT (initiate @_ @b' \\ g))
@@ -406,7 +408,7 @@ instance HasPullbacks (ORDINAL n) where
   pullback ZEQ ZEQ k = k ZEQ ZEQ
 
   -- @p1@ and @k1@ already share a codomain (@a@), which is all 'factorEqualizer' needs to compare
-  -- @q@ against @p@ -- @p2@/@k2@ carry no extra information once @p1, p2@ are known to be a pullback.
+  -- @q@ against @p@. @p2@/@k2@ carry no extra information once @p1, p2@ are known to be a pullback.
   factorPullback p1 _ k1 _ = factorEqualizer p1 k1
 
 -- | Dual to the 'HasPullbacks' instance above: pushouts in a thin category are joins.

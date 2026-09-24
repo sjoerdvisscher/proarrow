@@ -3,11 +3,8 @@
 -- itself, making it symmetric monoidal, 'Closed', 'StarAutonomous' and 'CompactClosed', with a
 -- cocommutative comonoid on @M@ and hence 'CopyDiscard'.
 --
--- It is deliberately /not/ cartesian or cocartesian. A one-object category has a terminal object
--- only when its hom-set is a singleton, and likewise has binary products only when @'fst' . (f
--- '&&&' g) = f@ forces @'combine' f g = f@ -- both hold only for the trivial monoid. The
--- corresponding instances would be unlawful for every other @m@, so they are omitted rather than
--- given a definition that type-checks.
+-- It is not cartesian or cocartesian: with one object, a terminal object needs a singleton
+-- hom-set and binary products force @'combine' f g = f@, so both hold only for the trivial monoid.
 module Proarrow.Category.Instance.Monoid where
 
 import Data.Type.Nat (Nat (..))
@@ -75,9 +72,9 @@ instance (CommutativeMonoid m) => Comonoid (M :: MONOID m) where
 instance (CommutativeMonoid m) => CocommutativeComonoid (M :: MONOID m)
 instance (CommutativeMonoid m) => CopyDiscard (MONOID m)
 
--- | A monoid is a one-object category, so its kind has one inhabitant, at index zero. Said directly
--- rather than left to the 'Objects' default, so that it reduces for a not-yet-known inhabitant --
--- which is how 'withOb' learns there is only @'M'@.
+-- | A monoid is a one-object category, so its kind has one inhabitant, at index zero. This is
+-- stated directly instead of left to the 'Objects' default, so that it reduces for a not-yet-known
+-- inhabitant. That way 'withOb' learns there is only @'M'@.
 instance Indexed (MONOID m) where
   type Index (a :: MONOID m) = 'Z
 

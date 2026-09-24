@@ -3,8 +3,8 @@
 
 -- | Hypergraph categories: compact closed categories where every object carries a 'Frobenius'
 -- structure (a compatible 'Proarrow.Monoid.Monoid' and 'Proarrow.Monoid.Comonoid'), giving n-to-m
--- 'spider's, 'cup's and 'cap's -- the setting for string diagrams with arbitrary fan-in\/fan-out
--- such as "Proarrow.Category.Instance.ZX".
+-- 'spider's, 'cup's and 'cap's. This is the setting for string diagrams with arbitrary
+-- fan-in\/fan-out such as "Proarrow.Category.Instance.ZX".
 module Proarrow.Category.Monoidal.Hypergraph where
 
 import Data.Type.Nat (SNatI)
@@ -28,9 +28,9 @@ import Proarrow.Monoid
   )
 
 -- | A __special commutative Frobenius algebra__: a commutative monoid and cocommutative comonoid
--- satisfying speciality (@mappend . comult = id@) and the Frobenius law. This is exactly the
--- structure a 'Hypergraph' category supplies at every object, and it is what makes the 'spider'
--- from n-fold @a@ to m-fold @a@ the unique connected map (commutativity\/cocommutativity make
+-- satisfying speciality (@mappend . comult = id@) and the Frobenius law. A 'Hypergraph' category
+-- supplies this structure at every object, and with it the 'spider' from n-fold @a@ to m-fold @a@
+-- is the unique connected map (commutativity\/cocommutativity make
 -- 'fanIn'\/'fanOut' independent of wiring order). The bare notion of a Frobenius monoid needs
 -- neither (co)commutativity, but the library only ever uses the special commutative one.
 class (CommutativeMonoid a, CocommutativeComonoid a) => Frobenius a
@@ -102,11 +102,12 @@ applyHG :: forall {k} (b :: k) c. (Hypergraph k, Ob b, Ob c) => ExpHG b c ** b ~
 applyHG = linDistInvHG @_ @b (obj @b ** obj @c)
 
 -- | In the free category the supply generators (see @'Supplies' 'Monoid'@\/@'Supplies' 'Comonoid'@
--- in "Proarrow.Monoid") are compatible by fiat, so monoid + comonoid is already 'Frobenius' -- and
--- with both supplies in @cs@, @'Supplies' 'Frobenius'@ and 'Hypergraph' fall out derived, with no
--- structure of their own. Superclasses are taken directly as the context to keep dictionary
--- construction acyclic (bundling them into an 'Proarrow.Category.Instance.Free.All'-style constraint here builds a dictionary that references itself
--- through the quantified 'Supplies' constraint, looping at runtime).
+-- in "Proarrow.Monoid") are compatible by fiat, so monoid + comonoid is already 'Frobenius'. With
+-- both supplies in @cs@, @'Supplies' 'Frobenius'@ and 'Hypergraph' are derived, with no structure
+-- of their own. Superclasses are taken directly as the context to keep dictionary construction
+-- acyclic. Bundling them into an 'Proarrow.Category.Instance.Free.All'-style constraint here builds
+-- a dictionary that references itself through the quantified 'Supplies' constraint, looping at
+-- runtime.
 instance (CommutativeMonoid a, CocommutativeComonoid (a :: FREE cs p)) => Frobenius (a :: FREE cs p)
 
 instance (Supplies Frobenius (FREE cs p), CompactClosed (FREE cs p)) => Hypergraph (FREE cs p)

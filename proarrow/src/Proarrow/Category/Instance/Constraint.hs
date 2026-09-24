@@ -25,7 +25,7 @@ data (:-) a b where
   Entails :: {unEntails :: forall r. (a) => ((b) => r) -> r} -> CNSTRNT a :- CNSTRNT b
 
 -- | The category of type class constraints. An arrow from constraint a to constraint b
--- | means that a implies b, i.e. if a holds then b holds.
+-- means that a implies b, i.e. if a holds then b holds.
 instance CategoryOf CONSTRAINT where
   type (~>) = (:-)
   type Ob a = (Is CNSTRNT a)

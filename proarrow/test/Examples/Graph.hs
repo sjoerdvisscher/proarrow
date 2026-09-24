@@ -76,7 +76,7 @@ instance Enumerable GRAPH where
     SS @i -> case snat @i of SZ -> r
 
 -- | The arrows of the schema, which is all the numbering needs: two identities and the two
--- incidence maps. Having finitely many of them is what lets the gluing conditions be enumerated.
+-- incidence maps. Since there are finitely many, the gluing conditions can be enumerated.
 graphHoms :: forall a b. (Ob a, Ob b) => [GraphHom a b]
 graphHoms = case (obj @a, obj @b) of
   (IdE, IdE) -> [IdE]
@@ -95,24 +95,21 @@ instance Finitary GraphHom where
 
 -- * A coverage on the schema
 
--- | A vertex covered by the two ends of an edge. Every other site in this repo is a poset, where
--- a hom-set has at most one arrow; here the two legs are /parallel/ -- both @'E' '~>' 'V'@ -- and
--- that is the whole point of the coverage. A sieve at 'V' can now hold 'Src' without 'Tgt', which
--- no coverage on a poset can express, and a factorisation through a leg can be well typed and
--- still wrong, which is what makes 'Proarrow.Testing.Laws.testStableSite' say something.
+-- | A coverage on the graph schema @E ⇉ V@: the vertex 'V' is covered by the two ends of an edge,
+-- the arrows 'Src' and 'Tgt' out of 'E'. Most sites in this repo are posets, with at most one
+-- arrow between two objects. Here the legs are parallel, so a sieve at 'V' (a set of arrows
+-- into 'V' closed under precomposition) can hold 'Src' without 'Tgt', and a factorisation through
+-- a leg can be well typed and still wrong. That gives 'Proarrow.Testing.Laws.testStableSite'
+-- something to check.
 --
--- Stable and composing, so a Grothendieck topology: the only arrows into 'V' are its identity and
--- the two legs, so a cover pulls back either to itself or to the identity cover of 'E'.
+-- It is a Grothendieck topology: the only arrows into 'V' are its identity and the two legs, so a
+-- cover pulls back either to itself or to the identity cover of 'E'. It is also
+-- 'Proarrow.Category.Sheaf.ByElements' at the collage of the two-element profunctor between two
+-- one-object categories, written out because the schema reads better as itself.
 --
--- Spelled out here, but it is an instance of a general construction: this schema is the collage of
--- the two-element profunctor between two one-object categories, and the coverage is
--- 'Proarrow.Category.Sheaf.ByElements' at it. Kept by hand because the schema exists for its own
--- reasons and reads better as itself.
---
--- A sheaf for it is a presheaf with @p 'V' ≅ p 'E' × p 'E'@ -- a graph whose vertices /are/ the
--- pairs of endpoints. The two legs have no overlap, nothing but 'E' mapping into 'E', so matching
--- is vacuous and gluing is a product; overlaps are @Props.Sheaf@\'s @Overlapping@\'s job,
--- on a poset. The two sites are complementary.
+-- A sheaf for it is a presheaf with @p 'V' ≅ p 'E' × p 'E'@. The legs do not overlap (nothing but
+-- 'E' maps into 'E'), so matching is vacuous and gluing is a product. For overlapping legs see
+-- @Props.Sheaf@\'s @Overlapping@, on a poset.
 type data ByEnds
 
 -- | The name of 'ByEnds'\'s one cover, whose 'Cover' constructor is @VByEnds@ and whose 'Leg'
@@ -135,8 +132,8 @@ instance HasFiniteCovers ByEnds GRAPH where
     IdV -> [SomeCover VByEnds]
 
 -- | Each leg is its own pullback along itself, and the cover pulls back to itself along the
--- identity. Note that @'Factors' AtTgt IdE@ type-checks where @'Factors' AtSrc IdE@ is meant --
--- the legs share a source -- so unlike on a poset these equations are the instance's to get right.
+-- identity. @'Factors' AtTgt IdE@ type-checks where @'Factors' AtSrc IdE@ is meant, since the legs
+-- share a source, so unlike on a poset these equations are the instance's to get right.
 instance StableSite ByEnds GRAPH where
   pullbackCover VByEnds IdV = pullbackAlongId VByEnds
   pullbackCover VByEnds Src = AlreadyFactors (Factors AtSrc IdE)

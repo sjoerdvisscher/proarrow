@@ -1,44 +1,35 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | Sheaves for the library's generic coverages at two small categories, and for one coverage of
--- this module's own.
+-- | Sheaves for the library's generic coverages on two small categories, and for one coverage
+-- defined here. A presheaf @p@ is a sheaf for a coverage when, for each cover of @a@, every
+-- compatible choice of elements at the legs (a /matching family/) is the restriction of one and
+-- only one element of @p a@. It can fail by having too few such elements or too many.
 --
--- 'Atomic' on the walking arrow covers 'TRU' by 'FLS' -- and every object by its identity, which
--- decides nothing. A presheaf is a sheaf when restriction along 'F2T' is a bijection, which 'Two'
--- is; 'Proarrow.Category.Enriched.Finitary.Sheaf.isSheaf' agrees, and separates the
--- representables -- the one at 'TRU' is a sheaf, the one at 'FLS' is not -- so this coverage is
--- /not/ subcanonical. That failure is the \"too few\" one: @'Yo' 'FLS'@ has one element at 'FLS'
--- and none at 'TRU', so the cover carries a matching family that nothing at 'TRU' restricts to.
+-- * 'Atomic' on the walking arrow covers 'TRU' by 'FLS' (and every object by its identity, which
+--   constrains nothing). So a sheaf is a presheaf whose restriction along 'F2T' is a bijection,
+--   such as 'Two'. The representable at 'TRU' is a sheaf; the one at 'FLS' is not (too few: it has
+--   one element at 'FLS' and none at 'TRU'), so this coverage is not /subcanonical/.
+-- * 'Joins' on @(BOOL, BOOL)@ is the discrete two-point space: its four opens are the whole space,
+--   the two points and the empty set. The whole space is covered by the two points, the empty set
+--   by the empty family. The empty cover has one matching family, so a sheaf has one element over
+--   the empty set. 'Const2' has two (too many), and fails only there. Every representable presheaf
+--   is a sheaf (subcanonical), but not every two-sided representable: the empty cover wants an
+--   element at every object of @j@, and @'Yo' a ('OP' b)@ has none where @b@ misses.
+-- * 'Overlapping', defined below, reads the same four opens with the two halves overlapping at
+--   @'(FLS, FLS)@. No generic coverage gives it. It is the one site here where gluing is an
+--   equalizer (the family must agree on the overlap) instead of a product.
 --
--- 'Joins' on @(BOOL, BOOL)@, the opens of the discrete two-point space, covers the whole space by
--- its singletons, and the empty set by nothing at all. That empty cover is the interesting one: it
--- forces a sheaf to have exactly one section over the empty set, which is the only thing 'Const2'
--- gets wrong -- and it gets it wrong the other way round, the \"too many\" failure, having two
--- sections over the empty set where the empty cover admits exactly one matching family.
+-- All three satisfy the Lawvere-Tierney laws, and for all three the dense sieves are the covering
+-- ones.
 --
--- Unions of opens are colimits, so here every representable /presheaf/ is a sheaf and the coverage
--- /is/ subcanonical -- which two-sidedly it is not, since the empty cover wants one section over
--- the empty set at every object of @j@ and @'Yo' a ('OP' b)@ has none at an object @b@ misses.
---
--- 'Overlapping', written by hand below, is the same four opens read so that the two halves
--- overlap: 'Joins' without the empty family. No generic coverage gives it, and it is here because
--- it is the one poset site whose gluing is an equalizer rather than a product.
---
--- All three topologies satisfy the Lawvere-Tierney laws, and at all three the dense sieves are the
--- covering ones.
---
--- Note the @j@ arguments below. Sheaf theory is about presheaves, so the natural instantiation of
--- every law here is @j ~ ()@ -- and over the unit category the covariant action is trivial
--- (@'dimap' g h@ collapses to @'lmap' g@), which leaves half of a two-sided profunctor untested by
--- construction. That is not a hypothetical worry: the missing @'HasInitialObject'@ on
--- @'Proarrow.Category.Sheaf.Sheaf' 'Proarrow.Category.Sheaf.Sums'@ was exactly this kind of
--- covariant-side bug, and invisible at @j ~ ()@.
---
--- Only 'closure'\'s naturality and the two-sided 'isSheaf' verdicts are run at a non-trivial @j@,
--- though, because only they can see one. Both of the other laws are stated through
--- @'Proarrow.Category.Enriched.Finitary.Sheaf.isCovering'@, which is stable under @'rmap'@ whatever
--- the coverage, so at any @j@ they say exactly what they say at @()@.
+-- Presheaves are profunctors with @j ~ ()@, but there the covariant action is trivial, leaving half
+-- of a two-sided profunctor untested. (The 'HasInitialObject' needed by
+-- @'Proarrow.Category.Sheaf.Sheaf' 'Proarrow.Category.Sheaf.Sums'@ is only for the covariant side,
+-- and its absence would go unnoticed at @j ~ ()@.) Only 'closure'\'s naturality and the two-sided
+-- 'isSheaf' verdicts are run at a non-trivial @j@: the other laws are stated through
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.isCovering', which is stable under 'rmap', so they
+-- say the same at any @j@.
 module Props.Sheaf (test) where
 
 import Data.Foldable (for_)
@@ -243,7 +234,7 @@ instance Testable Sh where
   genSome = genSomeDef @'[FIN Two, FIN (Yo TRU (OP '())), FIN (Yo FLS (OP '())), FIN (Sieve :: Presheaf BOOL)]
 
 -- | The category of sheaves for 'Atomic', as a testable kind. Its objects need a 'Sheaf' /instance/,
--- not just a true 'isSheaf', which 'withTabulatedSheaf' supplies for anything that is one -- and
+-- not just a true 'isSheaf'. 'withTabulatedSheaf' supplies one for anything that is a sheaf, and
 -- decides the condition on the way, so the failure branches below are where this palette asserts
 -- that its members are sheaves at all. The representable at 'TRU' has no instance of its own and
 -- enters tabulated, and so does the sheafification, whose own 'toIndex' re-runs the plus
@@ -276,7 +267,7 @@ instance Testable ShB where
 -- * The two-point space
 
 -- | A sheaf on the discrete two-point space: one section over the empty set, two over @{x}@, one
--- over @{y}@, and one per compatible pair over the whole space -- so two.
+-- over @{y}@, and one per compatible pair over the whole space, so two.
 type Sections :: Presheaf (BOOL, BOOL)
 data Sections u v where
   U0 :: Sections '(FLS, FLS) '()
@@ -306,8 +297,8 @@ instance Profunctor Sections where
     XY1 -> r
     XY2 -> r
 
--- | A section over an open is its sections at the points. A point is join-prime -- it lies below
--- a join only by lying below one of the joined -- so every cover of an open has a leg over each
+-- | A section over an open is its sections at the points. A point is join-prime (it lies below
+-- a join only by lying below one of the joined), so every cover of an open has a leg over each
 -- of its points, and @at@ reads the family there. Only @{x}@ has two sections, so it is the only
 -- point that has to be read; over the empty set there is nothing to glue and one section to
 -- produce.
@@ -346,7 +337,7 @@ instance (Ob u, Ob a) => TestableType (Sections a u) where
 instance TestableProfunctor Sections
 
 -- | The constant presheaf with two sections everywhere, as the coproduct of two copies of the
--- one-section presheaf. It glues over the two points -- a matching pair is a diagonal one -- but it
+-- one-section presheaf. It glues over the two points (a matching pair is a diagonal one), but it
 -- has two sections over the empty set where a sheaf must have exactly one, so it is not a sheaf.
 --
 -- 'Two' is the same shape one site over: constant with two sections, and /is/ a sheaf for
@@ -356,22 +347,19 @@ type Const2 = TerminalProfunctor :+: TerminalProfunctor
 
 -- * The two-point space with overlapping halves
 
--- | The same four opens as 'Joins' at @(BOOL, BOOL)@, read as a space whose two halves /overlap/: @'(TRU, TRU)@
--- is covered by @'(TRU, FLS)@ and @'(FLS, TRU)@ as before, but @'(FLS, FLS)@ is now their
--- intersection rather than the empty set, and gets no cover of its own. Several coverages on one
--- category is what the @t@ parameter is for, and this is the pair that shows why it earns its
--- keep: same category, same cover, different sheaves.
+-- | The four opens of 'Joins' at @(BOOL, BOOL)@, read as a space whose two halves /overlap/:
+-- @'(TRU, TRU)@ is covered by @'(TRU, FLS)@ and @'(FLS, TRU)@ as before, but @'(FLS, FLS)@ is now
+-- their intersection instead of the empty set, and gets no cover of its own. Same category, same
+-- cover, different sheaves: this is why a site has the @t@ parameter.
 --
--- The difference is the whole of what an overlap does. Under 'Joins' the two legs meet only at
--- the empty set, so a matching family is /any/ pair of sections and gluing is a product; here they
--- meet at a section of @p '(FLS, FLS)@, so a matching family is a pair that /agrees/ there and
--- gluing is an equalizer. The constant presheaf with two values is the shortest witness: it is no
--- sheaf for 'Joins' -- the empty cover wants one section over the empty set and it has two --
--- and it is one here, its four pairs of local sections cut down to the two that agree.
+-- Under 'Joins' the two legs meet only at the empty set, so any pair of sections is a matching
+-- family and gluing is a product. Here they meet at @p '(FLS, FLS)@, so the pair must agree there
+-- and gluing is an equalizer. The constant presheaf with two values shows the difference: no sheaf
+-- for 'Joins' (two sections over the empty set, where the empty cover wants one), but a sheaf here,
+-- its four pairs of local sections cut down to the two that agree.
 --
--- Stable and composing, so this is a Grothendieck topology: a cover pulls back along any arrow
--- into @'(TRU, TRU)@ to the target's identity cover, which factors through whichever leg the
--- arrow already factors through.
+-- This is a Grothendieck topology: a cover pulls back along any arrow into @'(TRU, TRU)@ to the
+-- target's identity cover, which factors through whichever leg the arrow already factors through.
 type data Overlapping
 
 -- | The name of 'Overlapping'\'s one cover, whose 'Cover' constructor is @ByHalves@ and whose
@@ -403,7 +391,7 @@ instance HasFiniteCovers Overlapping (BOOL, BOOL) where
 
 -- | Gluing for 'Overlapping': a matching family over the two halves agrees on the intersection,
 -- and both halves are the same two-valued set, so the value at either leg is the glued one. The
--- smallest instance in which an overlap does any work -- under 'Joins' this same presheaf is
+-- smallest instance in which an overlap does any work. Under 'Joins' this same presheaf is
 -- no sheaf at all.
 instance Sheaf Overlapping Const2 where
   glue ByHalves m = case m AtFst of
@@ -431,8 +419,8 @@ instance Testable PshG where
 
 -- | The category of sheaves for 'Overlapping', as a testable kind. The only one of the three
 -- whose gluing is an equalizer, so the only one where a quotient of sheaves can have local
--- sections agreeing on the intersection without coming from a global one -- the case
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.factorLocally' descends for. 'Sections' is a sheaf
+-- sections agreeing on the intersection without coming from a global one (the case
+-- 'Proarrow.Category.Enriched.Finitary.Sheaf.factorLocally' descends for). 'Sections' is a sheaf
 -- here but has no instance of its own, so it enters tabulated, as at 'ShB'.
 type ShO = SHEAVES Overlapping () (BOOL, BOOL)
 
@@ -452,7 +440,7 @@ instance Testable ShO where
       )
       (error "ShO: Sections is not a sheaf for Overlapping")
 
--- | The category of sheaves for 'Joins', as a testable kind -- see 'ShB', in particular for why
+-- | The category of sheaves for 'Joins', as a testable kind. See 'ShB', in particular for why
 -- the sheafification is tabulated.
 type ShC = SHEAVES Joins () (BOOL, BOOL)
 
@@ -516,7 +504,7 @@ test =
           -- two groups rely on.
           testLawvereTierney_ @(PROD Sh) (lawvereTierney @Trivial)
         , testDenseIsCovering @Trivial @() @BOOL
-        , -- only the maximal sieve is dense, so one plus changes nothing -- for a non-sheaf too
+        , -- only the maximal sieve is dense, so one plus changes nothing, even for a non-sheaf
           testPlusFixes @Trivial @Two
         , testPlusFixes @Trivial @Collapse
         ]
@@ -584,7 +572,7 @@ test =
             ]
         , -- The one cover has no overlaps, so one plus is already a sheaf for /every/ presheaf here:
           -- P⁺(TRU) is the classes of (maximal, x) and ({F2T}, y), identified when x restricts to y,
-          -- which is P(FLS) -- and restriction becomes the identity.
+          -- which is P(FLS), and restriction becomes the identity.
           testProperty "one plus suffices without overlaps" $ do
             expect "Plus Collapse is a sheaf" True (isSheaf @Atomic @(Plus Atomic Collapse))
             expect "Plus (Yo FLS) is a sheaf" True (isSheaf @Atomic @(Plus Atomic (Yo FLS (OP '()))))
@@ -609,7 +597,7 @@ test =
             expect "sheafified for Joins" [1, 2, 2, 4] (sizes @(Sheafify Joins Const2))
         , testProperty "the closed sieves are the opens" $
             -- the opens contained in each: the intersection has two, each half three, the union
-            -- five -- where 'Joins' sees a discrete pair of points and counts subsets
+            -- five. 'Joins' sees a discrete pair of points instead and counts subsets
             expect "Omega" [2, 3, 3, 5] (sizes @(ClosedSieve Overlapping :: Presheaf (BOOL, BOOL)))
         , testLawvereTierney_ @(PROD Sh2) (lawvereTierney @Overlapping)
         , testProperty "closure is natural" $
@@ -624,8 +612,8 @@ test =
         , testGluesBack @Overlapping @(Const2 :~>: Const2)
         , -- and the other carrier with no 'glue' of its own: the classifier
           testGluesBack @Overlapping @(ClosedSieve Overlapping :: Presheaf (BOOL, BOOL))
-        , -- The presheaf of /all/ sieves is not a sheaf here -- the sixth sieve at the top is not
-          -- closed -- and sheafifying it gives the closed ones: the classifier of the sheaves is
+        , -- The presheaf of /all/ sieves is not a sheaf here (the sixth sieve at the top is not
+          -- closed), and sheafifying it gives the closed ones. So the classifier of the sheaves is
           -- the sheafification of the classifier of the presheaves.
           testProperty "sheafifying the sieves gives the closed sieves" $ do
             expect "Sieve is no sheaf here" False (isSheaf @Overlapping @(Sieve :: Presheaf (BOOL, BOOL)))
@@ -642,14 +630,14 @@ test =
             , testPullbacks_ @ShO
             , testInitialObject @ShO
             , testBinaryCoproducts_ @ShO
-            , -- No 'testCoequalizers_' (2.6s), no 'testPushouts_' (4.4s) and no
-              -- 'testSubobjectClassifier_' (2.9s). The first two reach no branch the cheap groups
-              -- here do not -- measured, 'factorLocally' descends at the coproducts above -- and
-              -- what is special about quotients here, that a matching pair is a constraint and
-              -- not a choice, @Props.Sheaf.Collage@ asserts directly for nothing. The third is
-              -- the pushout that epi-mono factorization already drives, and the second runs at
-              -- both other sites, with what is special about Omega here -- that it is the five
-              -- opens -- asserted directly above at no cost.
+            , -- No 'testCoequalizers_' (2.6s), 'testPushouts_' (4.4s) or
+              -- 'testSubobjectClassifier_' (2.9s) here. Coequalizers and pushouts reach no branch
+              -- the cheaper tests miss ('factorLocally' already descends at the coproducts above),
+              -- and what is special about quotients at this site, that a matching pair is a
+              -- constraint and not a choice, is asserted directly in @Props.Sheaf.Collage@. The
+              -- pushout is also the one epi-mono factorization drives. The subobject classifier
+              -- is tested at both other sites, and what is special about it here, that it is the
+              -- five opens, is asserted directly above.
               testEpiMonoFactorization_ @ShO
             , testClosed_ @(PROD ShO)
             , testFinitary @(Sub Prof :: CAT ShO) "ShO"
@@ -660,13 +648,13 @@ test =
         "ByEnds"
         [ -- The one site here that is not a poset: both legs are arrows 'E' -> 'V'. Everything
           -- else in this module runs where a hom-set has at most one arrow, which hides three
-          -- things at once -- a sieve cannot tell parallel arrows apart, a factorisation through
+          -- things at once: a sieve cannot tell parallel arrows apart, a factorisation through
           -- a leg cannot be well typed and wrong, and matching collapses to an equation.
           testSiteLaws @ByEnds @() @GRAPH
         , testProperty "sieves tell the two legs apart" $ do
             -- five sieves at 'V': the empty one, 'Src' alone, 'Tgt' alone, both, and everything.
             -- On a poset the two singletons could not both exist. The one that is not closed is
-            -- @{Src, Tgt}@, whose closure is the maximal sieve -- that is the cover being a cover.
+            -- @{Src, Tgt}@, whose closure is the maximal sieve because it is the cover's sieve.
             expect "all sieves" [2, 5] (sizes @(Sieve :: Presheaf GRAPH))
             expect "closed ones" [2, 4] (sizes @(ClosedSieve ByEnds :: Presheaf GRAPH))
         , testProperty "isSheaf" $ do
@@ -723,7 +711,7 @@ test =
             , testBinaryCoproducts_ @ShC
             , testCoequalizers_ @ShC
             , -- No 'testPushouts_' here: the apex is the sheafified coproduct, whose sections over
-              -- the whole space are the pairs, and the law draws three arrows out of it -- each an
+              -- the whole space are the pairs, and the law draws three arrows out of it, each an
               -- enumeration over 15 points where a coequalizer's is over 6 (4.2s for the group).
               -- Epi-mono factorization covers the same pushout at a quarter the cost.
               testEpiMonoFactorization_ @ShC

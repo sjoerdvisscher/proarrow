@@ -1,9 +1,9 @@
 -- | The thin category of booleans: objects 'FLS' and 'TRU' with one non-identity arrow
--- @'FLS' '~>' 'TRU'@ -- the poset @False <= True@, a.k.a. the walking arrow. It is a core type:
--- thin categories are enriched in it ("Proarrow.Category.Enriched.Thin"), so this module depends
--- on nothing but "Proarrow.Core", and @BOOL@'s further structure -- conjunction as product and
+-- @'FLS' '~>' 'TRU'@, the poset @False <= True@, a.k.a. the walking arrow. It is a core type.
+-- Thin categories are enriched in it ("Proarrow.Category.Enriched.Thin"), so this module depends
+-- on nothing but "Proarrow.Core". The further structure of @BOOL@ (conjunction as product and
 -- tensor, disjunction as coproduct, closed, star-autonomous, (co)equalizers, pullbacks\/pushouts,
--- a parameterized NNO -- is instantiated in the modules that define those classes.
+-- a parameterized NNO) is instantiated in the modules that define those classes.
 module Proarrow.Category.Instance.Bool where
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, type (+->))
@@ -65,7 +65,7 @@ type family BoolLeq (a :: BOOL) (b :: BOOL) :: BOOL where
   BoolLeq a b = TRU
 
 -- | The four non-trivial profunctors @BOOL '+->' BOOL@, indexed by a pair of 'BOOL's selecting
--- whether the @FLS->FLS@ and @TRU->TRU@ heteromorphisms are present; @FLS->TRU@ always is.
+-- whether the @FLS->FLS@ and @TRU->TRU@ heteromorphisms are present. @FLS->TRU@ always is.
 type NonTrivialProfunctor :: (BOOL, BOOL) -> BOOL +-> BOOL
 data NonTrivialProfunctor ft a b where
   FF :: NonTrivialProfunctor '(TRU, tt) FLS FLS

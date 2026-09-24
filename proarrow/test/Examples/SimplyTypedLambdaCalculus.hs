@@ -298,7 +298,7 @@ succ = Lam (Lam (Lam (App (Vs Vz) (App (App (Vs (Vs Vz)) (Vs Vz)) Vz))))
 -- 'GenTotal' ('empty' for uninhabited branches, so nothing is ever discarded), structural
 -- recursion wherever a branch shrinks the goal, and a small fixed palette of intermediate
 -- objects for the one branch that doesn't ('App'/composition), bounded by fuel. Equality is
--- semantic -- terms and substitutions are compared through 'eval'/'evalSub' -- so the smart
+-- semantic (terms and substitutions are compared through 'eval'/'evalSub'), so the smart
 -- normalizing constructors don't have to be confluent for the laws to pass.
 
 -- ** Structural equality and display, needing only 'Ob'
@@ -342,7 +342,7 @@ evalSub (Comp f g) x = evalSub f (evalSub g x)
 --
 -- 'eqHask' compares interpreted terms by sampling arguments, which needs falsify 'Function'
 -- instances at every arrow's /left/ argument. These families thread that requirement through
--- 'TestOb', exactly like @KnownFree@ in Props.Free. The palettes below only ever put 'K'
+-- 'TestOb', as @KnownFree@ does in Props.Free. The palettes below only ever put 'K'
 -- on the left of an arrow (and only 'K' entries in contexts), so the vacuous
 -- @Function (a -> b)@ instance is never exercised.
 
@@ -468,7 +468,7 @@ instance Testable CON where
 
 deriving instance Show (Sub a b)
 
--- | Structural equality, used by the normalizing smart constructors ('cons', 'pComp') -- the
+-- | Structural equality, used by the normalizing smart constructors ('cons', 'pComp'). The
 -- test suite compares substitutions semantically instead, see 'TestingEqShow'.
 instance Eq (Sub a b) where
   Empty == Empty = True

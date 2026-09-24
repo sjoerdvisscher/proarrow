@@ -5,11 +5,9 @@
 -- 'Proarrow.Profunctor.Instance.Terminal.TerminalProfunctor' weight recovers ordinary conical
 -- limits, e.g. terminal objects, binary products and powers as special shapes.
 --
--- The weight synonyms and shape helpers used to state those instances are deliberately not
--- exported: @Unweighted@, @O1@\/@O2@, @At1@\/@At2@, the end weight @Hom@ and the @Ran@ carrier all
--- have namesakes in "Proarrow.Colimit", "Proarrow.Core" or
--- "Proarrow.Profunctor.Instance.Ran", and importing this module alongside those is far more common
--- than needing the helpers by name.
+-- The helpers that state those instances (@Unweighted@, @O1@\/@O2@, @At1@\/@At2@, @Hom@, @Ran@) are
+-- not exported, since they clash with names in "Proarrow.Colimit", "Proarrow.Core" and
+-- "Proarrow.Profunctor.Instance.Ran".
 module Proarrow.Limit
   ( HasLimits (..)
   , IsRepresentableLimit

@@ -19,7 +19,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
 
--- | Profuntorial strength for a monoidal actions.
+-- | Profunctorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
 -- and functorial costrength for corepresentable profunctors.
 type Strong :: forall {m} {k}. (m, k) +-> k -> k +-> k -> Constraint

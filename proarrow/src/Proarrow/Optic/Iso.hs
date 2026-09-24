@@ -2,12 +2,12 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The __iso__: the bottom of the subtyping lattice, usable as every other flavor. 'IsoFl' is
--- simply the conjunction of the five maximal flavors ('Proarrow.Optic.Lens.LensFl',
+-- the conjunction of the five maximal flavors ('Proarrow.Optic.Lens.LensFl',
 -- 'Proarrow.Optic.Prism.PrismFl', 'Proarrow.Optic.PowerGrate.PowerGrateFl',
--- 'Proarrow.Optic.MonoidalLens.MonLensFl' and 'Proarrow.Optic.Tracer.TracerFl'). Build with 'iso', eliminate to the two legs with
--- 'withIso' via the 'Yo' carrier -- which also eliminates 'Proarrow.Optic.re'-versed isos, a
--- conversion the subtyping lattice itself cannot express; 'fromPIso'\/'toPIso' mediate with the
--- profunctor-class-flavored 'PIso'.
+-- 'Proarrow.Optic.MonoidalLens.MonLensFl' and 'Proarrow.Optic.Tracer.TracerFl'). Build with
+-- 'iso', and eliminate to the two legs with 'withIso' via the 'Yo' carrier. That carrier also
+-- eliminates 'Proarrow.Optic.re'-versed isos, a conversion the subtyping lattice itself cannot
+-- express. 'fromPIso'\/'toPIso' mediate with the profunctor-class-flavored 'PIso'.
 module Proarrow.Optic.Iso where
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -53,7 +53,7 @@ instance (CategoryOf k, forall p q. (w p q) => Sub IsoFl p q) => Prostrong (w ::
 instance {-# OVERLAPPING #-} (CategoryOf k) => Prostrong (Flip IsoFl) (Yo (a :: k) (OP b) :: k +-> k) where
   proact @f @g (f :.: Yo sa bt :.: g) = Yo (sa . getP @f @g f) (getP @g @f g . bt)
 
--- | Eliminate any iso-flavored optic to its two legs, in either encoding -- including the
+-- | Eliminate any iso-flavored optic to its two legs, in either encoding, including the
 -- profunctor-class-flavored 'Proarrow.Optic.PIso' and reversed ('Proarrow.Optic.re') isos.
 withIso
   :: forall {k} c (s :: k) (t :: k) a b r

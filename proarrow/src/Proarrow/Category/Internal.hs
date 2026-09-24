@@ -4,15 +4,12 @@
 -- objects @'C0' ik@, an object of arrows @'C1' ik@, and source\/target\/identity\/composition
 -- structure maps.
 --
--- Taking @k@ to be finite sets makes these the finite categories, and the two halves of that
--- equivalence need the two presentations of finite sets, for opposite reasons. A 'FiniteCat' knows
--- its objects at the type level (@'Proarrow.Category.Enriched.Thin.Objects' k@) but its hom-sets
--- only at the value level ('size' is a 'Natural', not a type family), so it can be presented in
--- 'Proarrow.Category.Instance.FinHask.FINHASK', whose objects carry a value-level finiteness
--- witness, but not in 'Proarrow.Category.Instance.FinSet.FINSET', which would want the arrows
--- counted as a type. Coming back wants the opposite: 'Proarrow.Category.Enriched.Thin.Enumerable'
--- asks for an object list as a type, which only the skeleton @FINSET@ supplies. So 'INTERNAL' is
--- built from an internal category in @FINSET@.
+-- Internal to finite sets these are the finite categories, and each direction needs a different
+-- presentation of finite sets. A 'FiniteCat' counts its arrows only at the value level, so it is
+-- internal to 'Proarrow.Category.Instance.FinHask.FINHASK'. Going back,
+-- 'Proarrow.Category.Enriched.Thin.Enumerable' wants the object list as a type, which only the
+-- skeleton 'Proarrow.Category.Instance.FinSet.FINSET' supplies, so 'INTERNAL' is built from an
+-- internal category in @FINSET@.
 module Proarrow.Category.Internal where
 
 import Prelude (($))
@@ -99,7 +96,7 @@ data ArrIx k = ArrIx {arrSrc :: Natural, arrTgt :: Natural, arrPos :: Natural}
 
 -- | A composable pair, and the apex of 'compose': the pullback of 'source' along 'target'. The
 -- arrows are given outer first, so that the legs of 'compose' come out in the order that instance
--- wants them -- the first leg composed after the second.
+-- wants them: the first leg composed after the second.
 type CompIx :: Kind -> Type
 data CompIx k = CompIx (ArrIx k) (ArrIx k)
   deriving (P.Eq, P.Ord, P.Show)
@@ -186,9 +183,9 @@ instance (FiniteCat k) => k `InternalIn` FINHASK where
 
 -- * The converse: an internal category in @FINSET@ is a finite category
 
--- | How many objects and how many arrows an internal category in @FINSET@ has. These are types,
--- which is what @FINSET@ has over 'Proarrow.Category.Instance.FinHask.FINHASK' and what the
--- converse needs: 'Enumerable' asks for its object list at the type level.
+-- | How many objects and how many arrows an internal category in @FINSET@ has. These are types.
+-- That is what @FINSET@ has over 'Proarrow.Category.Instance.FinHask.FINHASK', and the converse
+-- needs it, because 'Enumerable' asks for its object list at the type level.
 type NumObs ik = UN FS (C0 ik :: FINSET)
 
 type NumArrs ik = UN FS (C1 ik :: FINSET)
@@ -198,7 +195,7 @@ type NumArrs ik = UN FS (C1 ik :: FINSET)
 type data INTERNAL ik = IN (ORDINAL (NumObs ik))
 
 -- | An arrow of the presented category: an element of @'C1' ik@. That its 'source' and 'target' are
--- the objects claimed is a runtime invariant, exactly as the table invariants of 'FinSet' are.
+-- the objects claimed is a runtime invariant, as the table invariants of 'FinSet' are.
 type Internal :: forall {ik}. CAT (INTERNAL ik)
 data Internal a b where
   Internal :: (Ob a, Ob b) => Natural -> Internal (a :: INTERNAL ik) b
@@ -260,10 +257,7 @@ instance (ik `InternalIn` FINSET, SNatI (NumObs ik)) => Finitary (Internal :: CA
       P.Nothing -> P.error "Internal.toIndex: not an arrow of this hom-set"
   fromIndex @a @b i = genericIndex (elements @(Internal :: CAT (INTERNAL ik)) @a @b) i
 
--- | The converse, as a statement: an internal category in @FINSET@ presents a 'FiniteCat'. The
--- 'Enumerable' half is what needs @FINSET@ rather than
--- 'Proarrow.Category.Instance.FinHask.FINHASK' -- its object list has to be a type, and only the
--- skeleton keeps the object count at the type level.
+-- | The converse, as a statement: an internal category in @FINSET@ presents a 'FiniteCat'.
 --
 -- At 'BOOL' the presented category has the hom-sets of 'BOOL' back: one arrow each way except from
 -- @TRU@ to @FLS@, where there is none.

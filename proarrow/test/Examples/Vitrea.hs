@@ -217,9 +217,9 @@ runK k = unStar (unKleisli k)
 -- | A monadic lens over 'Clock': viewing is pure, updating also stamps the time.
 --
 -- This is a 'MonoidalLens', not a 'Lens'. The Kleisli category of a monad has coproducts but not
--- products -- @'fst' . (f '&&&' g)@ would run both effects where the law allows only @f@\'s -- so
--- the monadic lenses of the paper live over the Kleisli /tensor/, with a comonoidal residual,
--- rather than over a product. Here the residual is the whole record.
+-- products (@'fst' . (f '&&&' g)@ would run both effects where the law allows only @f@\'s), so
+-- the monadic lenses of the paper live over the Kleisli /tensor/, with a comonoidal residual.
+-- Here the residual is the whole record.
 stamp :: forall a b. MonoidalLens (KL (Timestamped a) :: KLEISLI (Star Clock)) (KL (Timestamped b)) (KL a) (KL b)
 stamp =
   monLens @(KL (Timestamped a))

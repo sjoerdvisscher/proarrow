@@ -63,8 +63,8 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Yo (a :: k) (OP b :: OPPOSI
 
 -- | The embedding is finitary when the arrows are: its elements over @c@\/@d@ are an arrow @c ~> a@
 -- paired with an arrow @b ~> d@, numbered with the first varying slowest. This is the weight of the
--- ends in "Proarrow.Category.Enriched.Finitary.Topos", which is why it shares that module\'s
--- 'pairIndex' rather than spelling the radix out again.
+-- ends in "Proarrow.Category.Enriched.Finitary.Topos", so it shares that module\'s
+-- 'pairIndex' instead of spelling the radix out again.
 instance (FiniteCat j, FiniteCat k, Ob a, Ob b) => Finitary (Yo (a :: k) (OP (b :: j)) :: j +-> k) where
   size @c @d = size @(Hom k) @c @a * size @(Hom j) @b @d
   toIndex @c @d (Yo ca bd) = pairIndex (size @(Hom j) @b @d) (toIndex @(Hom k) @c @a ca) (toIndex @(Hom j) @b @d bd)

@@ -63,7 +63,7 @@ instance Testable ORDINAL3 where
 instance (Ob a, Ob b) => TestableType (LTE (a :: ORDINAL3) b) where
   gen = genElements @LTE
 
--- | Thin, so parallel arrows are equal for free; forcing is the one thing left to check.
+-- | Thin, so parallel arrows are equal for free. Forcing is the one thing left to check.
 instance (Ob a, Ob b) => TestingEqShow (LTE (a :: ORDINAL3) b) where
   eqP l r = l `seq` r `seq` pure True
   showP _ = show (objIndex @a) ++ "<=" ++ show (objIndex @b)

@@ -69,29 +69,29 @@ type BiCCCStructs =
    , Distributive
    ]
 
--- | The syntax category over @k@: the free BiCCC on @k@'s own hom-sets, i.e. 'Id' (rather than
--- @(~>)@ itself, which -- being an unsaturated type family application -- isn't allowed as a type
--- index wherever it is pattern-matched on below, in 'Mul').
+-- | The syntax category over @k@: the free BiCCC on @k@'s own hom-sets, i.e. 'Id'. @(~>)@ itself
+-- is an unsaturated type family application, so it isn't allowed as a type index where it is
+-- pattern-matched on below, in 'Mul'.
 type Syntax k = FREE BiCCCStructs (Id :: CAT k)
 
 type Ctx k = [Syntax k]
 
 -- | A short alias for embedding a base-category object, so type applications built from it read
--- like the target signature: '&&', '||' and '~~>' on the free category /are/ its object formers,
+-- like the target signature: '&&', '||' and '~~>' on the free category are its object formers,
 -- so @(F a ~~> F b) && F a@ is the object it looks like.
 type F a = EMB a
 
 -- | The context product: @'Mul' i@ is the single object standing in for "all the bound
--- variables in @i@", right fold with the most-recently-bound variable last -- the mirror image
--- of "Proarrow.Category.Monoidal.Strictified"'s @Fold@ (which puts its head /leftmost/), needed
--- here since 'curry'\/'fst'\/'snd' expect the thing being abstracted over on the /right/ of the
--- product, not the left, so @Fold@ itself can't be reused for this.
+-- variables in @i@", a right fold with the most-recently-bound variable last. This mirrors
+-- "Proarrow.Category.Monoidal.Strictified"'s @Fold@, which puts its head leftmost. @Fold@ itself
+-- can't be reused, since 'curry'\/'fst'\/'snd' expect the thing being abstracted over on the right
+-- of the product.
 type family Mul (i :: Ctx k) :: Syntax k where
   Mul '[] = TermF
   Mul (a ': as) = Mul as *! a
 
 -- | A term with free variables @i@ (innermost\/most-recently-bound first) and result type
--- @a@ -- literally a morphism from the context product to @a@ in the free BiCCC. A newtype
+-- @a@: a morphism from the context product to @a@ in the free BiCCC. A newtype
 -- (rather than a bare type synonym) so that @i@ is recoverable from a 'Free' term's type: 'Mul'
 -- is many-to-one at the type-family level as far as GHC's injectivity checker is concerned (even
 -- though it's mathematically injective here), which would otherwise leave @i@ ambiguous wherever
@@ -135,7 +135,7 @@ instance
 
 -- | Bind a variable, HOAS-style: the function argument stands for the newly bound variable,
 -- usable (via 'Cast') in the body of this 'lam' and any 'lam' nested inside it. The body is a
--- morphism out of the context /product/; 'curry' wants the /tensor/, so the 'Cartesian'
+-- morphism out of the context product, but 'curry' wants the tensor, so the 'Cartesian'
 -- coercion mediates.
 lam
   :: forall {k} a b i
@@ -205,8 +205,8 @@ either f g m = caseT m (uncurryF f) (uncurryF g)
 -- | Interpret a closed term (no free variables) into an actual morphism of the target
 -- category: move the empty context from the terminal object to the monoidal unit, 'lower' the
 -- function-valued term (a closed one needs no arguments to uncurry), and 'fold' into @k@ with
--- generators interpreted by unwrapping 'Id' -- the free category was built over @k@'s own
--- hom-sets directly.
+-- generators interpreted by unwrapping 'Id' (the free category was built over @k@'s own
+-- hom-sets directly).
 toCCC
   :: forall {k} a b
    . (BiCCC k, Ob (a :: Syntax k), Ob b)
@@ -214,9 +214,8 @@ toCCC
 toCCC (MkFree f) = fold @BiCCCStructs @(Id :: CAT k) unId (lower @a @b (f . unitToTerm))
 
 -- $
--- The examples below double as a regression test for the whole front end: each one exercises
--- 'lam'\/'Cast' (including nested lambdas), and\/or 'toCCC', on a concrete instantiation
--- (@k = 'Type'@) so the doctest can compare against an actual printed value.
+-- The examples below exercise 'lam'\/'Cast' (including nested lambdas) and 'toCCC' at
+-- @k = 'Type'@, where the compiled morphism can be run and its result printed.
 
 -- | Inject as the right element of a sum.
 --
@@ -251,7 +250,7 @@ curryPair :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => a ~> (b ~~> (a && b
 curryPair = toCCC @(F a) @(F b ~~> (F a && F b)) (lam (\x -> lam (\y -> x :& y)))
 
 -- | Flip the argument order of a 3-argument curried function, applying the last argument
--- twice — exercises three levels of nested 'lam' and 'Cast' weakening across all of them.
+-- twice. This exercises three levels of nested 'lam' and 'Cast' weakening across all of them.
 --
 -- >>> import Prelude (Bool (..))
 -- >>> flipCurried3 @Bool @Bool @Bool (\_ a _ -> a) True False

@@ -69,16 +69,11 @@ class (Representable m, Profunctor j) => RelativeMonad j m where
 
 type RelAlgebra j m a b = j a b -> m % a ~> b
 
--- | A 'Monad' or 'Comonad' seen as a relative (co)monad along 'Id' -- the canonical degenerate
--- case, that a relative monad along the identity is just a monad.
+-- | A 'Monad' or 'Comonad' seen as a relative (co)monad along 'Id'.
 --
--- The wrapper is load-bearing. Stated directly as @'RelativeMonad' 'Id' m@ this would clash
--- irreparably with the carrier-specific instances, such as the codensity monad's
--- @'RelativeMonad' j ('Proarrow.Profunctor.Representable.CorepStar' g ':.:'
--- 'Proarrow.Profunctor.Representable.CorepStar' f)@: the two heads unify at @j = 'Id'@ with
--- neither more specific than the other, so both match and no overlap pragma can order them
--- (@OVERLAPPING@\/@OVERLAPPABLE@ only rank comparable instances). Wrapping the carrier makes this
--- head rigid, so the two never compete.
+-- The wrapper is needed: a direct @'RelativeMonad' 'Id' m@ instance would unify at @j = 'Id'@ with
+-- carrier-specific ones such as the codensity monad's, with neither more specific, so no overlap
+-- pragma could order them.
 type AsRelative :: (k +-> i) -> k +-> i
 newtype AsRelative m a b = AsRelative {unAsRelative :: m a b}
   deriving newtype (Profunctor, Promonad, Representable, Corepresentable)

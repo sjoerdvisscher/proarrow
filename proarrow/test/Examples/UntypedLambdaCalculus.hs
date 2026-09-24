@@ -170,8 +170,8 @@ test =
     ]
 
 -- | Two contexts are the same when they have the same length. Not a method of 'Testable': the
--- laws never compare objects, and the two places below that do are comparing an object recovered
--- from a value -- the middle context of a composite substitution, and the one a weakening drops.
+-- laws never compare objects, and the two places below that do compare an object recovered from
+-- a value (the middle context of a composite substitution, and the one a weakening drops).
 eqCon :: forall (a :: CON) (b :: CON). (Ob a, Ob b) => Maybe (a :~: b)
 eqCon = case (sing @a, sing @b) of
   (SZ, SZ) -> Just Refl

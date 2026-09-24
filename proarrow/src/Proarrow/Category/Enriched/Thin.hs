@@ -58,8 +58,8 @@ mapDecision _ No = No
 -- 'BOOL'-valued profunctor a thin profunctor really is, computed by a type family, so it reduces to
 -- 'TRU' or 'FLS' for concrete objects. It agrees with 'HasArrow' ('fromHolds' and 'toHolds' are the
 -- two directions of that agreement, and the 'ThinProfunctor' defaults make it definitional), and
--- 'decide' computes the answer at the value level, arrow included. This is what lets a composite of
--- thin profunctors search for its middle object ("Proarrow.Category.Enriched.Thin.Composition").
+-- 'decide' computes the answer at the value level, arrow included. With it a composite of thin
+-- profunctors can search for its middle object ("Proarrow.Category.Enriched.Thin.Composition").
 type DecidableProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (ThinProfunctor p) => DecidableProfunctor (p :: j +-> k) where
   type Holds (p :: j +-> k) (a :: k) (b :: j) :: BOOL
@@ -151,7 +151,7 @@ class ((HasArrow (Hom k) c d) <=> (c ~ d)) => ArrowIsId k c d where
 instance ((HasArrow (Hom k) c d) <=> (c ~ d)) => ArrowIsId k c d where
   arrowIsIdProof r = r
 
--- | Note: @Discrete k@ is not the same as @DiscreteProfunctor (Hom k)@!
+-- | @Discrete k@ is not the same as @DiscreteProfunctor (Hom k)@!
 class (Thin k, forall c d. (Ob c, Ob d) => ArrowIsId k c d) => Discrete k where
   withEq :: (a :: k) ~> b -> ((a ~ b) => r) -> r
 
@@ -252,8 +252,8 @@ data IndexedList as where
   FNil :: IndexedList '[]
   FCons :: forall a as. (KnownIndex a) => IndexedList as -> IndexedList (a ': as)
 
--- | Every element of the list is numbered, so the list can be reflected to an 'IndexedList'. This
--- is what lets a kind that simply writes its objects out give 'finite' for free.
+-- | Every element of the list is numbered, so the list can be reflected to an 'IndexedList'. So a
+-- kind that simply writes its objects out gets 'finite' for free.
 class HasFiniteDefault (xs :: [k]) where
   finiteDefault :: IndexedList xs
 
@@ -298,8 +298,8 @@ class (CategoryOf k, Finite k) => Enumerable k where
 
   -- | The object at an index, if there is one. The default walks the object list, which is all a
   -- kind in general can do. A kind that can answer from the index alone should say so, and a wrapper
-  -- kind whose base is itself 'Enumerable' should defer to it -- which the discrete kinds cannot,
-  -- since they ask only that the kind they wrap be 'Finite'.
+  -- kind whose base is itself 'Enumerable' should defer to it. The discrete kinds cannot, since
+  -- they ask only that the kind they wrap be 'Finite'.
   atOb :: forall (i :: Nat). SNat i -> AtOb k (At k i)
   atOb i = withAtLookup @k i (lookupOb @k i (finite @k))
 
@@ -310,8 +310,8 @@ member :: forall {k} (a :: k). (Enumerable k, Ob a) => Member a (Objects k)
 member = withIndex @k @a (memberIndex @a)
 
 -- | Whether the inhabitant at an index exists, and if so that it is an object. Indexed by the lookup
--- itself, so that a caller holding @'At' k i ~ ''Just' a@ learns @'Ob' a@ -- which is what a wrapper
--- kind needs to recover the objects of the kind it wraps.
+-- itself, so that a caller holding @'At' k i ~ ''Just' a@ learns @'Ob' a@. A wrapper kind needs
+-- this to recover the objects of the kind it wraps.
 type AtOb :: forall k -> Maybe k -> Type
 data AtOb k x where
   AtNothing :: AtOb k 'Nothing

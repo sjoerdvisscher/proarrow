@@ -101,8 +101,8 @@ instance (HasPullbacks k, HasProducts k) => DaggerProfunctor (Span :: CAT (SPAN 
   dagger = dual
 
 -- Spans over @k@ do /not/ inherit binary products, coproducts or biproducts from @k@'s
--- coproducts alone. That construction is valid only when @k@ is extensive -- its coproducts
--- disjoint and stable under pullback -- which 'HasPullbacks' plus 'HasBinaryCoproducts' does not
+-- coproducts alone. That construction is valid only when @k@ is extensive (its coproducts
+-- disjoint and stable under pullback), which 'HasPullbacks' plus 'HasBinaryCoproducts' does not
 -- imply. Over BOOL, which satisfies both, @snd . (s &&& t)@ collapses to @s@ where the product
 -- law demands @t@. The instances are therefore omitted; the monoidal, compact-closed and
 -- hypergraph structure above needs no such condition and is unaffected.

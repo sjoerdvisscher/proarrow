@@ -4,7 +4,7 @@
 -- | Distributivity of a tensor over coproducts: a 'Distributive' category has 'distL'\/'distR' and
 -- absorption by the initial object, and a 'DistributiveProfunctor' is monoidal for both tensor and
 -- coproduct. Also home to 'Traversable' and 'Cotraversable' profunctors, which distribute any
--- 'StrongDistributiveProfunctor' -- the engine behind 'Proarrow.Optic.Traversal.Traversal'.
+-- 'StrongDistributiveProfunctor' and underlie 'Proarrow.Optic.Traversal.Traversal'.
 module Proarrow.Category.Monoidal.Distributive where
 
 import Data.Bifunctor (bimap)
@@ -45,7 +45,7 @@ class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfu
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 
 -- | A distributive monoidal category: the tensor distributes over coproducts, and annihilates the
--- 'InitialObject'. This is where the monoidal and coproduct worlds meet.
+-- 'InitialObject'. The monoidal and coproduct worlds meet here.
 --
 -- __Laws:__
 --
@@ -54,7 +54,7 @@ instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributivePr
 -- * @'distL'@ is inverse to 'distLInv', and @'distR'@ to 'distRInv'
 -- * @'absorbL'@ and @'absorbR'@ are inverse to 'Proarrow.Colimit.Initial.initiate'
 --
--- Checked by @Proarrow.Testing.Laws.testDistributive@, which verifies all four as isomorphisms.
+-- Checked by @Proarrow.Testing.Laws.testDistributive@.
 class (Monoidal k, HasCoproducts k) => Distributive k where
   -- | Distributes a tensor on the left over a coproduct.
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
@@ -70,8 +70,8 @@ class (Monoidal k, HasCoproducts k) => Distributive k where
 
 -- | The free-category structure for 'Distributive': formal distributors and absorbers,
 -- interpreted by 'foldStructure' through the target's own. Together with the coproduct and
--- monoidal structures this is what lets a free category over a bare quiver be distributive
--- without asking anything of the quiver's category.
+-- monoidal structures this makes a free category over a bare quiver distributive without asking
+-- anything of the quiver's category.
 instance
   ('[Distributive, Monoidal, HasBinaryCoproducts, HasInitialObject] `Elems` cs)
   => HasStructure cs (p :: CAT k) Distributive
@@ -234,6 +234,6 @@ instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
   cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'
   cotraverse (r :.: InjR q) = case cotraverse (r :.: q) of q' :.: r' -> InjR q' :.: r'
 
--- | Note this breaks for possibly infinite tranversals like Star [].
+-- | This breaks for possibly infinite traversals like Star [].
 instance (Traversable t, Representable t) => Cotraversable (RepCostar t) where
   cotraverse (p :.: RepCostar t) = p // case traverse @t (repUniv :.: p) of p' :.: t' -> corepUniv :.: rmap (t . index t') p'

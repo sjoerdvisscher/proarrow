@@ -1,29 +1,20 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | Profunctors whose hom-sets are finite and numbered: @p a b@ is in bijection with an initial
--- segment of the naturals. This is the profunctor form of the skeleton of the category of finite
--- sets, and it is what makes limits and colimits computable. An element is an index, so a subset or
--- a quotient of a hom-set is a table of indices, which a computation can produce and reify into a
--- fresh object; an arbitrary profunctor offers no handle on its hom-set other than the type itself.
+-- segment of the naturals. This makes limits and colimits computable: an element is an index, so a
+-- subset or quotient of a hom-set is a table of indices, which can be reified into a fresh object.
 --
--- The numbering is deliberately a /value/, as in "Proarrow.Category.Instance.FinHask": a size that
--- had to be a type family could only ever be a formula in the sizes it is built from, which rules
--- out every construction whose count depends on how arrows compose -- the exponential and the
--- subobject classifier among them. As values, those are enumerations like any other.
+-- The numbering is a /value/, as in "Proarrow.Category.Instance.FinHask". A type-level size could
+-- only be a formula in the sizes it is built from, which rules out constructions whose count
+-- depends on how arrows compose, such as the exponential and the subobject classifier.
 --
--- This is the sibling of "Proarrow.Category.Enriched.Thin", which it builds on: a
--- 'Proarrow.Category.Enriched.Thin.DecidableProfunctor' is the special case where every size is zero
--- or one, its 'Proarrow.Category.Enriched.Thin.Decision' being the pair 'toIndex'\/'fromIndex', and
--- 'decidableSize' and 'decidableFromIndex' build such an instance. As there, the class and the
--- instances for the basic profunctors live together here.
+-- A 'Proarrow.Category.Enriched.Thin.DecidableProfunctor' is the special case where every size is
+-- zero or one; 'decidableSize' and 'decidableFromIndex' build that instance.
 --
 -- This module is only the vocabulary. The category @'Proarrow.Category.Enriched.Finitary.Topos.FINITARY' j k@
--- of finitary profunctors and everything computed in it -- subobjects, quotients, limits, colimits,
--- the internal hom, the subobject classifier -- live in "Proarrow.Category.Enriched.Finitary.Topos".
--- The split is forced rather than cosmetic: 'Proarrow.Limit.Power.Powered',
--- 'Proarrow.Colimit.Copower.Copowered', "Proarrow.Category.Enriched" and
--- "Proarrow.Category.Instance.FinHask" all need the class and 'Elt', so this half has to sit below
--- them, while the other half needs things that sit above them -- the Yoneda embedding, for one.
+-- and everything computed in it live in "Proarrow.Category.Enriched.Finitary.Topos". The class
+-- and 'Elt' are needed by 'Proarrow.Limit.Power.Powered', "Proarrow.Category.Enriched" and
+-- others that the topos half itself depends on.
 module Proarrow.Category.Enriched.Finitary where
 
 import Data.Kind (Constraint)
@@ -84,8 +75,8 @@ indices :: Natural -> [Natural]
 indices n = genericTake n [0 ..]
 
 -- | A finitary profunctor's hom-set sizes, one per pair of objects, the outer index running over
--- @k@ and the inner over @j@. Cheap enough to display an object by: see @Props.Finitary.Graph@,
--- where one shows as @[2,4,2,4]@.
+-- @k@ and the inner over @j@. Cheap enough to display an object by: a presheaf on the graph
+-- schema, say, shows as @[2,4,2,4]@.
 sizes :: forall {j} {k} (p :: j +-> k). (Finitary p, Enumerable j, Enumerable k) => [Natural]
 sizes = foreachOb @k \ @a -> foreachOb @j \ @b -> [size @p @a @b]
 
@@ -121,7 +112,7 @@ decidableFromIndex _ = case decide @p @a @b of
 
 -- | An element of a hom-set of @p@, viewed as an element of a /finite set/: every instance the
 -- @universe@ package asks for is supplied by the numbering, with 'toIndex' standing in for equality
--- and ordering. This is what makes a finitary profunctor a profunctor enriched in
+-- and ordering. So a finitary profunctor is a profunctor enriched in
 -- 'Proarrow.Category.Instance.FinHask.FINHASK'.
 newtype Elt (p :: j +-> k) (a :: k) (b :: j) = Elt {unElt :: p a b}
 
@@ -147,14 +138,8 @@ class (CategoryOf k, Finitary (Hom k)) => LocallyFinite k
 instance (CategoryOf k, Finitary (Hom k)) => LocallyFinite k
 
 -- | How an arrow factors through another into the same object: @'factorThrough' g f@ is an @h@
--- with @g = f '.' h@, if there is one. Only the hom-sets have to be finite, not the category, since
--- the search is over the one hom-set @x '~>' y@.
---
--- 'Proarrow.Category.Enriched.Finitary.Sheaf.gluePlus' is the caller that needs the witness: to
--- glue over a cover it has to find not just that an arrow factors through a leg but /how/, so as to
--- ask that leg's family at the factor. It answers the image-membership question too -- an element
--- lands in the image of @f@ exactly when it factors through @f@ -- though nothing uses it for that
--- yet, and 'Proarrow.Category.Enriched.Finitary.Topos.preimage' does its own search.
+-- with @g = f '.' h@, if there is one. Only the hom-set @x '~>' y@ is searched, so only the
+-- hom-sets need to be finite. An element is in the image of @f@ iff it factors through @f@.
 factorThrough
   :: forall {k} (x :: k) y a. (LocallyFinite k, Ob x, Ob y, Ob a) => x ~> a -> y ~> a -> Maybe (x ~> y)
 factorThrough g f = find (\h -> toIndex @(Hom k) @x @a (f . h) == gi) (elements @(Hom k) @x @y)
@@ -174,15 +159,13 @@ class (Enumerable k, Finitary (Hom k)) => FiniteCat k
 
 instance (Enumerable k, Finitary (Hom k)) => FiniteCat k
 
--- | A profunctor between categories with finite hom-sets is finitary exactly when it is enriched in
--- finite sets, so a 'Finitary' instance can be read off an enrichment as well as the other way
--- round: these are the counterparts of 'decidableSize' and 'decidableFromIndex' one level up.
+-- | A profunctor between categories with finite hom-sets is finitary iff it is enriched in finite
+-- sets. These build a 'Finitary' instance from 'U.Finite' hom-sets, the counterparts of
+-- 'decidableSize' and 'decidableFromIndex' one level up.
 --
--- 'finiteToIndex' and 'finiteFromIndex' number a hom-set by /searching/ its 'U.universeF', which is
--- all a bare 'U.Finite' instance allows. That is fine for small hom-sets, and an instance whose
--- hom-sets are large should compute the index arithmetically instead --
--- 'Proarrow.Category.Instance.FinHask.FinHask' does, because 'Elt'\'s 'P.Ord' is @'P.compare'@ on
--- indices and so pays for every comparison.
+-- 'finiteToIndex' and 'finiteFromIndex' search 'U.universeF', which is fine for small hom-sets.
+-- For large ones compute the index arithmetically, as
+-- 'Proarrow.Category.Instance.FinHask.FinHask' does.
 finiteSize :: forall {j} {k} (p :: j +-> k) (a :: k) (b :: j). (U.Finite (p a b)) => Natural
 finiteSize = U.unTagged (U.cardinality @(p a b))
 
@@ -206,9 +189,9 @@ instance Finitary Booleans where
   toIndex _ = 0
   fromIndex @a @b = decidableFromIndex @Booleans @a @b
 
--- | The ordinals are thin too, so the same three lines serve. This is what makes a chain usable
--- as a site: a cover there can have a leg that is itself covered, which no coverage on a
--- two-object category can arrange.
+-- | The ordinals are thin too, so the same three lines serve. So a chain can be used as a site: a
+-- cover there can have a leg that is itself covered, which no coverage on a two-object category
+-- can arrange.
 instance Finitary LTE where
   size @a @b = decidableSize @LTE @a @b
   toIndex _ = 0
@@ -223,8 +206,8 @@ instance (CategoryOf j, CategoryOf k) => Finitary (TerminalProfunctor :: j +-> k
   fromIndex _ = TerminalProfunctor
 
 -- | A pair of indices as one index, row-major: the first factor varies slowest. Shared by the two
--- instances that number a pair of independent choices -- the product profunctor and the Yoneda
--- embedding -- because 'ExpWeight' nests one inside the other, so they have to agree.
+-- instances that number a pair of independent choices (the product profunctor and the Yoneda
+-- embedding), because 'ExpWeight' nests one inside the other, so they have to agree.
 pairIndex :: Natural -> Natural -> Natural -> Natural
 pairIndex n i j = i P.* n + j
 

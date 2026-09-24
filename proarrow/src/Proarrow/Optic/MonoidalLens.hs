@@ -5,21 +5,17 @@
 --
 -- > MonoidalLens s t a b = exists m. Comonoid m => (s ~> m ** a, m ** b ~> t)
 --
--- The residual @m@ is carried through the tensor, and being a 'Comonoid' it can be /discarded/
--- (@'counit' :: m ~> 'Unit'@) and /copied/ -- which is exactly what a lens's @get@ needs. So a
--- monoidal lens is a genuine lens (it views, sets, folds and traverses), and it sits below
--- 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal' and 'Proarrow.Optic.Getter.Getter' in the
--- lattice, mirroring the ordinary 'Proarrow.Optic.Lens.Lens' below
--- 'Proarrow.Optic.AffineTraversal.AffineTraversal':
+-- The residual can be discarded (@'counit' :: m ~> 'Unit'@) and copied, which is what a lens's
+-- @get@ needs, so a monoidal lens views, sets, folds and traverses:
 --
 -- > Lens         <: { Getter, AffineTraversal, Glass }                     -- product residual
 -- > MonoidalLens <: { Getter, MonoidalTraversal, AffineTraversal, Glass }  -- comonoidal tensor residual
 --
--- It is not a 'Proarrow.Optic.Lens.Lens', because 'Proarrow.Optic.Lens.putP' promises to work with
--- binary products alone, where the tensor and the product are unrelated. It /is/ an
+-- It is not a 'Proarrow.Optic.Lens.Lens', because 'Proarrow.Optic.Lens.putP' works with binary
+-- products alone, unrelated to the tensor. It is an
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' and a 'Proarrow.Optic.Glass.Glass', because
--- their methods ask for a cartesian category, in which the tensor is the product and the residual
--- can be projected out.
+-- their methods ask for a cartesian category, where the tensor is the product and the residual can
+-- be projected out.
 module Proarrow.Optic.MonoidalLens where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
@@ -85,7 +81,7 @@ class (GetterFl p q, MonTravFl p q, AffineTravFl p q, GlassFl p q) => MonLensFl 
   -- | Recover a monoidal lens's two legs and the comonoid structure of its existential residual
   -- @m@. The comonoid comes as a value ('ComonoidOn') rather than a 'Comonoid' constraint, because
   -- the residual of a composite is a tensor and that of the identity the unit, and type families
-  -- cannot head an instance; symmetry is what makes a tensor of comonoids a comonoid.
+  -- cannot head an instance. A tensor of comonoids is a comonoid by symmetry.
   withMonLensP
     :: (SymMonoidal k)
     => p s a -> q b t -> (forall (m :: k). (Ob m) => ComonoidOn m -> (s ~> m ** a) -> (m ** b ~> t) -> r) -> r

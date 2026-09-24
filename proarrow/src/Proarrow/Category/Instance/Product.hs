@@ -74,10 +74,9 @@ checkCodiscreteProfunctor :: (CodiscreteProfunctor p, CodiscreteProfunctor q, Ob
 checkCodiscreteProfunctor = anyArr
 
 -- | The product of two enumerable kinds is enumerable, but numbering one in general needs type-level
--- division to invert the pairing, which @fin@ does not provide, so the one product needed so far is
--- numbered by hand. The order matches the value-level 'Proarrow.Category.Enriched.Finitary.pairIndex'
--- convention -- first component slowest -- so a generic instance could replace this without
--- renumbering anything.
+-- division to invert the pairing, which @fin@ does not provide, so this instance for
+-- @(BOOL, BOOL)@ is numbered by hand. The order matches the value-level
+-- 'Proarrow.Category.Enriched.Finitary.pairIndex' convention: first component slowest.
 --
 -- ("Proarrow.Category.Sheaf" uses this kind as the opens of a discrete two-point space: a pair of
 -- booleans is a subset of @{x, y}@.)

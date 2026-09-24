@@ -3,13 +3,13 @@
 -- | The foundational module, defining the kind-indexed category machinery everything else builds
 -- on. A kind @k@ carries at most one category structure, chosen by the 'CategoryOf' class: its
 -- morphism type @('~>')@ and its object constraint 'Ob' (not every type of the kind need be an
--- object). A category's identity and composition live in 'Promonad', and 'Profunctor' -- with the
--- profunctor kind @j '+->' k@ -- is this library's central generalization of functors. 'Ob'
+-- object). A category's identity and composition live in 'Promonad', and 'Profunctor' (with the
+-- profunctor kind @j '+->' k@) is this library's central generalization of functors. 'Ob'
 -- constraints are typically not threaded through signatures but recovered from morphisms with
 -- '(\\)' and '(//)', since an arrow is proof that its endpoints are objects.
 --
--- Import "Proarrow" for the curated everyday vocabulary; this module is where that design is
--- defined, and the place to start when building your own categories.
+-- Import "Proarrow" for the curated everyday vocabulary. This module defines the design, and is
+-- the place to start when building your own categories.
 module Proarrow.Core
   ( -- * Type Infrastructure
 
@@ -86,7 +86,7 @@ infixr 9 .
 -- ** Basic Type Definitions
 
 -- | The kind @j +-> k@ of profunctors from category @j@ to category @k@.
--- Note that this follows mathematical convention,
+-- This follows mathematical convention,
 -- swapping the order compared to Haskell's contravariant-first ordering.
 type j +-> k = k -> j -> Type
 
@@ -114,8 +114,8 @@ class (Promonad ((~>) :: CAT k)) => CategoryOf k where
   -- | The type of morphisms in the category.
   type (~>) :: CAT k
 
-  -- | What constraints objects must satisfy. Defaults to 'ObId', which is what a category with
-  -- more than one object wants; a category where every type of the kind is an object, with no
+  -- | What constraints objects must satisfy. Defaults to 'ObId', which suits a category with
+  -- more than one object. A category where every type of the kind is an object, with no
   -- evidence needed, says @type 'Ob' a = 'Any' a@ instead.
   type Ob (a :: k) :: Constraint
 
@@ -132,10 +132,10 @@ instance (Ob a, CategoryOf k) => Ob' (a :: k)
 
 -- | Objecthood that carries the object's own identity arrow, and the default for 'Ob'.
 --
--- This is what a category with more than one object needs: 'id' must produce the identity /at
--- whichever object it is asked for/, so it has to dispatch on the object, and one instance per
--- object is exactly that dispatch. Since 'Ob' defaults to 'ObId' and 'id' defaults to 'objId',
--- such a category defines neither -- it just gives an 'ObId' instance per object:
+-- A category with more than one object needs this. 'id' must produce the identity at whichever
+-- object it is asked for, so it has to dispatch on the object, and one instance per object does
+-- that dispatch. Since 'Ob' defaults to 'ObId' and 'id' defaults to 'objId', such a category
+-- defines neither. It just gives an 'ObId' instance per object:
 --
 -- > type data STATE = Draft | Live
 -- >

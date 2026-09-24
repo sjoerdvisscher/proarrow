@@ -1,8 +1,8 @@
 -- | The "define your own category" example from @proarrow\/README.md@, compiled so it cannot
 -- rot. Keep the two in sync: the README block is the same text with the pragma line on top.
 --
--- It is also the only thing exercising the @'Ob' = 'ObId'@ and @'id' = 'objId'@ defaults, which is
--- why it earns a place here rather than living only in prose.
+-- It is also the only thing exercising the @'Ob' = 'ObId'@ and @'id' = 'objId'@ defaults, so it
+-- belongs here and not only in prose.
 module Examples.Readme where
 
 import Prelude hiding (id, (.))
@@ -19,8 +19,8 @@ data Move a b where
 
 deriving instance Show (Move a b)
 
--- 'id' has to produce the identity *at whichever object it is asked for*, so being an
--- object is exactly the ability to supply that identity:
+-- 'id' has to produce the identity at whichever object it is asked for, so being an
+-- object is the ability to supply that identity:
 instance ObId Draft where objId = KeepDraft
 instance ObId Live where objId = KeepLive
 

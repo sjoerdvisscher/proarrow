@@ -71,8 +71,8 @@ instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :++: q)
     InjL f -> InjL (dagger f)
     InjR f -> InjR (dagger f)
 
--- | Morphisms of 'COPRODUCT' never cross sides, so this is a straight case split reusing @j@'s or
--- @k@'s own equalizer -- never a mix of the two.
+-- | Morphisms of 'COPRODUCT' never cross sides, so this is a straight case split reusing either
+-- @j@'s or @k@'s own equalizer.
 instance (HasEqualizers j, HasEqualizers k) => HasEqualizers (COPRODUCT j k) where
   equalize (InjL f) (InjL g) k = equalize f g \e -> k (InjL e)
   equalize (InjR f) (InjR g) k = equalize f g \e -> k (InjR e)

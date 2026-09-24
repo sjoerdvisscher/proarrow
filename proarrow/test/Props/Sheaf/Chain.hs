@@ -1,23 +1,18 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | __A site whose covers nest.__ In every other coverage here the legs of a cover are objects
--- that nothing covers: the two points of the discrete space, the bottom of the walking arrow, the
--- left layer of a collage. So @'Proarrow.Category.Sheaf.HasFiniteCovers'@'s Composition law -- if
--- @c@ covers @a@ and every leg of @c@ is covered, the composites cover @a@ -- is satisfied there
--- with nothing to check, and the idempotence of 'closure' that it buys is never put to work.
+-- | __A site whose covers nest.__ In the other coverages here no leg of a cover is itself covered
+-- (the two points of the discrete space, the bottom of the walking arrow, the left layer of a
+-- collage), so @'Proarrow.Category.Sheaf.HasFiniteCovers'@'s Composition law (if @c@ covers @a@
+-- and every leg of @c@ is covered, the composites cover @a@) holds vacuously, and the idempotence
+-- of 'closure' that it buys is never tested.
 --
--- A chain has nothing but nesting. Under the 'Atomic' coverage on the three-element chain every
--- arrow covers, so @1 '~>' 2@ covers @2@, its leg @1@ is covered by @0 '~>' 1@, and the composite
--- @0 '~>' 2@ has to cover @2@ as well -- which it does, being an arrow. That is the law holding for
--- a reason rather than for want of a witness.
---
--- 'Pred' below is the same chain covered only by immediate predecessors, and there the law has
--- something to say and says no: the composite @0 '~>' 2@ is not one of its covers, so 'closure' is
--- not idempotent -- the assertion this module ends with. Which is also what makes the 'Atomic'
--- group's Lawvere--Tierney laws worth running, because idempotence is the /only/ law here that
--- separates the two coverages. 'Pred' is stable, and it passes all three of the checks
--- @testSiteLaws@ makes and the other two Lawvere--Tierney laws.
+-- On the three-element chain @0 -> 1 -> 2@, 'Atomic' lets every arrow cover, so the law holds for
+-- a reason: @1 '~>' 2@ covers @2@, its leg is covered by @0 '~>' 1@, and the composite @0 '~>' 2@
+-- covers @2@ too. 'Pred' covers each object only by its immediate predecessor and breaks the law:
+-- @0 '~>' 2@ is not a cover, so 'closure' is not idempotent, as the last test asserts. 'Pred'
+-- still passes the three @testSiteLaws@ checks and the other two Lawvere-Tierney laws, so
+-- idempotence is the only law separating the two coverages.
 module Props.Sheaf.Chain (test) where
 
 import Test.Tasty (TestTree, testGroup)

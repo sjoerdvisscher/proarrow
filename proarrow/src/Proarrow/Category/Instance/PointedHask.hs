@@ -96,15 +96,11 @@ instance Monoidal POINTED where
 instance SymMonoidal POINTED where
   swap = Pt (Just . swap)
 
--- This doesn't quite work, see tests.
--- We should have a -> Maybe b = Maybe (a ~~> b)
--- So a -> Maybe b as exponential is too big, it is not allowed to always return Nothing.
--- https://ncatlab.org/nlab/show/pointed+object#ClosedMonoidalStructure
--- instance Closed POINTED where
---   type P a ~~> P b = P (a -> Maybe b)
---   withObExp r = r
---   curry (Pt f) = Pt (\a -> Just (\b -> f (a, b)))
---   apply = Pt (\(f, b) -> f b)
+-- No 'Proarrow.Category.Monoidal.Closed.Closed' instance, though pointed sets are closed under the
+-- smash product (<https://ncatlab.org/nlab/show/pointed+object#ClosedMonoidalStructure>): the
+-- internal hom would need a type @x@ with @Maybe x ≅ (a -> Maybe b)@, the functions other than
+-- @const Nothing@, and that is no Haskell type. @a -> Maybe b@ itself is too big by that one
+-- function.
 
 instance Powered Type POINTED where
   type P a ^ n = P (n -> Maybe a)

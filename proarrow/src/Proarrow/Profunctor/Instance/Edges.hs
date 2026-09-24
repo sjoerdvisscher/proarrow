@@ -2,7 +2,7 @@
 
 -- | Relations and weighted graphs on a bare set of points, given as a table: a list of edges with
 -- their weights in the enriching category @v@. 'Edges' is an enriched profunctor on the discrete
--- category of an 'Indexed' kind -- over a discrete base there is nothing to be compatible with -- so
+-- category of an 'Indexed' kind (over a discrete base there is nothing to be compatible with), so
 -- it composes, and its Kleene closure 'Proarrow.Category.Enriched.Thin.Composition.Closure' is
 -- reachability for 'BOOL' weights and shortest paths for 'COST' weights.
 module Proarrow.Profunctor.Instance.Edges where

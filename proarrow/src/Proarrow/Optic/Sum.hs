@@ -2,14 +2,12 @@
 {-# LANGUAGE IncoherentInstances #-}
 
 -- | Dual to 'Proarrow.Optic.Prod.ProdFl': combine over the /coproduct/ of two categories via
--- ':++:'. This lives in its own module (rather than next to 'Proarrow.Optic.Prod.ProdFl') only because
--- "Proarrow.Category.Instance.Coproduct" transitively imports "Proarrow.Optic" already (via
--- 'Proarrow.Profunctor.Corepresentable'), so 'Proarrow.Optic' can't import it back.
+-- ':++:'. It has its own module because "Proarrow.Category.Instance.Coproduct" already imports
+-- "Proarrow.Optic" transitively.
 --
--- Unlike 'Proarrow.Optic.Prod.ProdFl', this doesn't let you combine two /different/ optics into one -- an
--- @(p ':++:' q) (L a) (L b)@ can only ever hold a @p@, never a @q@. Instead it lets any single
--- @w1@- or @w2@-flavored optic be /injected/ into a shared @'SumFl' w1 w2@ type, with the unused
--- side witnessed trivially by @'Id'@ (demanded via 'Flavor').
+-- It does not combine two different optics into one: an @(p ':++:' q) (L a) (L b)@ only ever holds
+-- a @p@. It lets any @w1@- or @w2@-flavored optic be injected into a shared @'SumFl' w1 w2@, the
+-- unused side witnessed by @'Id'@ (demanded via 'Flavor').
 module Proarrow.Optic.Sum where
 
 import Prelude (type (~))
@@ -21,12 +19,12 @@ import Proarrow.Optic (FLAVOR, Flavor, Optic, Prostrong (..), legs2prof, withLeg
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
--- | Unlike 'Proarrow.Optic.Prod.ProdFl', a 'SumFl' witness can be decomposed back: the trick is that
--- 'withSumL'\/'withSumR' only fix the /one/ endpoint anchored from outside (@s@ via @p@'s first
--- slot, @t@ via @q@'s second slot) -- the other endpoint (@a@, @b@) comes back /refined/ by the
--- continuation instead of being required upfront. That's what lets the ':.:' case recurse: the
--- existential "middle" object introduced there is exactly the next call's anchored endpoint, so
--- its tag is established by the previous step's own guarantee before it's ever needed as input.
+-- | Unlike 'Proarrow.Optic.Prod.ProdFl', a 'SumFl' witness can be decomposed back.
+-- 'withSumL'\/'withSumR' only fix the one endpoint anchored from outside (@s@ via @p@'s first
+-- slot, @t@ via @q@'s second slot). The other endpoint (@a@, @b@) comes back refined by the
+-- continuation instead of being required upfront. So the ':.:' case can recurse: the existential
+-- "middle" object introduced there is the next call's anchored endpoint, so its tag is established
+-- by the previous step's own guarantee before it's ever needed as input.
 type SumFl :: forall {j1} {k1} {j2} {k2}. FLAVOR j1 k1 -> FLAVOR j2 k2 -> FLAVOR (COPRODUCT j1 j2) (COPRODUCT k1 k2)
 class SumFl w1 w2 (p :: COPRODUCT k1 k2 +-> COPRODUCT k1 k2) (q :: COPRODUCT j1 j2 +-> COPRODUCT j1 j2) where
   withSumL

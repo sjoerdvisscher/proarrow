@@ -4,7 +4,7 @@
 -- ('AffineFoldFl' \/ 'previewP'). Every 'Proarrow.Optic.Getter.Getter' and
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' is one, and it subtypes to
 -- 'Proarrow.Optic.Fold.Fold'. Like all read-only flavors it has no builder of its own
--- ('Proarrow.Optic.convert' a stronger optic); its canonical eliminator is 'preview' \/ '(^?)',
+-- ('Proarrow.Optic.convert' a stronger optic). Its canonical eliminator is 'preview' \/ '(^?)',
 -- via the generic 'ExOptic' carrier.
 module Proarrow.Optic.AffineFold where
 
@@ -26,7 +26,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
--- | An affine fold is a fold that can see at most one @a@ -- 0-or-1, never 0-or-many. A getter
+-- | An affine fold is a fold that can see at most one @a@ (0-or-1, never 0-or-many). A getter
 -- is an affine fold that always succeeds; an affine traversal is one that additionally knows how
 -- to reconstruct a @t@ when it fails to match.
 type AffineFoldFl :: forall {j} {k}. FLAVOR j k

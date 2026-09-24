@@ -41,8 +41,9 @@ import Proarrow.Profunctor.Instance.Exponential ()
 -- Instead we encode them using the underlying regular category/profunctor,
 -- and show that the enriched structure can be recovered.
 --
--- Call an arrow @'Unit' '~>' x@ an /element/ of @x@. The laws say that @'ProObj' v p a b@ has
--- exactly the elements of the hom-set @p a b@, and that its two actions are the profunctor's:
+-- Call an arrow @'Unit' '~>' x@ an /element/ of @x@. The laws say that the elements of
+-- @'ProObj' v p a b@ are those of the hom-set @p a b@, and that its two actions are the
+-- profunctor's:
 --
 -- [Elements] 'underlying' and 'enriched' are mutually inverse, so 'underlying' is a bijection from
 -- @p a b@ onto the elements of @'ProObj' v p a b@.
@@ -56,11 +57,9 @@ import Proarrow.Profunctor.Instance.Exponential ()
 --
 -- > lmap . (underlying g ** underlying x) . leftUnitorInv == underlying (P.lmap g x)
 --
--- Because the first law makes 'underlying' a bijection, the other two pin 'rmap' and 'lmap' down on
--- elements -- all the way down exactly when @v@ is well-pointed, which 'Type' and the thin @v@s
--- are. Functoriality of 'rmap' and 'lmap' is then not a separate law: it follows from that of the
--- 'Profunctor' they agree with. At @p ~ 'Hom' k@, where 'ProObj' is 'HomObj' and 'rmap' is 'comp',
--- the right-action law says that the enriched composition is @('.')@.
+-- These fix 'rmap' and 'lmap' completely iff @v@ is well-pointed, as 'Type' and the thin @v@s are.
+-- Functoriality follows from the 'Profunctor' instance. At @p ~ 'Hom' k@ the right-action law says
+-- that the enriched composition 'comp' is @('.')@.
 type EnrichedProfunctor :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (Monoidal v, Profunctor p, Enriched v j, Enriched v k) => EnrichedProfunctor v (p :: j +-> k) where
   type ProObj v (p :: j +-> k) (a :: k) (b :: j) :: v
@@ -164,11 +163,11 @@ instance (Finitary p, LocallyFinite j, LocallyFinite k) => EnrichedProfunctor FI
 
 -- | The category of profunctors is enriched in itself: the hom-object is the internal hom
 -- @p ':~>:' q@, an element of it is a natural transformation, and composition is the internal one.
--- Cartesian closed, hence the 'PROD' wrapper -- @j '+->' k@\'s own tensor is Day convolution.
+-- Cartesian closed, hence the 'PROD' wrapper (@j '+->' k@\'s own tensor is Day convolution).
 --
--- This is a self-enrichment written the generic way, from 'HomSelf' and friends, which is what those
--- are for: they apply to any 'Closed' 'SymMonoidal' kind that has no enrichment instance of its own
--- covering its hom-profunctor.
+-- This self-enrichment is written the generic way, from 'HomSelf' and friends. Those apply to any
+-- 'Closed' 'SymMonoidal' kind that has no enrichment instance of its own covering its
+-- hom-profunctor.
 instance (CategoryOf j, CategoryOf k) => EnrichedProfunctor (PROD (j +-> k)) (Prod (Prof :: CAT (j +-> k))) where
   type ProObj (PROD (j +-> k)) (Prod (Prof :: CAT (j +-> k))) p q = HomSelf p q
   withProObj r = r

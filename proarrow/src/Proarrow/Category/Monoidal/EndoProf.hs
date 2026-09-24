@@ -1,15 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | The monoidal category of endo-profunctors on @k@ under composition ('(:.:)'\/'Id'),
--- with functor composition as the tensor. This is the profunctor-specific counterpart of
--- "Proarrow.Category.Monoidal.Endo" (in @proarrow-equipment@, which builds the analogous
--- structure for an arbitrary 'Proarrow.Bicategory.Bicategory'), hardcoded here to
--- @Prof@\/@:.:@\/'Id' instead, and reusing "Proarrow.Path"\'s associators\/unitors so they
--- aren't proved twice.
+-- | The monoidal category of endo-profunctors on @k@, with composition ('(:.:)'\/'Id') as the
+-- tensor. The profunctor-specific counterpart of "Proarrow.Category.Monoidal.Endo" (in
+-- @proarrow-equipment@), reusing "Proarrow.Path"\'s associators\/unitors.
 --
--- Note this is a genuinely different monoidal structure on @k +-> k@ than
--- "Proarrow.Profunctor.Instance.Day"\'s @Monoidal (j +-> k)@ instance (Day convolution) --
--- hence the need for a fresh wrapper type rather than another instance for the same kind.
+-- A fresh wrapper, since "Proarrow.Profunctor.Instance.Day" already gives @k '+->' k@ a different
+-- monoidal structure (Day convolution).
 module Proarrow.Category.Monoidal.EndoProf where
 
 import Data.Kind (Constraint)
@@ -84,10 +80,10 @@ class (Is E a, c (UN E a)) => OnE c a
 
 instance (Is E a, c (UN E a)) => OnE c a
 
--- | The subcategory of representable endo-profunctors -- i.e. ordinary functors
+-- | The subcategory of representable endo-profunctors, i.e. ordinary functors
 -- @k -> k@ under the profunctor encoding. The most permissive restriction of 'ENDO' for
--- which an 'Proarrow.Category.Monoidal.Action.Act'ion even makes sense (@'%'@ needs
--- 'Representable'), so every other 'MonoidalAction' on @k@ embeds into this one -- see
+-- which an 'Proarrow.Category.Monoidal.Action.Act'ion makes sense (@'%'@ needs
+-- 'Representable'), so every other 'MonoidalAction' on @k@ embeds into this one. See
 -- 'TravSub' for a further restriction.
 type RepSub k = SUBCAT (OnE Representable :: OB (ENDO k))
 
@@ -105,7 +101,7 @@ instance (CategoryOf k) => MonoidalAction (RepAction :: (RepSub k, k) +-> k) whe
   multiplicator @(SUB (E p)) @(SUB (E q)) @x = withObRep @q @x (withObRep @p @(q % x) id)
   multiplicatorInv @(SUB (E p)) @(SUB (E q)) @x = withObRep @q @x (withObRep @p @(q % x) id)
 
--- | The subcategory of representable, traversable endo-profunctors -- exactly the
+-- | The subcategory of representable, traversable endo-profunctors: the
 -- functors 'Proarrow.Category.Monoidal.Distributive.repTraverse' can traverse with.
 -- 'Monoidal' for free via "Proarrow.Category.Instance.Sub"\'s generic
 -- @Monoidal (SUBCAT ob)@, since both 'Representable' and 'Traversable' already have
@@ -126,19 +122,14 @@ instance (CategoryOf k) => MonoidalAction (TravAction :: (TravSub k, k) +-> k) w
   multiplicator @(SUB (E p)) @(SUB (E q)) @x = withObRep @q @x (withObRep @p @(q % x) id)
   multiplicatorInv @(SUB (E p)) @(SUB (E q)) @x = withObRep @q @x (withObRep @p @(q % x) id)
 
--- | Endo-profunctors on @x@ (any, not just representable ones) act on profunctors
--- @x +-> h@ by precomposition: @'Proarrow.Category.Monoidal.Action.Act' 'Precomp' ('E' g) q = q ':.:' g@. Unlike 'RepAction'\/
--- 'TravAction', the acted-upon kind here isn't @x@ or @h@ itself but the whole profunctor
--- kind @x +-> h@, so the witness @g@ never has to be 'Representable' -- only the assembled
--- action (@'Rep' 'Precomp'@) does, which is automatic. This is what lets
--- 'Proarrow.Squares.toPrecompOptic' turn /any/ 'Proarrow.Squares.OpticSq' (not just ones
--- already shaped like an 'Proarrow.Category.Monoidal.Action.Act'ion) into a genuine
--- 'Proarrow.Optic.Optic'.
+-- | Endo-profunctors on @x@ act on profunctors @x '+->' h@ by precomposition:
+-- @'Proarrow.Category.Monoidal.Action.Act' 'Precomp' ('E' g) q = q ':.:' g@. Since the acted-upon
+-- kind is the whole profunctor kind, @g@ need not be 'Representable' (unlike 'RepAction'\/
+-- 'TravAction'); only @'Rep' 'Precomp'@ is, automatically. So 'Proarrow.Squares.toOptic' can turn
+-- any 'Proarrow.Squares.EqpOptic' into a 'Proarrow.Optic.Optic'.
 --
--- The index category is @'REV' ('ENDO' x)@, not @'ENDO' x@, because precomposition
--- reverses the order composition happens in: @'Proarrow.Category.Monoidal.**'@ on
--- @'ENDO' x@ composes its two arguments left-to-right, but composing two precomposition
--- actions in sequence applies them right-to-left.
+-- The index category is @'REV' ('ENDO' x)@ because precomposing twice applies the actions in the
+-- reverse of the order in which @'Proarrow.Category.Monoidal.**'@ on @'ENDO' x@ composes them.
 data family Precomp :: forall x h. (REV (ENDO x), x +-> h) +-> (x +-> h)
 
 instance (CategoryOf h, CategoryOf x) => FunctorForRep (Precomp :: (REV (ENDO x), x +-> h) +-> (x +-> h)) where

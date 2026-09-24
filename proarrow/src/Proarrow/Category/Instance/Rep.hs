@@ -33,13 +33,9 @@ instance (forall a. (Ob a) => HasArrowRep p q a) => HasAllArrows (p :: j +-> k) 
 -- | The natural transformation @p ':~>' q@ obtained from a thin arrow @p % a '~>' q % a@ at every
 -- object, i.e. the 'Proarrow.Category.Enriched.Thin.arr' of a thin structure on @'REPK' j k@.
 --
--- It is given as a plain function rather than as
--- @'Proarrow.Category.Enriched.Thin.ThinProfunctor' ('Sub' 'Prof')@, because that class also
--- requires 'Proarrow.Category.Enriched.Thin.withArr', the converse direction: recovering
--- @'HasAllArrows' p q@ from a natural transformation would mean building the quantified
--- @forall a. 'Ob' a => 'HasArrowRep' p q a@ dictionary out of per-@a@ evidence, which is
--- value-level entailment GHC cannot express (cf. GHC issue #16502). An instance whose 'withArr'
--- is bottom would promise a capability the value does not have, so none is given.
+-- It is no @'Proarrow.Category.Enriched.Thin.ThinProfunctor' ('Sub' 'Prof')@ instance, because the
+-- converse 'Proarrow.Category.Enriched.Thin.withArr' would have to build the quantified
+-- @'HasAllArrows' p q@ from per-@a@ evidence, which GHC cannot (cf. GHC issue #16502).
 repArr
   :: forall {j} {k} (p :: j +-> k) q
    . (Thin k, Ob (REP p), Ob (REP q), HasAllArrows p q)

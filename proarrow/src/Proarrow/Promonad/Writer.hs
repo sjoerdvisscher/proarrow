@@ -92,7 +92,7 @@ instance (Ob (w :: k), SymMonoidal k) => Strong Tensor (Writer w :: k +-> k) whe
     withOb2 @k @b @y $
       Writer (associator @k @w @b @y . first @y (swap @_ @b @w) . associatorInv @k @b @w @y . (obj @b ** g))
 
--- | Note: This is only premonoidal, not monoidal, unless the monoid is commutative.
+-- | This is only premonoidal, not monoidal, unless the monoid is commutative.
 instance (Monoid (w :: k), SymMonoidal k) => MonoidalProfunctor (Writer w :: k +-> k) where
   one = id \\ unitObj @k
   Writer @x2 @x1 f ** Writer @y2 @y1 g =
@@ -159,7 +159,8 @@ instance (Monoid (w :: k), Strong Tensor p, Promonad p) => Promonad (WriterT w p
   id = WriterT (id :.: id)
   WriterT l . WriterT r = WriterT (compComp traverseWriter l r)
 
--- | WriterT is a monad on profunctors, i.e. we have @p ~> WriterT p@ and @WriterT (WriterT p) ~> WriterT p@.
+-- | WriterT is a monad on profunctors, with @p ~> WriterT p@ and
+-- @WriterT (WriterT p) ~> WriterT p@.
 instance (Monoid w, Monoidal k) => Promonad (Star (WriterT w :: k +-> k -> k +-> k)) where
   id = Star $ Prof \p -> WriterT (p :.: id) \\ p
   Star l . Star r = Star $ Prof (\(WriterT (WriterT (p :.: f) :.: g)) -> WriterT (p :.: (g . f))) . map l . r

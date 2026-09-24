@@ -1,22 +1,17 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | A __power grate__ is a 'Proarrow.Optic.Grate.Grate' whose exponent is a fixed tensor /power/ of
--- the focus: the witness @'Pow' n@ presents @s@ as @a ** ... ** a@ (@n@ times), i.e. the exponential
--- by a finite arity, which is also the reader applicative for @n@ readers. That fixed, finite shape
--- is a genuine decomposition, so a power grate is also a __fixed-arity
--- 'Proarrow.Optic.Traversal.Traversal'__ (@'PowerGrateFl' <: 'GrateFl', 'KaleidoFl', 'MonTravFl'@):
--- it zips, aggregates, folds, sets and traverses like those do.
+-- the focus: the witness @'Pow' n@ presents @s@ as @a ** ... ** a@ (@n@ times), the reader
+-- applicative for @n@ readers. A fixed finite shape is a decomposition, so a power grate is also a
+-- __fixed-arity 'Proarrow.Optic.Traversal.Traversal'__
+-- (@'PowerGrateFl' <: 'GrateFl', 'KaleidoFl', 'MonTravFl'@).
 --
--- Its /distinctive/ power over a grate or kaleidoscope is the eliminator: 'powerGrateP' distributes
--- an arbitrary 'MonoidalProfunctor' -- the @Applicative@\/zip structure ('one' and '**') alone --
--- rather than the full 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' a
--- traversal needs or the traversable carrier a kaleidoscope needs. With a fixed arity, /any/ functor
--- carrier @Costar f@ distributes, by unzipping @f (a ** ... ** a)@ into @f a ** ... ** f a@.
---
--- The aggregation is stated over an abstract @'MonoidalProfunctor' r@, /not/ the Hask-specific
--- @Costar f = f a -> b@: 'powerGrateOf' works at any monoidal profunctor carrier (the hom @('~>')@
--- gives 'Proarrow.Optic.Setter.over'; an applicative @'Proarrow.Profunctor.Instance.Star.Star' f@
--- combines the foci through @f@).
+-- It adds an eliminator: 'powerGrateP' distributes any 'MonoidalProfunctor', using only 'one' and
+-- '**'. A traversal needs a 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor',
+-- and a kaleidoscope needs a traversable carrier. With a fixed arity /any/ @Costar f@ distributes,
+-- by unzipping @f (a ** ... ** a)@ into @f a ** ... ** f a@. So 'powerGrateOf' works at any
+-- monoidal profunctor carrier: the hom @('~>')@ gives 'Proarrow.Optic.Setter.over', and an
+-- applicative @'Proarrow.Profunctor.Instance.Star.Star' f@ combines the foci through @f@.
 module Proarrow.Optic.PowerGrate
   ( PowerGrateFl (..)
   , PowerGrate
@@ -90,9 +85,9 @@ instance (PowerGrateFl f g, PowerGrateFl f' g') => PowerGrateFl (f :.: f') (g' :
 
 -- | The carrier of the literature's kaleidoscope eliminator (@>-@): @'Costar' f@, i.e. @f a -> b@ for
 -- any functor @f@ on a cartesian category. Power grates distribute any 'MonoidalProfunctor', and
--- @'Costar' f@ is one, so this is 'powerGrateP' at that carrier; it exists as an instance (rather than
--- only through 'powerGrateOf') so that a power grate composed with another flavor that also runs
--- at @Costar f@ -- an algebraic lens, say -- can be eliminated there directly.
+-- @'Costar' f@ is one, so this is 'powerGrateP' at that carrier. It is an instance (and not only
+-- reachable through 'powerGrateOf') so that a power grate composed with another flavor that also
+-- runs at @Costar f@, an algebraic lens say, can be eliminated there directly.
 instance (Cartesian k, Functor (f :: k -> k)) => Prostrong PowerGrateFl (Costar f :: k +-> k) where
   proact (f :.: c :.: g) = powerGrateP f g c
 
@@ -113,16 +108,15 @@ powerGrateOf o rab = withLegs @PowerGrateFl o \l r -> powerGrateP l r rab
 -- * @n@-ary aggregation via tensor powers
 
 -- | Distribute a 'MonoidalProfunctor' over the @n@-fold tensor power, by combining @n@ copies of
--- the carrier value with 'one' (at 'Z') and '**' (at 'S') -- the profunctor-general heart of the
--- @n@-ary power grate.
+-- the carrier value with 'one' (at 'Z') and '**' (at 'S'). This is the profunctor-general core
+-- of the @n@-ary power grate.
 powDist :: forall n r a b. (SNatI n, MonoidalProfunctor r) => r a b -> r (NFold n a) (NFold n b)
 powDist rab = case snat @n of
   SZ -> one
   SS @m -> rab ** powDist @m rab
 
 -- | Distribute the internal hom over the tensor power: split @x ~~> aⁿ@ into @(x ~~> a)ⁿ@ using
--- 'CopyDiscard' projections -- this is what makes an @n@-ary power grate a
--- 'Proarrow.Optic.Grate.Grate'.
+-- 'CopyDiscard' projections. This makes an @n@-ary power grate a 'Proarrow.Optic.Grate.Grate'.
 splitPow
   :: forall n k (x :: k) a. (SNatI n, Closed k, CopyDiscard k, Ob x, Ob a) => (x ~~> NFold n a) ~> NFold n (x ~~> a)
 splitPow = case snat @n of
@@ -148,6 +142,11 @@ powUnit = case snat @n of
   SS @m -> (obj @(Unit :: k) ** powUnit @m @k) . leftUnitorInv @k @Unit
 
 -- | The arity-@n@ aggregation witness: @s@ presents @n@ foci via the tensor power.
+--
+-- @'Pow' n@ is the representable profunctor of the tensor power @NFold n@, which is the reader
+-- applicative for @n@ readers. Its instances make it a
+-- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', hence a kaleidoscope
+-- witness.
 type Pow :: forall {k}. Nat -> k +-> k
 data Pow n s a where
   Pow :: forall (n :: Nat) {k} (s :: k) (a :: k). (Ob a) => (s ~> NFold n a) -> Pow n s a
@@ -175,7 +174,7 @@ instance (Monoidal k, SNatI n) => MonTravFl (Pow n :: k +-> k) (CoPow n :: k +->
 -- | A power grate is a glass: ignore the source, and for each of the @n@ positions feed the
 -- consumer the selector "project this focus". The selectors come from @splitPow@ of @sl@, the
 -- consumer is copied @n@ times with 'fanOut', @powZip@ pairs them, and @powDist@ applies each.
--- Everything is stated with the 'CopyDiscard' structure that 'CCC' now provides, so the tensor
+-- Everything is stated with the 'CopyDiscard' structure that 'CCC' provides, so the tensor
 -- and the product never have to be identified by hand.
 instance (Monoidal k, HasCoproducts k, SNatI n) => GlassFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   glassP @s @a @b (Pow sl@Objs) (CoPow rt@Objs) =
@@ -195,10 +194,6 @@ instance (CopyDiscard k, HasCoproducts k, SNatI n) => GrateFl (Pow n :: k +-> k)
 instance (CopyDiscard k, HasCoproducts k, SNatI n) => PowerGrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   powerGrateP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 
--- | @'Pow' n@ is the representable profunctor of the tensor power @NFold n@, which is the reader
--- applicative for @n@ readers; the instances below make it a
--- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', hence a kaleidoscope
--- witness.
 -- | A tensor power is a fixed-shape traversable: distribute the carrier over the @n@ copies.
 instance (Monoidal k, SNatI n) => Traversable (Pow n :: k +-> k) where
   traverse @_ @_ @b (Pow f :.: p) = p // withObNFold @n @b (lmap f (powDist @n p) :.: Pow id)
@@ -238,7 +233,7 @@ powerGrate sl rt = legs2prof @PowerGrateFl (Pow @n sl) (CoPow @n rt)
 
 -- | Zip two sources through a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' (or any stronger optic, a
 -- 'Proarrow.Optic.Grate.Grate' in particular, in any encoding): combine the foci pairwise. This is
--- 'kaleidoscopeOf' at the carrier @'RepCostar' ('Pow' 2)@, the costar of the binary tensor power --
+-- 'kaleidoscopeOf' at the carrier @'RepCostar' ('Pow' 2)@, the costar of the binary tensor power:
 -- a binary combination @(a ** a) ~> b@ of foci, which the optic's applicative lifts by @liftA2@.
 zipWithOf
   :: forall {k} c (s :: k) (t :: k) a b

@@ -5,7 +5,7 @@
 -- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' with product strength
 -- through the foci. This module keeps the mutually-recursive 'TravFl'\/'MonTravFl' flavor
 -- classes and their leaf witnesses ('Traversable' and 'Cotraversable' functors, the product lens,
--- the coproduct prism, 'Beside'\/'BesideSum' juxtaposition and the unit\/zero witnesses); the
+-- the coproduct prism, 'Beside'\/'BesideSum' juxtaposition and the unit\/zero witnesses). The
 -- free-profunctor apparatus lives in "Proarrow.Optic.MonoidalTraversal". A traversal subtypes to
 -- 'Proarrow.Optic.Fold.Fold' and 'Proarrow.Optic.Setter.Setter'. Build with 'traversed' (from a
 -- 'Traversable') or 'Proarrow.Optic.MonoidalTraversal.traversal' (from the van-Laarhoven form),
@@ -58,8 +58,8 @@ import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (.
 
 type TravFl :: forall {k}. FLAVOR k k
 class (SetterFl p q, FoldFl p q) => TravFl (p :: k +-> k) (q :: k +-> k) where
-  -- | Distribute a traversal-strength profunctor. Only the product-lens witness genuinely needs
-  -- @'Strong' 'ProdAction'@ (to carry the residual through the categorical product); every other
+  -- | Distribute a traversal-strength profunctor. Only the product-lens witness needs
+  -- @'Strong' 'ProdAction'@ (to carry the residual through the categorical product). Every other
   -- witness distributes a plain 'StrongDistributiveProfunctor' and inherits 'travP' from 'monTravP'.
   travP :: (StrongDistributiveProfunctor r, Strong ProdAction r) => p s a -> q b t -> r a b -> r s t
   default travP :: (MonTravFl p q, StrongDistributiveProfunctor r) => p s a -> q b t -> r a b -> r s t
@@ -77,7 +77,7 @@ instance (Bicartesian k, Traversable t, Representable t) => MonTravFl (t :: k +-
   monTravP l (RepCostar r) = dimap (index l) r . repTraverse @t
 
 -- | A corepresentable 'Cotraversable' functor builds @s@ from a shape of @a@'s, and its 'travP'
--- distributes an SDP exactly as a cotraversal's would -- so at /this/ witness a cotraversal is a
+-- distributes an SDP the same way a cotraversal's would. So at this witness a cotraversal is a
 -- traversal, and it needs no flavor of its own.
 -- ("Proarrow.Optic.Kaleidoscope" does define a @Cotraversal@, over 'Cotraversable' witnesses that
 -- are not representable. In the lattice it is a sibling of 'Traversal', not a descendant: both are
@@ -91,13 +91,11 @@ instance (HasBinaryProducts k, Ob (s :: k)) => TravFl (Rep (Product s)) (Corep (
   travP (Rep p) (Corep q) r = dimap p q (act @ProdAction @_ @(PR s) r)
 
 -- | The tensor-action witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' m)@ with a __comonoid__
--- residual @m@ (legs @s ~> m ** a@, @m ** b ~> t@) is a (monoidal) traversal witness: it folds by
--- discarding the residual with the comonoid's counit and distributes any 'StrongDistributiveProfunctor'
--- through @'act' \@'Tensor'@ -- exactly the strength such a profunctor already carries, so no product
--- strength or @tensor = product@ is needed. Asking 'Comonoid' of the residual only (rather than
--- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' of the whole category) is what makes this work
--- in @LINEAR@ for the duplicable objects; it is also the monoidal-lens witness
--- ("Proarrow.Optic.MonoidalLens").
+-- residual @m@ (legs @s ~> m ** a@, @m ** b ~> t@) is a (monoidal) traversal witness. It folds by
+-- discarding the residual with the counit, and distributes a 'StrongDistributiveProfunctor' by its
+-- own strength @'act' \@'Tensor'@, so neither product strength nor @tensor = product@ is needed.
+-- Only @m@ must be a 'Comonoid', so this works in @LINEAR@ for the duplicable objects. It is also
+-- the monoidal-lens witness ("Proarrow.Optic.MonoidalLens").
 instance (Comonoid (m :: k)) => FoldFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   foldMapP (Rep h) am = leftUnitor . (Mon.counit @m ** am) . h
 
@@ -118,15 +116,14 @@ instance (MonTravFl f g, MonTravFl f' g') => MonTravFl (f :.: f') (g' :.: g) whe
 type Traversal (s :: k) (t :: k) a b = Optic (Prostrong TravFl) s t a b
 type Traversal' s a = Traversal s s a a
 
--- | Traverse: distribute any 'StrongDistributiveProfunctor' -- not merely a @Star f@ (the
--- Hask van-Laarhoven shape) -- through any optic that is at least a 'Traversal'. Works for an
--- arbitrary profunctor carrier by handing it to 'travP', rather than relying on a per-carrier
--- @'Prostrong' w p@ bridge (which could only ever cover specific carrier heads).
+-- | Distribute any 'StrongDistributiveProfunctor' (not only a @Star f@, the van-Laarhoven shape)
+-- through any optic that is at least a 'Traversal', by handing it to 'travP'.
 --
--- The optic is accepted in any encoding: the constraint asks the optic's class to hold for the
--- generic carrier @'ExOptic' 'TravFl' a b@, which a 'Prostrong'-flavored optic discharges via
--- @forall p q. w p q => 'Proarrow.Optic.Sub' 'TravFl' p q@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
--- ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the carrier's by-generator instances.
+-- The optic may be in any encoding: the constraint asks its class to hold for the generic carrier
+-- @'ExOptic' 'TravFl' a b@. A 'Prostrong'-flavored optic discharges it via
+-- @forall p q. w p q => 'Proarrow.Optic.Sub' 'TravFl' p q@, a '(%)'-composite one conjunct at a
+-- time, and a profunctor-class one ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the
+-- carrier's by-generator instances.
 traverseOf
   :: forall {k} c (s :: k) (t :: k) a b p
    . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, (Ob a, Ob b) => c (ExOptic TravFl a b))
@@ -134,9 +131,9 @@ traverseOf
 traverseOf o pab = withLegs @TravFl o \l r -> travP l r pab
 
 -- | Build a traversal from a 'Traversable' (representable) functor @t@: it focuses every element
--- the functor holds. This is the one weak-flavor builder that is genuinely primitive -- a
+-- the functor holds. This is the one weak-flavor builder that is primitive: a
 -- 'Traversable's traversal is not reachable by 'convert' from any single stronger optic. The
--- witness is @t@ itself paired with @'RepCostar' t@ (see 'TravFl' above); the two legs are the
+-- witness is @t@ itself paired with @'RepCostar' t@ (see 'TravFl' above). The two legs are the
 -- representable universal @'repUniv'@ and the identity 'RepCostar'.
 traversed
   :: forall {k} (t :: k +-> k) a b
@@ -145,20 +142,16 @@ traversed = legs2prof @TravFl (repUniv @t) (corepUniv @(RepCostar t))
 
 -- * The free traversal profunctor
 
--- | Witness pair for traversing two juxtaposed (tensored) parts in sequence, both parts focusing
--- the same type @x@:
+-- | Witness pair for traversing two juxtaposed (tensored) parts in sequence, both focusing @x@:
 --
 -- > Beside p1 p2 s x = exists s1 s2. (s ~> s1 ** s2, p1 s1 x, p2 s2 x)
 --
--- spelled as a composite through the product category @(k, k)@: decompose the source with the
--- tensor (@'Rep' 'MultRep'@, @s ~> s1 ** s2@), run the two witnesses side by side (':**:'), and
--- identify their foci with the diagonal (@'Rep' 'Diag'@, @'(x1, x2) ~> '(x, x)@). Compare
--- 'Proarrow.Profunctor.Instance.Day.Day', which is the same composite with @'Corep' 'MultRep'@ in
--- place of the diagonal, so that the two foci are /tensored/ (@x1 ** x2@) instead of identified.
--- The identification is essential: a @(Day p1 p2, Day q1 q2)@ witness pair admits no componentwise
--- 'travP' (it would have to split a 'StrongDistributiveProfunctor' value at a tensor), which is why
--- 'Proarrow.Optic.Day.DayFl'-flavored optics focus /pairs/ while this one visits both foci in
--- sequence.
+-- spelled as a composite through @(k, k)@: split the source with the tensor (@'Rep' 'MultRep'@),
+-- run the witnesses side by side (':**:'), and identify the foci with the diagonal (@'Rep' 'Diag'@).
+-- 'Proarrow.Profunctor.Instance.Day.Day' is the same composite with @'Corep' 'MultRep'@ in place of
+-- the diagonal, tensoring the foci instead. Identifying them is necessary: a Day witness pair admits
+-- no componentwise 'travP', which would have to split a 'StrongDistributiveProfunctor' value at a
+-- tensor. So 'Proarrow.Optic.Day.DayFl' optics focus pairs, while this one visits both foci in turn.
 type Beside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 type Beside p1 p2 = Rep MultRep :.: (p1 :**: p2) :.: Rep Diag
 
@@ -183,8 +176,8 @@ instance (MonTravFl p1 q1, MonTravFl p2 q2, Monoidal k) => MonTravFl (Beside p1 
 
 -- | Witness pair for traversing one of two alternative (coproduct) parts: 'Beside' with the tensor
 -- replaced by the coproduct (@'Rep' 'PlusRep'@, @s ~> s1 || s2@, and @'Corep' 'PlusRep'@,
--- @t1 || t2 ~> t@). Here identifying the foci and tensoring them agree -- @x1 || x2 ~> x@ /is/ a pair
--- @(x1 ~> x, x2 ~> x)@ -- so this is literally Day convolution over the coproduct.
+-- @t1 || t2 ~> t@). Here identifying the foci and tensoring them agree, since @x1 || x2 ~> x@ is a
+-- pair @(x1 ~> x, x2 ~> x)@. So this is Day convolution over the coproduct.
 type BesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 type BesideSum p1 p2 = Rep PlusRep :.: (p1 :**: p2) :.: Rep Diag
 
@@ -213,17 +206,13 @@ instance
 
 -- | Witness pair with no foci at all: decompose to 'Unit' and rebuild.
 --
--- 'UnitW' and 'CoUnitW' are the two halves of 'Proarrow.Profunctor.Instance.Day.DayUnit', one
--- per side of the witness pair, with a phantom focus: together with 'Beside'\/'CoBeside' being
--- 'Proarrow.Profunctor.Instance.Day.Day' with the foci identified, the witness pairs here are exactly the
--- Day-monoidal structure on profunctors (@'Proarrow.Category.Monoidal.Monoidal' (j '+->' k)@),
--- split at the focus. The split is forced: a whole 'Proarrow.Profunctor.Instance.Day.DayUnit'
--- on the decomposition side would demand @Unit ~> a@ for an arbitrary focus @a@.
+-- 'UnitW' and 'CoUnitW' are the halves of 'Proarrow.Profunctor.Instance.Day.DayUnit', one per side,
+-- with a phantom focus; with 'Beside'\/'CoBeside' they are the Day-monoidal structure on profunctors
+-- split at the focus. The split is forced: a whole 'DayUnit' on the decomposition side would demand
+-- @Unit ~> a@ for an arbitrary focus @a@.
 --
--- Unlike 'Beside', this cannot be spelled as a composite: the nullary analogue would pass through
--- the unit category @()@ (@'Rep' 'Proarrow.Category.Monoidal.UnitRep' :.: TerminalProfunctor@), but
--- @()@ can coincide with the ambient kind @k@, so its instances would overlap with the generic
--- composition instances -- whereas @(k, k)@ never equals @k@.
+-- Unlike 'Beside' this is not a composite: the nullary analogue would pass through the unit
+-- category @()@, which can coincide with @k@ and so overlap the generic composition instances.
 type UnitW :: forall {k}. k +-> k
 data UnitW s x where
   UnitW :: (Ob x) => (s ~> Unit) -> UnitW s x
@@ -251,8 +240,8 @@ instance (Monoidal k) => Proadjunction (UnitW :: k +-> k) CoUnitW where
   unit = CoUnitW id :.: UnitW id
   counit (UnitW h :.: CoUnitW i) = i . h
 
--- | Witness pair for the impossible case: decompose to the initial object -- the halves of the
--- (unspelled) unit of Day convolution over the coproduct monoidal structure, cf.
+-- | Witness pair for the impossible case: decompose to the initial object. These are the halves of
+-- the (unspelled) unit of Day convolution over the coproduct monoidal structure, cf.
 -- 'UnitW'\/'CoUnitW'.
 type ZeroW :: forall {k}. k +-> k
 data ZeroW s x where

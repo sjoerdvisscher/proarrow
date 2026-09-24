@@ -179,15 +179,15 @@ class (c (FreeK b c k)) => FreeK' (b :: Kind -> Constraint) (c :: Kind -> Constr
 
 instance (c (FreeK b c k)) => FreeK' b c k
 
--- | @'FreeK' b c@ builds the free @c@-structured kind over any @b@-structured kind: 'liftK'
--- embeds the arrows of @k@, and when @k@ itself is already @c@-structured 'retractK' interprets
--- back into @k@.
 -- | The embedding of an object of @k@ into the free @c@-structured kind.
 type family Lift (b :: Kind -> Constraint) (c :: Kind -> Constraint) (a :: k) :: FreeK b c k
 
 -- | Interpret an object of the free @c@-structured kind back into @k@.
 type family Retract (b :: Kind -> Constraint) (c :: Kind -> Constraint) (k :: Kind) (a :: FreeK b c k) :: k
 
+-- | @'FreeK' b c@ builds the free @c@-structured kind over any @b@-structured kind: 'liftK'
+-- embeds the arrows of @k@, and when @k@ itself is already @c@-structured 'retractK' interprets
+-- back into @k@.
 class
   (forall k. (b k) => FreeK' b c k) =>
   HasFreeK (b :: Kind -> Constraint) (c :: Kind -> Constraint)

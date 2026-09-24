@@ -1,11 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | A worked instance of 'HasCofree', kept for the typechecker rather than for the test tree: the
--- cofree @Test@ object on a Hask type is that type paired with the @Int@ the class produces, and
--- that makes the coKleisli category of the env comonad a 'Promonad'. There is nothing to assert at
--- runtime, so this module exports no 'Test.Tasty.TestTree' -- compiling it is the test, as in
--- "Examples.Free".
+-- | A worked instance of 'HasCofree', checked by the typechecker only. The cofree @Test@ object
+-- on a Hask type is that type paired with the @Int@ the class produces, and that makes the
+-- coKleisli category of the env comonad a 'Promonad'. There is nothing to assert at runtime, so
+-- this module exports no 'Test.Tasty.TestTree'. Compiling it is the test, as in "Examples.Free".
 module Examples.Cofree where
 
 import Prelude (Int, fst, snd)

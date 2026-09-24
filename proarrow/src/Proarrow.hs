@@ -1,6 +1,6 @@
--- | The main entry point of the library: one import giving the curated core vocabulary --
--- categories, profunctors, functors, promonads, objects, monoids, universal properties and
--- optics. Several @Prelude@ names are redefined here, so import it with
+-- | The main entry point of the library. One import gives the curated core vocabulary
+-- (categories, profunctors, functors, promonads, objects, monoids, universal properties and
+-- optics). Several @Prelude@ names are redefined here, so import it with
 --
 -- > import Prelude hiding (id, (.), Functor, fmap, Monad, return, Monoid, mempty, mappend, map)
 -- > import Proarrow

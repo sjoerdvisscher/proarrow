@@ -55,7 +55,7 @@ dpoStep
 dpoStep (Rule left right) m ok notGlueable =
   pushoutComplement left m (\a2d d2g -> pushout a2d right \d2h r2h -> ok d2g d2h r2h) notGlueable
 
--- | Whether a collection has no repeats -- the match may identify two elements only if the rule
+-- | Whether a collection has no repeats. The match may identify two elements only if the rule
 -- keeps both, so a repeated image among the deleted ones is an identification conflict.
 allDistinct :: (P.Int, Set.Set a) -> P.Bool
 allDistinct (n, s) = Set.size s P.== n
@@ -87,18 +87,16 @@ instance HasPushoutComplements FINHASK where
           let gToD = M.fromList [(d M.! i, i) | i <- universeF]
           in ok (FinHask (P.fmap (gToD M.!) aToG)) (FinHask d)
 
--- | Pushout complements of finitary profunctors, for any finite schema at all -- so double-pushout
--- rewriting of graphs, typed graphs, or the rows of a database, in one instance.
+-- | Pushout complements of finitary profunctors over any finite schema, so one instance gives
+-- double-pushout rewriting of graphs, typed graphs, or the rows of a database.
 --
--- The gluing condition splits into exactly its two classical halves, neither of which has to mention
--- graphs:
+-- The gluing condition has two halves:
 --
--- * an /identification conflict/ is the match identifying two elements that the rule does not both
---   keep -- either a kept element with a deleted one, or two distinct deleted ones -- and
--- * the /dangling condition/ is that the surviving elements are closed under the action of the
---   schema\'s arrows -- which is precisely the statement that they form a /subprofunctor/, and hence
---   that 'Reindex' can carve them out at all. For the two-object schema @E \-\> V@ it says that a
---   surviving edge still has both its endpoints, which is where the classical name comes from.
+-- * no /identification conflict/: the match identifies two elements only if the rule keeps both
+--   (so never a kept element with a deleted one, nor two distinct deleted ones), and
+-- * the /dangling condition/: the surviving elements are closed under the schema\'s arrows, i.e.
+--   form a subprofunctor that 'Reindex' can carve out. For the schema @E \-\> V@ it says a
+--   surviving edge keeps both its endpoints.
 instance (FiniteCat j, FiniteCat k) => HasPushoutComplements (FINITARY j k) where
   pushoutComplement (Sub (Prof @av @lv ll)) (Sub (Prof @_ @gv m)) ok notGlueable
     | noSharedImage P.&& noDoubleDelete =

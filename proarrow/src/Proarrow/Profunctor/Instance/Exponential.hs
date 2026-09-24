@@ -2,8 +2,8 @@
 
 -- | The internal hom of the category of profunctors under the /product/: a @(p ':~>:' q) a b@ is a
 -- natural family of maps @p c d -> q c d@ available at @a@\/@b@, making @'PROD' (j +-> k)@ 'Closed'.
--- @j +-> k@ itself is 'Closed' too, but for Day convolution and with a different hom -- see
--- "Proarrow.Profunctor.Instance.Day". The 'PROD' wrapper is what keeps the two apart.
+-- @j +-> k@ itself is 'Closed' too, but for Day convolution and with a different hom (see
+-- "Proarrow.Profunctor.Instance.Day"). The 'PROD' wrapper keeps the two apart.
 module Proarrow.Profunctor.Instance.Exponential where
 
 import Proarrow.Category.Enriched.Thin
@@ -39,16 +39,16 @@ instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
   Prod (Prof m) ^^^ Prod (Prof n) = Prod (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p)))
 
 -- | That a full subcategory of the profunctors contains the internal homs of its objects, as a
--- class with a single instance, so that it can be the head of the quantified constraint below --
+-- class with a single instance, so that it can be the head of the quantified constraint below.
 -- 'Proarrow.Category.Instance.Sub.IsObProd' has the same shape for the product.
 class (ob (p :~>: q)) => IsObExp (ob :: OB (j +-> k)) p q
 
 instance (ob (p :~>: q)) => IsObExp ob p q
 
--- | And then the subcategory is closed, with the ambient exponential and nothing of its own --
+-- | And then the subcategory is closed, with the ambient exponential and nothing of its own,
 -- just as its products are the ambient ones. @'Proarrow.Category.Enriched.Finitary.Topos.FINITARY'
--- j k@ is one instance, 'Proarrow.Category.Enriched.Finitary.Sheaf.SHEAVES' another: for the
--- first, a hom-set of natural transformations is finitary; for the second, an internal hom into a
+-- j k@ is one instance, 'Proarrow.Category.Enriched.Finitary.Sheaf.SHEAVES' another. For the
+-- first, a hom-set of natural transformations is finitary. For the second, an internal hom into a
 -- sheaf is a sheaf.
 instance
   ( CategoryOf j
