@@ -31,7 +31,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (Functor (..), FunctorForRep (..))
+import Proarrow.Functor (Copresheaf, Functor (..), FunctorForRep (..), Presheaf)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate)
@@ -60,7 +60,7 @@ mapLimit (Prof n) = Prof (limitUniv @j (n . limit @j))
 
 type Unweighted = TerminalProfunctor
 
-instance (HasTerminalObject k) => HasLimits (Unweighted :: VOID +-> ()) k where
+instance (HasTerminalObject k) => HasLimits (Unweighted :: Copresheaf VOID) k where
   type Limit Unweighted d = Rep (Constant TerminalObject)
   limit (_ :.: t) = case t of {}
   limitUniv _ p = p // Rep terminate
@@ -70,12 +70,12 @@ type O2 = R '()
 type At1 d = d % O1
 type At2 d = d % O2
 
-data family ProductLimit :: COPRODUCT () () +-> k -> () +-> k
-instance (HasBinaryProducts k, Representable d) => FunctorForRep (ProductLimit d :: () +-> k) where
+data family ProductLimit :: COPRODUCT () () +-> k -> Presheaf k
+instance (HasBinaryProducts k, Representable d) => FunctorForRep (ProductLimit d :: Presheaf k) where
   type ProductLimit d @ '() = At1 d && At2 d
   fmap Unit = withObRep @d @O1 $ withObRep @d @O2 $ withObProd @_ @(At1 d) @(At2 d) id
 
-instance (HasBinaryProducts k) => HasLimits (Unweighted :: COPRODUCT () () +-> ()) k where
+instance (HasBinaryProducts k) => HasLimits (Unweighted :: Copresheaf (COPRODUCT () ())) k where
   type Limit Unweighted d = Rep (ProductLimit d)
   limit @d (Rep f :.: TerminalProfunctor @_ @o) =
     withObRep @d @O1 $
@@ -85,33 +85,33 @@ instance (HasBinaryProducts k) => HasLimits (Unweighted :: COPRODUCT () () +-> (
           (tabulate (snd @_ @(At1 d) @(At2 d) . f))
   limitUniv n p = p // Rep (index (n (p :.: TerminalProfunctor @'() @O1)) &&& index (n (p :.: TerminalProfunctor @'() @O2)))
 
-data family PowerLimit :: v -> () +-> k -> () +-> k
-instance (Representable d, Powered v k, Ob n) => FunctorForRep (PowerLimit (n :: v) d :: () +-> k) where
+data family PowerLimit :: v -> Presheaf k -> Presheaf k
+instance (Representable d, Powered v k, Ob n) => FunctorForRep (PowerLimit (n :: v) d :: Presheaf k) where
   type PowerLimit n d @ '() = (d % '()) ^ n
   fmap Unit = withObRep @d @'() $ withObPower @v @k @(d % '()) @n id
-instance (Powered Type k) => HasLimits (HaskValue n :: () +-> ()) k where
+instance (Powered Type k) => HasLimits (HaskValue n :: Copresheaf ()) k where
   type Limit (HaskValue n) d = Rep (PowerLimit n d)
   limit @d (Rep f :.: HaskValue n) = withObRep @d @'() $ tabulate (unpower f n)
   limitUniv @d m p = withObRep @d @'() $ Rep (power \n -> index (m (p :.: HaskValue n))) \\ p
 
 newtype End d = End {unEnd :: forall a b. a ~> b -> d % '(OP a, b)}
 
-data family EndLimit :: (OPPOSITE k, k) +-> Type -> () +-> Type
+data family EndLimit :: (OPPOSITE k, k) +-> Type -> Presheaf Type
 instance (Representable d) => FunctorForRep (EndLimit (d :: (OPPOSITE k, k) +-> Type)) where
   type EndLimit d @ '() = End d
   fmap Unit = id
 
 -- | The hom-functor of @k@ as a weight: the limit of a diagram @('OPPOSITE' k, k) '+->' ()@
 -- weighted by 'Hom' is its end.
-type Hom :: (OPPOSITE k, k) +-> ()
+type Hom :: Copresheaf (OPPOSITE k, k)
 data Hom a b where
   Hom :: a ~> b -> Hom '() '(OP a, b)
 
-instance (CategoryOf k) => Profunctor (Hom :: (OPPOSITE k, k) +-> ()) where
+instance (CategoryOf k) => Profunctor (Hom :: Copresheaf (OPPOSITE k, k)) where
   dimap Unit (Op l :**: r) (Hom f) = Hom (r . f . l) \\ l \\ r
   r \\ Hom f = r \\ f
 
-instance (CategoryOf k) => HasLimits (Hom :: (OPPOSITE k, k) +-> ()) Type where
+instance (CategoryOf k) => HasLimits (Hom :: Copresheaf (OPPOSITE k, k)) Type where
   type Limit Hom d = Rep (EndLimit d)
   limit (Rep f :.: Hom k) = k // tabulate (\a -> unEnd (f a) k)
   limitUniv n p = p // Rep \a -> End \x -> index (n (p :.: Hom x)) a

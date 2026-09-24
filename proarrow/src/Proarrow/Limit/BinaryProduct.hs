@@ -23,7 +23,7 @@ import Proarrow.Category.Instance.Free
   , WithShow
   , withLowerOb
   )
-import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
+import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -103,7 +103,8 @@ instance HasBinaryProducts Type where
   f &&& g = \a -> (f a, g a)
 
 instance HasBinaryProducts () where
-  type '() && '() = '()
+  -- a wildcard, not @'()@, so that @a && b@ reduces for an abstract @a@, as on pairs
+  type _ && _ = '()
   withObProd r = r
   fst = U.Unit
   snd = U.Unit
@@ -128,7 +129,8 @@ instance HasBinaryProducts BOOL where
   Tru &&& Tru = Tru
 
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
-  type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
+  -- Through the projections, as the tensor on pairs is, so that the two agree at abstract pairs.
+  type a && b = '(Fst @ a && Fst @ b, Snd @ a && Snd @ b)
   withObProd @'(a1, a2) @'(b1, b2) r = withObProd @j @a1 @b1 (withObProd @k @a2 @b2 r)
   fst @'(a1, a2) @'(b1, b2) = fst @_ @a1 @b1 :**: fst @_ @a2 @b2
   snd @'(a1, a2) @'(b1, b2) = snd @_ @a1 @b1 :**: snd @_ @a2 @b2

@@ -55,6 +55,24 @@ test =
     , testComonoid_ @(FS Nat2)
     , testComonoid_ @(FS Nat3)
     , testMonoid_ @(FS Nat1)
+    , -- The product category, whose tensor, products and coproducts all go through the
+      -- projections -- which is what lets 'Cartesian' see the tensor as the product at all. On
+      -- FINSET rather than a thin category, where parallel arrows are equal and these laws could
+      -- only check that the arrows evaluate; and with both factors the same, so that mixing up the
+      -- components still type-checks and has to be caught here.
+      testGroup
+        "FINSET x FINSET"
+        [ testCategory @(FINSET, FINSET)
+        , testTerminalObject @(FINSET, FINSET)
+        , testInitialObject @(FINSET, FINSET)
+        , testBinaryProducts_ @(FINSET, FINSET)
+        , testBinaryCoproducts_ @(FINSET, FINSET)
+        , testMonoidal_ @(FINSET, FINSET)
+        , testSymMonoidal_ @(FINSET, FINSET)
+        , testCopyDiscard_ @(FINSET, FINSET)
+        , testCartesian_ @(FINSET, FINSET)
+        , testDistributive_ @(FINSET, FINSET)
+        ]
     ]
 
 -- | Two finite sets are the same object when they have the same cardinality. Not a method of

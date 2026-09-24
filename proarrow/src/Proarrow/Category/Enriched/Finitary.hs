@@ -47,6 +47,7 @@ import Proarrow.Category.Enriched.Thin
   )
 import Proarrow.Category.Instance.Bool (Booleans)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Instance.Ordinal (LTE)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
@@ -204,6 +205,14 @@ instance Finitary Booleans where
   size @a @b = decidableSize @Booleans @a @b
   toIndex _ = 0
   fromIndex @a @b = decidableFromIndex @Booleans @a @b
+
+-- | The ordinals are thin too, so the same three lines serve. This is what makes a chain usable
+-- as a site: a cover there can have a leg that is itself covered, which no coverage on a
+-- two-object category can arrange.
+instance Finitary LTE where
+  size @a @b = decidableSize @LTE @a @b
+  toIndex _ = 0
+  fromIndex @a @b = decidableFromIndex @LTE @a @b
 
 -- * Products and coproducts
 

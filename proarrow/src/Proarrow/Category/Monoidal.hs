@@ -23,7 +23,7 @@ import Proarrow.Category.Instance.Free
   , withLowerOb
   )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Core
   ( CAT
@@ -237,7 +237,9 @@ instance (a ** Unit ~ a, Unit ** a ~ a, forall b c. (Ob b, Ob c) => StrictlyAsso
 
 instance Monoidal () where
   type Unit = '()
-  type '() ** '() = '()
+
+  -- a wildcard, not @'()@, so that @a ** b@ reduces for an abstract @a@, as on pairs
+  type _ ** _ = '()
   withOb2 @'() @'() r = r
   leftUnitor = U.Unit
   leftUnitorInv = U.Unit
@@ -248,7 +250,11 @@ instance Monoidal () where
 
 instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   type Unit = '(Unit, Unit)
-  type '(a1, a2) ** '(b1, b2) = '(a1 ** b1, a2 ** b2)
+
+  -- Through the projections rather than by matching the pair, so that @a ** b@ reduces for an
+  -- abstract @a@: the quantified @a ** b ~ a && b@ of 'Proarrow.Category.Monoidal.Cartesian.Cartesian'
+  -- needs that.
+  type a ** b = '(Fst @ a ** Fst @ b, Snd @ a ** Snd @ b)
   withOb2 @'(a1, a2) @'(b1, b2) r = withOb2 @j @a1 @b1 (withOb2 @k @a2 @b2 r)
   leftUnitor @'(a1, a2) = leftUnitor @j @a1 :**: leftUnitor @k @a2
   leftUnitorInv @'(a1, a2) = leftUnitorInv @j @a1 :**: leftUnitorInv @k @a2

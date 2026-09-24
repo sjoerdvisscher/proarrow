@@ -24,16 +24,31 @@ import Proarrow.Category.Enriched.Thin
   , withLookupMapWrap
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.BinaryProduct
+  ( HasBinaryProducts (..)
+  , HasProducts
+  , associatorProd
+  , associatorProdInv
+  , diag
+  , leftUnitorProd
+  , leftUnitorProdInv
+  , rightUnitorProd
+  , rightUnitorProdInv
+  , swapProd
+  )
 import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Prelude qualified as P
 
 type data ORDINAL n where
@@ -107,10 +122,10 @@ ordSize
   :: forall n r
    . (SNatI n)
   => ((n ~ Z) => r) -> ((n ~ S Z) => r) -> (forall m. (n ~ S (S m), SNatI m) => r) -> r
-ordSize none one more = case snat @n of
+ordSize none single more = case snat @n of
   SZ -> none
   SS @m -> case snat @m of
-    SZ -> one
+    SZ -> single
     SS -> more
 
 -- | The ordinals of @'ORDINAL' n@ together with the proof that the list tabulates 'OrdAt' at one index.
@@ -293,6 +308,72 @@ instance (HasBinaryProducts (ORDINAL (S n))) => HasBinaryProducts (ORDINAL (S (S
   ZEQ &&& ZLT _ = ZEQ
   ZLT a &&& ZLT b = ZLT (a &&& b)
   SLT a &&& SLT b = SLT (a &&& b)
+
+-- | The meet as tensor and the top as unit: the cartesian monoidal structure. Like the products it
+-- is made of, only for a syntactically concrete @n@; 'MonoidalOrdinal' names the context.
+type MonoidalOrdinal :: Nat -> Constraint
+type MonoidalOrdinal n = (HasProducts (ORDINAL n), Ob (TerminalObject :: ORDINAL n))
+
+-- The second conjunct looks redundant, since 'Ob' 'TerminalObject' is a superclass of
+-- 'HasTerminalObject'. It is not: 'Monoidal' needs @'Ob' 'Unit'@ as a superclass of the instance
+-- /declaration/, and GHC does not discharge an instance's own superclasses from the superclasses
+-- of its context (see "Undecidable instances and loopy superclasses" in the GHC user's guide), so
+-- without it the instance fails with @Could not deduce IsOrdinal TerminalObject@.
+
+instance (MonoidalOrdinal n) => MonoidalProfunctor (LTE :: CAT (ORDINAL n)) where
+  one = id
+  f ** g = f *** g
+
+instance (MonoidalOrdinal n) => Monoidal (ORDINAL n) where
+  type Unit = TerminalObject
+  type a ** b = a && b
+  withOb2 @a @b = withObProd @(ORDINAL n) @a @b
+  leftUnitor = leftUnitorProd
+  leftUnitorInv = leftUnitorProdInv
+  rightUnitor = rightUnitorProd
+  rightUnitorInv = rightUnitorProdInv
+  associator @a @b @c = associatorProd @a @b @c
+  associatorInv @a @b @c = associatorProdInv @a @b @c
+
+instance (MonoidalOrdinal n) => SymMonoidal (ORDINAL n) where
+  swap @a @b = swapProd @a @b
+
+-- | Every object is a comonoid by the diagonal and the map to the top, which is what makes the
+-- chain 'CopyDiscard' and so 'Proarrow.Category.Monoidal.Cartesian.Cartesian'.
+instance (MonoidalOrdinal n, Ob a) => Comonoid (a :: ORDINAL n) where
+  counit = terminate
+  comult = diag
+
+instance (MonoidalOrdinal n, Ob a) => CocommutativeComonoid (a :: ORDINAL n)
+
+instance (MonoidalOrdinal n) => CopyDiscard (ORDINAL n)
+
+instance Distributive (ORDINAL (S Z)) where
+  distL @a @b @c = case (singOrdinal @a, singOrdinal @b, singOrdinal @c) of (SOZ, SOZ, SOZ) -> ZEQ
+  distR @a @b @c = case (singOrdinal @a, singOrdinal @b, singOrdinal @c) of (SOZ, SOZ, SOZ) -> ZEQ
+  absorbL @a = case singOrdinal @a of SOZ -> ZEQ
+  absorbR @a = case singOrdinal @a of SOZ -> ZEQ
+
+-- | A chain is a distributive lattice: the meet is the minimum and the join the maximum. By
+-- recursion on the objects, as the products and coproducts are: a bottom on either side makes
+-- both sides the same object, and otherwise both sides are a successor.
+instance (Distributive (ORDINAL (S n)), MonoidalOrdinal (S n)) => Distributive (ORDINAL (S (S n))) where
+  distL @a @b @c = case singOrdinal @a of
+    SOZ -> ZEQ
+    SOS @a' -> case singOrdinal @b of
+      SOZ -> withObProd @_ @a @c (obj @(a && c))
+      SOS @b' -> case singOrdinal @c of
+        SOZ -> withObProd @_ @a @b (obj @(a && b))
+        SOS @c' -> SLT (distL @_ @a' @b' @c')
+  distR @a @b @c = case singOrdinal @c of
+    SOZ -> ZEQ
+    SOS @c' -> case singOrdinal @a of
+      SOZ -> withObProd @_ @b @c (obj @(b && c))
+      SOS @a' -> case singOrdinal @b of
+        SOZ -> withObProd @_ @a @c (obj @(a && c))
+        SOS @b' -> SLT (distR @_ @a' @b' @c')
+  absorbL = ZEQ
+  absorbR = ZEQ
 
 -- | @LTE@ is thin, so equalizers are trivial; @factorEqualizer incl h@ just needs @h@'s domain to be
 -- @<=@ @incl@'s domain, which -- since both share the codomain @x@ -- can only fail when @incl@'s

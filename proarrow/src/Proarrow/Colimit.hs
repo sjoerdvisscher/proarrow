@@ -33,7 +33,7 @@ import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Colimit.Copower (Copowered (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..), initiate)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
-import Proarrow.Functor (Functor (..), FunctorForRep (..))
+import Proarrow.Functor (Copresheaf, Functor (..), FunctorForRep (..), Presheaf)
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -60,7 +60,7 @@ mapColimit
    . (HasColimits j k, Corepresentable p, Corepresentable q) => (p :: k +-> i) ~> q -> Colimit j p ~> Colimit j q
 mapColimit (Prof n) = Prof (colimitUniv @j (n . colimit @j))
 
-instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
+instance (HasInitialObject k) => HasColimits (Unweighted :: Presheaf VOID) k where
   type Colimit Unweighted d = Corep (Constant InitialObject)
   colimit (t :.: _) = case t of {}
   colimitUniv _ p = p // Corep initiate
@@ -70,12 +70,12 @@ type O2 = R '()
 type At1 d = d %% O1
 type At2 d = d %% O2
 
-data family CoproductColimit :: k +-> COPRODUCT () () -> () +-> k
-instance (HasBinaryCoproducts k, Corepresentable d) => FunctorForRep (CoproductColimit d :: () +-> k) where
+data family CoproductColimit :: k +-> COPRODUCT () () -> Presheaf k
+instance (HasBinaryCoproducts k, Corepresentable d) => FunctorForRep (CoproductColimit d :: Presheaf k) where
   type CoproductColimit d @ '() = At1 d || At2 d
   fmap Unit = withObCorep @d @O1 $ withObCorep @d @O2 $ withObCoprod @_ @(At1 d) @(At2 d) id
 
-instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT () ()) k where
+instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: Presheaf (COPRODUCT () ())) k where
   type Colimit Unweighted d = Corep (CoproductColimit d)
   colimit @d (TerminalProfunctor @o :.: Corep f) =
     withObCorep @d @O1 $
@@ -89,11 +89,11 @@ instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT 
           r = n (TerminalProfunctor @O2 :.: p)
       in Corep $ coindex l ||| coindex r
 
-data family CopowerLimit :: Type -> k +-> () -> () +-> k
-instance (Corepresentable d, Copowered Type k) => FunctorForRep (CopowerLimit n d :: () +-> k) where
+data family CopowerLimit :: Type -> Copresheaf k -> Presheaf k
+instance (Corepresentable d, Copowered Type k) => FunctorForRep (CopowerLimit n d :: Presheaf k) where
   type CopowerLimit n d @ '() = n *. (d %% '())
   fmap Unit = withObCorep @d @'() $ withObCopower @Type @k @(d %% '()) @n id
-instance (Copowered Type k) => HasColimits (HaskValue n :: () +-> ()) k where
+instance (Copowered Type k) => HasColimits (HaskValue n :: Presheaf ()) k where
   type Colimit (HaskValue n) d = Corep (CopowerLimit n d)
   colimit @d (HaskValue n :.: Corep f) = withObCorep @d @'() $ cotabulate $ uncopower f n
   colimitUniv @d m p = withObCorep @d @'() $ Corep (copower \n -> coindex (m (HaskValue n :.: p))) \\ p
@@ -101,19 +101,19 @@ instance (Copowered Type k) => HasColimits (HaskValue n :: () +-> ()) k where
 data Coend d where
   Coend :: a ~> b -> d %% '(OP b, a) -> Coend d
 
-data family CoendLimit :: Type +-> (OPPOSITE k, k) -> () +-> Type
+data family CoendLimit :: Type +-> (OPPOSITE k, k) -> Presheaf Type
 instance (Corepresentable d) => FunctorForRep (CoendLimit (d :: Type +-> (OPPOSITE k, k))) where
   type CoendLimit d @ '() = Coend d
   fmap Unit = id
 
-type Hom :: () +-> (OPPOSITE k, k)
+type Hom :: Presheaf (OPPOSITE k, k)
 data Hom a b where
   Hom :: a ~> b -> Hom '(OP b, a) '()
-instance (CategoryOf k) => Profunctor (Hom :: () +-> (OPPOSITE k, k)) where
+instance (CategoryOf k) => Profunctor (Hom :: Presheaf (OPPOSITE k, k)) where
   dimap (Op l :**: r) Unit (Hom f) = Hom (l . f . r) \\ l \\ r
   r \\ Hom f = r \\ f
 
-instance (CategoryOf k) => HasColimits (Hom :: () +-> (OPPOSITE k, k)) Type where
+instance (CategoryOf k) => HasColimits (Hom :: Presheaf (OPPOSITE k, k)) Type where
   type Colimit Hom d = Corep (CoendLimit d)
   colimit (Hom f :.: Corep g) = f // cotabulate (\d -> g (Coend f d))
   colimitUniv n p = p // Corep \(Coend f d) -> coindex (n (Hom f :.: p)) d

@@ -24,7 +24,7 @@ import Proarrow.Category.Instance.Free
   )
 import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
+import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -150,7 +150,8 @@ instance HasBinaryCoproducts Type where
   (|||) = P.either
 
 instance HasBinaryCoproducts () where
-  type '() || '() = '()
+  -- a wildcard, not @'()@, so that @a || b@ reduces for an abstract @a@, as on pairs
+  type _ || _ = '()
   withObCoprod r = r
   lft = U.Unit
   rgt = U.Unit
@@ -173,6 +174,15 @@ instance HasBinaryCoproducts BOOL where
   Fls ||| Fls = Fls
   F2T ||| b = b
   Tru ||| _ = Tru
+
+-- | Coproducts in a product category are componentwise. Through the projections, as products are
+-- there, so that @a || b@ reduces for an abstract pair.
+instance (HasBinaryCoproducts j, HasBinaryCoproducts k) => HasBinaryCoproducts (j, k) where
+  type a || b = '(Fst @ a || Fst @ b, Snd @ a || Snd @ b)
+  withObCoprod @'(a1, a2) @'(b1, b2) r = withObCoprod @j @a1 @b1 (withObCoprod @k @a2 @b2 r)
+  lft @'(a1, a2) @'(b1, b2) = lft @_ @a1 @b1 :**: lft @_ @a2 @b2
+  rgt @'(a1, a2) @'(b1, b2) = rgt @_ @a1 @b1 :**: rgt @_ @a2 @b2
+  (f1 :**: f2) ||| (g1 :**: g2) = (f1 ||| g1) :**: (f2 ||| g2)
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (j +-> k) where
   type p || q = p :+: q

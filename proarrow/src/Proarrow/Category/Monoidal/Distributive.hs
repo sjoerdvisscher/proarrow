@@ -13,6 +13,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second, type (**!))
 import Proarrow.Category.Monoidal.Action (CoprodAction)
@@ -136,6 +137,13 @@ instance Distributive BOOL where
     Tru -> obj @a +++ obj @b
   absorbL = Fls
   absorbR = Fls
+
+-- | A product of distributive categories distributes componentwise.
+instance (Distributive j, Distributive k) => Distributive (j, k) where
+  distL @'(a1, a2) @'(b1, b2) @'(c1, c2) = distL @j @a1 @b1 @c1 :**: distL @k @a2 @b2 @c2
+  distR @'(a1, a2) @'(b1, b2) @'(c1, c2) = distR @j @a1 @b1 @c1 :**: distR @k @a2 @b2 @c2
+  absorbL @'(a1, a2) = absorbL @j @a1 :**: absorbL @k @a2
+  absorbR @'(a1, a2) = absorbR @j @a1 :**: absorbR @k @a2
 
 distLClosed
   :: forall {k} (a :: k) (b :: k) (c :: k)

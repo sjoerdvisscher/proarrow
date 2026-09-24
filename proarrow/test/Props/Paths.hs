@@ -24,7 +24,7 @@ import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Member (..), 
 import Proarrow.Category.Instance.Discrete (DISCRETE (..))
 import Proarrow.Category.Instance.Paths (EqGen (..), PATHS (..), Paths (..), Rewrite (..), emb, pathLength)
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN)
 import Proarrow.Functor (Copresheaf)
 import Proarrow.Testing
   ( GenTotal
@@ -200,7 +200,7 @@ instance (Ob b) => TestableType (Staff '() b) where
     SDepartment -> optGen allDepartments
     SStr -> optGen (Txt <$> ["Alan", "Ruth", "Kris", "Sales", "IT"])
 
-instance TestableProfunctor (Staff :: HR +-> ())
+instance TestableProfunctor (Staff :: Copresheaf HR)
 
 test :: TestTree
 test =
