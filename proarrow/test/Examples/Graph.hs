@@ -15,6 +15,16 @@ import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..))
 import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..))
+import Proarrow.Category.Sheaf
+  ( Factors (..)
+  , HasFiniteCovers (..)
+  , PulledBack (..)
+  , Site (..)
+  , SomeCover (..)
+  , SomeLeg (..)
+  , StableSite (..)
+  , pullbackAlongId
+  )
 import Proarrow.Core (CAT, CategoryOf (..), ObId (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Testing
   ( GenTotal (..)
@@ -82,6 +92,55 @@ instance Finitary GraphHom where
   toIndex Tgt = 1
   fromIndex @a @b i = graphHoms @a @b `genericIndex` i
   elements = graphHoms
+
+-- * A coverage on the schema
+
+-- | A vertex covered by the two ends of an edge. Every other site in this repo is a poset, where
+-- a hom-set has at most one arrow; here the two legs are /parallel/ -- both @'E' '~>' 'V'@ -- and
+-- that is the whole point of the coverage. A sieve at 'V' can now hold 'Src' without 'Tgt', which
+-- no coverage on a poset can express, and a factorisation through a leg can be well typed and
+-- still wrong, which is what makes 'Proarrow.Testing.Laws.testStableSite' say something.
+--
+-- Stable and composing, so a Grothendieck topology: the only arrows into 'V' are its identity and
+-- the two legs, so a cover pulls back either to itself or to the identity cover of 'E'.
+--
+-- Spelled out here, but it is an instance of a general construction: this schema is the collage of
+-- the two-element profunctor between two one-object categories, and the coverage is
+-- 'Proarrow.Category.Sheaf.ByElements' at it. Kept by hand because the schema exists for its own
+-- reasons and reads better as itself.
+--
+-- A sheaf for it is a presheaf with @p 'V' ≅ p 'E' × p 'E'@ -- a graph whose vertices /are/ the
+-- pairs of endpoints. The two legs have no overlap, nothing but 'E' mapping into 'E', so matching
+-- is vacuous and gluing is a product; overlaps are @Props.Sheaf@\'s @Overlapping@\'s job,
+-- on a poset. The two sites are complementary.
+type data ByEnds
+
+-- | The name of 'ByEnds'\'s one cover, whose 'Cover' constructor is @VByEnds@ and whose 'Leg'
+-- constructors are @AtSrc@ and @AtTgt@.
+type data Endpoints
+
+instance Site ByEnds GRAPH where
+  data Cover ByEnds GRAPH a c where
+    VByEnds :: Cover ByEnds GRAPH V Endpoints
+  data Leg ByEnds GRAPH a c x where
+    AtSrc :: Leg ByEnds GRAPH V Endpoints E
+    AtTgt :: Leg ByEnds GRAPH V Endpoints E
+  legArrow AtSrc = Src
+  legArrow AtTgt = Tgt
+  legs VByEnds = [SomeLeg AtSrc, SomeLeg AtTgt]
+
+instance HasFiniteCovers ByEnds GRAPH where
+  covers @a = case obj @a of
+    IdE -> []
+    IdV -> [SomeCover VByEnds]
+
+-- | Each leg is its own pullback along itself, and the cover pulls back to itself along the
+-- identity. Note that @'Factors' AtTgt IdE@ type-checks where @'Factors' AtSrc IdE@ is meant --
+-- the legs share a source -- so unlike on a poset these equations are the instance's to get right.
+instance StableSite ByEnds GRAPH where
+  pullbackCover VByEnds IdV = pullbackAlongId VByEnds
+  pullbackCover VByEnds Src = AlreadyFactors (Factors AtSrc IdE)
+  pullbackCover VByEnds Tgt = AlreadyFactors (Factors AtTgt IdE)
 
 -- * The schema as a testable category
 

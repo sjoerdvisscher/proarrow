@@ -446,7 +446,8 @@ instance (HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k) => Finitary
 -- elements with the same restrictions to a dense sieve are equal -- and the second makes it a
 -- sheaf. The first alone need not: @Props.Sheaf@'s constant presheaf on the two-point space has one
 -- section over the empty set after one plus, but still two over the whole space where a sheaf needs
--- four. On a site whose covers have no overlaps, 'Proarrow.Category.Sheaf.ByArrow' say, one plus is
+-- four. On a site whose covers have no overlaps, 'Proarrow.Category.Sheaf.Atomic' on the walking
+-- arrow say, one plus is
 -- already a sheaf and the second changes nothing.
 type Sheafify :: forall {j} {k}. Type -> j +-> k -> j +-> k
 type Sheafify t p = Plus t (Plus t p)
@@ -620,8 +621,8 @@ instance (Site t k, Enumerable j, Enumerable k) => HasPullbacks (SHEAVES t j k)
 -- universal property -- which is exactly the statement that sheafification is a left adjoint, and
 -- so preserves the colimits it is applied to.
 --
--- The initial sheaf is /not/ the initial presheaf: 'Proarrow.Category.Sheaf.Canonical' covers the
--- empty set by nothing at all, so a sheaf has one section there where the initial presheaf has
+-- The initial sheaf is /not/ the initial presheaf: 'Proarrow.Category.Sheaf.Joins' covers the
+-- bottom of a lattice -- the empty set -- by nothing at all, so a sheaf has one section there where the initial presheaf has
 -- none, and the sheafification supplies it.
 instance (HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasInitialObject (SHEAVES t j k) where
   type InitialObject @(SHEAVES t j k) = SUB (Sheafify t InitialProfunctor)

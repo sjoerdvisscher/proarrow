@@ -54,7 +54,7 @@ import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Colimit.Coequalizer qualified as Coequalizer
 import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Colimit.Pushout qualified as Pushout
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor qualified as Functor
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Limit.Equalizer qualified as Equalizer
@@ -338,6 +338,74 @@ testGeneratedSieveIsSieve =
           | Sheaf.SomeCover c <- Sheaf.covers @t @k @a
           ]
       )
+
+-- | 'Sheaf.StableSite'\'s law, which is 'Sheaf.Site'\'s Stability turned into an operation: the
+-- cover 'Sheaf.pullbackCover' hands back really is the given one pulled back. Each of its legs
+-- must factor the arrow through a leg of the original --
+-- @f '.' 'Sheaf.legArrow' l' = 'Sheaf.legArrow' l '.' u@ -- and the instance supplies both the leg
+-- @l@ and the factor @u@, so the composite is what gets checked. And it must be a cover: a
+-- 'Sheaf.Cover' value is only a claim, and one built rather than listed -- as
+-- 'Proarrow.Category.Sheaf.Joins' builds its meets -- is checked here to generate a covering sieve.
+-- Covering, not dense, so that the check does not lean on the covers composing; and at @j ~ ()@,
+-- since whether a sieve covers does not depend on @j@.
+--
+-- __On a thin site this is vacuous.__ Where a hom-set has at most one arrow, @f@ and
+-- @'Sheaf.legArrow' l '.' u@ are equal as soon as they have the same type, so the type checker
+-- rejects every wrong factorisation before this runs -- naming the other leg in
+-- @Props.Sheaf@\'s @Overlapping@ instance is a type error, not a test failure. So the
+-- poset coverages run it for nothing, and it bites only where two legs can share a source.
+-- @Examples.Graph.ByEnds@ is one, where the legs are two constructors of the same type and naming
+-- the wrong one compiles; 'Proarrow.Category.Sheaf.ByElements' is the other, where a leg is named
+-- by the element it carries, so a wrong instance takes a wrong /element/ rather than a wrong
+-- constructor -- harder to write by accident, and caught here just the same.
+testStableSite
+  :: forall t k. (Sheaf.StableSite t k, Sheaf.HasFiniteCovers t k, Finitary.FiniteCat k) => TestTree
+testStableSite =
+  testProperty "covers pull back" $
+    sequence_
+      ( Finitary.foreachOb @k @(Property ()) \ @a -> Finitary.foreachOb @k @(Property ()) \ @b ->
+          [ case Sheaf.pullbackCover c f of
+              -- the arrow itself factors, so the pullback is @b@\'s implicit identity cover
+              Sheaf.AlreadyFactors fs -> propFactorsThroughLeg @t f fs
+              Sheaf.PulledBack c' fs -> do
+                expect
+                  ("the pulled-back cover of object " ++ show (Finitary.objIndex @b) ++ " covers it")
+                  True
+                  (FinSheaf.isCovering @t (FinSheaf.generatedSieve @t @b @'() c'))
+                sequence_ [propFactorsThroughLeg @t (f . Sheaf.legArrow l) (fs l) | Sheaf.SomeLeg l <- Sheaf.legs c']
+          | Sheaf.SomeCover c <- Sheaf.covers @t @k @a
+          , f <- Finitary.elements @(Hom k) @b @a
+          ]
+      )
+
+-- | One leg\'s half of 'testStableSite': the arrow is the leg it factors through, composed with
+-- the factor.
+propFactorsThroughLeg
+  :: forall t {k} (a :: k) c x
+   . (Sheaf.Site t k, Finitary.FiniteCat k, Ob a)
+  => x ~> a
+  -> Sheaf.Factors t k a c x
+  -> Property ()
+propFactorsThroughLeg f (Sheaf.Factors l u) =
+  -- the factor is what brings its own source into scope, and the result type is known here, where
+  -- at the call site it would be under an untouchable variable
+  u //
+    expect
+      "the arrow factors through the leg the pullback names"
+      (Finitary.toIndex @(Hom k) @x @a f)
+      (Finitary.toIndex (Sheaf.legArrow l . u))
+
+-- | The three laws a listable, stable coverage owes, as one group: 'testStableSite',
+-- 'testGeneratedSieveIsSieve' and 'testDenseIsCovering'. Every site wants all three, and running
+-- them through one call is what stops a site quietly acquiring only two.
+testSiteLaws
+  :: forall t j k
+   . (Sheaf.StableSite t k, Sheaf.HasFiniteCovers t k, Finitary.FiniteCat j, Finitary.FiniteCat k)
+  => TestTree
+testSiteLaws =
+  testGroup
+    "site laws"
+    [testStableSite @t @k, testGeneratedSieveIsSieve @t @j @k, testDenseIsCovering @t @j @k]
 
 -- | For every sieve at every pair of objects of a finite site: it is covering exactly when it is dense,
 -- that is when its 'FinSheaf.closure' is the maximal sieve. Two independent computations of one

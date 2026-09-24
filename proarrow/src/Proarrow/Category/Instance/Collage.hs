@@ -8,9 +8,11 @@
 module Proarrow.Category.Instance.Collage where
 
 import Data.Kind (Constraint)
+import Data.List (genericIndex)
 import Data.Type.Nat (SNat (..), SNatI, snat, type Plus)
-import Prelude (Maybe (..), type (~))
+import Prelude (Maybe (..), map, type (~))
 
+import Proarrow.Category.Enriched.Finitary (Finitary (..))
 import Proarrow.Category.Enriched.Thin
   ( AtOb (..)
   , CodiscreteProfunctor
@@ -225,6 +227,34 @@ instance (Finite j, Finite k) => Finite (COLLAGE (p :: k +-> j)) where
       goR :: forall ys. IndexedList ys -> IndexedList (MapWrap (R :: k -> COLLAGE p) ys)
       goR FNil = FNil
       goR (FCons @y ys) = withCollageR @p @y (FCons @(R y) (goR ys))
+
+-- | The collage of a finitary profunctor between finite categories is a finite category: a
+-- hom-set is one of the two base hom-sets, or an element set of @p@ for a cross-arrow, or empty
+-- going back the other way. Numbering it is numbering whichever of those it is.
+--
+-- A collage is the cheapest source of a category that is /not a poset/: @p@ can have several
+-- elements between one pair of objects, and those are parallel arrows, while the base categories
+-- supply whatever else is wanted. That is what a coverage on one is good for, and enumerating the
+-- hom-sets is what any decision procedure over it needs.
+instance
+  (Finitary (Hom j), Finitary (Hom k), Finitary p)
+  => Finitary (Collage :: CAT (COLLAGE (p :: k +-> j)))
+  where
+  size @a @b = case (obj @a, obj @b) of
+    (InL @x f, InL @y g) -> size @(Hom j) @x @y \\ f \\ g
+    (InL @x f, InR @y g) -> size @p @x @y \\ f \\ g
+    (InR _, InL _) -> 0
+    (InR @x f, InR @y g) -> size @(Hom k) @x @y \\ f \\ g
+  toIndex = \case
+    InL f -> toIndex f \\ f
+    InR f -> toIndex f \\ f
+    L2R x -> toIndex x \\ x
+  fromIndex @a @b = genericIndex (elements @(Collage :: CAT (COLLAGE p)) @a @b)
+  elements @a @b = case (obj @a, obj @b) of
+    (InL @x f, InL @y g) -> map InL (elements @(Hom j) @x @y) \\ f \\ g
+    (InL @x f, InR @y g) -> map L2R (elements @p @x @y) \\ f \\ g
+    (InR _, InL _) -> []
+    (InR @x f, InR @y g) -> map InR (elements @(Hom k) @x @y) \\ f \\ g
 
 instance (Enumerable j, Enumerable k, Profunctor p) => Enumerable (COLLAGE (p :: k +-> j)) where
   withIndex @a r = case obj @a of
