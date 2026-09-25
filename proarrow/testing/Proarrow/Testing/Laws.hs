@@ -1775,8 +1775,8 @@ testRanFullyFaithful =
 -- presheaves on @k@ sending @b@ to @p (-) b@ is: each hom-set @b ~> b'@ is in bijection with the
 -- natural transformations @p (-) b -> p (-) b'@, which are @(p '<|' p) b b'@. For a representable
 -- @p@ that is the functor @p '%' -@ being fully faithful. For a corepresentable @p@ it says the
--- image of @p '%%' -@ is dense, which for 'Proarrow.Category.Sheaf.ByImage' is the coverage being
--- subcanonical.
+-- image of @p '%%' -@ is dense. That makes 'Proarrow.Category.Sheaf.ByImage' subcanonical, and
+-- when @p '%%' -@ is fully faithful the converse holds too. The comparison lemma asks for something else, 'testCoveredByImage'.
 testRiftFullyFaithful
   :: forall {j} {k} (p :: j +-> k). (Finitary.Finitary p, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
 testRiftFullyFaithful =
@@ -1795,6 +1795,29 @@ testRiftFullyFaithful =
                  (sort [ix (Rift (rmap f)) | f <- Finitary.elements @(Hom j) @b @b'])
              ]
       )
+
+-- | Every object of @j@ is covered, for the coverage @t@, by the arrows into it from the image of
+-- the functor @w '%%' -@: the sieve they generate is covering. With @w '%%' -@ fully faithful
+-- ('testRanFullyFaithful') this is the hypothesis of the comparison lemma, see
+-- 'Proarrow.Category.Sheaf.Induced'. Neither this nor 'testRiftFullyFaithful' implies the other.
+testCoveredByImage
+  :: forall t {j} {k} (w :: j +-> k)
+   . (Sheaf.HasFiniteCovers t j, Corepresentable w, Finitary.Finitary w, Finitary.FiniteCat j, Finitary.FiniteCat k)
+  => TestTree
+testCoveredByImage =
+  testProperty "every object is covered by the image" $
+    sequence_
+      ( Finitary.foreachOb @j @(Property ()) \ @c ->
+          [ expect
+              ("object " ++ show (Finitary.objIndex @c) ++ " is covered")
+              True
+              (FinSheaf.isCovering @t (Sieve @c @'() \g _ -> or (fromImage g) \\ g))
+          ]
+      )
+  where
+    fromImage :: forall (c :: j) x. (Ob c, Ob x) => x ~> c -> [Bool]
+    fromImage g =
+      Finitary.foreachOb @k \ @e -> [Finitary.factorsThrough g f \\ f | x <- Finitary.elements @w @e @c, let f = coindex x]
 
 -- | For every sieve at every pair of objects of a finite site: it is covering exactly when it is dense,
 -- that is when its 'FinSheaf.closure' is the maximal sieve. Two independent computations of one

@@ -216,10 +216,10 @@ genNamed nm = case gen of
   GenFun f g -> f . applyFunP <$> genWithNamed nm (Just . show) g
   GenEmpty _ -> discard
 
--- | Check a measured value against the expected one, showing what was found. For the assertions a
--- worked example makes, which no generic law-checking property covers.
+-- | Check a measured value against the expected one, showing both. For the assertions a worked
+-- example makes, which no generic law-checking property covers.
 expect :: (Eq a, Show a) => String -> a -> a -> Property ()
-expect what want got = unless (got == want) (testFailed (what ++ ", found " ++ show got))
+expect what want got = unless (got == want) (testFailed (what ++ ", found " ++ show got ++ ", expected " ++ show want))
 
 -- | Check that two values are semantically equal, naming both sides so a failure says which law
 -- broke and what the two sides came out as.

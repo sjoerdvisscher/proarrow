@@ -16,7 +16,8 @@ import Prelude hiding (id, (.))
 import Proarrow.Category.Enriched.Finitary (Finitary (..))
 import Proarrow.Category.Enriched.Thin (Enumerable (..), Finite (..), Indexed (..))
 import Proarrow.Category.Sheaf
-  ( Factors (..)
+  ( Coverage
+  , Factors (..)
   , HasFiniteCovers (..)
   , PulledBack (..)
   , Site (..)
@@ -104,12 +105,13 @@ instance Finitary GraphHom where
 --
 -- It is a Grothendieck topology: the only arrows into 'V' are its identity and the two legs, so a
 -- cover pulls back either to itself or to the identity cover of 'E'. It is also
--- 'Proarrow.Category.Sheaf.ByElements' at the collage of the two-element profunctor between two
--- one-object categories, written out because the schema reads better as itself.
+-- 'Proarrow.Category.Sheaf.ByImage' of the inclusion of 'E', written out because the schema reads
+-- better as itself.
 --
 -- A sheaf for it is a presheaf with @p 'V' ≅ p 'E' × p 'E'@. The legs do not overlap (nothing but
 -- 'E' maps into 'E'), so matching is vacuous and gluing is a product. For overlapping legs see
 -- @Props.Sheaf@\'s @Overlapping@, on a poset.
+type ByEnds :: Coverage
 type data ByEnds
 
 -- | The name of 'ByEnds'\'s one cover, whose 'Cover' constructor is @VByEnds@ and whose 'Leg'

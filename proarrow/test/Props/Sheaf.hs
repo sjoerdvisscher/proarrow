@@ -38,7 +38,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, testProperty)
 import Prelude hiding (const, id, (.))
 
-import Examples.Graph (ByEnds, GRAPH (..))
+import Examples.Graph (ByEnds, GRAPH (..), GraphHom (..))
 import Proarrow.Category.Enriched.Finitary (Finitary (..), foreachOb, objIndex, sizes)
 import Proarrow.Category.Enriched.Finitary.Sheaf
   ( ClosedSieve
@@ -60,7 +60,9 @@ import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Sheaf
   ( Atomic
+  , ByImage
   , Cover (..)
+  , Coverage
   , Factors (..)
   , HasFiniteCovers (..)
   , Joins
@@ -77,12 +79,15 @@ import Proarrow.Category.Sheaf
   )
 import Proarrow.Category.Topos (HasSubobjectClassifier (..), closedTopology, doubleNegation, false, openTopology)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, type (+->))
-import Proarrow.Functor (Presheaf)
+import Proarrow.Functor (FunctorForRep (..), Presheaf)
 import Proarrow.Limit.BinaryProduct (PROD)
 import Proarrow.Limit.Terminal (const)
+import Proarrow.Profunctor.Corepresentable (Corep)
+import Proarrow.Profunctor.Instance.Composition ((:.:))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
+import Proarrow.Profunctor.Instance.Rift (Rift)
 import Proarrow.Profunctor.Instance.Sieve (Sieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo)
@@ -120,6 +125,8 @@ import Proarrow.Testing.Laws
   , testProfunctor
   , testPullbacks_
   , testPushouts_
+  , testRanFullyFaithful
+  , testRiftFullyFaithful
   , testSheafification
   , testSiteLaws
   , testSubobjectClassifier_
@@ -360,6 +367,7 @@ type Const2 = TerminalProfunctor :+: TerminalProfunctor
 --
 -- This is a Grothendieck topology: a cover pulls back along any arrow into @'(TRU, TRU)@ to the
 -- target's identity cover, which factors through whichever leg the arrow already factors through.
+type Overlapping :: Coverage
 type data Overlapping
 
 -- | The name of 'Overlapping'\'s one cover, whose 'Cover' constructor is @ByHalves@ and whose
@@ -406,6 +414,31 @@ instance TestableProfunctor (Sub Prof :: CAT Sh2)
 instance Testable Sh2 where
   showOb @(SUB p) = show (sizes @p)
   genSome = genSomeDef @'[FIN Sections, FIN Const2, FIN (Yo '(TRU, TRU) (OP '())), FIN (Sieve :: Presheaf (BOOL, BOOL))]
+
+-- | The edge object of the graph schema, as a functor out of the one-object category.
+data family AtEdge :: () +-> GRAPH
+
+instance FunctorForRep AtEdge where
+  type AtEdge @ '() = E
+  fmap Unit = IdE
+
+-- | The inclusion of the edges, as a corepresentable: its elements are the arrows out of 'E'. The
+-- coverage by its image covers 'V' by the two ends of an edge, which is 'ByEnds'.
+type EdgeInc :: GRAPH +-> ()
+type EdgeInc = Corep AtEdge
+
+-- | The graph schema squashed onto the walking arrow: 'E' to 'FLS', 'V' to 'TRU', and both 'Src'
+-- and 'Tgt' to the one arrow between them. It is not faithful, and so extension along it loses
+-- information.
+data family Squash :: GRAPH +-> BOOL
+
+instance FunctorForRep Squash where
+  type Squash @ E = FLS
+  type Squash @ V = TRU
+  fmap IdE = Fls
+  fmap IdV = Tru
+  fmap Src = F2T
+  fmap Tgt = F2T
 
 -- | The kind of finitary presheaves on the graph schema, as a testable kind. Needed for the
 -- Lawvere--Tierney laws at 'ByEnds', which are stated on the presheaf classifier.
@@ -621,6 +654,9 @@ test =
               "and its sheafification is Omega"
               (sizes @(ClosedSieve Overlapping :: Presheaf (BOOL, BOOL)))
               (sizes @(Sheafify Overlapping (Sieve :: Presheaf (BOOL, BOOL))))
+        , -- 'Sieve' is no sheaf here, so 'extendSheafify' descends through 'factorLocally' along the
+          -- two overlapping halves, the one kind of cover no other site here has.
+          testSheafification @Overlapping @(Sieve :: Presheaf (BOOL, BOOL)) @Const2
         , testGroup
             "the category of sheaves"
             [ testCategory @ShO
@@ -629,15 +665,15 @@ test =
             , testEqualizers_ @ShO
             , testPullbacks_ @ShO
             , testInitialObject @ShO
-            , testBinaryCoproducts_ @ShO
-            , -- No 'testCoequalizers_' (2.6s), 'testPushouts_' (4.4s) or
-              -- 'testSubobjectClassifier_' (2.9s) here. Coequalizers and pushouts reach no branch
-              -- the cheaper tests miss ('factorLocally' already descends at the coproducts above),
-              -- and what is special about quotients at this site, that a matching pair is a
+            , -- No 'testBinaryCoproducts_' (6.3s), 'testCoequalizers_' (2.6s), 'testPushouts_' (4.4s)
+              -- or 'testSubobjectClassifier_' (2.9s) here. Their laws are the same at every site,
+              -- and the one branch they would reach that no other site does, 'factorLocally'
+              -- descending along overlapping legs, the sheafification test above reaches for 0.2s.
+              -- What is special about quotients at this site, that a matching pair is a
               -- constraint and not a choice, is asserted directly in @Props.Sheaf.Collage@. The
               -- pushout is also the one epi-mono factorization drives. The subobject classifier
-              -- is tested at both other sites, and what is special about it here, that it is the
-              -- five opens, is asserted directly above.
+              -- is tested at Atomic, and what is special about it here, that it is the five opens,
+              -- is asserted directly above.
               testEpiMonoFactorization_ @ShO
             , testClosed_ @(PROD ShO)
             , testFinitary @(Sub Prof :: CAT ShO) "ShO"
@@ -670,6 +706,40 @@ test =
           testSheafification @ByEnds @(Yo V (OP '())) @(TerminalProfunctor :: Presheaf GRAPH)
         , testLawvereTierney_ @(PROD PshG) (lawvereTierney @ByEnds)
         , testProperty "closure is natural" $ propNaturalTransformation @(Sieve :: Presheaf GRAPH) (closure @ByEnds)
+        , testGroup
+            "as the image of the edges"
+            [ testSiteLaws @(ByImage EdgeInc) @() @GRAPH
+            , testRanFullyFaithful @EdgeInc
+            , -- the hom-profunctor is fully faithful on both sides: that is the Yoneda lemma
+              testGroup "the hom-profunctor" [testRanFullyFaithful @GraphHom, testRiftFullyFaithful @GraphHom]
+            , -- The other side fails for the edges: their image is not dense. Its transformations
+              -- V -> V are the four maps {Src, Tgt} -> {Src, Tgt}, where there is one arrow. As the
+              -- edges are fully faithful, that makes the coverage not subcanonical: the
+              -- representable at V is no sheaf.
+              testProperty "the edges are not dense" $
+                expect "transformations V -> V, arrows V -> V" (4, 1) (size @(Rift (OP EdgeInc) EdgeInc) @V @V, size @GraphHom @V @V)
+            , testProperty "agrees with ByEnds" $ do
+                expect
+                  "closed sieves"
+                  (sizes @(ClosedSieve ByEnds :: Presheaf GRAPH))
+                  (sizes @(ClosedSieve (ByImage EdgeInc) :: Presheaf GRAPH))
+                expect "the terminal presheaf" True (isSheaf @(ByImage EdgeInc) @(TerminalProfunctor :: Presheaf GRAPH))
+                expect "the representable at V" False (isSheaf @(ByImage EdgeInc) @(Yo V (OP '())))
+                expect "the representable at E" False (isSheaf @(ByImage EdgeInc) @(Yo E (OP '())))
+                -- the sheafification of a presheaf is the extension of its restriction to the edges
+                expect
+                  "sheafifying the representable at V"
+                  (sizes @(Sheafify ByEnds (Yo V (OP '()))))
+                  (sizes @(Rift (OP EdgeInc) (EdgeInc :.: Yo V (OP '()))))
+            ]
+        , -- Extension along a functor that is not fully faithful still gives a sheaf, but
+          -- restricting it back does not recover the presheaf: here the family at 'TRU' would have
+          -- to be both 'Src' and 'Tgt'. The representable at 'V' has sizes [2, 1].
+          testProperty "along a functor that is not faithful the counit is no isomorphism" $
+            expect
+              "the representable at V, restricted after extending"
+              [2, 0]
+              (sizes @(Corep Squash :.: Rift (OP (Corep Squash)) (Yo V (OP '()))))
         ]
     , testGroup
         "Joins"
@@ -708,15 +778,21 @@ test =
             , testEqualizers_ @ShC
             , testPullbacks_ @ShC
             , testInitialObject @ShC
-            , testBinaryCoproducts_ @ShC
-            , testCoequalizers_ @ShC
-            , -- No 'testPushouts_' here: the apex is the sheafified coproduct, whose sections over
+            , -- No 'testBinaryCoproducts_' (5.8s), 'testCoequalizers_' (2.9s) or
+              -- 'testSubobjectClassifier_' (2.9s) here. Their laws are the same at every site and
+              -- hold at Atomic, and a coverage comparison shows they reach no code at this site
+              -- that the other tests here miss. What is special here, 'factorLocally' descending
+              -- over the empty cover, the sheafification and initial object tests reach. The
+              -- sheafified coproduct, whose empty cover collapses the two sections over the empty
+              -- set, is built by the epi-mono factorization below, and the classifier's closed
+              -- sieves are asserted directly below.
+              --
+              -- No 'testPushouts_' either: the apex is the sheafified coproduct, whose sections over
               -- the whole space are the pairs, and the law draws three arrows out of it, each an
               -- enumeration over 15 points where a coequalizer's is over 6 (4.2s for the group).
               -- Epi-mono factorization covers the same pushout at a quarter the cost.
               testEpiMonoFactorization_ @ShC
             , testClosed_ @(PROD ShC)
-            , testSubobjectClassifier_ @(PROD ShC)
             , testFinitary @(ClosedSieve Joins :: Presheaf (BOOL, BOOL)) "ClosedSieve Joins"
             , -- The closed sieves on a space are its opens: over the empty set only the empty one,
               -- where the presheaf of all sieves has two, and the four subsets over the whole.

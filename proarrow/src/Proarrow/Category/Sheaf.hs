@@ -49,7 +49,6 @@ import Prelude (Bool, Maybe (..), and, error, not, null, (||))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, LocallyFinite, factorThrough, foreachOb)
 import Proarrow.Category.Enriched.Thin (Thin)
-import Proarrow.Category.Instance.Collage (COLLAGE (..), Collage (..))
 import Proarrow.Category.Instance.Free (Elem, FREE)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
@@ -58,11 +57,19 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), obj, rmap, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
+import Proarrow.Object (pattern Objs)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Instance.Product (fstP, sndP, (:*:) (..))
+import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
 -- * Sites
+
+-- | The kind of coverage names. A coverage is named by an empty type, the first argument of
+-- 'Site', and has no values.
+type Coverage :: Kind
+type Coverage = Type
 
 -- | A coverage, named @t@, on the category @k@. Several coverages can live on one category, so the
 -- name is a parameter rather than a wrapper on the kind.
@@ -82,7 +89,7 @@ import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 -- Naming matters when several covers share a type-level name @c@, as 'Atomic'\'s do on a category
 -- that is not thin and 'Joins'\'s always do. Then 'Leg' also admits the legs of the other covers
 -- with that name, so a hand-written 'glue' takes its legs from the cover it was given.
-type Site :: Type -> Kind -> Constraint
+type Site :: Coverage -> Kind -> Constraint
 class (CategoryOf k) => Site t k where
   -- | A cover of @a@. The type @c@ names it, so that 'Leg' can say which cover a leg belongs to;
   -- the value is the evidence that @c@ covers @a@.
@@ -101,7 +108,7 @@ class (CategoryOf k) => Site t k where
   legs :: Cover t k a c -> [SomeLeg t k a c]
 
 -- | A leg of the cover @c@ of @a@, with its source hidden.
-type SomeLeg :: Type -> forall (k :: Kind) -> k -> Type -> Type
+type SomeLeg :: Coverage -> forall (k :: Kind) -> k -> Type -> Type
 data SomeLeg t k a c where
   SomeLeg :: Leg t k a c x -> SomeLeg t k a c
 
@@ -119,14 +126,14 @@ class (Site t k) => HasFiniteCovers t k where
   covers :: forall (a :: k). (Ob a) => [SomeCover t k a]
 
 -- | A cover of @a@, with its name hidden.
-type SomeCover :: Type -> forall (k :: Kind) -> k -> Type
+type SomeCover :: Coverage -> forall (k :: Kind) -> k -> Type
 data SomeCover t k a where
   SomeCover :: Cover t k a c -> SomeCover t k a
 
 -- | How an arrow into @a@ factors through a cover of @a@: the leg it goes through, and the arrow
 -- to that leg\'s source. The equation @f = 'legArrow' g . h@ is the caller\'s to rely on and the
 -- instance\'s to respect.
-type Factors :: Type -> forall (k :: Kind) -> k -> Type -> k -> Type
+type Factors :: Coverage -> forall (k :: Kind) -> k -> Type -> k -> Type
 data Factors t k a c x where
   Factors :: Leg t k a c y -> x ~> y -> Factors t k a c x
 
@@ -138,7 +145,7 @@ factorThroughCover c h = listToMaybe [Factors l u | SomeLeg l <- legs c, Just u 
 -- | A cover pulled back along an arrow @f :: b '~>' a@: either @f@ itself factors through a leg
 -- (the pullback is @b@\'s implicit identity cover), or some cover of @b@ has every leg factoring
 -- through one.
-type PulledBack :: Type -> forall (k :: Kind) -> k -> Type -> k -> Type
+type PulledBack :: Coverage -> forall (k :: Kind) -> k -> Type -> k -> Type
 data PulledBack t k a c b where
   AlreadyFactors :: Factors t k a c b -> PulledBack t k a c b
   PulledBack :: Cover t k b c' -> (forall x. Leg t k b c' x -> Factors t k a c x) -> PulledBack t k a c b
@@ -186,7 +193,7 @@ pullbackAlongId c = PulledBack c \l -> legArrow l // Factors l id
 -- Instances are indexed by the shape of the profunctor: the limits below, a site's
 -- representables, and the image of sheafification. An instance per coverage would overlap all of
 -- them, so 'Trivial' gets the function 'glueTrivial' instead.
-type Sheaf :: forall {j} {k}. Type -> j +-> k -> Constraint
+type Sheaf :: forall {j} {k}. Coverage -> j +-> k -> Constraint
 class (Site t k, Profunctor p) => Sheaf t (p :: j +-> k) where
   glue
     :: forall (a :: k) c (b :: j)
@@ -206,6 +213,7 @@ instance (Sheaf t p, Sheaf t q) => Sheaf t (p :*: q) where
 -- * Coverages
 
 -- | The trivial coverage: only identities cover, so every profunctor is a sheaf.
+type Trivial :: Coverage
 type data Trivial
 
 instance (CategoryOf k) => Site Trivial k where
@@ -241,6 +249,7 @@ glueTrivial c _ = case c of {}
 --
 -- The identity is listed as a cover too. It decides nothing new, and dropping it would take
 -- deciding @b ~ a@ under 'foreachOb', which a coverage generic in @k@ cannot do.
+type Atomic :: Coverage
 type data Atomic
 
 -- | The name of the 'Atomic' cover of an object by a single arrow out of @b@: the 'Cover'
@@ -289,6 +298,7 @@ instance (HasPullbacks k, FiniteCat k) => StableSite Atomic k where
 --
 -- The finite, stable counterpart of 'Sums': a distributive lattice is the thin case of the
 -- extensivity that a free bicartesian category lacks.
+type Joins :: Coverage
 type data Joins
 
 -- | The name of every 'Joins' cover: the 'Cover' constructor is @ByJoin@, holding its legs, and
@@ -377,6 +387,7 @@ pullbackJoin c ls f = PulledBack (ByJoin [meet g | SomeLeg (Under g) <- ls]) \(U
 -- So the coverage generates no Grothendieck topology. Nothing here relies on stability: 'glue'\'s
 -- laws are the coproduct's universal property, and @FREE@ cannot list the covers of an arbitrary
 -- object, so it is not a 'HasFiniteCovers' and the topology machinery never runs at it.
+type Sums :: Coverage
 type data Sums
 
 -- | The name of the cover of @x '+' y@ by its injections, whose 'Cover' constructor is
@@ -409,41 +420,112 @@ instance
   glue BySummands m = case (m AtLeft, m AtRight) of
     (Yo f h, Yo g _) -> Yo (f ||| g) h
 
--- | __Any profunctor as a site.__ In the collage of @p@, an object @'R' b@ of the right layer is
--- covered by all the arrows into it from the left layer, which are the elements of @p@ at @b@.
--- Left-layer objects are covered by nothing.
+-- | __The coverage by the image of a functor.__ A 'Corepresentable' @w@ is a functor
+-- @F = w '%%' -@ from @k@ to @j@, with @w d c ≅ F d ~> c@. Every object @c@ of @j@ is covered by all
+-- the arrows into it from the image, @F d ~> c@, so a leg is an element of @w@. For an object in the
+-- image the cover contains its identity and asks nothing.
 --
--- This is a source of sites that are /not posets/: several elements of @p@ between one pair of
--- objects are parallel legs. The walking arrow 'Proarrow.Category.Instance.Bool.BOOL' is the
--- collage of the one-element profunctor on the unit category, covered as 'Atomic' covers it. The
--- schema of directed graphs, @E ⇉ V@, is the collage of the two-element one, with the vertices
--- covered by the two ends of an edge.
+-- It is stable, since pulling a leg back along @g@ is composing with @g@, and the covers compose,
+-- since the cover of a leg's source is again an image cover, and contains that source's identity.
+-- A presheaf on @k@ extends to a sheaf on @j@: its right Kan lift @q '<|' w@ ('Rift'), whose value
+-- at @c@ is a family over all the arrows @F d ~> c@. The restriction of a sheaf back to @k@ is
+-- @w ':.:' s@, and the two are adjoint by the
+-- 'Proarrow.Profunctor.Corepresentable.Corepresentable' instance of @'Star' ('Rift' ('OP' w))@.
 --
--- The coverage is stable for any @p@. An arrow into @'R' b@ is either a leg, or an @'InR' g@,
--- along which the cover pulls back leg by leg since @'InR' g '.' 'L2R' x = 'L2R' ('rmap' g x)@.
--- Composition holds trivially, since nothing covers the legs' sources.
+-- The comparison lemma needs @F@ to be fully faithful: 'corepMap' is a bijection on each hom-set,
+-- equivalently @('~>') ≅ w '|>' w@ ('Proarrow.Testing.Laws.testRanFullyFaithful'). Then the unit
+-- of the adjunction is an isomorphism exactly on the sheaves, the counit is an isomorphism, and
+-- the sheaves are the presheaves on @k@. Without it the coverage is still lawful, but its sheaves
+-- are the presheaves on the full subcategory of @j@ on the objects @F d@. When @F@ sends two
+-- objects to one, every presheaf is a sheaf, and the unit is a diagonal.
 --
--- A sheaf for it is a profunctor whose value at @'R' b@ is, up to iso, the matching families over
--- the elements of @p@ at @b@.
-type data ByElements
+-- Two examples: the left inclusion of a collage, whose other objects are covered by the arrows
+-- from the left layer, and the edges of a graph, covering each vertex by the two ends of an edge.
+type ByImage :: forall {j} {k}. (j +-> k) -> Coverage
+type data ByImage w
 
--- | The name of 'ByElements'\'s cover of an object of the right layer, whose 'Cover' constructor
--- is @ByElements@ and whose 'Leg' constructor is @AtElement@, one leg per element of @p@.
-type data Elements
+-- | The name of the one 'ByImage' cover of an object, whose 'Cover' constructor is @Images@ and
+-- whose 'Leg' constructor is @FromImage@, one leg per element of @w@.
+type data Image
 
-instance (FiniteCat j, Finitary p) => Site ByElements (COLLAGE (p :: k +-> j)) where
-  data Cover ByElements (COLLAGE p) a c where
-    ByElements :: (Ob b) => Cover ByElements (COLLAGE p) (R b) Elements
-  data Leg ByElements (COLLAGE p) a c x where
-    AtElement :: (Ob a) => p a b -> Leg ByElements (COLLAGE p) (R b) Elements (L a)
-  legArrow (AtElement x) = L2R x
-  legs (ByElements @b) = foreachOb @j \ @a -> [SomeLeg (AtElement x) | x <- elements @p @a @b]
+instance (Corepresentable w, Finitary w, FiniteCat k) => Site (ByImage (w :: j +-> k)) j where
+  data Cover (ByImage w) j a c where
+    Images :: (Ob a) => Cover (ByImage w) j a Image
+  data Leg (ByImage w) j a c x where
+    FromImage :: (Ob d) => w d a -> Leg (ByImage w) j a Image (w %% d)
+  legArrow (FromImage x) = coindex x
+  legs @a Images = foreachOb @k \ @d -> [SomeLeg (FromImage x) | x <- elements @w @d @a]
 
-instance (FiniteCat j, Finitary p, CategoryOf k) => HasFiniteCovers ByElements (COLLAGE (p :: k +-> j)) where
-  covers @a = case obj @a of
-    InL _ -> []
-    InR g -> [SomeCover ByElements] \\ g
+instance (Corepresentable w, Finitary w, FiniteCat k) => HasFiniteCovers (ByImage (w :: j +-> k)) j where
+  covers = [SomeCover Images]
 
-instance (FiniteCat j, Finitary p, CategoryOf k) => StableSite ByElements (COLLAGE (p :: k +-> j)) where
-  pullbackCover ByElements (L2R x) = x // AlreadyFactors (Factors (AtElement x) id)
-  pullbackCover ByElements (InR g) = g // PulledBack ByElements \(AtElement y) -> Factors (AtElement (rmap g y)) id
+instance (Corepresentable w, Finitary w, FiniteCat k) => StableSite (ByImage (w :: j +-> k)) j where
+  pullbackCover Images g = PulledBack Images \(FromImage (x :: w d b)) -> withObCorep @w @d (Factors (FromImage (rmap g x)) id)
+
+-- | The extension of a presheaf along @w@ is a sheaf: gluing reads each leg's family at the
+-- identity of its source.
+instance
+  (Corepresentable w, Finitary w, FiniteCat k, Profunctor q)
+  => Sheaf (ByImage (w :: j +-> k)) (Rift (OP w) q :: i +-> j)
+  where
+  glue Images m = Rift \(x :: w d a) -> x // case m (FromImage x) of Rift f -> f (corepUniv @w @d)
+
+-- | __The coverage induced along a functor.__ For a coverage @t@ on @j@ and a functor
+-- @F = w '%%' -@ from @k@ to @j@, a cover of @d@ is a @t@-cover @c@ of @F d@, and its legs are
+-- all the arrows @h :: e ~> d@ whose image @F h@ factors through a leg of @c@.
+--
+-- The comparison lemma: when @F@ is fully faithful and every object of @j@ is covered by arrows
+-- out of the image ('Proarrow.Testing.Laws.testCoveredByImage'), the sheaves for @t@ are the
+-- sheaves for @'Induced' t w@. Restriction is @w ':.:' s@ and extension is the
+-- right Kan lift @q '<|' w@, glued by 'glueExtension', the adjunction of 'ByImage'. 'ByImage' is
+-- the case where @t@ has only the image covers. Then every induced cover contains an identity,
+-- and every presheaf on @k@ is a sheaf.
+--
+-- The opens of a space and a basis of it are the standard example: sheaves on the space are
+-- sheaves on the basis.
+type Induced :: forall {j} {k}. Coverage -> (j +-> k) -> Coverage
+type data Induced t w
+
+instance (Site t j, Corepresentable w, LocallyFinite j, FiniteCat k) => Site (Induced t (w :: j +-> k)) k where
+  data Cover (Induced t w) k d c where
+    Induce :: (Ob d) => Cover t j (w %% d) c -> Cover (Induced t w) k d c
+  data Leg (Induced t w) k d c e where
+    Induces :: (Ob e) => e ~> d -> Factors t j (w %% d) c (w %% e) -> Leg (Induced t w) k d c e
+  legArrow (Induces h _) = h
+  legs @d (Induce c) =
+    foreachOb @k \ @e ->
+      [SomeLeg (Induces h fs) | h <- elements @(Hom k) @e @d, Just fs <- [factorThroughCover c (corepMap @w h)]]
+
+instance (HasFiniteCovers t j, Corepresentable w, LocallyFinite j, FiniteCat k) => HasFiniteCovers (Induced t (w :: j +-> k)) k where
+  covers @d = withObCorep @w @d [SomeCover (Induce c) | SomeCover c <- covers @t @j @(w %% d)]
+
+-- | Pulling back along @h'@ is pulling the cover of @F d@ back along @F h'@.
+instance (StableSite t j, Corepresentable w, LocallyFinite j, FiniteCat k) => StableSite (Induced t (w :: j +-> k)) k where
+  pullbackCover @d' (Induce c) h' =
+    withObCorep @w @d'
+      ( case pullbackCover c (corepMap @w h') of
+          AlreadyFactors fs -> AlreadyFactors (Factors (Induces h' fs) id)
+          PulledBack c' fs -> PulledBack (Induce c') \(Induces h (Factors l' u)) -> case fs l' of
+            Factors l u' -> Factors (Induces (h' . h) (Factors l (u' . u))) id
+      )
+
+-- | The extension of a sheaf for the induced coverage is a sheaf for @t@. Its value at @x :: F e ~> a@
+-- is found by pulling the cover back along @x@ and gluing in @q@ over the induced cover of @e@.
+--
+-- A function instead of an instance, because an instance would overlap the 'ByImage' one.
+glueExtension
+  :: forall t {i} {j} {k} (w :: j +-> k) (q :: i +-> k) (a :: j) c (b :: i)
+   . (StableSite t j, Corepresentable w, LocallyFinite j, FiniteCat k, Sheaf (Induced t w) q, Ob a, Ob b)
+  => Cover t j a c
+  -> (forall x. Leg t j a c x -> Rift (OP w) q x b)
+  -> Rift (OP w) q a b
+glueExtension c m = Rift \(x@Objs :: w e a) ->
+  withObCorep @w @e
+    ( case pullbackCover c (coindex x) of
+        AlreadyFactors (Factors l u) -> at l (rmap u (corepUniv @w @e))
+        PulledBack c' fs -> glue @(Induced t w) (Induce c') \(Induces _ (Factors l' u)) -> case fs l' of
+          Factors l u' -> at l (rmap (u' . u) corepUniv)
+    )
+  where
+    at :: Leg t j a c y -> w e' y -> q e' b
+    at l y = case m l of Rift f -> f y

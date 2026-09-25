@@ -45,7 +45,7 @@ import Proarrow.Category.Enriched.Thin
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Sheaf (Sheaf (..), Site (..), SomeLeg (..), Trivial)
+import Proarrow.Category.Sheaf (Coverage, Sheaf (..), Site (..), SomeLeg (..), Trivial)
 import Proarrow.Category.Topos
   ( ElementaryTopos
   , HasEpiMonoFactorization (..)
@@ -278,7 +278,7 @@ type KnownTables j k lm rm = (KnownTable (Objects j) (Objects k) lm, KnownTable 
 -- @t@ is the coverage the tables have been checked to be a sheaf for, which the tables cannot say.
 -- Only the builders apply it: 'withTabulated' uses 'Trivial', which has no covers, and
 -- 'Proarrow.Category.Enriched.Finitary.Sheaf.withTabulatedSheaf' decides the condition first.
-type Tabulated :: forall {j} {k}. Type -> [[[[Nat]]]] -> [[[[Nat]]]] -> j +-> k
+type Tabulated :: forall {j} {k}. Coverage -> [[[[Nat]]]] -> [[[[Nat]]]] -> j +-> k
 data Tabulated t lm rm a b where
   Tabulated :: (Ob a, Ob b) => Natural -> Tabulated t lm rm a b
 

@@ -21,7 +21,6 @@
 -- an elementary topos.
 module Proarrow.Category.Enriched.Finitary.Sheaf where
 
-import Data.Kind (Type)
 import Data.List (find, genericIndex, genericLength, sort)
 import Data.Map.Strict qualified as M
 import Data.Maybe (fromMaybe, isJust, listToMaybe, mapMaybe)
@@ -66,7 +65,8 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Sheaf
-  ( Factors (..)
+  ( Coverage
+  , Factors (..)
   , HasFiniteCovers (..)
   , PulledBack (..)
   , Sheaf (..)
@@ -82,6 +82,7 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core
   ( CategoryOf (..)
+  , Kind
   , OB
   , Profunctor (..)
   , Promonad (..)
@@ -98,7 +99,6 @@ import Proarrow.Limit.Pullback (HasPullbacks)
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
-import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..), maximalSieve, sieveMeet)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
@@ -330,7 +330,7 @@ factorThroughLocalEpi proj h = factorLocally @t \y -> P.fmap h (preimageMaybe pr
 -- __The constructor does not check__ that the support is a dense sieve or that the family is
 -- matching. 'plusElements' builds only lawful values; one built by hand is its builder's
 -- responsibility.
-type Plus :: forall {j} {k}. Type -> j +-> k -> j +-> k
+type Plus :: forall {j} {k}. Coverage -> j +-> k -> j +-> k
 data Plus t p a b where
   Plus :: (Ob a, Ob b) => (forall c d. c ~> a -> b ~> d -> P.Maybe (p c d)) -> Plus t p a b
 
@@ -435,7 +435,7 @@ instance (HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k) => Finitary
 -- where a sheaf needs four. On a site whose covers have no overlaps, such as
 -- 'Proarrow.Category.Sheaf.Atomic' on the walking arrow, one plus is already a sheaf and the
 -- second changes nothing.
-type Sheafify :: forall {j} {k}. Type -> j +-> k -> j +-> k
+type Sheafify :: forall {j} {k}. Coverage -> j +-> k -> j +-> k
 type Sheafify t p = Plus t (Plus t p)
 
 -- | The unit of the plus construction: an element as the family of its own restrictions, on the
@@ -507,7 +507,7 @@ extendSheafify n = extendPlus @t (extendPlus @t n)
 --
 -- __The constructor checks nothing.__ 'elements' produces only closed sieves, and 'closedSieve'
 -- closes any sieve.
-type ClosedSieve :: forall {j} {k}. Type -> j +-> k
+type ClosedSieve :: forall {j} {k}. Coverage -> j +-> k
 newtype ClosedSieve t (a :: k) (b :: j) = ClosedSieve (Sieve a b)
 
 -- | Closure commutes with 'dimap' (the Lawvere–Tierney axiom that 'lawvereTierney' packages as an
@@ -568,10 +568,12 @@ closedSieve s = ClosedSieve (closure @t s)
 -- followed by 'Sheafify', since a quotient of sheaves need not be a sheaf, and their universal
 -- property uses 'factorLocally', since an epi of sheaves is onto only locally.
 -- @'Proarrow.Category.Topos.Omega'@ is 'ClosedSieve'.
+type SHEAVES :: Coverage -> Kind -> Kind -> Kind
 type SHEAVES t j k = SUBCAT ((Finitary :&&: Sheaf t) :: OB (j +-> k))
 
 -- | A sheaf as an object of 'SHEAVES', as 'Proarrow.Category.Enriched.Finitary.Topos.FIN' names
 -- an object of 'FINITARY'.
+type SHF :: forall {j} {k}. forall (t :: Coverage) -> (j +-> k) -> SHEAVES t j k
 type SHF t (p :: j +-> k) = SUB p :: SHEAVES t j k
 
 -- | Equalizers as in 'FINITARY', by 'equalizeNat'; the result is a sheaf for every coverage, which
@@ -651,7 +653,7 @@ instance (StableSite t k, Sheaf t q, Profunctor p, CategoryOf j) => Sheaf t (p :
 instance (StableSite t k, HasFiniteCovers t k, FiniteCat j, FiniteCat k) => HasSubobjectClassifier (PROD (SHEAVES t j k)) where
   type Omega @(PROD (SHEAVES t j k)) = PR (SUB (ClosedSieve t))
   true = Prod (Sub (Prof \TerminalProfunctor -> ClosedSieve maximalSieve))
-  classifyGraph (Prod (Sub (Prof f))) = Prod (Sub (Prof \(x :*: y) -> closedSieve @t (graphSieve f x y)))
+  classifyGraph (Prod (Sub (Prof n))) = Prod (Sub (Prof (closedSieve @t . graphSieve n)))
 
 -- | __The topos of sheaves.__ Finite limits and colimits, cartesian closed, a subobject
 -- classifier, and image factorization, all defined above and none of them postulated.
