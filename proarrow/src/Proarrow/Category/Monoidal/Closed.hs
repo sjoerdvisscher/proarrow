@@ -5,7 +5,7 @@
 -- ('CCC') and bicartesian closed ('BiCCC') categories.
 module Proarrow.Category.Monoidal.Closed where
 
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import Prelude (($))
 import Prelude qualified as P
 
@@ -26,11 +26,12 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), type (**!))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), concatMany, obj1, singleton, splitMany, (==))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct ()
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 infixr 2 ~~>
 
@@ -190,10 +191,15 @@ swapClosed :: forall {k} (c :: k) a b. (Closed k, SymMonoidal k, Ob b, Ob c) => 
 swapClosed f = curry @k @b @a (uncurry @b @c f . swap @k @b @a) \\ f
 
 data family (-->) (a :: k) (b :: k) :: k
-instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, '[Closed, Monoidal] `Elems` cs) => IsFreeOb (a --> b) where
+
+-- | The structures the free category needs for 'Closed', and those its laws are stated for.
+type ClosedStructures :: [Kind -> Constraint]
+type ClosedStructures = '[Monoidal, Closed]
+
+instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, ClosedStructures `Elems` cs) => IsFreeOb (a --> b) where
   type Lower f (a --> b) = Lower f a ~~> Lower f b
   lowerOb @k' @f r = fromAll @Closed @cs @k' (withLowerOb @f @a (withLowerOb @f @b (withObExp @k' @(Lower f a) @(Lower f b) r)))
-instance ('[Closed, Monoidal] `Elems` cs) => HasStructure cs (p :: CAT k) Closed where
+instance (ClosedStructures `Elems` cs) => HasStructure cs (p :: CAT k) Closed where
   data Struct Closed a b where
     Apply :: (Ob a, Ob b) => Struct Closed ((a --> b) **! a) b
     Curry :: forall a b c. (Ob a, Ob b) => (a **! b) ~> c -> Struct Closed a (b --> c)
@@ -203,8 +209,38 @@ instance (WithShow a) => P.Show (Struct Closed a b) where
   showsPrec _ Apply = P.showString "apply"
   showsPrec d (Curry f) = P.showParen (d P.> 10) $ P.showString "curry " . P.showsPrec 11 f
 
-instance ('[Closed, Monoidal] `Elems` cs) => Closed (FREE cs (p :: CAT k)) where
+instance (ClosedStructures `Elems` cs) => Closed (FREE cs (p :: CAT k)) where
   type a ~~> b = a --> b
   withObExp r = r
   curry f = St (Curry f) Nil \\ f
   apply = St Apply Nil
+
+-- | 'apply' undoes 'curry' and every arrow into an exponential is the 'curry' of one ('curry' is
+-- a bijection with inverse @f |-> 'apply' . (f '**' 'id')@), 'curry' is natural in all three
+-- objects, and '^^^' is the exponential's action on arrows defined from 'curry' and 'apply'.
+-- Together these make @(- ** b)@ left adjoint to @(b ~~> -)@, and '^^^' a profunctor.
+instance Laws ClosedStructures where
+  laws =
+    [ Law "apply after curry" \ @a @b @c gen -> withOb2 @_ @a @b do
+        p <- gen @(a ** b) @c "p"
+        p =:= apply @_ @b @c . (curry @_ @a @b p ** obj @b)
+    , Law "curry of apply" \ @a @b @c gen -> withObExp @_ @b @c do
+        q <- gen @a @(b ~~> c) "q"
+        q =:= curry @_ @a @b (apply @_ @b @c . (q ** obj @b))
+    , Law "curry naturality (a)" \ @a @b @c @d gen -> withOb2 @_ @a @b do
+        p <- gen @(a ** b) @c "p"
+        f <- gen @d @a "f"
+        curry @_ @a @b p . f =:= curry @_ @d @b (p . (f ** obj @b))
+    , Law "curry naturality (b)" \ @a @b @c @d gen -> withOb2 @_ @a @b do
+        p <- gen @(a ** b) @c "p"
+        g <- gen @d @b "g"
+        (obj @c ^^^ g) . curry @_ @a @b p =:= curry @_ @a @d (p . (obj @a ** g))
+    , Law "curry naturality (c)" \ @a @b @c @d gen -> withOb2 @_ @a @b do
+        p <- gen @(a ** b) @c "p"
+        h <- gen @c @d "h"
+        (h ^^^ obj @b) . curry @_ @a @b p =:= curry @_ @a @b (h . p)
+    , Law "^^^ from curry" \ @a @b @c @d gen -> do
+        f <- gen @b @d "f"
+        g <- gen @c @a "g"
+        withObExp @_ @a @b (f ^^^ g =:= curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
+    ]

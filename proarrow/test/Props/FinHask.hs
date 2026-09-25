@@ -52,7 +52,6 @@ test =
     , testBinaryProducts @FINHASK (\r -> r)
     , testCartesian @FINHASK (\r -> r) (\r -> r)
     , testMonoidal @FINHASK (\r -> r)
-    , testMonoidalHom @FINHASK (\r -> r)
     , testSymMonoidal @FINHASK (\r -> r)
     , testCopyDiscard @FINHASK (\r -> r) (\r -> r)
     , testBinaryCoproducts @FINHASK (\r -> r)

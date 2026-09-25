@@ -123,3 +123,38 @@ To property-test the laws of your own category, depend on the public sublibrary
 `proarrow:testing`: a `Testable` instance for your kind plus the law checks from
 `Proarrow.Testing.Laws` (`testCategory`, `testMonoidal`, ...) give it a test suite —
 proarrow's own tests are built from exactly these pieces.
+
+## Laws as code
+
+A class's laws are written down next to the class, as ordinary proarrow code that works in any
+category with the structure: a `Laws` instance from `Proarrow.Tools.Laws`, keyed by the list of
+structures the laws mention. For example, from `Proarrow.Category.Monoidal`:
+
+```haskell
+instance Laws '[Monoidal] where
+  laws =
+    [ ...
+    , Law "associator naturality" \ @a @b @c @d gen -> do
+        f <- gen @a @b "f"
+        g <- gen @b @c "g"
+        h <- gen @c @d "h"
+        associator @_ @b @c @d . ((f ** g) ** h) =:= (f ** (g ** h)) . associator @_ @a @b @c
+    , ...
+    ]
+```
+
+A law binds the object variables it uses and asks the supply `gen` for named arbitrary arrows
+between them, then states its equation with `=:=`. `testLaws` from `Proarrow.Testing.Laws.Run`
+checks each law as its own property. It draws random objects and arrows, runs the law in a
+category whose arrows also describe themselves, and on failure prints both sides as the code
+they were built from:
+
+```
+Failed swap naturality:
+swap . (f ** g) = ...
+(g ** f) . swap = ...
+```
+
+`testMonoidal`, `testClosed` and the other checks for proarrow's own classes are built this way,
+and a class of your own can be checked the same way: `test/Examples/CustomLaws.hs` walks through
+a complete one.

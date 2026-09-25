@@ -35,6 +35,7 @@ import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 infixl 5 &&
 infixl 5 &&&
@@ -326,3 +327,27 @@ instance (HasBinaryProducts k) => Representable (Corep Diag :: (k, k) +-> k) whe
   type Corep Diag % '(a, b) = a && b
   index (Corep (f :**: g)) = f &&& g
   repUniv @'(a, b) = withObProd @k @a @b (Corep (fst @k @a @b :**: snd @k @a @b))
+
+-- | The universal property of the binary product: the projections recover the components of
+-- @f '&&&' g@, and every arrow into the product is the pairing of its components.
+instance Laws '[HasBinaryProducts] where
+  laws =
+    [ Law "fst" \ @a @b @c gen -> do
+        f <- gen @a @b "f"
+        g <- gen @a @c "g"
+        f =:= fst @_ @b @c . (f &&& g)
+    , Law "snd" \ @a @b @c gen -> do
+        f <- gen @a @b "f"
+        g <- gen @a @c "g"
+        g =:= snd @_ @b @c . (f &&& g)
+    , Law "pairing naturality" \ @a @b @c @d gen -> do
+        f <- gen @a @b "f"
+        g <- gen @a @c "g"
+        h <- gen @d @a "h"
+        (f . h) &&& (g . h) =:= (f &&& g) . h
+    , Law "pairing the projections" \ @_ @b @c _ ->
+        withObProd @_ @b @c (fst @_ @b @c &&& snd @_ @b @c =:= id)
+    , Law "pairing uniqueness" \ @a @b @c gen -> withObProd @_ @b @c do
+        p <- gen @a @(b && c) "p"
+        p =:= (fst @_ @b @c . p) &&& (snd @_ @b @c . p)
+    ]

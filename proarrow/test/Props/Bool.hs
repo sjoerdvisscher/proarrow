@@ -53,7 +53,6 @@ test =
     , testBinaryProducts_ @BOOL
     , testCartesian_ @BOOL
     , testMonoidal_ @BOOL
-    , testMonoidalHom_ @BOOL
     , testSymMonoidal_ @BOOL
     , testCopyDiscard_ @BOOL
     , testStarAutonomous_ @BOOL

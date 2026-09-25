@@ -95,7 +95,6 @@ test =
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
     , testMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
-    , testMonoidalHom @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , testSymMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , testDistributive @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
@@ -109,6 +108,7 @@ test =
       -- ones 'CompactClosed' already provides.
       testCompactClosed @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+        (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
     , testHypergraph @FREEKIND (\r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , sheafTests

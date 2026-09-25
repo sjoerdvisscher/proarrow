@@ -7,6 +7,7 @@
 -- 'dualityCounit') and every morphism @x ** u ~> y ** u@ has a trace ('traceCC').
 module Proarrow.Category.Monoidal.CompactClosed where
 
+import Data.Kind (Constraint)
 import Prelude (($))
 import Prelude qualified as P
 
@@ -34,7 +35,8 @@ import Proarrow.Category.Monoidal.StarAutonomous
   , dualityUnitSA
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (=:=))
 
 class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
@@ -104,8 +106,12 @@ instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
   distribDual @'(a, a') @'(b, b') = distribDual @j @a @b :**: distribDual @k @a' @b'
   dualUnit = dualUnit :**: dualUnit
 
+-- | The structures the free category needs for 'CompactClosed', and those its laws are stated for.
+type CompactClosedStructures :: [Kind -> Constraint]
+type CompactClosedStructures = '[Monoidal, SymMonoidal, Closed, StarAutonomous, CompactClosed]
+
 instance
-  ('[StarAutonomous, SymMonoidal, Closed, Monoidal, CompactClosed] `Elems` cs)
+  (CompactClosedStructures `Elems` cs)
   => HasStructure cs (p :: CAT k) CompactClosed
   where
   data Struct CompactClosed a b where
@@ -119,8 +125,38 @@ instance P.Show (Struct CompactClosed a b) where
   showsPrec _ DualUnit = P.showString "dualUnit"
 
 instance
-  ('[StarAutonomous, SymMonoidal, Closed, Monoidal, CompactClosed] `Elems` cs)
+  (CompactClosedStructures `Elems` cs)
   => CompactClosed (FREE cs (p :: CAT k))
   where
   distribDual @a @b = St (DistribDual @a @b) Nil
   dualUnit = St DualUnit Nil
+
+-- | 'distribDual' and 'dualUnit' are isomorphisms (so 'Dual' is strong monoidal), and 'dualityUnit'
+-- and 'dualityCounit' satisfy the zigzag identities, making @Dual a@ dual to @a@.
+instance Laws CompactClosedStructures where
+  laws =
+    inverses "distribDual" (\ @a @b -> Inverses (distribDual @_ @a @b) (label "combineDual" (combineDual @a @b)))
+      P.++ inverses "dualUnit" (Inverses dualUnit (label "dualUnitInv" dualUnitInv))
+      P.++ [ Law
+               "zigzag (a)"
+               \ @a _ ->
+                 withObDual @_ @a $
+                   ( rightUnitor @_ @a
+                       . (obj @a ** label "dualityCounit" (dualityCounit @a))
+                       . associator @_ @a @(Dual a) @a
+                       . (label "dualityUnit" (dualityUnit @a) ** obj @a)
+                       . leftUnitorInv @_ @a
+                   )
+                     =:= id
+           , Law
+               "zigzag (Dual a)"
+               \ @a _ ->
+                 withObDual @_ @a $
+                   ( leftUnitor @_ @(Dual a)
+                       . (label "dualityCounit" (dualityCounit @a) ** obj @(Dual a))
+                       . associatorInv @_ @(Dual a) @a @(Dual a)
+                       . (obj @(Dual a) ** label "dualityUnit" (dualityUnit @a))
+                       . rightUnitorInv @_ @(Dual a)
+                   )
+                     =:= id
+           ]

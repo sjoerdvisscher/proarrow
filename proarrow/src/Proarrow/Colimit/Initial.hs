@@ -28,6 +28,7 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
   type InitialObject :: k
@@ -90,3 +91,11 @@ instance (HasInitialObject k) => HasTerminalObject (OPPOSITE k) where
 instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
   type InitialObject = OP TerminalObject
   initiate = Op terminate
+
+-- | Every arrow out of the initial object is 'initiate'.
+instance Laws '[HasInitialObject] where
+  laws =
+    [ Law "uniqueness" \ @a gen -> do
+        g <- gen @InitialObject @a "g"
+        g =:= initiate
+    ]

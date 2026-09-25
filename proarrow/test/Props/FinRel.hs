@@ -43,7 +43,6 @@ test =
     , testBinaryProducts_ @FINREL
     , testBinaryCoproducts_ @FINREL
     , testMonoidal_ @FINREL
-    , testMonoidalHom_ @FINREL
     , testSymMonoidal_ @FINREL
     , testDistributive_ @FINREL
     , testClosed_ @FINREL

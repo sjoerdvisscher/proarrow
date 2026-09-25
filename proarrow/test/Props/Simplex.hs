@@ -39,7 +39,6 @@ test =
     , testInitialObject @Nat
     , testTerminalObject @Nat
     , testMonoidal_ @Nat
-    , testMonoidalHom_ @Nat
     , testMonoid_ @Z
     , testMonoid_ @(S Z)
     , testProfunctor @(Rep Forget)

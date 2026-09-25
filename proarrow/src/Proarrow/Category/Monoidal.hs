@@ -44,6 +44,7 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity qualified as Id
 import Proarrow.Profunctor.Representable (CorepStar, Rep, RepCostar, Representable (..), repUniv)
+import Proarrow.Tools.Laws (Inverses (..), Law (..), Laws (..), inverses, (=:=))
 
 infixl 8 **
 infixl 7 ==
@@ -434,12 +435,85 @@ instance (Monoidal `Elem` cs) => Monoidal (FREE cs (p :: CAT k)) where
   associator = St Associator Nil
   associatorInv = St AssociatorInv Nil
 
-instance ('[SymMonoidal, Monoidal] `Elems` cs) => HasStructure cs (p :: CAT k) SymMonoidal where
+-- | The structures the free category needs for 'SymMonoidal', and those its laws are stated for.
+type SymMonoidalStructures :: [Kind -> Constraint]
+type SymMonoidalStructures = '[Monoidal, SymMonoidal]
+
+instance (SymMonoidalStructures `Elems` cs) => HasStructure cs (p :: CAT k) SymMonoidal where
   data Struct SymMonoidal i o where
     Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
   foldStructure @f _ (Swap @a @b) = withLowerOb @f @a (withLowerOb @f @b (swap @_ @(Lower f a) @(Lower f b)))
 instance Show (Struct SymMonoidal a b) where
   showsPrec _ Swap = P.showString "swap"
 
-instance ('[SymMonoidal, Monoidal] `Elems` cs) => SymMonoidal (FREE cs (p :: CAT k)) where
+instance (SymMonoidalStructures `Elems` cs) => SymMonoidal (FREE cs (p :: CAT k)) where
   swap = St Swap Nil
+
+-- | The tensor is a bifunctor, and the unitors and the associator are natural isomorphisms
+-- satisfying the triangle and pentagon identities.
+instance Laws '[Monoidal] where
+  laws =
+    inverses "leftUnitor" (\ @a -> Inverses (leftUnitor @_ @a) (leftUnitorInv @_ @a))
+      P.++ inverses "rightUnitor" (\ @a -> Inverses (rightUnitor @_ @a) (rightUnitorInv @_ @a))
+      P.++ inverses
+        "associator"
+        (\ @a @b @c -> Inverses (associator @_ @a @b @c) (associatorInv @_ @a @b @c))
+      P.++ [ Law "tensor identity" \ @a @b _ -> withOb2 @_ @a @b (obj @a ** obj @b =:= id)
+           , Law "tensor interchange" \ @a @b @c @d @e gen -> do
+               f <- gen @a @b "f"
+               g <- gen @b @c "g"
+               h <- gen @d @e "h"
+               i <- gen @e @c "i"
+               (g . f) ** (i . h) =:= (g ** i) . (f ** h)
+           , Law "leftUnitor naturality" \ @a @b gen -> do
+               f <- gen @a @b "f"
+               leftUnitor @_ @b . (one ** f) =:= f . leftUnitor @_ @a
+           , Law "leftUnitorInv naturality" \ @a @b gen -> do
+               f <- gen @a @b "f"
+               leftUnitorInv @_ @b . f =:= (one ** f) . leftUnitorInv @_ @a
+           , Law "rightUnitor naturality" \ @a @b gen -> do
+               f <- gen @a @b "f"
+               rightUnitor @_ @b . (f ** one) =:= f . rightUnitor @_ @a
+           , Law "rightUnitorInv naturality" \ @a @b gen -> do
+               f <- gen @a @b "f"
+               rightUnitorInv @_ @b . f =:= (f ** one) . rightUnitorInv @_ @a
+           , Law "associator naturality" \ @a @b @c @d gen -> do
+               f <- gen @a @b "f"
+               g <- gen @b @c "g"
+               h <- gen @c @d "h"
+               associator @_ @b @c @d . ((f ** g) ** h) =:= (f ** (g ** h)) . associator @_ @a @b @c
+           , Law "associatorInv naturality" \ @a @b @c @d gen -> do
+               f <- gen @a @b "f"
+               g <- gen @b @c "g"
+               h <- gen @c @d "h"
+               associatorInv @_ @b @c @d . (f ** (g ** h)) =:= ((f ** g) ** h) . associatorInv @_ @a @b @c
+           , Law "triangle identity" \ @a @b _ ->
+               (obj @a ** leftUnitor @_ @b) . associator @_ @a @Unit @b =:= rightUnitor @_ @a ** obj @b
+           , Law "pentagon identity" \ @a @b @c @d _ ->
+               withOb2 @_ @a @b $
+                 withOb2 @_ @b @c $
+                   withOb2 @_ @c @d $
+                     (obj @a ** associator @_ @b @c @d)
+                       . associator @_ @a @(b ** c) @d
+                       . (associator @_ @a @b @c ** obj @d)
+                       =:= associator @_ @a @b @(c ** d)
+                       . associator @_ @(a ** b) @c @d
+           ]
+
+-- | 'swap' is a natural self-inverse satisfying the hexagon identity.
+instance Laws SymMonoidalStructures where
+  laws =
+    [ Law "swap self-inverse" \ @a @b _ -> (swap @_ @b @a . swap @_ @a @b =:= id) \\ swap @_ @a @b
+    , Law "swap naturality" \ @a @b @c @d gen -> do
+        f <- gen @a @c "f"
+        g <- gen @b @d "g"
+        swap @_ @c @d . (f ** g) =:= (g ** f) . swap @_ @a @b
+    , Law "hexagon identity" \ @a @b @c _ ->
+        withOb2 @_ @b @c $
+          associator @_ @b @c @a
+            . swap @_ @a @(b ** c)
+            . associator @_ @a @b @c
+            =:= (obj @b ** swap @_ @a @c)
+            . associator @_ @b @a @c
+            . (swap @_ @a @b ** obj @c)
+    ]

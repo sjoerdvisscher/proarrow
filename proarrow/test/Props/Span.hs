@@ -34,7 +34,6 @@ test =
     [ testCategory @(SPAN FINSET)
     , testDagger @(SPAN FINSET)
     , testMonoidal_ @(SPAN FINSET)
-    , testMonoidalHom_ @(SPAN FINSET)
     , testSymMonoidal_ @(SPAN FINSET)
     , testClosed_ @(SPAN FINSET)
     , testStarAutonomous_ @(SPAN FINSET)

@@ -5,6 +5,7 @@ module Main where
 import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
+import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
@@ -76,7 +77,8 @@ main =
           ]
       , testGroup
           "Examples"
-          [ Database.test
+          [ CustomLaws.test
+          , Database.test
           , FreeExample.test
           , Graph.test
           , STLC.test

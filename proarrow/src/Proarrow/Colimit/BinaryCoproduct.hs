@@ -41,6 +41,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), Representable (..))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 infixl 4 ||
 infixl 4 |||
@@ -381,3 +382,27 @@ instance (HasBinaryCoproducts k) => Corepresentable (Rep Diag :: k +-> (k, k)) w
   type Rep Diag %% '(a, b) = a || b
   coindex (Rep (f :**: g)) = f ||| g
   corepUniv @'(a, b) = withObCoprod @k @a @b (Rep (lft @k @a @b :**: rgt @k @a @b))
+
+-- | The universal property of the binary coproduct: the injections recover the components of
+-- @f '|||' g@, and every arrow out of the coproduct is the copairing of its components.
+instance Laws '[HasBinaryCoproducts] where
+  laws =
+    [ Law "lft" \ @a @b @c gen -> do
+        f <- gen @a @c "f"
+        g <- gen @b @c "g"
+        f =:= (f ||| g) . lft @_ @a @b
+    , Law "rgt" \ @a @b @c gen -> do
+        f <- gen @a @c "f"
+        g <- gen @b @c "g"
+        g =:= (f ||| g) . rgt @_ @a @b
+    , Law "copairing naturality" \ @a @b @c @d gen -> do
+        f <- gen @a @c "f"
+        g <- gen @b @c "g"
+        h <- gen @c @d "h"
+        (h . f) ||| (h . g) =:= h . (f ||| g)
+    , Law "copairing the injections" \ @a @b _ ->
+        withObCoprod @_ @a @b (lft @_ @a @b ||| rgt @_ @a @b =:= id)
+    , Law "copairing uniqueness" \ @a @b @c gen -> withObCoprod @_ @a @b do
+        p <- gen @(a || b) @c "p"
+        p =:= (p . lft @_ @a @b) ||| (p . rgt @_ @a @b)
+    ]

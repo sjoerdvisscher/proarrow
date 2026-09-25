@@ -41,7 +41,6 @@ test =
     , testBinaryProducts_ @FINSET
     , testCartesian_ @FINSET
     , testMonoidal_ @FINSET
-    , testMonoidalHom_ @FINSET
     , testSymMonoidal_ @FINSET
     , testCopyDiscard_ @FINSET
     , testBinaryCoproducts_ @FINSET

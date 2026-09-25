@@ -28,7 +28,6 @@ test =
     [ testCategory @Nat
     , testDagger @Nat
     , testMonoidal_ @Nat
-    , testMonoidalHom_ @Nat
     , testHypergraph_ @Nat
     , testSymMonoidal_ @Nat
     , testClosed_ @Nat

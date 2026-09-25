@@ -25,6 +25,7 @@ import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k
@@ -84,3 +85,11 @@ instance Show (Struct HasTerminalObject a b) where
 instance (HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs (p :: CAT k)) where
   type TerminalObject = TermF
   terminate = St Terminate Nil
+
+-- | Every arrow into the terminal object is 'terminate'.
+instance Laws '[HasTerminalObject] where
+  laws =
+    [ Law "uniqueness" \ @a gen -> do
+        g <- gen @a @TerminalObject "g"
+        g =:= terminate
+    ]

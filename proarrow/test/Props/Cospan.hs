@@ -34,7 +34,6 @@ test =
     [ testCategory @(COSPAN FINSET)
     , testDagger @(COSPAN FINSET)
     , testMonoidal_ @(COSPAN FINSET)
-    , testMonoidalHom_ @(COSPAN FINSET)
     , testSymMonoidal_ @(COSPAN FINSET)
     , testClosed_ @(COSPAN FINSET)
     , testStarAutonomous_ @(COSPAN FINSET)

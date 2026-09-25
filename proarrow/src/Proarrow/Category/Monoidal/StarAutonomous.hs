@@ -8,6 +8,8 @@
 -- Star-autonomous categories are the categorical semantics of multiplicative linear logic.
 module Proarrow.Category.Monoidal.StarAutonomous where
 
+import Data.Kind (Constraint)
+import Prelude (($))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), Not)
@@ -27,8 +29,9 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
-import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj)
 import Proarrow.Optic (PIso, iso)
+import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (=:=))
 
 -- | A *-autonomous category: a symmetric monoidal closed category with a dualizing object, so
 -- that 'Dual' is a contravariant involution and @Hom(a '**' b, 'Dual' c)@ is symmetric in its three
@@ -41,10 +44,10 @@ import Proarrow.Optic (PIso, iso)
 --   @'dualInv' ('dual' f) = f@ and @'dual' ('dualInv' g) = g@
 -- * 'linDist' and 'linDistInv' are mutually inverse, giving
 --   @Hom(a '**' b, 'Dual' c) ≅ Hom(a, 'Dual' (b '**' c))@, natural in all three variables
--- * 'Proarrow.Category.Monoidal.StarAutonomous.doubleNegIso' witnesses
---   @'Dual' ('Dual' a) ≅ a@, naturally.
+-- * 'doubleNeg' and 'doubleNegInv' are mutually inverse, so @'Dual' ('Dual' a) ≅ a@
 --
--- Checked by @Proarrow.Testing.Laws.testStarAutonomous@.
+-- Stated as code by the 'Proarrow.Tools.Laws.Laws' instance for 'StarAutonomousStructures', and
+-- checked by @Proarrow.Testing.Laws.testStarAutonomous@.
 class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
   -- | The dual of an object.
   type Dual (a :: k) :: k
@@ -148,8 +151,13 @@ data family DualF (a :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), StarAutonomous `Elem` cs) => IsFreeOb (DualF a) where
   type Lower f (DualF a) = Dual (Lower f a)
   lowerOb @k' @f r = fromAll @StarAutonomous @cs @k' (withLowerOb @f @a (withObDual @k' @(Lower f a) r))
+
+-- | The structures the free category needs for 'StarAutonomous', and those its laws are stated for.
+type StarAutonomousStructures :: [Kind -> Constraint]
+type StarAutonomousStructures = '[Monoidal, SymMonoidal, Closed, StarAutonomous]
+
 instance
-  ('[Monoidal, SymMonoidal, Closed, StarAutonomous] `Elems` cs)
+  (StarAutonomousStructures `Elems` cs)
   => HasStructure cs (p :: CAT k) StarAutonomous
   where
   data Struct StarAutonomous a b where
@@ -171,7 +179,7 @@ instance (WithShow a) => P.Show (Struct StarAutonomous a b) where
   showsPrec d (LinDistInv f) = P.showParen (d P.> 10) P.$ P.showString "linDistInv " . P.showsPrec 11 f
 
 instance
-  ('[Monoidal, SymMonoidal, Closed, StarAutonomous] `Elems` cs)
+  (StarAutonomousStructures `Elems` cs)
   => StarAutonomous (FREE cs (p :: CAT k))
   where
   type Dual a = DualF a
@@ -180,3 +188,46 @@ instance
   dualInv @a @b f = St (DualInv @a @b f) Nil \\ f
   linDist @a @b @c f = St (LinDist @a @b @c f) Nil \\ f
   linDistInv @a @b @c f = St (LinDistInv @a @b @c f) Nil \\ f
+
+-- | 'dual' is a contravariant functor, bijective on hom-sets with inverse 'dualInv'; 'doubleNeg'
+-- is an isomorphism; and 'linDist' is a natural bijection
+-- @Hom(a ** b, Dual c) ≅ Hom(a, Dual (b ** c))@ with inverse 'linDistInv'.
+instance Laws StarAutonomousStructures where
+  laws =
+    [ Law "dual identity" \ @a _ -> withObDual @_ @a (dual (obj @a) =:= id)
+    , Law "dual composition" \ @a @b @c gen -> do
+        f <- gen @a @b "f"
+        g <- gen @b @c "g"
+        dual (g . f) =:= dual f . dual g
+    , Law "dualInv after dual" \ @a @b gen -> do
+        f <- gen @a @b "f"
+        f =:= dualInv @_ @b @a (dual f)
+    , Law "dual after dualInv" \ @a @b gen -> withObDual @_ @a $ withObDual @_ @b do
+        g <- gen @(Dual b) @(Dual a) "g"
+        g =:= dual (dualInv @_ @b @a g)
+    , Law "linDistInv after linDist" \ @a @b @c gen ->
+        withOb2 @_ @a @b $ withObDual @_ @c do
+          p <- gen @(a ** b) @(Dual c) "p"
+          p =:= linDistInv @_ @a @b @c (linDist @_ @a @b @c p)
+    , Law "linDist after linDistInv" \ @a @b @c gen ->
+        withOb2 @_ @b @c $ withObDual @_ @(b ** c) do
+          q <- gen @a @(Dual (b ** c)) "q"
+          q =:= linDist @_ @a @b @c (linDistInv @_ @a @b @c q)
+    , Law "linDist naturality (a)" \ @a @b @c @d gen ->
+        withOb2 @_ @a @b $ withObDual @_ @c do
+          p <- gen @(a ** b) @(Dual c) "p"
+          f <- gen @d @a "f"
+          linDist @_ @a @b @c p . f =:= linDist @_ @d @b @c (p . (f ** obj @b))
+    , Law "linDist naturality (b)" \ @a @b @c @d gen ->
+        withOb2 @_ @a @b $ withObDual @_ @c do
+          p <- gen @(a ** b) @(Dual c) "p"
+          g <- gen @d @b "g"
+          dual (g ** obj @c) . linDist @_ @a @b @c p =:= linDist @_ @a @d @c (p . (obj @a ** g))
+    , Law "linDist naturality (c)" \ @a @b @c @d gen ->
+        withOb2 @_ @a @b $ withObDual @_ @d do
+          p <- gen @(a ** b) @(Dual d) "p"
+          h <- gen @c @d "h"
+          linDist @_ @a @b @c (dual h . p) =:= dual (obj @b ** h) . linDist @_ @a @b @d p
+    ]
+      P.++ inverses "doubleNeg" \ @a ->
+        Inverses (label "doubleNegInv" (doubleNegInv @a)) (label "doubleNeg" (doubleNeg @a))

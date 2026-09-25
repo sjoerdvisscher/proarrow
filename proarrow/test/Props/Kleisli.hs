@@ -42,7 +42,6 @@ test =
         [ testCategory @(KLEISLI (Star (Prelude Maybe)))
         , testInitialObject @(KLEISLI (Star (Prelude Maybe)))
         , testMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
-        , testMonoidalHom @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , testSymMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , testCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r) (\r -> r)
         , testBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
@@ -61,7 +60,7 @@ test =
           -- and every object in the palette is inhabited, so every hom-set here is a singleton and
           -- every law holds trivially. A non-empty answer type would make it meaningful, but the
           -- generator for @(b -> r) -> (a -> r)@ does not currently support one.
-          testMonoidalHom @(KLEISLI (Cont Void)) (\r -> r)
+          testMonoidal @(KLEISLI (Cont Void)) (\r -> r)
         ]
     , testGroup
         "Pair comonad"
@@ -73,7 +72,6 @@ test =
           testBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         , testCartesian @(KLEISLI (Costar (Prelude Pair))) (\r -> r) (\r -> r)
         , testMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
-        , testMonoidalHom @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         ]
     ]
 

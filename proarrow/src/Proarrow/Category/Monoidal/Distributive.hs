@@ -30,7 +30,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , type (+)
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, obj, (//), (:~>), type (+->))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), coindex, corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -39,6 +39,7 @@ import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representable (..), repUniv)
+import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Laws (..), inverses)
 import Prelude (($))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -68,12 +69,16 @@ class (Monoidal k, HasCoproducts k) => Distributive k where
   -- | The 'InitialObject' annihilates the tensor on the left.
   absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
 
+-- | The structures the free category needs for 'Distributive', and those its laws are stated for.
+type DistributiveStructures :: [Kind -> Constraint]
+type DistributiveStructures = '[Monoidal, HasInitialObject, HasBinaryCoproducts, Distributive]
+
 -- | The free-category structure for 'Distributive': formal distributors and absorbers,
 -- interpreted by 'foldStructure' through the target's own. Together with the coproduct and
 -- monoidal structures this makes a free category over a bare quiver distributive without asking
 -- anything of the quiver's category.
 instance
-  ('[Distributive, Monoidal, HasBinaryCoproducts, HasInitialObject] `Elems` cs)
+  (DistributiveStructures `Elems` cs)
   => HasStructure cs (p :: CAT k) Distributive
   where
   data Struct Distributive i o where
@@ -94,7 +99,7 @@ instance P.Show (Struct Distributive a b) where
   showsPrec _ AbsorbL = P.showString "absorbL"
   showsPrec _ AbsorbR = P.showString "absorbR"
 
-instance ('[Distributive, Monoidal, HasBinaryCoproducts, HasInitialObject] `Elems` cs) => Distributive (FREE cs (p :: CAT k)) where
+instance (DistributiveStructures `Elems` cs) => Distributive (FREE cs (p :: CAT k)) where
   distL = St DistL Nil
   distR = St DistR Nil
   absorbL = St AbsorbL Nil
@@ -237,3 +242,17 @@ instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
 -- | This breaks for possibly infinite traversals like Star [].
 instance (Traversable t, Representable t) => Cotraversable (RepCostar t) where
   cotraverse (p :.: RepCostar t) = p // case traverse @t (repUniv :.: p) of p' :.: t' -> corepUniv :.: rmap (t . index t') p'
+
+-- | The tensor distributes over coproducts and is absorbed by the initial object:
+-- 'distL', 'distR', 'absorbL' and 'absorbR' are isomorphisms, with the inverses 'distLInv',
+-- 'distRInv' and 'initiate'.
+instance Laws DistributiveStructures where
+  laws =
+    inverses "distL" (\ @a @b @c -> Inverses (distL @_ @a @b @c) (label "distLInv" (distLInv @a @b @c)))
+      P.++ inverses "distR" (\ @a @b @c -> Inverses (distR @_ @a @b @c) (label "distRInv" (distRInv @a @b @c)))
+      P.++ inverses
+        "absorbL"
+        (\ @a -> withOb2 @_ @a @InitialObject (Inverses (absorbL @_ @a) initiate))
+      P.++ inverses
+        "absorbR"
+        (\ @a -> withOb2 @_ @InitialObject @a (Inverses (absorbR @_ @a) initiate))

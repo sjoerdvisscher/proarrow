@@ -47,7 +47,6 @@ test =
     , testBinaryCoproducts_ @(MatK Int)
     , testHypergraph_ @(MatK Int)
     , testMonoidal_ @(MatK Int)
-    , testMonoidalHom_ @(MatK Int)
     , testSymMonoidal_ @(MatK Int)
     , testDistributive_ @(MatK Int)
     , testClosed_ @(MatK Int)

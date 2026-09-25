@@ -60,7 +60,6 @@ test =
     , testBinaryProducts_ @COST
     , testBinaryCoproducts_ @COST
     , testMonoidal_ @COST
-    , testMonoidalHom_ @COST
     , testSymMonoidal_ @COST
     , testDistributive_ @COST
     , testEqualizers_ @COST

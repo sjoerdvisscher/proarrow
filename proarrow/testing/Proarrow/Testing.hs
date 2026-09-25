@@ -17,6 +17,16 @@ module Proarrow.Testing
   , TestOb'
   , obFromTestOb
 
+    -- * Objecthood witnesses
+  , WithTestOb
+  , WithTestOb2
+  , WithTestObProd
+  , WithTestObCoprod
+  , WithTestObExp
+  , WithTestObDual
+  , WithTestObRep
+  , WithTestObCorep
+
     -- * Objects
   , Some (..)
   , mapSome
@@ -96,12 +106,18 @@ import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
+import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.Closed qualified as Exponential
+import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Category.Sheaf (HasFiniteCovers)
+import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
+import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Object (Ob')
+import Proarrow.Profunctor.Corepresentable (type (%%))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
@@ -112,7 +128,7 @@ import Proarrow.Profunctor.Instance.Sieve (Sieve)
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
-import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Representable (Rep (..), type (%))
 import Test.Falsify.Interactive (falsify)
 
 data GenTotal a where
@@ -399,6 +415,37 @@ obFromTestOb :: forall {k} (a :: k) r. (Testable k, TestOb a) => ((Ob a) => r) -
 -- Seen on GHC 9.10.3, likely a solver limitation. Worth retrying without this helper after a
 -- GHC upgrade.
 obFromTestOb r = r
+
+-- * Objecthood witnesses
+
+-- | How 'TestOb' is closed under the structure a law-checker is about.
+--
+-- Every law-checker in "Proarrow.Testing.Laws" that needs one takes it as an explicit rank-2 argument, since in
+-- general a category may make only some of its objects testable; the @_@-suffixed variants supply
+-- the trivial witness. These synonyms only name the shapes, which would otherwise be spelled out
+-- in forty-odd signatures.
+type WithTestOb k = forall (a :: k) r. (Ob a) => ((TestOb a) => r) -> r
+
+-- | @'TestOb'@ is closed under the tensor.
+type WithTestOb2 k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r
+
+-- | @'TestOb'@ is closed under the binary product.
+type WithTestObProd k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryProduct.&& b)) => r) -> r
+
+-- | @'TestOb'@ is closed under the binary coproduct.
+type WithTestObCoprod k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryCoproduct.|| b)) => r) -> r
+
+-- | @'TestOb'@ is closed under the internal hom.
+type WithTestObExp k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Exponential.~~> b)) => r) -> r
+
+-- | @'TestOb'@ is closed under dualization.
+type WithTestObDual k = forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r
+
+-- | @'TestOb'@ is closed under a representable profunctor.
+type WithTestObRep k p = forall (a :: k) r. (TestOb a) => ((TestOb (p % a)) => r) -> r
+
+-- | @'TestOb'@ is closed under a corepresentable profunctor.
+type WithTestObCorep k p = forall (a :: k) r. (TestOb a) => ((TestOb (p %% a)) => r) -> r
 
 data Some k where
   Some :: forall {k} a. (TestOb (a :: k)) => Some k

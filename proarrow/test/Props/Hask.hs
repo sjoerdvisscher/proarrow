@@ -47,7 +47,6 @@ test =
     , testBinaryProducts @Type (\r -> r)
     , testCartesian @Type (\r -> r) (\r -> r)
     , testMonoidal @Type (\r -> r)
-    , testMonoidalHom @Type (\r -> r)
     , testSymMonoidal @Type (\r -> r)
     , testCopyDiscard @Type (\r -> r) (\r -> r)
     , testBinaryCoproducts @Type (\r -> r)
