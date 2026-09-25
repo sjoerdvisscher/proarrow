@@ -67,6 +67,8 @@ import Proarrow.Profunctor.Corepresentable
   , type (%%)
   )
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Ran (Ran (..))
+import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep, Representable, index, repMap, tabulate, withObRep, type (%))
@@ -1663,7 +1665,7 @@ testSiteLaws =
 --
 -- On a thin site (at most one arrow between two objects) the equation holds as soon as it
 -- typechecks. It bites only where two legs share a source and target: the ends of an edge in the
--- graph schema @E ⇉ V@, or 'Proarrow.Category.Sheaf.ByElements', whose legs are named by elements.
+-- graph schema @E ⇉ V@, or 'Proarrow.Category.Sheaf.ByImage', whose legs are named by elements.
 testStableSite
   :: forall t k. (Sheaf.StableSite t k, Sheaf.HasFiniteCovers t k, Finitary.FiniteCat k) => TestTree
 testStableSite =
@@ -1743,6 +1745,56 @@ testAtomicIsDoubleNegation =
       (Topos.doubleNegation @(BinaryProduct.PROD (FinTopos.FINITARY () k)))
       "lawvereTierney @Atomic"
       (FinSheaf.lawvereTierney @Sheaf.Atomic)
+
+-- | A profunctor @p :: j +-> k@ is fully faithful in the sense of 'Ran' when the functor from @k@ to
+-- copresheaves on @j@ sending @a@ to @p a (-)@ is: each hom-set @a ~> a'@ is in bijection with the
+-- natural transformations @p a' (-) -> p a (-)@, which are @(p '|>' p) a a'@. For a corepresentable
+-- @p@ that is the functor @p '%%' -@ being fully faithful, which is
+-- 'Proarrow.Category.Sheaf.ByImage'\'s Fully faithful law. 'testRiftFullyFaithful' is the other
+-- side, and neither implies the other.
+testRanFullyFaithful
+  :: forall {j} {k} (p :: j +-> k). (Finitary.Finitary p, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
+testRanFullyFaithful =
+  testProperty "fully faithful into copresheaves" $
+    sequence_
+      ( Finitary.foreachOb @k @(Property ()) \ @a -> Finitary.foreachOb @k @(Property ()) \ @a' ->
+          let ix = Finitary.toIndex @(Ran (OP p) p) @a @a'
+          in [ expect
+                 ( "each arrow from object "
+                     ++ show (Finitary.objIndex @a)
+                     ++ " to object "
+                     ++ show (Finitary.objIndex @a')
+                     ++ " is one transformation"
+                 )
+                 (Finitary.indices (Finitary.size @(Ran (OP p) p) @a @a'))
+                 (sort [ix (Ran (lmap f)) | f <- Finitary.elements @(Hom k) @a @a'])
+             ]
+      )
+
+-- | A profunctor @p :: j +-> k@ is fully faithful in the sense of 'Rift' when the functor from @j@ to
+-- presheaves on @k@ sending @b@ to @p (-) b@ is: each hom-set @b ~> b'@ is in bijection with the
+-- natural transformations @p (-) b -> p (-) b'@, which are @(p '<|' p) b b'@. For a representable
+-- @p@ that is the functor @p '%' -@ being fully faithful. For a corepresentable @p@ it says the
+-- image of @p '%%' -@ is dense, which for 'Proarrow.Category.Sheaf.ByImage' is the coverage being
+-- subcanonical.
+testRiftFullyFaithful
+  :: forall {j} {k} (p :: j +-> k). (Finitary.Finitary p, Finitary.FiniteCat j, Finitary.FiniteCat k) => TestTree
+testRiftFullyFaithful =
+  testProperty "fully faithful into presheaves" $
+    sequence_
+      ( Finitary.foreachOb @j @(Property ()) \ @b -> Finitary.foreachOb @j @(Property ()) \ @b' ->
+          let ix = Finitary.toIndex @(Rift (OP p) p) @b @b'
+          in [ expect
+                 ( "each arrow from object "
+                     ++ show (Finitary.objIndex @b)
+                     ++ " to object "
+                     ++ show (Finitary.objIndex @b')
+                     ++ " is one transformation"
+                 )
+                 (Finitary.indices (Finitary.size @(Rift (OP p) p) @b @b'))
+                 (sort [ix (Rift (rmap f)) | f <- Finitary.elements @(Hom j) @b @b'])
+             ]
+      )
 
 -- | For every sieve at every pair of objects of a finite site: it is covering exactly when it is dense,
 -- that is when its 'FinSheaf.closure' is the maximal sieve. Two independent computations of one

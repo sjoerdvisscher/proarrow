@@ -42,7 +42,7 @@ import Proarrow.Category.Enriched.Thin
   , IndexedList (..)
   , KnownList (..)
   )
-import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Sheaf (Sheaf (..), Site (..), SomeLeg (..), Trivial)
@@ -64,6 +64,7 @@ import Proarrow.Core
   , Promonad (..)
   , UN
   , lmap
+  , obj
   , rmap
   , (//)
   , type (+->)
@@ -72,10 +73,13 @@ import Proarrow.Core
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
+import Proarrow.Profunctor.Instance.Ran (Ran (..))
+import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..), maximalSieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
@@ -200,15 +204,8 @@ instance
   => Finitary (Reindex r (p :: j +-> k) fs)
   where
   size @a @b = genericLength (cellVal @fs @a @b)
-  toIndex @a @b (Reindex x) =
-    ( case findIndex (P.elem (toIndex x)) (cellVal @fs @a @b) of
-        Just pos -> P.fromIntegral pos
-        Nothing -> P.error "Reindex: element outside every fibre"
-    )
-      \\ x
-  fromIndex @a @b i = case genericIndex (cellVal @fs @a @b) i of
-    rep : _ -> Reindex (fromIndex @p rep)
-    [] -> P.error "Reindex: empty fibre"
+  toIndex @a @b (Reindex x) = classIndex "Reindex: element outside every fibre" (cellVal @fs @a @b) (toIndex x) \\ x
+  fromIndex @a @b i = Reindex (fromIndex @p (classRep "Reindex: empty fibre" (cellVal @fs @a @b) i))
 
 -- | Restricting a sheaf to a subobject gives a sheaf, provided the subobject is a /subsheaf/: the
 -- element glued from a family of kept elements must be kept too. The tables of 'equalize' and the
@@ -427,6 +424,16 @@ classes pairs is = sort (P.map sort (P.foldr merge (P.map (: []) is) pairs))
     merge (i, j) cs = case partition (\c -> P.elem i c || P.elem j c) cs of
       ([], _) -> P.error "classes: an index outside the set being partitioned"
       (hit, miss) -> P.concat hit : miss
+
+-- | The position of the class an index lies in.
+classIndex :: P.String -> [[Natural]] -> Natural -> Natural
+classIndex msg cls n = P.fromIntegral (fromMaybe (P.error msg) (findIndex (P.elem n) cls))
+
+-- | The first member of the class at a position, which stands for the class.
+classRep :: P.String -> [[Natural]] -> Natural -> Natural
+classRep msg cls i = case genericIndex cls i of
+  n : _ -> n
+  [] -> P.error msg
 
 -- | Equalizers of finitary profunctors between finite categories: at each pair of objects, keep the
 -- indices on which the two natural transformations agree, and reify the table.
@@ -727,6 +734,114 @@ expAt
   -> (p :~>: q) a b
 expAt pos row = Exp \ca bd x -> ca // bd // fromIndex @q (atNatKey pos row (natKey (Yo ca bd :*: x)))
 
+-- | What the right Kan lift @'Rift' ('OP' j) p@ at @a@\/@b@ is a set of natural transformations out
+-- of. An element of @'Rift' ('OP' j) p a b@ is a function @forall x. j x a -> p x b@, and by Yoneda
+-- that is a natural transformation from @j (-) a × (b ~> -)@ to @p@.
+type RiftWeight :: forall {i} {j} {k}. (k +-> i) -> k -> j -> j +-> i
+data RiftWeight w a b x d where
+  RiftWeight :: (Ob x, Ob d) => w x a -> b ~> d -> RiftWeight w a b x d
+
+instance (Profunctor w, CategoryOf j) => Profunctor (RiftWeight w a (b :: j)) where
+  dimap f g (RiftWeight u h) = f // g // RiftWeight (lmap f u) (g . h)
+  r \\ RiftWeight{} = r
+
+instance (Finitary w, LocallyFinite j, Ob a, Ob b) => Finitary (RiftWeight w a (b :: j)) where
+  size @x @d = size @w @x @a P.* size @(Hom j) @b @d
+  toIndex @_ @d (RiftWeight u h) = pairIndex (size @(Hom j) @b @d) (toIndex u) (toIndex h)
+  fromIndex @_ @d i = let (l, r) = unpairIndex (size @(Hom j) @b @d) i in RiftWeight (fromIndex l) (fromIndex r)
+  elements @x @d = [RiftWeight u h | u <- elements @w @x @a, h <- elements @(Hom j) @b @d]
+
+-- | The right Kan lift of finitary profunctors is finitary: its elements are the natural
+-- transformations out of 'RiftWeight', enumerated, as for the internal hom.
+instance
+  (Finitary w, Finitary p, FiniteCat i, FiniteCat j)
+  => Finitary (Rift (OP (w :: k +-> i)) p :: j +-> k)
+  where
+  size @a @b = genericLength (natElements @(RiftWeight w a b) @p)
+  toIndex @a @b = \(Rift f) -> ix \(RiftWeight u h) -> rmap h (f u)
+    where
+      ix = natIndex @(RiftWeight w a b) @p "toIndex: the family is not natural"
+  fromIndex @a @b i = riftAt @w @p (natPositions @(RiftWeight w a b)) (genericIndex (natElements @(RiftWeight w a b) @p) i)
+  elements @a @b =
+    let pos = natPositions @(RiftWeight w a b) in P.map (riftAt @w @p pos) (natElements @(RiftWeight w a b) @p)
+
+-- | The composite of finitary profunctors over a finite middle category is finitary. An element
+-- at @a@\/@c@ is a pair @(u, v)@ over some middle object @x@, and pairs are identified along the
+-- arrows of the middle category: @(rmap f u, v) = (u, lmap f v)@, the coend
+-- @∫^x w a x × s x c@. The classes are computed by 'classes' and numbered in order, each shown by
+-- its first pair.
+instance (Finitary w, Finitary s, FiniteCat j) => Finitary ((w :: j +-> k) :.: (s :: i +-> j)) where
+  size @a @c = genericLength (compClasses @w @s @a @c)
+  toIndex @a @c = \(u :.: v) -> u // classIndex "toIndex: a pair in no class" cls (compIndex @w @s @a @c offs u v)
+    where
+      offs = compOffsets @w @s @a @c
+      cls = compClasses @w @s @a @c
+  fromIndex @a @c n = genericIndex (compPairs @w @s @a @c) (classRep "fromIndex: an empty class" (compClasses @w @s @a @c) n)
+  elements @a @c = let ps = compPairs @w @s @a @c in [genericIndex ps n | n : _ <- compClasses @w @s @a @c]
+
+-- | Every pair @(u, v)@ over every middle object, numbered as 'compIndex' numbers them.
+compPairs
+  :: forall {i} {j} {k} (w :: j +-> k) (s :: i +-> j) (a :: k) (c :: i)
+   . (Finitary w, Finitary s, FiniteCat j, Ob a, Ob c)
+  => [(w :.: s) a c]
+compPairs = foreachOb @j \ @x -> [u :.: v | u <- elements @w @a @x, v <- elements @s @x @c]
+
+-- | Where each middle object's pairs start in the numbering of 'compPairs'.
+compOffsets
+  :: forall {i} {j} {k} (w :: j +-> k) (s :: i +-> j) (a :: k) (c :: i)
+   . (Finitary w, Finitary s, FiniteCat j, Ob a, Ob c)
+  => [Natural]
+compOffsets = P.scanl (P.+) 0 (foreachOb @j \ @x -> [size @w @a @x P.* size @s @x @c])
+
+-- | The position of a pair over @x@ in 'compPairs'.
+compIndex
+  :: forall {i} {j} {k} (w :: j +-> k) (s :: i +-> j) (a :: k) (c :: i) (x :: j)
+   . (Finitary w, Finitary s, FiniteCat j, Ob a, Ob c, Ob x)
+  => [Natural]
+  -> w a x
+  -> s x c
+  -> Natural
+compIndex offs u v = genericIndex offs (objIndex @x) P.+ pairIndex (size @s @x @c) (toIndex u) (toIndex v)
+
+-- | The classes of pairs under the identifications along the middle arrows.
+compClasses
+  :: forall {i} {j} {k} (w :: j +-> k) (s :: i +-> j) (a :: k) (c :: i)
+   . (Finitary w, Finitary s, FiniteCat j, Ob a, Ob c)
+  => [[Natural]]
+compClasses =
+  classes
+    ( foreachOb @j \ @x -> foreachOb @j \ @x' ->
+        [ (compIndex @w @s @a @c offs (rmap f u) v, compIndex @w @s @a @c offs u (lmap f v))
+        | f <- elements @(Hom j) @x @x'
+        , u <- elements @w @a @x
+        , v <- elements @s @x' @c
+        ]
+    )
+    (indices (P.last offs))
+  where
+    offs = compOffsets @w @s @a @c
+
+-- | The right Kan extension of finitary profunctors is finitary. It is the right Kan lift in the
+-- opposite categories, @'Ran' ('OP' v) p a b ≅ 'Rift' ('OP' ('Op' v)) ('Op' p) ('OP' b) ('OP' a)@,
+-- and is numbered as that is.
+instance
+  (Finitary v, Finitary p, FiniteCat i, FiniteCat k)
+  => Finitary (Ran (OP (v :: i +-> j)) p :: j +-> k)
+  where
+  size @a @b = size @(Rift (OP (Op v)) (Op p)) @(OP b) @(OP a)
+  toIndex @a @b (Ran f) = toIndex @(Rift (OP (Op v)) (Op p)) @(OP b) @(OP a) (Rift \(Op u) -> Op (f u))
+  fromIndex @a @b i = case fromIndex @(Rift (OP (Op v)) (Op p)) @(OP b) @(OP a) i of Rift k -> Ran \u -> unOp (k (Op u))
+  elements @a @b = [Ran \u -> unOp (k (Op u)) | Rift k <- elements @(Rift (OP (Op v)) (Op p)) @(OP b) @(OP a)]
+
+-- | A tabulated family as an element of the right Kan lift.
+riftAt
+  :: forall {i} {j} {k} (w :: k +-> i) (p :: j +-> i) (a :: k) (b :: j)
+   . (Finitary w, Finitary p, FiniteCat i, FiniteCat j, Ob a, Ob b)
+  => M.Map NatKey P.Int
+  -> [Natural]
+  -> Rift (OP w) p a b
+riftAt pos row = Rift \u -> u // fromIndex @p (atNatKey pos row (natKey (RiftWeight u (obj @b))))
+
 -- Finitary profunctors are cartesian closed, and the sheaves are too, by the instance for any
 -- full subcategory closed under the internal hom in "Proarrow.Profunctor.Instance.Exponential".
 -- Here that is @'Finitary' (p ':~>:' q)@ just above, where the hom-set is the natural
@@ -765,19 +880,16 @@ sieveAt pos row = Sieve \ca bd -> ca // bd // atNatKey pos row (natKey (Yo ca bd
 -- | All the ways an element of @p@ and one of @q@ can be carried to a matching pair: the sieve an
 -- arrow's graph is classified by. Shared with the sheaves, whose classifier is this closed.
 graphSieve
-  :: forall {j} {k} (p :: j +-> k) (q :: j +-> k) (a :: k) (b :: j)
+  :: forall {j} {k} (p :: j +-> k) (q :: j +-> k)
    . (Profunctor p, Finitary q)
-  => (p :~> q)
-  -> p a b
-  -> q a b
-  -> Sieve a b
-graphSieve f x y = x // Sieve \g h -> g // h // toIndex @q (f (dimap g h x)) == toIndex (dimap g h y)
+  => (p :~> q) -> (p :*: q) :~> Sieve
+graphSieve n (x :*: y) = x // Sieve \g h -> g // h // toIndex @q (n (dimap g h x)) == toIndex (dimap g h y)
 
 -- | The subobject classifier is the profunctor of sieves, and an arrow classifies its graph.
 instance (FiniteCat j, FiniteCat k) => HasSubobjectClassifier (PROD (FINITARY j k)) where
   type Omega = PR (SUB Sieve)
   true = Prod (Sub (Prof \TerminalProfunctor -> maximalSieve))
-  classifyGraph (Prod (Sub (Prof f))) = Prod (Sub (Prof \(x :*: y) -> graphSieve f x y))
+  classifyGraph (Prod (Sub (Prof n))) = Prod (Sub (Prof (graphSieve n)))
 
 -- | Finitary profunctors between finite categories form an elementary topos: finite limits and
 -- colimits, cartesian closed, a subobject classifier, and image factorization.

@@ -9,8 +9,8 @@ import Data.Void (Void)
 import Proarrow.Category.Instance.Opposite (OPPOSITE)
 import Proarrow.Category.Monoidal.Closed (ExpRep)
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Profunctor.Instance.Costar (Costar, unCostar, pattern Costar)
-import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
+import Proarrow.Profunctor.Instance.Costar (Costar)
+import Proarrow.Profunctor.Instance.Star (Star)
 import Proarrow.Profunctor.Representable (Rep)
 import Test.Falsify.Generator (Function, choose, function, functionMap, list)
 import Test.Falsify.Range (between)
@@ -135,16 +135,6 @@ instance (TestingEqShow (f a)) => TestingEqShow (Prelude f a) where
 instance (Function (f a)) => Function (Prelude f a) where
   function = fmap (functionMap unPrelude Prelude) . function
 
-instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestableType (Star (Prelude f) a b) where
-  gen = invmap Star unStar gen
-instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestingEqShow (Star (Prelude f) a b) where
-  eqP (Star l) (Star r) = eqP l r
-  showP (Star f) = showP f
 instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Star (Prelude f))
 
-instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestableType (Costar (Prelude f) a b) where
-  gen = invmap Costar unCostar gen
-instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestingEqShow (Costar (Prelude f) a b) where
-  eqP (Costar l) (Costar r) = eqP l r
-  showP (Costar f) = showP f
 instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Costar (Prelude f))

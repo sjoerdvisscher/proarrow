@@ -42,6 +42,8 @@ import Proarrow.Category.Instance.Ordinal (LTE)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Functor (FunctorForRep (..), withMappedOb)
+import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
@@ -231,6 +233,14 @@ instance (Finitary p, Finitary q) => Finitary (p :**: q) where
   toIndex @'(_, a2) @'(_, b2) (x :**: y) = pairIndex (size @q @a2 @b2) (toIndex x) (toIndex y)
   fromIndex @'(_, a2) @'(_, b2) i = let (l, r) = unpairIndex (size @q @a2 @b2) i in fromIndex l :**: fromIndex r
   elements @'(a1, a2) @'(b1, b2) = [x :**: y | x <- elements @p @a1 @b1, y <- elements @q @a2 @b2]
+
+-- | A corepresentable over finite hom-sets is finitary, numbered as the hom-set @f '@' a ~> b@.
+-- (It lives here and not with 'Corep': "Proarrow.Profunctor.Corepresentable" is below this module.)
+instance (FunctorForRep f, LocallyFinite j) => Finitary (Corep (f :: k +-> j)) where
+  size @a @b = withMappedOb @f @a (size @(Hom j) @(f @ a) @b)
+  toIndex (Corep g) = toIndex g \\ g
+  fromIndex @a @_ i = withMappedOb @f @a (Corep (fromIndex i))
+  elements @a @b = withMappedOb @f @a (P.map Corep (elements @(Hom j) @(f @ a) @b))
 
 -- | The opposite of a finitary profunctor is finitary, at the same sizes read the other way round.
 -- Taking @p = 'Hom' k@ this makes @'OPPOSITE' k@ a 'FiniteCat' whenever @k@ is one, so everything

@@ -89,7 +89,7 @@ import Control.Monad (ap, unless)
 import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Enriched.Finitary (Finitary (..), FiniteCat, foreachOb)
 import Proarrow.Category.Enriched.Finitary.Sheaf (ClosedSieve (..), Plus, plusTable, samePlus)
-import Proarrow.Category.Enriched.Finitary.Topos (KnownTables, Tabulated (..), natTable, sieveTable)
+import Proarrow.Category.Enriched.Finitary.Topos (KnownTables, Tabulated (..), natTable, natTransformations, sieveTable)
 import Proarrow.Category.Enriched.Thin (Enumerable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
@@ -103,9 +103,13 @@ import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Instance.Product (fstP, sndP, (:*:) (..))
+import Proarrow.Profunctor.Instance.Ran (Ran (..))
+import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve)
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -496,6 +500,21 @@ instance (TestingEqShow (p b a)) => TestingEqShow (Op p (OP a) (OP b)) where
   eqP (Op l) (Op r) = eqP l r
   showP (Op p) = "Op (" ++ showP p ++ ")"
 
+-- | The elements of 'Star' and 'Costar' are arrows, and are compared, shown and drawn as those.
+instance (TestingEqShow (a ~> f b)) => TestingEqShow (Star f a b) where
+  eqP (Star l) (Star r) = eqP l r
+  showP (Star f) = showP f
+
+instance (Ob b, TestableType (a ~> f b)) => TestableType (Star f a b) where
+  gen = invmap Star (\(Star f) -> f) gen
+
+instance (TestingEqShow (f a ~> b)) => TestingEqShow (Costar f a b) where
+  eqP (Costar l) (Costar r) = eqP l r
+  showP (Costar f) = showP f
+
+instance (Ob a, TestableType (f a ~> b)) => TestableType (Costar f a b) where
+  gen = invmap Costar (\(Costar f) -> f) gen
+
 instance (TestableType (a ~> (f Rep.@ b)), Ob b) => TestableType (Rep f a b) where
   gen = invmap Rep unRep (gen @(a ~> f Rep.@ b))
 instance (TestingEqShow (a ~> (f Rep.@ b)), Ob b) => TestingEqShow (Rep f a b) where
@@ -637,6 +656,54 @@ instance
   (Testable j, Testable k, Finitary p, Finitary q, FiniteCat j, FiniteCat k)
   => TestableProfunctor (p :~>: q :: j +-> k)
 
+-- | A natural transformation between finitary profunctors, compared and shown by its table and
+-- drawn from 'natTransformations'. The hom-sets of a category of finitary profunctors, with or
+-- without the 'SUBCAT' wrapper.
+instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestingEqShow (Prof (p :: j +-> k) q) where
+  eqP (Prof f) (Prof g) = pure (natTable @p @q f == natTable @p @q g)
+  showP (Prof f) = show (natTable @p @q f)
+
+instance (Finitary p, Finitary q, FiniteCat j, FiniteCat k) => TestableType (Prof (p :: j +-> k) q) where
+  gen = case natTransformations @p @q of
+    [] -> GenEmpty \_ -> error "no natural transformations between these profunctors"
+    fs -> optGen fs
+
+-- | The right Kan lift and extension of finitary profunctors, compared and shown by index, as the
+-- internal hom is.
+instance
+  (Testable j, Testable k, Finitary w, Finitary p, FiniteCat i, FiniteCat j, TestOb (a :: k), TestOb (b :: j))
+  => TestingEqShow (Rift (OP (w :: k +-> i)) p a b)
+  where
+  eqP x@Rift{} y = pure (toIndex @(Rift (OP w) p) x == toIndex y)
+  showP x@Rift{} = show (toIndex @(Rift (OP w) p) x)
+
+instance
+  (Testable j, Testable k, Finitary w, Finitary p, FiniteCat i, FiniteCat j, TestOb (a :: k), TestOb (b :: j))
+  => TestableType (Rift (OP (w :: k +-> i)) p a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Rift (OP w) p)))
+
+instance
+  (Testable j, Testable k, Finitary w, Finitary p, FiniteCat i, FiniteCat j)
+  => TestableProfunctor (Rift (OP (w :: k +-> i)) p :: j +-> k)
+
+instance
+  (Testable j, Testable k, Finitary v, Finitary p, FiniteCat i, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestingEqShow (Ran (OP (v :: i +-> j)) p a b)
+  where
+  eqP x@Ran{} y = pure (toIndex @(Ran (OP v) p) x == toIndex y)
+  showP x@Ran{} = show (toIndex @(Ran (OP v) p) x)
+
+instance
+  (Testable j, Testable k, Finitary v, Finitary p, FiniteCat i, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
+  => TestableType (Ran (OP (v :: i +-> j)) p a b)
+  where
+  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Ran (OP v) p)))
+
+instance
+  (Testable j, Testable k, Finitary v, Finitary p, FiniteCat i, FiniteCat k)
+  => TestableProfunctor (Ran (OP (v :: i +-> j)) p :: j +-> k)
+
 -- | A closed sieve is a sieve, and is compared and shown as one. Drawing one is dearer still than
 -- drawing a sieve: the closed ones are found by taking the 'closure' of every sieve at the pair.
 instance (FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (ClosedSieve t a b) where
@@ -689,8 +756,8 @@ instance
   (Finitary p, Finitary q, FiniteCat j, FiniteCat k)
   => TestingEqShow (Sub Prof (SUB p :: SUBCAT (ob :: OB (j +-> k))) (SUB q))
   where
-  eqP (Sub (Prof f)) (Sub (Prof g)) = pure (natTable @p @q f == natTable @p @q g)
-  showP (Sub (Prof f)) = show (natTable @p @q f)
+  eqP (Sub l) (Sub r) = eqP l r
+  showP (Sub f) = showP f
 
 instance
   (Finitary (Sub Prof :: CAT (SUBCAT ob)), Finitary p, Finitary q, FiniteCat j, FiniteCat k, ob p, ob q)
