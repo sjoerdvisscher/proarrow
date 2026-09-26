@@ -227,18 +227,12 @@ instance Laws ClosedStructures where
     , Law "curry of apply" \ @a @b @c gen -> withObExp @_ @b @c do
         q <- gen @a @(b ~~> c) "q"
         q =:= curry @_ @a @b (apply @_ @b @c . (q ** obj @b))
-    , Law "curry naturality (a)" \ @a @b @c @d gen -> withOb2 @_ @a @b do
+    , Law "curry naturality" \ @a @b @c @d @e gen -> withOb2 @_ @a @b $ withOb2 @_ @d @d do
         p <- gen @(a ** b) @c "p"
         f <- gen @d @a "f"
-        curry @_ @a @b p . f =:= curry @_ @d @b (p . (f ** obj @b))
-    , Law "curry naturality (b)" \ @a @b @c @d gen -> withOb2 @_ @a @b do
-        p <- gen @(a ** b) @c "p"
         g <- gen @d @b "g"
-        (obj @c ^^^ g) . curry @_ @a @b p =:= curry @_ @a @d (p . (obj @a ** g))
-    , Law "curry naturality (c)" \ @a @b @c @d gen -> withOb2 @_ @a @b do
-        p <- gen @(a ** b) @c "p"
-        h <- gen @c @d "h"
-        (h ^^^ obj @b) . curry @_ @a @b p =:= curry @_ @a @b (h . p)
+        h <- gen @c @e "h"
+        (h ^^^ g) . curry @_ @a @b p . f =:= curry @_ @d @d (h . p . (f ** g))
     , Law "^^^ from curry" \ @a @b @c @d gen -> do
         f <- gen @b @d "f"
         g <- gen @c @a "g"

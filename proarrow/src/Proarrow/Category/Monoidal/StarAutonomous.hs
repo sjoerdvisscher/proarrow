@@ -213,21 +213,13 @@ instance Laws StarAutonomousStructures where
         withOb2 @_ @b @c $ withObDual @_ @(b ** c) do
           q <- gen @a @(Dual (b ** c)) "q"
           q =:= linDist @_ @a @b @c (linDistInv @_ @a @b @c q)
-    , Law "linDist naturality (a)" \ @a @b @c @d gen ->
-        withOb2 @_ @a @b $ withObDual @_ @c do
+    , Law "linDist naturality" \ @a @b @c @d @e gen ->
+        withOb2 @_ @a @b $ withOb2 @_ @d @e $ withObDual @_ @c $ withObDual @_ @d do
           p <- gen @(a ** b) @(Dual c) "p"
           f <- gen @d @a "f"
-          linDist @_ @a @b @c p . f =:= linDist @_ @d @b @c (p . (f ** obj @b))
-    , Law "linDist naturality (b)" \ @a @b @c @d gen ->
-        withOb2 @_ @a @b $ withObDual @_ @c do
-          p <- gen @(a ** b) @(Dual c) "p"
-          g <- gen @d @b "g"
-          dual (g ** obj @c) . linDist @_ @a @b @c p =:= linDist @_ @a @d @c (p . (obj @a ** g))
-    , Law "linDist naturality (c)" \ @a @b @c @d gen ->
-        withOb2 @_ @a @b $ withObDual @_ @d do
-          p <- gen @(a ** b) @(Dual d) "p"
-          h <- gen @c @d "h"
-          linDist @_ @a @b @c (dual h . p) =:= dual (obj @b ** h) . linDist @_ @a @b @d p
+          g <- gen @e @b "g"
+          h <- gen @d @c "h"
+          linDist @_ @d @e @d (dual h . p . (f ** g)) =:= dual (g ** h) . linDist @_ @a @b @c p . f
     ]
       P.++ inverses "doubleNeg" \ @a ->
         Inverses (label "doubleNegInv" (doubleNegInv @a)) (label "doubleNeg" (doubleNeg @a))
