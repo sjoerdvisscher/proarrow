@@ -18,11 +18,12 @@
 module Proarrow.Testing.Laws where
 
 import Control.Monad (unless, when)
+import Data.Default (def)
 import Data.Foldable (for_)
 import Data.List (genericLength, sort)
 import Numeric.Natural (Natural)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, testFailed, testProperty)
+import Test.Tasty.Falsify (Property, TestOptions, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Adjunction (Adjunction)
@@ -83,7 +84,7 @@ import Proarrow.Profunctor.Instance.Ran (Ran (..))
 import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
-import Proarrow.Profunctor.Representable (Representable, index, repMap, tabulate, withObRep, type (%))
+import Proarrow.Profunctor.Representable (Representable, withObRep)
 import Proarrow.Testing
   ( Some (..)
   , SomeProfunctorElt (..)
@@ -110,7 +111,7 @@ import Proarrow.Testing
   , obFromTestOb
   , testEq
   )
-import Proarrow.Testing.Laws.Run (Witness (..), Witnesses (..), testLaws, testLawsWith)
+import Proarrow.Testing.Laws.Run (RepresentedBy, Witness (..), Witnesses (..), testLaws, testLawsWith, testProLaws)
 
 -- * Isomorphisms
 
@@ -179,46 +180,19 @@ testDagger = testProperty "Dagger" $ do
 
 -- * Profunctors
 
--- | The profunctor laws of @p@ ('propProfunctor') as a ready-made test.
+-- | The falsify options of a plain 'testProperty', to adjust for one test, e.g. a larger
+-- 'overrideMaxRatio' where a law's arrows rarely exist.
+defaultTestOptions :: TestOptions
+defaultTestOptions = def
+
+-- | The profunctor laws of @p@ stated as code ('Laws.ProLaws' 'Profunctor').
 testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
-testProfunctor = testProperty "Profunctor" (propProfunctor @p)
+testProfunctor = testProfunctorWith @p defaultTestOptions
 
--- | The profunctor laws of @p@ at elements from its 'TestableProfunctor' generator; see
--- 'propProfunctorWith'.
-propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => Property ()
-propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)
-
--- | The profunctor laws (@'dimap' id id = id@, 'lmap' and 'rmap' commute, and 'dimap' respects
--- composition) at elements drawn from the given generator, compared through the given
--- 'TestingEqShow' witness. For a profunctor whose elements are not a 'TestableProfunctor' of their
--- own, such as 'testClosed'\'s exponential.
-propProfunctorWith
-  :: forall {j} {k} (p :: j +-> k)
-   . (Profunctor p, Testable j, Testable k)
-  => Property (SomeProfunctorElt p)
-  -> (forall a b r. (TestOb a, TestOb b) => ((TestingEqShow (p a b)) => r) -> r)
-  -> Property ()
-propProfunctorWith genPro withEqShow = do
-  SomeP @a @b p <- genPro
-  withEqShow @a @b $
-    testEq "identity" "dimap id id p" (dimap id id p) "p" p
-  Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
-  Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
-  f <- genNamed @(c ~> a) "f"
-  g <- genNamed @(b ~> d) "g"
-  withEqShow @c @d $
-    testEq "interchange" "lmap f (rmap g p)" (lmap f (rmap g p)) "rmap g (lmap f p)" (rmap g (lmap f p))
-  Some @e <- genObSuchThat @k \(Some @e) -> isGenNonEmpty @(e ~> c)
-  Some @h <- genObSuchThat @j \(Some @h) -> isGenNonEmpty @(d ~> h)
-  f' <- genNamed @(e ~> c) "f'"
-  g' <- genNamed @(d ~> h) "g'"
-  withEqShow @e @h $
-    testEq
-      "composition"
-      "dimap (f . f') (g' . g) p"
-      (dimap (f . f') (g' . g) p)
-      "dimap f' g' (dimap f g p)"
-      (dimap f' g' (dimap f g p))
+-- | 'testProfunctor' with the given falsify options for each law.
+testProfunctorWith :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestOptions -> TestTree
+testProfunctorWith opts =
+  testProLaws @'[CategoryOf] @'[CategoryOf] @Profunctor @p opts "Profunctor" (CategoryW :& WNil) (CategoryW :& WNil)
 
 -- | 'Thin.decide' agrees with the generator: an element of @p a b@ can be generated exactly
 -- when @'Thin.Holds' p a b@ decides to 'Proarrow.Category.Instance.Bool.TRU', and then (the
@@ -244,7 +218,7 @@ propNaturalTransformation
   :: forall {j} {k} (p :: j +-> k) q. (TestableProfunctor p, TestableProfunctor q) => p :~> q -> Property ()
 propNaturalTransformation n = do
   SomeP @a @b p <- genProfunctorElt @p "p"
-  -- as in 'propProfunctorWith': an object with no arrow to @a@ discards the run
+  -- an object with no arrow to @a@ discards the run
   Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
   Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
   f <- genNamed @(c ~> a) "f"
@@ -286,7 +260,7 @@ testFinitary nm = testProperty ("Finitary " ++ nm) $ do
 -- | Check the functor laws of a 'Functor.Functor' @f@: @map id = id@ and @map (g . f) = map g . map
 -- f@. The witness lifts 'TestOb' along @f@ (usually @\\ \@a r -> r@ when @'TestOb' (f a)@ follows
 -- from @'TestOb' a@). Functors encoded as representable profunctors ('Functor.FunctorForRep') are
--- instead tested via their @'Proarrow.Profunctor.Representable.Rep'@ with 'propProfunctor', since
+-- instead tested via their @'Proarrow.Profunctor.Representable.Rep'@ with 'testProfunctor', since
 -- the profunctor laws on @Rep f@ are the functor laws on @f@.
 propFunctor
   :: forall {k1} {k2} (f :: k1 -> k2)
@@ -327,47 +301,39 @@ testFunctor_
   => TestTree
 testFunctor_ = testFunctor @f (\r -> r)
 
--- | Check the 'Representable' laws of @p@: 'index' and 'tabulate' are mutually inverse (@p a b@ is
--- naturally isomorphic to @a '~>' p '%' b@), and that iso is natural,
--- @'index' ('dimap' f g p) = 'repMap' g '.' 'index' p '.' f@, which pins 'repMap' down as
--- the functorial action of the representing functor @p '%' -@. The witness lifts 'TestOb' along
--- @p '%' -@. Unlike the hom-level 'propAdjunction', this generates @p a b@ elements, so it needs @p@
--- to be an element-generatable 'TestableProfunctor'.
-propRepresentable
+-- | The 'M.MonoidalProfunctor' laws of @p@ stated as code ('Laws.ProLaws' 'M.MonoidalProfunctor').
+-- The witnesses say how 'TestOb' is closed under the tensor of @j@ and of @k@.
+testMonoidalProfunctor
   :: forall {j} {k} (p :: j +-> k)
-   . (Representable p, TestableProfunctor p)
-  => WithTestObRep j p
-  -> Property ()
-propRepresentable withTestObRep = do
-  SomeP @a @b p <- genProfunctorElt @p "p"
-  testEq "tabulate . index" "tabulate (index p)" (tabulate @p (index p)) "p" p
-  withTestObRep @b @(Property ()) do
-    f <- genNamed @(a ~> p % b) "f"
-    testEq "index . tabulate" "index (tabulate f)" (index @p (tabulate @p @b @a f)) "f" f
-  Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
-  Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
-  fc <- genNamed @(c ~> a) "f"
-  gd <- genNamed @(b ~> d) "g"
-  withTestObRep @d @(Property ()) do
-    testEq
-      "index naturality"
-      "index (dimap f g p)"
-      (index @p (dimap fc gd p))
-      "repMap g . index p . f"
-      (repMap @p gd . index @p p . fc)
+   . (M.MonoidalProfunctor p, TestableProfunctor p, TestOb (M.Unit :: j), TestOb (M.Unit :: k))
+  => WithTestOb2 j
+  -> WithTestOb2 k
+  -> TestTree
+testMonoidalProfunctor withTestOb2J withTestOb2K =
+  testProLaws @'[CategoryOf, M.Monoidal] @'[CategoryOf, M.Monoidal] @M.MonoidalProfunctor @p
+    defaultTestOptions
+    "MonoidalProfunctor"
+    (CategoryW :& MonoidalW (\ @a @b r -> withTestOb2J @a @b r) :& WNil)
+    (CategoryW :& MonoidalW (\ @a @b r -> withTestOb2K @a @b r) :& WNil)
 
--- | The 'Representable' laws of @p@ ('propRepresentable') as a ready-made test.
+-- | The 'Representable' laws of @p@ stated as code ('Laws.ProLaws' 'Representable'): 'index' and
+-- 'tabulate' are inverse and natural. The witness lifts 'TestOb' along @p '%' -@.
 testRepresentable
   :: forall {j} {k} (p :: j +-> k)
    . (Representable p, TestableProfunctor p)
   => WithTestObRep j p
   -> TestTree
-testRepresentable withTestObRep = testProperty "Representable" (propRepresentable @p (\ @b r -> withTestObRep @b r))
+testRepresentable withTestObRep =
+  testProLaws @'[CategoryOf] @'[CategoryOf, RepresentedBy '[CategoryOf] p] @Representable @p
+    defaultTestOptions
+    "Representable"
+    (CategoryW :& WNil)
+    (CategoryW :& RepresentedW (CategoryW :& WNil) (\ @b r -> withTestObRep @b r) :& WNil)
 
 testRepresentable_ :: forall {j} {k} (p :: j +-> k). (Representable p, TestableProfunctor p, TestObIsOb k) => TestTree
 testRepresentable_ = testRepresentable @p (\ @b r -> withObRep @p @b r)
 
--- | Check the 'Corepresentable' laws of @p@, dual to 'propRepresentable': 'coindex' and 'cotabulate'
+-- | Check the 'Corepresentable' laws of @p@, dual to 'testRepresentable': 'coindex' and 'cotabulate'
 -- are mutually inverse (@p a b@ is naturally isomorphic to @p '%%' a '~>' b@), and that iso is
 -- natural, @'coindex' ('dimap' f g p) = g '.' 'coindex' p '.' 'corepMap' f@, pinning down 'corepMap'
 -- as the functorial action of the corepresenting functor @p '%%' -@. The witness lifts 'TestOb' along
@@ -412,20 +378,9 @@ testCorepresentable_ = testCorepresentable @p (\ @a r -> withObCorep @p @a r)
 -- | Check the adjunction laws of an 'Adjunction' @p@. An adjunction here is a profunctor that is
 -- both 'Representable' and 'Corepresentable', with left adjoint @L = p '%%' -@ and right adjoint
 -- @R = p '%' -@. It carries no laws of its own beyond theirs ('leftAdjunct'\/'rightAdjunct' are just
--- @'index' '.' 'cotabulate'@ and @'coindex' '.' 'tabulate'@), so this delegates to
--- 'propCorepresentable' (for @L@) and 'propRepresentable' (for @R@). The two witnesses lift 'TestOb'
--- along @L@ and @R@ respectively.
-propAdjunction
-  :: forall {j} {k} (p :: j +-> k)
-   . (Adjunction p, TestableProfunctor p)
-  => WithTestObCorep k p
-  -> WithTestObRep j p
-  -> Property ()
-propAdjunction withTestObL withTestObR = do
-  propCorepresentable @p (\ @a r -> withTestObL @a r)
-  propRepresentable @p (\ @b r -> withTestObR @b r)
-
--- | The laws of the adjunction @p@ ('propAdjunction') as a ready-made test.
+-- @'index' '.' 'cotabulate'@ and @'coindex' '.' 'tabulate'@), so this groups 'propCorepresentable'
+-- (for @L@) and 'testRepresentable' (for @R@). The two witnesses lift 'TestOb' along @L@ and @R@
+-- respectively.
 testAdjunction
   :: forall {j} {k} (p :: j +-> k)
    . (Adjunction p, TestableProfunctor p)
@@ -433,7 +388,11 @@ testAdjunction
   -> WithTestObRep j p
   -> TestTree
 testAdjunction withTestObL withTestObR =
-  testProperty "Adjunction" (propAdjunction @p (\ @a r -> withTestObL @a r) (\ @b r -> withTestObR @b r))
+  testGroup
+    "Adjunction"
+    [ testProperty "Corepresentable" (propCorepresentable @p (\ @a r -> withTestObL @a r))
+    , testRepresentable @p (\ @b r -> withTestObR @b r)
+    ]
 
 testAdjunction_
   :: forall {j} {k} (p :: j +-> k)

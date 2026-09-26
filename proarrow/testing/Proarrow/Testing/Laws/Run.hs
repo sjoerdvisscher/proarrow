@@ -21,6 +21,7 @@
 module Proarrow.Testing.Laws.Run
   ( testLaws
   , testLawsWith
+  , testProLaws
 
     -- * Witnesses
   , Witness (..)
@@ -33,20 +34,27 @@ module Proarrow.Testing.Laws.Run
   , untestOb2
   , untestOb3
   , untestTestOb2
-  , TestedArr (..)
+  , TestedArr
+  , pattern TestedArr
+
+    -- * Interpreting profunctors
+  , TestedP (..)
+  , RepF
+  , RepresentedBy
 
     -- * Describing arrows
   , Doc
   , prim
   , atom
   , app
+  , apps
   , infixlDoc
   , infixrDoc
   ) where
 
 import Data.Kind (Constraint, Type)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, testProperty)
+import Test.Tasty.Falsify (Property, TestOptions, testProperty, testPropertyWith)
 import Prelude hiding (fst, id, snd, (.))
 
 import Proarrow.Category.Instance.Free qualified as Free
@@ -59,20 +67,27 @@ import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Category.Monoidal.Strength qualified as Strength
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Colimit.Initial qualified as Initial
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
+import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 import Proarrow.Testing
   ( Some (..)
+  , SomeProfunctorElt (..)
   , Testable (..)
+  , TestableProfunctor (..)
+  , TestableTypeP
   , WithTestOb2
   , WithTestObCoprod
   , WithTestObDual
   , WithTestObExp
   , WithTestObProd
+  , WithTestObRep
   , genNamed
   , genOb
+  , genObSuchThat
+  , isGenNonEmpty
   , obFromTestOb
   , testEq
   )
@@ -93,9 +108,6 @@ testLawsWith
 testLawsWith genObject name witnesses =
   testGroup name [testProperty (Laws.lawName law) (checkLaw law) | law <- Laws.laws @cs]
   where
-    gen :: forall (x :: TESTED cs k) y. (Tested x, Tested y) => String -> Property (x ~> y)
-    gen s =
-      untestTestOb2 @x @y witnesses (prim s <$> genNamed @(Untest x ~> Untest y) s)
     checkLaw :: Laws.Law cs -> Property ()
     checkLaw (Laws.Law lawName body) = do
       Some @a <- genObject
@@ -103,11 +115,78 @@ testLawsWith genObject name witnesses =
       Some @c <- genObject
       Some @d <- genObject
       Some @e <- genObject
-      eq <- body @(TLeaf a :: TESTED cs k) @(TLeaf b) @(TLeaf c) @(TLeaf d) @(TLeaf e) gen
-      case eq of
-        TestedArr @s @t dl l Laws.:=: TestedArr dr r ->
-          untestTestOb2 @s @t @(Property ()) witnesses $
-            testEq lawName (dl 0 "") l (dr 0 "") r
+      eq <-
+        body @(TLeaf a :: TESTED cs k) @(TLeaf b) @(TLeaf c) @(TLeaf d) @(TLeaf e) (genArr witnesses)
+      testEquation witnesses lawName eq
+
+-- | Check the laws of @'Laws.ProLaws' c@ for the profunctor @p@, one property per law: run each
+-- law with @p@ interpreted as 'TestedP' @p@, its elements drawn by 'genProfunctorElt' (each picks
+-- its two object variables), the other variables of a 'Laws.ProLaw' drawn along the chain
+-- @e '~>' c '~>' a@ and @b '~>' d '~>' f@ where those hom-sets are non-empty, and random arrows
+-- for the ones it asks for. The two 'Witnesses' are for the domain @j@ and the codomain
+-- @k@ of @p@, and the 'TestOptions' apply to each law's property.
+testProLaws
+  :: forall {j} {k} csj csk cl (p :: j +-> k)
+   . (Laws.ProLaws cl, TestableProfunctor p, cl (TestedP p :: TESTED csj j +-> TESTED csk k))
+  => TestOptions -> String -> Witnesses csj j -> Witnesses csk k -> TestTree
+testProLaws opts name wsj wsk =
+  testGroup name [testPropertyWith opts (Laws.proLawName law) (checkLaw law) | law <- Laws.proLaws @cl]
+  where
+    checkLaw :: Laws.ProLaw cl -> Property ()
+    checkLaw (Laws.ProLaw lawName body) = do
+      SomeP @a @b p0 <- genProfunctorElt @p "p"
+      Some @c <- genObSuchThat @k \(Some @c') -> isGenNonEmpty @(c' ~> a)
+      Some @d <- genObSuchThat @j \(Some @d') -> isGenNonEmpty @(b ~> d')
+      Some @e <- genObSuchThat @k \(Some @e') -> isGenNonEmpty @(e' ~> c)
+      Some @f <- genObSuchThat @j \(Some @f') -> isGenNonEmpty @(d ~> f')
+      eq <-
+        body @(TestedP p) @(TLeaf a :: TESTED csk k) @(TLeaf b :: TESTED csj j) @(TLeaf c) @(TLeaf d) @(TLeaf e) @(TLeaf f)
+          (prim "p" p0)
+          (genArr wsk)
+          (genArr wsj)
+      testProEquation lawName eq
+    checkLaw (Laws.ProLaw3 lawName body) = do
+      SomeP @a @b p0 <- genProfunctorElt @p "p"
+      SomeP @c @d p1 <- genProfunctorElt @p "p'"
+      SomeP @e @f p2 <- genProfunctorElt @p "p''"
+      eq <-
+        body @(TestedP p) @(TLeaf a :: TESTED csk k) @(TLeaf b :: TESTED csj j) @(TLeaf c) @(TLeaf d) @(TLeaf e) @(TLeaf f)
+          (prim "p" p0)
+          (prim "p'" p1)
+          (prim "p''" p2)
+          (genArr wsk)
+          (genArr wsj)
+      testProEquation lawName eq
+    testProEquation :: String -> Laws.ProEquation (TestedP p :: TESTED csj j +-> TESTED csk k) -> Property ()
+    testProEquation lawName = \case
+      l Laws.:=: r -> testTested wsj wsk lawName l r
+      Laws.InK e -> testEquation wsk lawName e
+      Laws.InJ e -> testEquation wsj lawName e
+
+-- | Compare the two sides of an equation between arrows of 'TESTED', printing them on failure.
+testEquation :: forall cs k. (Testable k) => Witnesses cs k -> String -> Laws.Equation (TESTED cs k) -> Property ()
+testEquation ws lawName eq = Laws.withSides eq (testTested ws ws lawName)
+
+-- | A named arbitrary element of @p@ between the objects of @k@ and @j@ that the endpoints stand
+-- for. With @p@ the hom profunctor, a named arbitrary arrow.
+genTested
+  :: forall {csj} {csk} {j} {k} (p :: j +-> k) (x :: TESTED csk k) (y :: TESTED csj j)
+   . (TestableTypeP p, Tested x, Tested y)
+  => Witnesses csj j -> Witnesses csk k -> String -> Property (TestedP p x y)
+genTested wsj wsk s = untestTestOb @x wsk $ untestTestOb @y wsj $ prim s <$> genNamed @(p (Untest x) (Untest y)) s
+
+-- | A named arbitrary arrow, 'genTested' at the hom profunctor.
+genArr
+  :: forall cs k (x :: TESTED cs k) y. (Testable k, Tested x, Tested y) => Witnesses cs k -> String -> Property (x ~> y)
+genArr ws = genTested @(Hom k) ws ws
+
+-- | Compare two elements of @p@, printing their descriptions on failure.
+testTested
+  :: forall {csj} {csk} {j} {k} (p :: j +-> k) (x :: TESTED csk k) (y :: TESTED csj j)
+   . (TestableProfunctor p)
+  => Witnesses csj j -> Witnesses csk k -> String -> TestedP p x y -> TestedP p x y -> Property ()
+testTested wsj wsk lawName (TestedP dl l) (TestedP dr r) =
+  untestTestOb @x wsk $ untestTestOb @y @(Property ()) wsj $ testEq lawName (dl 0 "") l (dr 0 "") r
 
 -- | Objects of @k@ built from leaves by the structures' object formers. Checking a law
 -- interprets it here rather than in @k@ itself: an object's 'Ob' is then 'Tested', which
@@ -257,10 +336,17 @@ untestOb3
 untestOb3 r = untestOb @a (untestOb @b (untestOb @c r))
 
 -- | An arrow of @k@ between the objects the endpoints stand for, with a description of how it was
--- built, for printing a failing law.
-type TestedArr :: CAT (TESTED cs k)
-data TestedArr a b where
-  TestedArr :: (Tested a, Tested b) => Doc -> Untest a ~> Untest b -> TestedArr a b
+-- built: an element of the hom profunctor. These are the arrows of 'TESTED'.
+type TestedArr :: forall cs k. CAT (TESTED cs k)
+type TestedArr @cs @k = TestedP (Hom k)
+
+-- | 'TestedP' at the hom profunctor.
+pattern TestedArr
+  :: forall cs k (a :: TESTED cs k) (b :: TESTED cs k)
+   . () => (Tested a, Tested b) => Doc -> Untest a ~> Untest b -> TestedArr a b
+pattern TestedArr d f = TestedP d f
+
+{-# COMPLETE TestedArr #-}
 
 -- | A description that can be shown at a precedence, like 'showsPrec'.
 type Doc = Int -> ShowS
@@ -269,13 +355,17 @@ type Doc = Int -> ShowS
 atom :: String -> Doc
 atom s _ = showString s
 
--- | An arrow described by its name.
-prim :: (Tested a, Tested b) => String -> Untest a ~> Untest b -> TestedArr a b
-prim s = TestedArr (atom s)
+-- | An element or arrow described by its name.
+prim :: (Tested a, Tested b) => String -> p (Untest a) (Untest b) -> TestedP p a b
+prim s = TestedP (atom s)
 
 -- | A function applied to one argument.
 app :: String -> Doc -> Doc
-app f x d = showParen (d > 10) (showString f . showChar ' ' . x 11)
+app f x = apps f [x]
+
+-- | A function applied to several arguments.
+apps :: String -> [Doc] -> Doc
+apps f xs d = showParen (d > 10) (showString f . foldr (\x r -> showChar ' ' . x 11 . r) (\r -> r) xs)
 
 -- | A left or right associative infix operator at the given precedence, like @infixl@ and
 -- @infixr@. The operator string includes its surrounding spaces, e.g. @" . "@.
@@ -283,22 +373,23 @@ infixlDoc, infixrDoc :: Int -> String -> Doc -> Doc -> Doc
 infixlDoc p op x y d = showParen (d > p) (x p . showString op . y (p + 1))
 infixrDoc p op x y d = showParen (d > p) (x (p + 1) . showString op . y p)
 
-instance (CategoryOf k) => Profunctor (TestedArr :: CAT (TESTED cs k)) where
-  dimap = dimapDefault
-  r \\ TestedArr{} = r
-instance (CategoryOf k) => Promonad (TestedArr :: CAT (TESTED cs k)) where
-  id @a = untestOb @a (prim "id" id)
-  TestedArr df f . TestedArr dg g = TestedArr (infixrDoc 9 " . " df dg) (f . g)
 instance (CategoryOf k) => CategoryOf (TESTED cs k) where
   type (~>) = TestedArr
   type Ob a = Tested a
 
 instance
-  (HasWitness M.Monoidal cs, Testable k, M.Monoidal k, TestOb (M.Unit :: k))
-  => M.MonoidalProfunctor (TestedArr :: CAT (TESTED cs k))
+  ( HasWitness M.Monoidal csj
+  , HasWitness M.Monoidal csk
+  , Testable j
+  , Testable k
+  , M.MonoidalProfunctor p
+  , TestOb (M.Unit :: j)
+  , TestOb (M.Unit :: k)
+  )
+  => M.MonoidalProfunctor (TestedP p :: TESTED csj j +-> TESTED csk k)
   where
   one = prim "one" M.one
-  TestedArr df f ** TestedArr dg g = TestedArr (infixlDoc 8 " ** " df dg) (f M.** g)
+  TestedP df f ** TestedP dg g = TestedP (infixlDoc 8 " ** " df dg) (f M.** g)
 instance (HasWitness M.Monoidal cs, Testable k, M.Monoidal k, TestOb (M.Unit :: k)) => M.Monoidal (TESTED cs k) where
   type Unit = M.UnitF
   type a ** b = a M.**! b
@@ -446,13 +537,13 @@ instance
   )
   => Monoid.CocommutativeComonoid (a :: TESTED cs k)
 
--- | The trace, 'Strength.coact' over the tensor, of the category the objects stand for.
+-- | 'Strength.coact' over the tensor of @p@, e.g. the trace of the category the objects stand for.
 instance
-  (HasWitness M.Monoidal cs, Testable k, Strength.TracedMonoidal k, TestOb (M.Unit :: k))
-  => Strength.Costrong M.Tensor (TestedArr :: CAT (TESTED cs k))
+  (HasWitness M.Monoidal cs, Testable k, M.Monoidal k, Strength.Costrong M.Tensor p, TestOb (M.Unit :: k))
+  => Strength.Costrong M.Tensor (TestedP p :: CAT (TESTED cs k))
   where
-  coact @a @x @y (TestedArr df f) =
-    untestOb3 @a @x @y (TestedArr (app "coact" df) (Strength.coact @M.Tensor @(~>) @(Untest a) @(Untest x) @(Untest y) f))
+  coact @a @x @y (TestedP df f) =
+    untestOb3 @a @x @y (TestedP (app "coact" df) (Strength.coact @M.Tensor @p @(Untest a) @(Untest x) @(Untest y) f))
 
 -- | Copying and discarding in the category the objects stand for.
 instance
@@ -464,3 +555,53 @@ instance
 
 instance (CategoryOf k) => Laws.Labelled (TESTED cs k) where
   label s (TestedArr _ f) = prim s f
+
+-- * The testable-objects profunctor
+
+-- | An element of @p@ between the objects the endpoints stand for, with a description of how it
+-- was built, for printing a failing law.
+type TestedP :: forall {csj} {csk} {j} {k}. (j +-> k) -> TESTED csj j +-> TESTED csk k
+data TestedP p a b where
+  TestedP :: (Tested a, Tested b) => Doc -> p (Untest a) (Untest b) -> TestedP p a b
+
+instance (Profunctor p) => Profunctor (TestedP p :: TESTED csj j +-> TESTED csk k) where
+  dimap (TestedArr df f) (TestedArr dg g) (TestedP dx x) = TestedP (apps "dimap" [df, dg, dx]) (dimap f g x)
+  lmap (TestedArr df f) (TestedP dx x) = TestedP (apps "lmap" [df, dx]) (lmap f x)
+  rmap (TestedArr dg g) (TestedP dx x) = TestedP (apps "rmap" [dg, dx]) (rmap g x)
+  r \\ TestedP{} = r
+
+instance (Promonad p) => Promonad (TestedP p :: CAT (TESTED cs k)) where
+  id @a = untestOb @a (prim "id" id)
+  TestedP dy y . TestedP dx x = TestedP (infixrDoc 9 " . " dy dx) (y . x)
+
+-- | The object @p '%' b@, for the interpretation of a 'Representable' @p@.
+type RepF :: forall {csj} {j} {k} {o}. (j +-> k) -> TESTED csj j -> o
+data family RepF p b
+
+-- | The structure of being closed under the representing functor of @p@, whose objects in 'TESTED'
+-- are formed by 'RepF'. Its witness needs the witnesses of the domain @j@ of @p@, @csj@.
+type RepresentedBy :: forall {j} {k}. [Kind -> Constraint] -> (j +-> k) -> Kind -> Constraint
+class RepresentedBy csj p k'
+
+instance RepresentedBy csj p k'
+
+data instance Witness (RepresentedBy csj (p :: j +-> k)) k' = RepresentedW (Witnesses csj j) (WithTestObRep j p)
+
+instance
+  (HasWitness (RepresentedBy csj p) csk, Representable p, Tested (b :: TESTED csj j))
+  => Tested (RepF (p :: j +-> k) b :: TESTED csk k)
+  where
+  type Untest (RepF p b) = p % Untest b
+  untestOb r = untestOb @b (withObRep @p @(Untest b) r)
+  untestTestOb ws r = case witness @(RepresentedBy csj p) ws of
+    RepresentedW wsj f -> untestTestOb @b wsj (f @(Untest b) r)
+
+instance
+  (HasWitness (RepresentedBy csj p) csk, Representable p)
+  => Representable (TestedP p :: TESTED csj j +-> TESTED csk k)
+  where
+  type TestedP p % b = RepF p b
+  index (TestedP dx x) = TestedArr (app "index" dx) (index x)
+  tabulate @b (TestedArr df f) = untestOb @b (TestedP (app "tabulate" df) (tabulate @p @(Untest b) f))
+  repMap (TestedArr df f) = TestedArr (app "repMap" df) (repMap @p f)
+  repUniv @b = untestOb @b (prim "repUniv" (repUniv @p @(Untest b)))

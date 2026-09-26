@@ -62,7 +62,7 @@ test =
     , testComonoid_ @(M Nat1 :: MatK Int)
     , testComonoid_ @(M Nat2 :: MatK Int)
     , testComonoid_ @(M Nat3 :: MatK Int)
-    , testProperty "App functor" $ propProfunctor @(Rep App :: MatK Int +-> Type)
+    , testGroup "App functor" [testProfunctor @(Rep App :: MatK Int +-> Type)]
     , -- the trace of an identity, and the one place the traced object could silently be dropped
       testProperty "dimension counts the object" $
         expect "dimensions 0, 1, 3" [0, 1, 3] (map scalar [dimension @(M Nat0), dimension @(M Nat1), dimension @(M Nat3)])
