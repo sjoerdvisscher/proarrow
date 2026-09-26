@@ -3,7 +3,7 @@
 
 module Props.Dot where
 
-import Control.Monad (forM_, replicateM, when)
+import Control.Monad (replicateM)
 import Data.Containers.ListUtils (nubOrd)
 import Data.List qualified as List
 import Data.Map (Map)
@@ -17,13 +17,9 @@ import Data.Void (absurd)
 import GHC.TypeLits (Symbol, decideSymbol, symbolVal)
 import Test.Falsify.Generator (Gen, elem)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.))
 
-import Proarrow.Category.Monoidal (Monoidal, SymMonoidalStructures, withOb2)
-import Proarrow.Category.Monoidal.Closed (ClosedStructures)
-import Proarrow.Category.Monoidal.CompactClosed (CompactClosedStructures)
-import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomousStructures)
+import Proarrow.Category.Monoidal (withOb2)
 import Proarrow.Category.Monoidal.Strictified (IsList (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
 import Proarrow.Tools.Diagrams.Dot
@@ -35,7 +31,6 @@ import Proarrow.Tools.Diagrams.Dot
   , SymRefl (..)
   , Vec (..)
   , getData
-  , lawDiagrams
   , len
   , names
   , node
@@ -69,22 +64,11 @@ test =
     , testMonoid_ @(D '["A", "B"])
     , testCommutativeMonoid_ @(D '["A", "B"])
     , testComonoid_ @(D '["A", "B"])
-    , testHypergraph @DOT (\r -> r) (\ @a @b r -> withOb2 @DOT @a @b r)
+    , testHypergraph @DOT (\ @a @b r -> withOb2 @DOT @a @b r)
     , testClosed_ @DOT
     , testStarAutonomous_ @DOT
     , testCompactClosed_ @DOT
-    , testProperty "every law draws as an equation" $ do
-        let structures :: [[(String, String)]]
-            structures =
-              [ lawDiagrams @'[Monoidal]
-              , lawDiagrams @SymMonoidalStructures
-              , lawDiagrams @ClosedStructures
-              , lawDiagrams @StarAutonomousStructures
-              , lawDiagrams @CompactClosedStructures
-              ]
-        forM_ structures \drawn -> do
-          when (null drawn) (testFailed "a structure drew no laws")
-          forM_ drawn \(name, d) -> when (null d) (testFailed (name ++ " drew nothing"))
+    , testTraced_ @DOT
     ]
 
 foldSome :: [Some Symbol] -> Some DOT
@@ -119,18 +103,25 @@ instance (Ob a, Ob b) => TestingEqShow (Dot a b) where
 -- arrows' are: one labelled node from the inputs to the outputs, or two stacked through a random
 -- boundary in between.
 instance (Ob a, Ob b) => TestableType (Dot a b) where
-  gen = GenNonEmpty do
-    stacked <- elem [False, True]
-    if stacked
-      then do
-        Some @m <- genSome @DOT
-        (.) <$> labelled @m @b <*> labelled @a @m
-      else labelled @a @b
+  gen = GenNonEmpty (boxes @a @b \ @x @y -> node @(UN D x) @(UN D y))
 
-labelled :: forall a b. (Ob a, Ob b) => Gen (Dot a b)
-labelled = do
-  l <- elem ["f", "g", "h"]
-  pure (node @(UN D a) @(UN D b) l)
+-- | One box, with a random label, from the inputs to the outputs, or two stacked through a random
+-- boundary in between, each made by the given function from its label.
+boxes
+  :: forall {k} (a :: k) (b :: k)
+   . (Testable k, Ob a, Ob b)
+  => (forall (x :: k) (y :: k). (Ob x, Ob y) => String -> x ~> y)
+  -> Gen (a ~> b)
+boxes box = do
+  stacked <- elem [False, True]
+  if stacked
+    then do
+      Some @m <- genSome @k
+      (.) <$> labelled @m @b <*> labelled @a @m
+    else labelled @a @b
+  where
+    labelled :: forall (x :: k) (y :: k). (Ob x, Ob y) => Gen (x ~> y)
+    labelled = box @x @y <$> elem ["f", "g", "h"]
 
 -- * What a diagram means
 

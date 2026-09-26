@@ -38,6 +38,7 @@ import Props.Sheaf.Chain qualified as SheafChain
 import Props.Sheaf.Collage qualified as SheafCollage
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
+import Props.Svg qualified as Svg
 import Props.ZX qualified as ZX
 
 main :: IO ()
@@ -73,6 +74,7 @@ main =
           , SheafCollage.test
           , Simplex.test
           , Span.test
+          , Svg.test
           , ZX.test
           ]
       , testGroup

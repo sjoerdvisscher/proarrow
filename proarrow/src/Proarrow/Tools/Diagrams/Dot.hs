@@ -3,20 +3,17 @@
 
 -- | String diagrams rendered to Graphviz: 'Dot' is a monoidal category of diagram fragments
 -- ('node', 'line', the adjunction unit and counit 'unitAdj'\/'counitAdj', ...) indexed by their typed input and
--- output wires, and 'run' emits the composed diagram as dot source ('runEquation' two of them as
--- an equation).
+-- output wires, and 'run' emits the composed diagram as dot source.
 module Proarrow.Tools.Diagrams.Dot where
 
 import Data.Bifunctor (first)
 import Data.Char (digitToInt, isDigit)
 import Data.Coerce (coerce)
-import Data.Functor.Identity (Identity (..))
 import Data.List qualified as List
 import Data.Proxy (Proxy (..))
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 import Prelude hiding (Monoid (..), curry, id, (.))
 
-import Proarrow.Category.Instance.Free (All)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
@@ -38,7 +35,6 @@ import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
-import Proarrow.Tools.Laws (Equation (..), Labelled (..), Law (..), Laws (..), lawName)
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
 
@@ -407,95 +403,50 @@ getData :: Dot (D as) (D bs) -> DotData as bs
 getData (Dot f) = snd (f 0)
 
 run :: Dot (D as) (D bs) -> String
-run d =
-  let (body, _, ins, outs) = statements "" d
-  in header
-       ++ body
-       -- the inputs at the top and the outputs at the bottom
-       ++ sameRank "source" ins
-       ++ sameRank "sink" outs
-       ++ "\n}\n"
+run @as @bs d@Dot{} =
+  header
+    ++ statements d
+    -- the inputs at the top and the outputs at the bottom
+    ++ onRank "source" "i" (len @as)
+    ++ onRank "sink" "o" (len @bs)
+    ++ "\n}\n"
 
--- | Two parallel diagrams side by side, with an equals sign between them. Neither is simplified:
--- the picture shows two different diagrams that mean the same.
-runEquation :: Dot a b -> Dot a b -> String
-runEquation l@Dot{} r@Dot{} =
-  let (lBody, lAnchors, lIns, lOuts) = statements "l" l
-      (rBody, rAnchors, rIns, rOuts) = statements "r" r
-  in header
-       -- ranks shared by the two sides; a boundary rank then no longer keeps the other nodes
-       -- off it, which the anchors do instead
-       ++ " newrank=true;"
-       ++ cluster "l" (lBody ++ lAnchors)
-       ++ "\n  eq [shape=plain; label=\"=\"; fontname=\"Times\"; fontsize=24];"
-       ++ cluster "r" (rBody ++ rAnchors)
-       -- both inputs at the top and both outputs at the bottom, and the equals sign halfway down
-       -- the left one, which keeps it on the left: tied to both, Graphviz may swap the sides
-       ++ sameRank "min" (lIns ++ rIns)
-       ++ sameRank "max" (lOuts ++ rOuts)
-       ++ foldMap (\n -> "\n  " ++ n ++ " -> eq [style=invis];") lIns
-       ++ foldMap (\n -> "\n  eq -> " ++ n ++ " [style=invis];") lOuts
-       ++ "\n}\n"
-  where
-    cluster name body = "\n  subgraph cluster_" ++ name ++ " { peripheries=0;" ++ body ++ "\n  }"
-
--- | The nodes on one rank, in the given order from left to right.
-sameRank :: String -> [String] -> String
-sameRank _ [] = ""
-sameRank rank ns =
-  "\n  { rank="
-    ++ rank
-    ++ "; "
-    ++ List.intercalate "; " ns
-    ++ "; }"
-    -- an edge within a rank puts its tail left of its head
-    ++ foldMap (\(m, n) -> "\n  " ++ m ++ " -> " ++ n ++ " [style=invis; weight=0];") (zip ns (drop 1 ns))
+-- | A boundary node on the given rank, when its boundary has any wires.
+onRank :: String -> String -> Int -> String
+onRank rank n wires = if wires == 0 then "" else "\n  { rank=" ++ rank ++ "; " ++ n ++ "; }"
 
 -- | The start of a Graphviz graph, with the fonts and wire style of every diagram.
 header :: String
 header =
   "digraph G { ranksep=0.3; node [fontname=\"Times-Italic\"; shape=circle; margin=0]; edge [fontname=\"Times-Italic\"; dir=none];"
 
--- | The statements drawing a diagram, every node named with the prefix @p@; invisible edges
--- tying the nodes without inputs or outputs to the boundary, for when the boundary ranks do not
--- keep them inside; and the names of its input and its output boundary node. Each boundary is
--- one node with a port per wire, so that Graphviz keeps the wires in order, and is left out when
--- it has no wires.
-statements :: String -> Dot (D as) (D bs) -> (String, String, [String], [String])
-statements @as @bs p (Dot f) =
+-- | The statements drawing a diagram. Each boundary is one node, @i@ or @o@, with a port per
+-- wire, so that Graphviz keeps the wires in order, and is left out when it has no wires.
+statements :: Dot (D as) (D bs) -> String
+statements @as @bs (Dot f) =
   let (_, DotData is os es ns) = f 0
       ins = unVec (names @as)
       outs = unVec (names @bs)
-      untouched ends = [n | n <- [0 .. length ns - 1], n `notElem` ends]
-      unfed = untouched ([nodeOf q | Right q <- unVec is] ++ [nodeOf q | (_, _, q) <- es])
-      unused = untouched ([nodeOf q | Right q <- unVec os] ++ [nodeOf q | (q, _, _) <- es])
-  in ( boundary "i" ins
-         ++ boundary "o" outs
-         -- node configuration, in the order the nodes are reached from the inputs: Graphviz breaks
-         -- the cycles of a trace by searching in the order nodes are listed, so this makes the wires
-         -- run forward from the first input
-         ++ foldMap (\i -> "\n  " ++ at (show i) ++ " [" ++ snd (ns !! i) ++ "];") (nodeOrder (unVec is) es (length ns))
-         -- edges from inputs
-         ++ foldMap
-           (\(i, n) -> "\n  " ++ at "i:p" ++ show i ++ ":s -> " ++ either (\j -> at "o:p" ++ show j ++ ":n") at n ++ ";")
-           (ixed is)
-         -- edges from outputs
-         ++ foldMap (\(i, n) -> either (const "") (\n' -> "\n  " ++ at n' ++ " -> " ++ at "o:p" ++ show i ++ ":n;") n) (ixed os)
-         -- internal edges
-         ++ foldMap (\(i, s, j) -> "\n  " ++ at i ++ " -> " ++ at j ++ " [label=\"" ++ s ++ "\"];") es
-     , -- a node with no wires in hangs from the inputs, and one with no wires out from the outputs
-       foldMap (\n -> "\n  " ++ at "i -> " ++ at (show n) ++ " [style=invis];") [n | not (null ins), n <- unfed]
-         ++ foldMap (\n -> "\n  " ++ at (show n) ++ " -> " ++ at "o [style=invis];") [n | not (null outs), n <- unused]
-     , [at "i" | not (null ins)]
-     , [at "o" | not (null outs)]
-     )
+  in boundary "i" ins
+       ++ boundary "o" outs
+       -- node configuration, in the order the nodes are reached from the inputs: Graphviz breaks
+       -- the cycles of a trace by searching in the order nodes are listed, so this makes the wires
+       -- run forward from the first input
+       ++ foldMap (\i -> "\n  " ++ show i ++ " [" ++ snd (ns !! i) ++ "];") (nodeOrder (unVec is) es (length ns))
+       -- edges from inputs
+       ++ foldMap
+         (\(i, n) -> "\n  i:p" ++ show i ++ ":s -> " ++ either (\j -> "o:p" ++ show j ++ ":n") id n ++ ";")
+         (ixed is)
+       -- edges from outputs
+       ++ foldMap (\(i, n) -> either (const "") (\n' -> "\n  " ++ n' ++ " -> o:p" ++ show i ++ ":n;") n) (ixed os)
+       -- internal edges
+       ++ foldMap (\(i, s, j) -> "\n  " ++ i ++ " -> " ++ j ++ " [label=\"" ++ s ++ "\"];") es
   where
-    at = (p ++)
     boundary name ws
       | null ws = ""
       | otherwise =
           "\n  "
-            ++ at name
+            ++ name
             ++ " [shape=plain; label=<<table border=\"0\" cellborder=\"0\" cellspacing=\"8\" cellpadding=\"0\"><tr>"
             ++ foldMap (\(i, n) -> "<td port=\"p" ++ show i ++ "\" width=\"24\">" ++ htmlEscape n ++ "</td>") (zip [0 :: Int ..] ws)
             ++ "</tr></table>>];"
@@ -505,19 +456,3 @@ unitAdj = node' Box (Vec []) (Vec [":sw", ":se"]) "label=η"
 
 counitAdj :: (Ob l, Ob r) => Dot (D '[r, l]) (D '[])
 counitAdj = node' Box (Vec [":nw", ":ne"]) (Vec []) "label=ϵ"
-
--- | Derived operations are drawn as what they are made of.
-instance Labelled DOT where
-  label _ f = f
-
--- | The laws of @cs@, each drawn as an equation by 'runEquation', with its name. The object
--- variables are single wires @a@ to @e@, and the arrows a law asks for are 'node's with the names
--- it gives them.
-lawDiagrams :: forall cs. (Laws cs, All cs DOT) => [(String, String)]
-lawDiagrams = [(lawName law, draw law) | law <- laws @cs]
-  where
-    draw :: Law cs -> String
-    draw (Law _ body) = case runIdentity (body @(D '["a"]) @(D '["b"]) @(D '["c"]) @(D '["d"]) @(D '["e"]) box) of
-      l :=: r -> runEquation l r
-    box :: forall (x :: DOT) y. (Ob x, Ob y) => String -> Identity (x ~> y)
-    box s = Identity (node @(UN D x) @(UN D y) s)
