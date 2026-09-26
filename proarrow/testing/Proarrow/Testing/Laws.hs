@@ -912,22 +912,47 @@ testCompactClosed_ =
     (\ @a @b r -> Exponential.withObExp @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
 
--- | Check 'propFrobenius' at randomly sampled objects.
+-- | The laws of a category that supplies special commutative Frobenius algebras, stated for
+-- every object: the monoid and comonoid laws of its points, their commutativity, and the Frobenius laws of
+-- 'Hypergraph.FrobeniusStructures'.
 testHypergraph
   :: forall k
-   . (Testable k, M.SymMonoidal k, TestOb (M.Unit @k))
-  => (forall (a :: k) r. (TestOb a) => ((Ob a, Hypergraph.Frobenius a) => r) -> r)
-  -> WithTestOb2 k
+   . ( Testable k
+     , M.SymMonoidal k
+     , Monoid.Supplies Monoid.CommutativeMonoid k
+     , Monoid.Supplies Monoid.CocommutativeComonoid k
+     , TestOb (M.Unit @k)
+     )
+  => WithTestOb2 k
   -> TestTree
-testHypergraph withFrob withTestOb2 = testProperty "Hypergraph (Frobenius supply)" $ do
-  Some @a <- genOb @k
-  withFrob @a (propFrobenius @a (\ @x @y r -> withTestOb2 @x @y r))
+testHypergraph withTestOb2 =
+  testGroup
+    "Hypergraph (Frobenius supply)"
+    [ testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Monoid] "Monoids" (monoidal :& MonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Comonoid] "Comonoids" (monoidal :& ComonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CommutativeMonoid]
+        "Commutative monoids"
+        (monoidal :& SymMonoidalW :& CommutativeMonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CocommutativeComonoid]
+        "Cocommutative comonoids"
+        (monoidal :& SymMonoidalW :& CocommutativeComonoidSupplyW :& WNil)
+    , testLaws @Hypergraph.FrobeniusStructures
+        "Frobenius"
+        (monoidal :& SymMonoidalW :& MonoidSupplyW :& ComonoidSupplyW :& WNil)
+    ]
+  where
+    monoidal = MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
 
 testHypergraph_
   :: forall k
-   . (Testable k, M.SymMonoidal k, TestObIsOb k, forall (a :: k). (TestOb a) => Hypergraph.Frobenius a)
+   . ( Testable k
+     , M.SymMonoidal k
+     , TestObIsOb k
+     , Monoid.Supplies Monoid.CommutativeMonoid k
+     , Monoid.Supplies Monoid.CocommutativeComonoid k
+     )
   => TestTree
-testHypergraph_ = testHypergraph @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r)
+testHypergraph_ = testHypergraph @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
 
 -- * Monoids and comonoids
 

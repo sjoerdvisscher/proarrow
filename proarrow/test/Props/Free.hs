@@ -110,7 +110,7 @@ test =
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
-    , testHypergraph @FREEKIND (\r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , testHypergraph @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , sheafTests
     , testProperty "cartesian coercions interpret to identities" P.$ do
         let roundTrip = retract @CARTCS @(Rep InterpT) (tensorToProd @(EMB '()) @(EMB '()) . prodToTensor @(EMB '()) @(EMB '()))

@@ -7,14 +7,15 @@
 -- fan-in\/fan-out such as "Proarrow.Category.Instance.ZX".
 module Proarrow.Category.Monoidal.Hypergraph where
 
+import Data.Kind (Constraint)
 import Data.Type.Nat (SNatI)
 import Prelude (($))
 
 import Proarrow.Category.Instance.Free (FREE)
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), NFold, NFoldS, (==))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), NFold, NFoldS, SymMonoidal (..), (==))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, singleton, swap2)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
+import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj)
 import Proarrow.Monoid
   ( CocommutativeComonoid
   , CommutativeMonoid
@@ -26,6 +27,7 @@ import Proarrow.Monoid
   , fanOut
   , fanOutS
   )
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 -- | A __special commutative Frobenius algebra__: a commutative monoid and cocommutative comonoid
 -- satisfying speciality (@mappend . comult = id@) and the Frobenius law. A 'Hypergraph' category
@@ -111,3 +113,21 @@ applyHG = linDistInvHG @_ @b (obj @b ** obj @c)
 instance (CommutativeMonoid a, CocommutativeComonoid (a :: FREE cs p)) => Frobenius (a :: FREE cs p)
 
 instance (Supplies Frobenius (FREE cs p), CompactClosed (FREE cs p)) => Hypergraph (FREE cs p)
+
+-- | The structures the laws of a category supplying special commutative Frobenius algebras are
+-- stated for: the monoids and comonoids, together.
+type FrobeniusStructures :: [Kind -> Constraint]
+type FrobeniusStructures = '[Monoidal, SymMonoidal, Supplies Monoid, Supplies Comonoid]
+
+-- | The supplied monoids and comonoids are special and satisfy the Frobenius law. Their monoid and
+-- comonoid laws, and their commutativity, are separate instances, in "Proarrow.Monoid".
+instance Laws FrobeniusStructures where
+  laws =
+    [ Law "speciality" \ @a _ -> obj @a =:= mappend @a . comult @a
+    , Law "Frobenius (left)" \ @a _ ->
+        withOb2 @_ @a @a $
+          comult @a . mappend @a =:= (mappend @a ** obj @a) . associatorInv @_ @a @a @a . (obj @a ** comult @a)
+    , Law "Frobenius (right)" \ @a _ ->
+        withOb2 @_ @a @a $
+          comult @a . mappend @a =:= (obj @a ** mappend @a) . associator @_ @a @a @a . (comult @a ** obj @a)
+    ]

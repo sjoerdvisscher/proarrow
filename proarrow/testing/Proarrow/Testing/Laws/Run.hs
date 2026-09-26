@@ -60,6 +60,7 @@ import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault)
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Limit.Terminal qualified as Terminal
+import Proarrow.Monoid qualified as Monoid
 import Proarrow.Testing
   ( Some (..)
   , Testable (..)
@@ -135,6 +136,10 @@ data instance Witness Distributive.Distributive k = DistributiveW
 newtype instance Witness Exponential.Closed k = ClosedW (WithTestObExp k)
 newtype instance Witness SA.StarAutonomous k = StarAutonomousW (WithTestObDual k)
 data instance Witness CC.CompactClosed k = CompactClosedW
+data instance Witness (Monoid.Supplies Monoid.Monoid) k = MonoidSupplyW
+data instance Witness (Monoid.Supplies Monoid.Comonoid) k = ComonoidSupplyW
+data instance Witness (Monoid.Supplies Monoid.CommutativeMonoid) k = CommutativeMonoidSupplyW
+data instance Witness (Monoid.Supplies Monoid.CocommutativeComonoid) k = CocommutativeComonoidSupplyW
 
 infixr 5 :&
 
@@ -397,6 +402,45 @@ instance
   dualUnit = prim "dualUnit" CC.dualUnit
   dualityUnit @a = untestOb @a (prim "dualityUnit" (CC.dualityUnit @k @(Untest a)))
   dualityCounit @a = untestOb @a (prim "dualityCounit" (CC.dualityCounit @k @(Untest a)))
+
+-- | Every object is a monoid when the category supplies them, with the monoid of the object it
+-- stands for.
+instance
+  (HasWitness M.Monoidal cs, Testable k, M.Monoidal k, Monoid.Supplies Monoid.Monoid k, TestOb (M.Unit :: k), Tested a)
+  => Monoid.Monoid (a :: TESTED cs k)
+  where
+  mempty = untestOb @a (prim "mempty" (Monoid.mempty @(Untest a)))
+  mappend = untestOb @a (prim "mappend" (Monoid.mappend @(Untest a)))
+
+-- | Every object is a comonoid when the category supplies them.
+instance
+  (HasWitness M.Monoidal cs, Testable k, M.Monoidal k, Monoid.Supplies Monoid.Comonoid k, TestOb (M.Unit :: k), Tested a)
+  => Monoid.Comonoid (a :: TESTED cs k)
+  where
+  counit = untestOb @a (prim "counit" (Monoid.counit @(Untest a)))
+  comult = untestOb @a (prim "comult" (Monoid.comult @(Untest a)))
+
+-- | The monoids of a category that supplies commutative ones are commutative.
+instance
+  ( HasWitness M.Monoidal cs
+  , Testable k
+  , M.SymMonoidal k
+  , Monoid.Supplies Monoid.CommutativeMonoid k
+  , TestOb (M.Unit :: k)
+  , Tested a
+  )
+  => Monoid.CommutativeMonoid (a :: TESTED cs k)
+
+-- | The comonoids of a category that supplies cocommutative ones are cocommutative.
+instance
+  ( HasWitness M.Monoidal cs
+  , Testable k
+  , M.SymMonoidal k
+  , Monoid.Supplies Monoid.CocommutativeComonoid k
+  , TestOb (M.Unit :: k)
+  , Tested a
+  )
+  => Monoid.CocommutativeComonoid (a :: TESTED cs k)
 
 instance (CategoryOf k) => Laws.Labelled (TESTED cs k) where
   label s (TestedArr _ f) = prim s f
