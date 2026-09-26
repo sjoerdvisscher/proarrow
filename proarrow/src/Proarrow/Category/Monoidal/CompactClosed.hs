@@ -36,7 +36,7 @@ import Proarrow.Category.Monoidal.StarAutonomous
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
-import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (=:=))
+import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (===))
 
 class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
@@ -153,8 +153,8 @@ instance Laws CompactClosedStructures where
   laws =
     inverses "distribDual" (\ @a @b -> Inverses (distribDual @_ @a @b) (label "combineDual" (combineDual @a @b)))
       P.++ inverses "dualUnit" (Inverses dualUnit (label "dualUnitInv" dualUnitInv))
-      P.++ [ Law "dualityUnit definition" \ @a _ -> withObDual @_ @a (dualityUnit @_ @a =:= dualityUnitDefault @a)
-           , Law "dualityCounit definition" \ @a _ -> withObDual @_ @a (dualityCounit @_ @a =:= dualityCounitDefault @a)
+      P.++ [ Law "dualityUnit definition" \ @a _ -> withObDual @_ @a (dualityUnit @_ @a === dualityUnitDefault @a)
+           , Law "dualityCounit definition" \ @a _ -> withObDual @_ @a (dualityCounit @_ @a === dualityCounitDefault @a)
            , Law
                "zigzag (a)"
                \ @a _ ->
@@ -165,7 +165,7 @@ instance Laws CompactClosedStructures where
                        . (dualityUnit @_ @a ** obj @a)
                        . leftUnitorInv @_ @a
                    )
-                     =:= id
+                     === id
            , Law
                "zigzag (Dual a)"
                \ @a _ ->
@@ -176,5 +176,5 @@ instance Laws CompactClosedStructures where
                        . (obj @(Dual a) ** dualityUnit @_ @a)
                        . rightUnitorInv @_ @(Dual a)
                    )
-                     =:= id
+                     === id
            ]

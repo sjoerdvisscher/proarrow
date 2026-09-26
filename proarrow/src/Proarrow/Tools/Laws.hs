@@ -35,11 +35,11 @@ import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..))
 -- @
 -- instance Laws '[HasSquare] where
 --   laws =
---     [ Law "sq identity" \\ \@a _ -> withObSq \@_ \@a (sq (obj \@a) '=:=' id)
+--     [ Law "sq identity" \\ \@a _ -> withObSq \@_ \@a (sq (obj \@a) '===' id)
 --     , Law "sq composition" \\ \@a \@b \@c mor -> do
 --         f <- mor \@a \@b "f"
 --         g <- mor \@b \@c "g"
---         sq (g . f) '=:=' sq g . sq f
+--         sq (g . f) '===' sq g . sq f
 --     ]
 -- @
 type Laws :: [Kind -> Constraint] -> Constraint
@@ -74,11 +74,11 @@ type Equation :: Kind -> Type
 data Equation k where
   (:=:) :: forall {k} (a :: k) b. a ~> b -> a ~> b -> Equation k
 
-infix 1 =:=
+infix 1 ===
 
--- | '(:=:)' as the result of a law body: @l '=:=' r = 'pure' (l ':=:' r)@.
-(=:=) :: forall {k} m (a :: k) b. (Applicative m) => a ~> b -> a ~> b -> m (Equation k)
-l =:= r = pure (l :=: r)
+-- | '(:=:)' as the result of a law body: @l '===' r = 'pure' (l ':=:' r)@.
+(===) :: forall {k} m (a :: k) b. (Applicative m) => a ~> b -> a ~> b -> m (Equation k)
+l === r = pure (l :=: r)
 
 -- * Inverses
 
@@ -132,11 +132,11 @@ bijection name body =
   [ Law (name ++ " left inverse") \ @a @b @c @d @e mor -> case body @a @b @c @d @e mor of
       Bijection askF _ to from -> do
         f <- askF
-        f =:= from (to f)
+        f === from (to f)
   , Law (name ++ " right inverse") \ @a @b @c @d @e mor -> case body @a @b @c @d @e mor of
       Bijection _ askG to from -> do
         g <- askG
-        g =:= to (from g)
+        g === to (from g)
   ]
 
 -- * The laws of a category
@@ -146,15 +146,15 @@ instance Laws '[CategoryOf] where
   laws =
     [ Law "left identity" \ @a @b mor -> do
         f <- mor @a @b "f"
-        f =:= id . f
+        f === id . f
     , Law "right identity" \ @a @b mor -> do
         f <- mor @a @b "f"
-        f =:= f . id
+        f === f . id
     , Law "associativity" \ @a @b @c @d mor -> do
         f <- mor @a @b "f"
         g <- mor @b @c "g"
         h <- mor @c @d "h"
-        h . (g . f) =:= (h . g) . f
+        h . (g . f) === (h . g) . f
     ]
 
 -- * Naming arrows

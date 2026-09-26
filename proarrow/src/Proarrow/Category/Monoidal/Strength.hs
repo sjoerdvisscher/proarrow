@@ -19,7 +19,7 @@ import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 -- | Profunctorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
@@ -117,14 +117,14 @@ instance Laws TracedStructures where
         f <- mor @(x ** u) @(y ** u) "f"
         g <- mor @y @d "g"
         h <- mor @e @x "h"
-        g . trace @(~>) @u @x @y f . h =:= trace @(~>) @u @e @d ((g ** obj @u) . f . (h ** obj @u))
+        g . trace @(~>) @u @x @y f . h === trace @(~>) @u @e @d ((g ** obj @u) . f . (h ** obj @u))
     , Law "sliding" \ @x @y @u @v mor -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @x @v $ withOb2 @_ @y @v do
         f <- mor @(x ** v) @(y ** u) "f"
         g <- mor @u @v "g"
-        trace @(~>) @u @x @y (f . (obj @x ** g)) =:= trace @(~>) @v @x @y ((obj @y ** g) . f)
+        trace @(~>) @u @x @y (f . (obj @x ** g)) === trace @(~>) @v @x @y ((obj @y ** g) . f)
     , Law "vanishing (unit)" \ @x @y mor -> withOb2 @_ @x @Unit $ withOb2 @_ @y @Unit do
         f <- mor @(x ** Unit) @(y ** Unit) "f"
-        trace @(~>) @Unit @x @y f =:= rightUnitor @_ @y . f . rightUnitorInv @_ @x
+        trace @(~>) @Unit @x @y f === rightUnitor @_ @y . f . rightUnitorInv @_ @x
     , Law "vanishing (tensor)" \ @x @y @u @v mor ->
         withOb2 @_ @u @v $
           withOb2 @_ @x @(u ** v) $
@@ -135,7 +135,7 @@ instance Laws TracedStructures where
                     withOb2 @_ @(y ** u) @v do
                       f <- mor @(x ** (u ** v)) @(y ** (u ** v)) "f"
                       trace @(~>) @(u ** v) @x @y f
-                        =:= trace @(~>) @u @x @y (trace @(~>) @v @(x ** u) @(y ** u) (associatorInv @_ @y @u @v . f . associator @_ @x @u @v))
+                        === trace @(~>) @u @x @y (trace @(~>) @v @(x ** u) @(y ** u) (associatorInv @_ @y @u @v . f . associator @_ @x @u @v))
     , Law "superposing" \ @x @y @u @w mor ->
         withOb2 @_ @x @u $
           withOb2 @_ @y @u $
@@ -146,6 +146,6 @@ instance Laws TracedStructures where
                     f <- mor @(x ** u) @(y ** u) "f"
                     obj @w
                       ** trace @(~>) @u @x @y f
-                      =:= trace @(~>) @u @(w ** x) @(w ** y) (associatorInv @_ @w @y @u . (obj @w ** f) . associator @_ @w @x @u)
-    , Law "yanking" \ @u _ -> withOb2 @_ @u @u (obj @u =:= trace @(~>) @u @u @u (swap @_ @u @u))
+                      === trace @(~>) @u @(w ** x) @(w ** y) (associatorInv @_ @w @y @u . (obj @w ** f) . associator @_ @w @x @u)
+    , Law "yanking" \ @u _ -> withOb2 @_ @u @u (obj @u === trace @(~>) @u @u @u (swap @_ @u @u))
     ]

@@ -28,7 +28,7 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
   type InitialObject :: k
@@ -97,5 +97,5 @@ instance Laws '[HasInitialObject] where
   laws =
     [ Law "uniqueness" \ @a mor -> do
         g <- mor @InitialObject @a "g"
-        g =:= initiate
+        g === initiate
     ]

@@ -25,7 +25,7 @@ import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k
@@ -91,5 +91,5 @@ instance Laws '[HasTerminalObject] where
   laws =
     [ Law "uniqueness" \ @a mor -> do
         g <- mor @a @TerminalObject "g"
-        g =:= terminate
+        g === terminate
     ]

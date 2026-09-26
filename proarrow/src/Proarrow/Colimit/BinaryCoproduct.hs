@@ -41,7 +41,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), Representable (..))
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 infixl 4 ||
 infixl 4 |||
@@ -390,19 +390,19 @@ instance Laws '[HasBinaryCoproducts] where
     [ Law "lft" \ @a @b @c mor -> do
         f <- mor @a @c "f"
         g <- mor @b @c "g"
-        f =:= (f ||| g) . lft @_ @a @b
+        f === (f ||| g) . lft @_ @a @b
     , Law "rgt" \ @a @b @c mor -> do
         f <- mor @a @c "f"
         g <- mor @b @c "g"
-        g =:= (f ||| g) . rgt @_ @a @b
+        g === (f ||| g) . rgt @_ @a @b
     , Law "copairing naturality" \ @a @b @c @d mor -> do
         f <- mor @a @c "f"
         g <- mor @b @c "g"
         h <- mor @c @d "h"
-        (h . f) ||| (h . g) =:= h . (f ||| g)
+        (h . f) ||| (h . g) === h . (f ||| g)
     , Law "copairing the injections" \ @a @b _ ->
-        withObCoprod @_ @a @b (lft @_ @a @b ||| rgt @_ @a @b =:= id)
+        withObCoprod @_ @a @b (lft @_ @a @b ||| rgt @_ @a @b === id)
     , Law "copairing uniqueness" \ @a @b @c mor -> withObCoprod @_ @a @b do
         p <- mor @(a || b) @c "p"
-        p =:= (p . lft @_ @a @b) ||| (p . rgt @_ @a @b)
+        p === (p . lft @_ @a @b) ||| (p . rgt @_ @a @b)
     ]

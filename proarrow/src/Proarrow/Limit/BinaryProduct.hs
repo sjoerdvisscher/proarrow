@@ -35,7 +35,7 @@ import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 infixl 5 &&
 infixl 5 &&&
@@ -335,19 +335,19 @@ instance Laws '[HasBinaryProducts] where
     [ Law "fst" \ @a @b @c mor -> do
         f <- mor @a @b "f"
         g <- mor @a @c "g"
-        f =:= fst @_ @b @c . (f &&& g)
+        f === fst @_ @b @c . (f &&& g)
     , Law "snd" \ @a @b @c mor -> do
         f <- mor @a @b "f"
         g <- mor @a @c "g"
-        g =:= snd @_ @b @c . (f &&& g)
+        g === snd @_ @b @c . (f &&& g)
     , Law "pairing naturality" \ @a @b @c @d mor -> do
         f <- mor @a @b "f"
         g <- mor @a @c "g"
         h <- mor @d @a "h"
-        (f . h) &&& (g . h) =:= (f &&& g) . h
+        (f . h) &&& (g . h) === (f &&& g) . h
     , Law "pairing the projections" \ @_ @b @c _ ->
-        withObProd @_ @b @c (fst @_ @b @c &&& snd @_ @b @c =:= id)
+        withObProd @_ @b @c (fst @_ @b @c &&& snd @_ @b @c === id)
     , Law "pairing uniqueness" \ @a @b @c mor -> withObProd @_ @b @c do
         p <- mor @a @(b && c) "p"
-        p =:= (fst @_ @b @c . p) &&& (snd @_ @b @c . p)
+        p === (fst @_ @b @c . p) &&& (snd @_ @b @c . p)
     ]

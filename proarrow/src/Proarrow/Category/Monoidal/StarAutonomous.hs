@@ -38,7 +38,7 @@ import Proarrow.Tools.Laws
   , Laws (..)
   , bijection
   , inverses
-  , (=:=)
+  , (===)
   )
 
 -- | A *-autonomous category: a symmetric monoidal closed category with a dualizing object, so
@@ -220,18 +220,18 @@ instance
 -- @Hom(a ** b, Dual c) ≅ Hom(a, Dual (b ** c))@ with inverse 'linDistInv'.
 instance Laws StarAutonomousStructures where
   laws =
-    [ Law "dual identity" \ @a _ -> withObDual @_ @a (dual (obj @a) =:= id)
+    [ Law "dual identity" \ @a _ -> withObDual @_ @a (dual (obj @a) === id)
     , Law "dual composition" \ @a @b @c mor -> do
         f <- mor @a @b "f"
         g <- mor @b @c "g"
-        dual (g . f) =:= dual f . dual g
+        dual (g . f) === dual f . dual g
     , Law "linDist naturality" \ @a @b @c @d @e mor ->
         withOb2 @_ @a @b $ withOb2 @_ @d @e $ withObDual @_ @c $ withObDual @_ @d do
           p <- mor @(a ** b) @(Dual c) "p"
           f <- mor @d @a "f"
           g <- mor @e @b "g"
           h <- mor @d @c "h"
-          linDist @_ @d @e @d (dual h . p . (f ** g)) =:= dual (g ** h) . linDist @_ @a @b @c p . f
+          linDist @_ @d @e @d (dual h . p . (f ** g)) === dual (g ** h) . linDist @_ @a @b @c p . f
     ]
       P.++ bijection
         "dual"
@@ -249,6 +249,6 @@ instance Laws StarAutonomousStructures where
                   withObDual @_ @(b ** c) $
                     Bijection (mor @(a ** b) @(Dual c) "p") (mor @a @(Dual (b ** c)) "q") (linDist @_ @a @b @c) (linDistInv @_ @a @b @c)
         )
-      P.++ [ Law "doubleNegInv definition" \ @a _ -> withObDual @_ @a $ withObDual @_ @(Dual a) (doubleNegInv @_ @a =:= doubleNegInvDefault @a)
+      P.++ [ Law "doubleNegInv definition" \ @a _ -> withObDual @_ @a $ withObDual @_ @(Dual a) (doubleNegInv @_ @a === doubleNegInvDefault @a)
            ]
       P.++ inverses "doubleNeg" \ @a -> Inverses (doubleNegInv @_ @a) (doubleNeg @_ @a)

@@ -27,7 +27,7 @@ import Proarrow.Monoid
   , fanOut
   , fanOutS
   )
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 -- | A __special commutative Frobenius algebra__: a commutative monoid and cocommutative comonoid
 -- satisfying speciality (@mappend . comult = id@) and the Frobenius law. A 'Hypergraph' category
@@ -123,11 +123,11 @@ type FrobeniusStructures = '[Monoidal, SymMonoidal, Supplies Monoid, Supplies Co
 -- comonoid laws, and their commutativity, are separate instances, in "Proarrow.Monoid".
 instance Laws FrobeniusStructures where
   laws =
-    [ Law "speciality" \ @a _ -> obj @a =:= mappend @a . comult @a
+    [ Law "speciality" \ @a _ -> obj @a === mappend @a . comult @a
     , Law "Frobenius (left)" \ @a _ ->
         withOb2 @_ @a @a $
-          comult @a . mappend @a =:= (mappend @a ** obj @a) . associatorInv @_ @a @a @a . (obj @a ** comult @a)
+          comult @a . mappend @a === (mappend @a ** obj @a) . associatorInv @_ @a @a @a . (obj @a ** comult @a)
     , Law "Frobenius (right)" \ @a _ ->
         withOb2 @_ @a @a $
-          comult @a . mappend @a =:= (obj @a ** mappend @a) . associator @_ @a @a @a . (comult @a ** obj @a)
+          comult @a . mappend @a === (obj @a ** mappend @a) . associator @_ @a @a @a . (comult @a ** obj @a)
     ]

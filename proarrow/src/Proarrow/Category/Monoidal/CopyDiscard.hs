@@ -32,7 +32,7 @@ import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..),
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Supplies)
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Tools.Laws (Equation, Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Equation, Law (..), Laws (..), (===))
 
 class (SymMonoidal k, Supplies CocommutativeComonoid k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a
@@ -54,27 +54,27 @@ type CopyDiscardStructures = '[Monoidal, SymMonoidal, CopyDiscard]
 -- The comonoid laws and cocommutativity are those of the supply, in "Proarrow.Monoid".
 instance Laws CopyDiscardStructures where
   laws =
-    [ Law "copy is comult" \ @a _ -> copy @_ @a =:= comult @a
-    , Law "discard is counit" \ @a _ -> discard @_ @a =:= counit @a
+    [ Law "copy is comult" \ @a _ -> copy @_ @a === comult @a
+    , Law "discard is counit" \ @a _ -> discard @_ @a === counit @a
     , Law "copy of a tensor" \ @a @b _ ->
         withOb2 @_ @a @b $
           withOb2 @_ @a @a $
             withOb2 @_ @b @b $
               withOb2 @_ @(a ** b) @(a ** b) $
-                copy @_ @(a ** b) =:= swapInner @a @a @b @b . (copy @_ @a ** copy @_ @b)
+                copy @_ @(a ** b) === swapInner @a @a @b @b . (copy @_ @a ** copy @_ @b)
     , Law "discard of a tensor" \ @a @b _ ->
-        withOb2 @_ @a @b (discard @_ @(a ** b) =:= leftUnitor @_ @Unit . (discard @_ @a ** discard @_ @b))
+        withOb2 @_ @a @b (discard @_ @(a ** b) === leftUnitor @_ @Unit . (discard @_ @a ** discard @_ @b))
     , Law "copy of the unit" \ @a _ -> copyOfUnit @a
     , Law "discard of the unit" \ @a _ -> discardOfUnit @a
     ]
 
 -- | 'copy' on the unit is a unitor; @a@ only says which category.
 copyOfUnit :: forall {k} (a :: k) m. (CopyDiscard k, Applicative m) => m (Equation k)
-copyOfUnit = withOb2 @k @Unit @Unit (copy @k @Unit =:= leftUnitorInv @k @Unit)
+copyOfUnit = withOb2 @k @Unit @Unit (copy @k @Unit === leftUnitorInv @k @Unit)
 
 -- | 'discard' on the unit is the identity; @a@ only says which category.
 discardOfUnit :: forall {k} (a :: k) m. (CopyDiscard k, Applicative m) => m (Equation k)
-discardOfUnit = discard @k @Unit =:= obj @Unit
+discardOfUnit = discard @k @Unit === obj @Unit
 
 copyS :: (CopyDiscard k, Ob (a :: k)) => '[a] ~> '[a, a]
 copyS = Str copy

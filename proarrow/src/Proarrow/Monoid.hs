@@ -45,7 +45,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 -- | A monoid object in a monoidal category: a unit and an (associative, unital) multiplication
 -- for the object @m@. At @k = Type@ (with tensor @(,)@) this is the ordinary 'P.Monoid'.
@@ -356,28 +356,28 @@ fanOutS =
 -- to the unitors), and 'mappend' is associative (up to the associator).
 instance Laws '[Monoidal, Supplies Monoid] where
   laws =
-    [ Law "left unit" \ @a _ -> withOb2 @_ @Unit @a (leftUnitor @_ @a =:= mappend @a . (mempty @a ** obj @a))
-    , Law "right unit" \ @a _ -> withOb2 @_ @a @Unit (rightUnitor @_ @a =:= mappend @a . (obj @a ** mempty @a))
+    [ Law "left unit" \ @a _ -> withOb2 @_ @Unit @a (leftUnitor @_ @a === mappend @a . (mempty @a ** obj @a))
+    , Law "right unit" \ @a _ -> withOb2 @_ @a @Unit (rightUnitor @_ @a === mappend @a . (obj @a ** mempty @a))
     , Law "associativity" \ @a _ ->
         withOb2 @_ @a @a P.$
-          mappend @a . (mappend @a ** obj @a) =:= mappend @a . (obj @a ** mappend @a) . associator @_ @a @a @a
+          mappend @a . (mappend @a ** obj @a) === mappend @a . (obj @a ** mappend @a) . associator @_ @a @a @a
     ]
 
 -- | In a category that supplies comonoids, every object is one: 'counit' is a unit for 'comult', and
 -- 'comult' is coassociative.
 instance Laws '[Monoidal, Supplies Comonoid] where
   laws =
-    [ Law "left counit" \ @a _ -> withOb2 @_ @Unit @a (leftUnitorInv @_ @a =:= (counit @a ** obj @a) . comult @a)
-    , Law "right counit" \ @a _ -> withOb2 @_ @a @Unit (rightUnitorInv @_ @a =:= (obj @a ** counit @a) . comult @a)
+    [ Law "left counit" \ @a _ -> withOb2 @_ @Unit @a (leftUnitorInv @_ @a === (counit @a ** obj @a) . comult @a)
+    , Law "right counit" \ @a _ -> withOb2 @_ @a @Unit (rightUnitorInv @_ @a === (obj @a ** counit @a) . comult @a)
     , Law "coassociativity" \ @a _ ->
         withOb2 @_ @a @a P.$
-          associator @_ @a @a @a . (comult @a ** obj @a) . comult @a =:= (obj @a ** comult @a) . comult @a
+          associator @_ @a @a @a . (comult @a ** obj @a) . comult @a === (obj @a ** comult @a) . comult @a
     ]
 
 -- | The supplied monoids are commutative: 'mappend' is unchanged by 'swap'.
 instance Laws '[Monoidal, SymMonoidal, Supplies CommutativeMonoid] where
-  laws = [Law "commutativity" \ @a _ -> withOb2 @_ @a @a (mappend @a =:= mappend @a . swap @_ @a @a)]
+  laws = [Law "commutativity" \ @a _ -> withOb2 @_ @a @a (mappend @a === mappend @a . swap @_ @a @a)]
 
 -- | The supplied comonoids are cocommutative: 'comult' is unchanged by 'swap'.
 instance Laws '[Monoidal, SymMonoidal, Supplies CocommutativeComonoid] where
-  laws = [Law "cocommutativity" \ @a _ -> withOb2 @_ @a @a (comult @a =:= swap @_ @a @a . comult @a)]
+  laws = [Law "cocommutativity" \ @a _ -> withOb2 @_ @a @a (comult @a === swap @_ @a @a . comult @a)]

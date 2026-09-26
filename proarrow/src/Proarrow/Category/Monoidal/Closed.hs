@@ -31,7 +31,7 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct ()
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Tools.Laws (Bijection (..), Law (..), Laws (..), bijection, (=:=))
+import Proarrow.Tools.Laws (Bijection (..), Law (..), Laws (..), bijection, (===))
 
 infixr 2 ~~>
 
@@ -233,9 +233,9 @@ instance Laws ClosedStructures where
                f <- mor @d @a "f"
                g <- mor @d @b "g"
                h <- mor @c @e "h"
-               (h ^^^ g) . curry @_ @a @b p . f =:= curry @_ @d @d (h . p . (f ** g))
+               (h ^^^ g) . curry @_ @a @b p . f === curry @_ @d @d (h . p . (f ** g))
            , Law "internal hom on arrows" \ @a @b @c @d mor -> do
                f <- mor @b @d "f"
                g <- mor @c @a "g"
-               withObExp @_ @a @b (f ^^^ g =:= curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
+               withObExp @_ @a @b (f ^^^ g === curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
            ]
