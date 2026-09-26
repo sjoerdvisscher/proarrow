@@ -748,26 +748,27 @@ propMonoidalProfunctor withTestObK withTestObJ = do
                   "x ** (y ** z)"
                   (x M.** (y M.** z))
 
--- | Every object is a cocommutative comonoid under 'CopyDiscard.copy' and 'CopyDiscard.discard'
--- ('propCocommutativeComonoid'). The first witness recovers the comonoid of an object from its
--- 'TestOb'.
+-- | The laws of a copy-discard category: every object is a cocommutative comonoid (the laws of its
+-- supply, in "Proarrow.Monoid"), and 'CopyDiscard.copy' and 'CopyDiscard.discard' are that comonoid
+-- and respect the tensor ('CopyDiscard.CopyDiscardStructures').
 testCopyDiscard
-  :: forall k
-   . (Testable k, CopyDiscard.CopyDiscard k, TestOb (M.Unit @k))
-  => (forall (a :: k) r. (TestOb a) => ((Ob a, Monoid.CocommutativeComonoid a) => r) -> r)
-  -> WithTestOb2 k
-  -> TestTree
-testCopyDiscard withCoco withTestOb2 = testProperty "CopyDiscard" $ do
-  Some @a <- genOb @k
-  withCoco @a (propCocommutativeComonoid @a (\ @x @y r -> withTestOb2 @x @y r))
+  :: forall k. (Testable k, CopyDiscard.CopyDiscard k, TestOb (M.Unit @k)) => WithTestOb2 k -> TestTree
+testCopyDiscard withTestOb2 =
+  testGroup
+    "CopyDiscard"
+    [ testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Comonoid] "Comonoids" (monoidal :& ComonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CocommutativeComonoid]
+        "Cocommutative comonoids"
+        (monoidal :& SymMonoidalW :& CocommutativeComonoidSupplyW :& WNil)
+    , testLaws @CopyDiscard.CopyDiscardStructures "Copy and discard" (monoidal :& SymMonoidalW :& CopyDiscardW :& WNil)
+    ]
+  where
+    monoidal = MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
 
--- | The cocommutative comonoid on each object is supplied by 'CopyDiscard.CopyDiscard' itself (its
--- @'Monoid.Supplies' 'Monoid.CocommutativeComonoid' k@ superclass), so only @'Ob' a@ has to be
--- recovered from @'TestOb' a@. That goes through 'obFromTestOb', because with that quantified
--- superclass in scope GHC does not find the @TestOb a => Ob' a => Ob a@ route on its own.
+-- | 'testCopyDiscard' where 'TestOb' is 'Ob'. 'Ob' goes through 'obFromTestOb', because with the
+-- comonoid supply in scope GHC does not find the @TestOb a => Ob' a => Ob a@ route on its own.
 testCopyDiscard_ :: forall k. (Testable k, CopyDiscard.CopyDiscard k, TestObIsOb k) => TestTree
-testCopyDiscard_ =
-  testCopyDiscard @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+testCopyDiscard_ = testCopyDiscard @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
 
 -- | The coherence law tying 'Cartesian.Cartesian' to its 'CopyDiscard.CopyDiscard' superclass
 -- (Fox's theorem): the comonoid supplied on every object is the natural one, @copy = id &&& id@

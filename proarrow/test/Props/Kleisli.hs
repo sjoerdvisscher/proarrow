@@ -43,7 +43,7 @@ test =
         , testInitialObject @(KLEISLI (Star (Prelude Maybe)))
         , testMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , testSymMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
-        , testCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r) (\r -> r)
+        , testCopyDiscard @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , testBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         ]
     , testGroup

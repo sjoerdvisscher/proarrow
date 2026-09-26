@@ -1,5 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -Wno-orphans -Wno-unused-foralls #-}
 
 -- | Monoidal categories in which every object carries a cocommutative comonoid (the
 -- @'Supplies' 'CocommutativeComonoid' k@ superclass), with @'copy' :: a ~> a ** a@ and
@@ -11,7 +11,8 @@
 -- non-uniformly.
 module Proarrow.Category.Monoidal.CopyDiscard where
 
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
+import Prelude (Applicative, ($))
 
 import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
@@ -23,13 +24,15 @@ import Proarrow.Category.Monoidal
   , Tensor
   , leftUnitorWith
   , rightUnitorWith
+  , swapInner
   )
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), listCase)
-import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj, (\\), type (+->))
+import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Supplies)
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Tools.Laws (Equation, Law (..), Laws (..), (=:=))
 
 class (SymMonoidal k, Supplies CocommutativeComonoid k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a
@@ -41,6 +44,37 @@ class (SymMonoidal k, Supplies CocommutativeComonoid k) => CopyDiscard k where
 -- needed, so this works in biproduct categories as well as cartesian ones.
 instance (CopyDiscard k, Ob r) => Strong Tensor (Rep (Constant r) :: k +-> k) where
   act @a (Rep @y p) = withOb2 @k @a @y (Rep (p . leftUnitorWith (discard @k @a))) \\ p
+
+-- | The structures the laws of a copy-discard category are stated for.
+type CopyDiscardStructures :: [Kind -> Constraint]
+type CopyDiscardStructures = '[Monoidal, SymMonoidal, CopyDiscard]
+
+-- | 'copy' and 'discard' are the supplied comonoid, and they respect the tensor: copying or
+-- discarding @a '**' b@ is copying or discarding both parts, and on the unit they do nothing.
+-- The comonoid laws and cocommutativity are those of the supply, in "Proarrow.Monoid".
+instance Laws CopyDiscardStructures where
+  laws =
+    [ Law "copy is comult" \ @a _ -> copy @_ @a =:= comult @a
+    , Law "discard is counit" \ @a _ -> discard @_ @a =:= counit @a
+    , Law "copy of a tensor" \ @a @b _ ->
+        withOb2 @_ @a @b $
+          withOb2 @_ @a @a $
+            withOb2 @_ @b @b $
+              withOb2 @_ @(a ** b) @(a ** b) $
+                copy @_ @(a ** b) =:= swapInner @a @a @b @b . (copy @_ @a ** copy @_ @b)
+    , Law "discard of a tensor" \ @a @b _ ->
+        withOb2 @_ @a @b (discard @_ @(a ** b) =:= leftUnitor @_ @Unit . (discard @_ @a ** discard @_ @b))
+    , Law "copy of the unit" \ @a _ -> copyOfUnit @a
+    , Law "discard of the unit" \ @a _ -> discardOfUnit @a
+    ]
+
+-- | 'copy' on the unit is a unitor; @a@ only says which category.
+copyOfUnit :: forall {k} (a :: k) m. (CopyDiscard k, Applicative m) => m (Equation k)
+copyOfUnit = withOb2 @k @Unit @Unit (copy @k @Unit =:= leftUnitorInv @k @Unit)
+
+-- | 'discard' on the unit is the identity; @a@ only says which category.
+discardOfUnit :: forall {k} (a :: k) m. (CopyDiscard k, Applicative m) => m (Equation k)
+discardOfUnit = discard @k @Unit =:= obj @Unit
 
 copyS :: (CopyDiscard k, Ob (a :: k)) => '[a] ~> '[a, a]
 copyS = Str copy

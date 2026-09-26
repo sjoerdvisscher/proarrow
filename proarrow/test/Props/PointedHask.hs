@@ -35,7 +35,7 @@ test =
     , testBinaryCoproducts @POINTED (\r -> r)
     , testMonoidal @POINTED (\r -> r)
     , testSymMonoidal @POINTED (\r -> r)
-    , testCopyDiscard @POINTED (\r -> r) (\r -> r)
+    , testCopyDiscard @POINTED (\r -> r)
     , testMonoid @(P Void) (\r -> r)
     , testMonoid @(P ()) (\r -> r)
     , testMonoid @(P [()]) (\r -> r)

@@ -48,7 +48,7 @@ test =
     , testCartesian @Type (\r -> r) (\r -> r)
     , testMonoidal @Type (\r -> r)
     , testSymMonoidal @Type (\r -> r)
-    , testCopyDiscard @Type (\r -> r) (\r -> r)
+    , testCopyDiscard @Type (\r -> r)
     , testBinaryCoproducts @Type (\r -> r)
     , testDistributive @Type (\r -> r) (\r -> r)
     , testClosed @Type (\r -> r) (\r -> r)

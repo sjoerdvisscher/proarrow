@@ -53,7 +53,7 @@ test =
     , testCartesian @FINHASK (\r -> r) (\r -> r)
     , testMonoidal @FINHASK (\r -> r)
     , testSymMonoidal @FINHASK (\r -> r)
-    , testCopyDiscard @FINHASK (\r -> r) (\r -> r)
+    , testCopyDiscard @FINHASK (\r -> r)
     , testBinaryCoproducts @FINHASK (\r -> r)
     , testDistributive @FINHASK (\r -> r) (\r -> r)
     , testClosed @FINHASK (\r -> r) (\r -> r)

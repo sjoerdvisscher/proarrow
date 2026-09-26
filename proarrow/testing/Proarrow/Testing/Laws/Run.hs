@@ -53,6 +53,7 @@ import Proarrow.Category.Instance.Free qualified as Free
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Category.Monoidal.CompactClosed qualified as CC
+import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Category.Monoidal.Strength qualified as Strength
@@ -138,6 +139,7 @@ newtype instance Witness Exponential.Closed k = ClosedW (WithTestObExp k)
 newtype instance Witness SA.StarAutonomous k = StarAutonomousW (WithTestObDual k)
 data instance Witness CC.CompactClosed k = CompactClosedW
 data instance Witness Strength.TracedMonoidal k = TracedW
+data instance Witness CopyDiscard.CopyDiscard k = CopyDiscardW
 data instance Witness (Monoid.Supplies Monoid.Monoid) k = MonoidSupplyW
 data instance Witness (Monoid.Supplies Monoid.Comonoid) k = ComonoidSupplyW
 data instance Witness (Monoid.Supplies Monoid.CommutativeMonoid) k = CommutativeMonoidSupplyW
@@ -451,6 +453,14 @@ instance
   where
   coact @a @x @y (TestedArr df f) =
     untestOb3 @a @x @y (TestedArr (app "coact" df) (Strength.coact @M.Tensor @(~>) @(Untest a) @(Untest x) @(Untest y) f))
+
+-- | Copying and discarding in the category the objects stand for.
+instance
+  (HasWitness M.Monoidal cs, Testable k, CopyDiscard.CopyDiscard k, TestOb (M.Unit :: k))
+  => CopyDiscard.CopyDiscard (TESTED cs k)
+  where
+  copy @a = untestOb @a (prim "copy" (CopyDiscard.copy @k @(Untest a)))
+  discard @a = untestOb @a (prim "discard" (CopyDiscard.discard @k @(Untest a)))
 
 instance (CategoryOf k) => Laws.Labelled (TESTED cs k) where
   label s (TestedArr _ f) = prim s f
