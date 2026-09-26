@@ -95,7 +95,7 @@ instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
 -- | Every arrow out of the initial object is 'initiate'.
 instance Laws '[HasInitialObject] where
   laws =
-    [ Law "uniqueness" \ @a gen -> do
-        g <- gen @InitialObject @a "g"
+    [ Law "uniqueness" \ @a mor -> do
+        g <- mor @InitialObject @a "g"
         g =:= initiate
     ]

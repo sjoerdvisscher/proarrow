@@ -223,19 +223,19 @@ instance Laws ClosedStructures where
   laws =
     bijection
       "curry"
-      ( \ @a @b @c gen ->
+      ( \ @a @b @c mor ->
           withOb2 @_ @a @b $
             withObExp @_ @b @c $
-              Bijection (gen @(a ** b) @c "p") (gen @a @(b ~~> c) "q") (curry @_ @a @b) (\q -> apply @_ @b @c . (q ** obj @b))
+              Bijection (mor @(a ** b) @c "p") (mor @a @(b ~~> c) "q") (curry @_ @a @b) (\q -> apply @_ @b @c . (q ** obj @b))
       )
-      P.++ [ Law "curry naturality" \ @a @b @c @d @e gen -> withOb2 @_ @a @b $ withOb2 @_ @d @d do
-               p <- gen @(a ** b) @c "p"
-               f <- gen @d @a "f"
-               g <- gen @d @b "g"
-               h <- gen @c @e "h"
+      P.++ [ Law "curry naturality" \ @a @b @c @d @e mor -> withOb2 @_ @a @b $ withOb2 @_ @d @d do
+               p <- mor @(a ** b) @c "p"
+               f <- mor @d @a "f"
+               g <- mor @d @b "g"
+               h <- mor @c @e "h"
                (h ^^^ g) . curry @_ @a @b p . f =:= curry @_ @d @d (h . p . (f ** g))
-           , Law "internal hom on arrows" \ @a @b @c @d gen -> do
-               f <- gen @b @d "f"
-               g <- gen @c @a "g"
+           , Law "internal hom on arrows" \ @a @b @c @d mor -> do
+               f <- mor @b @d "f"
+               g <- mor @c @a "g"
                withObExp @_ @a @b (f ^^^ g =:= curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
            ]

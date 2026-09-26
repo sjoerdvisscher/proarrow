@@ -221,33 +221,33 @@ instance
 instance Laws StarAutonomousStructures where
   laws =
     [ Law "dual identity" \ @a _ -> withObDual @_ @a (dual (obj @a) =:= id)
-    , Law "dual composition" \ @a @b @c gen -> do
-        f <- gen @a @b "f"
-        g <- gen @b @c "g"
+    , Law "dual composition" \ @a @b @c mor -> do
+        f <- mor @a @b "f"
+        g <- mor @b @c "g"
         dual (g . f) =:= dual f . dual g
-    , Law "linDist naturality" \ @a @b @c @d @e gen ->
+    , Law "linDist naturality" \ @a @b @c @d @e mor ->
         withOb2 @_ @a @b $ withOb2 @_ @d @e $ withObDual @_ @c $ withObDual @_ @d do
-          p <- gen @(a ** b) @(Dual c) "p"
-          f <- gen @d @a "f"
-          g <- gen @e @b "g"
-          h <- gen @d @c "h"
+          p <- mor @(a ** b) @(Dual c) "p"
+          f <- mor @d @a "f"
+          g <- mor @e @b "g"
+          h <- mor @d @c "h"
           linDist @_ @d @e @d (dual h . p . (f ** g)) =:= dual (g ** h) . linDist @_ @a @b @c p . f
     ]
       P.++ bijection
         "dual"
-        ( \ @a @b gen ->
+        ( \ @a @b mor ->
             withObDual @_ @a $
               withObDual @_ @b $
-                Bijection (gen @a @b "f") (gen @(Dual b) @(Dual a) "g") dual (dualInv @_ @b @a)
+                Bijection (mor @a @b "f") (mor @(Dual b) @(Dual a) "g") dual (dualInv @_ @b @a)
         )
       P.++ bijection
         "linDist"
-        ( \ @a @b @c gen ->
+        ( \ @a @b @c mor ->
             withOb2 @_ @a @b $
               withOb2 @_ @b @c $
                 withObDual @_ @c $
                   withObDual @_ @(b ** c) $
-                    Bijection (gen @(a ** b) @(Dual c) "p") (gen @a @(Dual (b ** c)) "q") (linDist @_ @a @b @c) (linDistInv @_ @a @b @c)
+                    Bijection (mor @(a ** b) @(Dual c) "p") (mor @a @(Dual (b ** c)) "q") (linDist @_ @a @b @c) (linDistInv @_ @a @b @c)
         )
       P.++ [ Law "doubleNegInv definition" \ @a _ -> withObDual @_ @a $ withObDual @_ @(Dual a) (doubleNegInv @_ @a =:= doubleNegInvDefault @a)
            ]

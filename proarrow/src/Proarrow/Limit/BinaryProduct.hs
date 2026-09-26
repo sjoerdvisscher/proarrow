@@ -332,22 +332,22 @@ instance (HasBinaryProducts k) => Representable (Corep Diag :: (k, k) +-> k) whe
 -- @f '&&&' g@, and every arrow into the product is the pairing of its components.
 instance Laws '[HasBinaryProducts] where
   laws =
-    [ Law "fst" \ @a @b @c gen -> do
-        f <- gen @a @b "f"
-        g <- gen @a @c "g"
+    [ Law "fst" \ @a @b @c mor -> do
+        f <- mor @a @b "f"
+        g <- mor @a @c "g"
         f =:= fst @_ @b @c . (f &&& g)
-    , Law "snd" \ @a @b @c gen -> do
-        f <- gen @a @b "f"
-        g <- gen @a @c "g"
+    , Law "snd" \ @a @b @c mor -> do
+        f <- mor @a @b "f"
+        g <- mor @a @c "g"
         g =:= snd @_ @b @c . (f &&& g)
-    , Law "pairing naturality" \ @a @b @c @d gen -> do
-        f <- gen @a @b "f"
-        g <- gen @a @c "g"
-        h <- gen @d @a "h"
+    , Law "pairing naturality" \ @a @b @c @d mor -> do
+        f <- mor @a @b "f"
+        g <- mor @a @c "g"
+        h <- mor @d @a "h"
         (f . h) &&& (g . h) =:= (f &&& g) . h
     , Law "pairing the projections" \ @_ @b @c _ ->
         withObProd @_ @b @c (fst @_ @b @c &&& snd @_ @b @c =:= id)
-    , Law "pairing uniqueness" \ @a @b @c gen -> withObProd @_ @b @c do
-        p <- gen @a @(b && c) "p"
+    , Law "pairing uniqueness" \ @a @b @c mor -> withObProd @_ @b @c do
+        p <- mor @a @(b && c) "p"
         p =:= (fst @_ @b @c . p) &&& (snd @_ @b @c . p)
     ]

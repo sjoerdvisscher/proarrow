@@ -113,19 +113,19 @@ type TracedStructures = '[Monoidal, SymMonoidal, TracedMonoidal]
 -- (yanking).
 instance Laws TracedStructures where
   laws =
-    [ Law "naturality" \ @x @y @u @d @e gen -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @e @u $ withOb2 @_ @d @u do
-        f <- gen @(x ** u) @(y ** u) "f"
-        g <- gen @y @d "g"
-        h <- gen @e @x "h"
+    [ Law "naturality" \ @x @y @u @d @e mor -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @e @u $ withOb2 @_ @d @u do
+        f <- mor @(x ** u) @(y ** u) "f"
+        g <- mor @y @d "g"
+        h <- mor @e @x "h"
         g . trace @(~>) @u @x @y f . h =:= trace @(~>) @u @e @d ((g ** obj @u) . f . (h ** obj @u))
-    , Law "sliding" \ @x @y @u @v gen -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @x @v $ withOb2 @_ @y @v do
-        f <- gen @(x ** v) @(y ** u) "f"
-        g <- gen @u @v "g"
+    , Law "sliding" \ @x @y @u @v mor -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @x @v $ withOb2 @_ @y @v do
+        f <- mor @(x ** v) @(y ** u) "f"
+        g <- mor @u @v "g"
         trace @(~>) @u @x @y (f . (obj @x ** g)) =:= trace @(~>) @v @x @y ((obj @y ** g) . f)
-    , Law "vanishing (unit)" \ @x @y gen -> withOb2 @_ @x @Unit $ withOb2 @_ @y @Unit do
-        f <- gen @(x ** Unit) @(y ** Unit) "f"
+    , Law "vanishing (unit)" \ @x @y mor -> withOb2 @_ @x @Unit $ withOb2 @_ @y @Unit do
+        f <- mor @(x ** Unit) @(y ** Unit) "f"
         trace @(~>) @Unit @x @y f =:= rightUnitor @_ @y . f . rightUnitorInv @_ @x
-    , Law "vanishing (tensor)" \ @x @y @u @v gen ->
+    , Law "vanishing (tensor)" \ @x @y @u @v mor ->
         withOb2 @_ @u @v $
           withOb2 @_ @x @(u ** v) $
             withOb2 @_ @y @(u ** v) $
@@ -133,17 +133,17 @@ instance Laws TracedStructures where
                 withOb2 @_ @y @u $
                   withOb2 @_ @(x ** u) @v $
                     withOb2 @_ @(y ** u) @v do
-                      f <- gen @(x ** (u ** v)) @(y ** (u ** v)) "f"
+                      f <- mor @(x ** (u ** v)) @(y ** (u ** v)) "f"
                       trace @(~>) @(u ** v) @x @y f
                         =:= trace @(~>) @u @x @y (trace @(~>) @v @(x ** u) @(y ** u) (associatorInv @_ @y @u @v . f . associator @_ @x @u @v))
-    , Law "superposing" \ @x @y @u @w gen ->
+    , Law "superposing" \ @x @y @u @w mor ->
         withOb2 @_ @x @u $
           withOb2 @_ @y @u $
             withOb2 @_ @w @x $
               withOb2 @_ @w @y $
                 withOb2 @_ @w @(x ** u) $
                   withOb2 @_ @w @(y ** u) do
-                    f <- gen @(x ** u) @(y ** u) "f"
+                    f <- mor @(x ** u) @(y ** u) "f"
                     obj @w
                       ** trace @(~>) @u @x @y f
                       =:= trace @(~>) @u @(w ** x) @(w ** y) (associatorInv @_ @w @y @u . (obj @w ** f) . associator @_ @w @x @u)

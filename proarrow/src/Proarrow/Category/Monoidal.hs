@@ -459,33 +459,33 @@ instance Laws '[Monoidal] where
         "associator"
         (\ @a @b @c -> Inverses (associator @_ @a @b @c) (associatorInv @_ @a @b @c))
       P.++ [ Law "tensor identity" \ @a @b _ -> withOb2 @_ @a @b (obj @a ** obj @b =:= id)
-           , Law "tensor interchange" \ @a @b @c @d @e gen -> do
-               f <- gen @a @b "f"
-               g <- gen @b @c "g"
-               h <- gen @d @e "h"
-               i <- gen @e @c "i"
+           , Law "tensor interchange" \ @a @b @c @d @e mor -> do
+               f <- mor @a @b "f"
+               g <- mor @b @c "g"
+               h <- mor @d @e "h"
+               i <- mor @e @c "i"
                (g . f) ** (i . h) =:= (g ** i) . (f ** h)
-           , Law "leftUnitor naturality" \ @a @b gen -> do
-               f <- gen @a @b "f"
+           , Law "leftUnitor naturality" \ @a @b mor -> do
+               f <- mor @a @b "f"
                leftUnitor @_ @b . (one ** f) =:= f . leftUnitor @_ @a
-           , Law "leftUnitorInv naturality" \ @a @b gen -> do
-               f <- gen @a @b "f"
+           , Law "leftUnitorInv naturality" \ @a @b mor -> do
+               f <- mor @a @b "f"
                leftUnitorInv @_ @b . f =:= (one ** f) . leftUnitorInv @_ @a
-           , Law "rightUnitor naturality" \ @a @b gen -> do
-               f <- gen @a @b "f"
+           , Law "rightUnitor naturality" \ @a @b mor -> do
+               f <- mor @a @b "f"
                rightUnitor @_ @b . (f ** one) =:= f . rightUnitor @_ @a
-           , Law "rightUnitorInv naturality" \ @a @b gen -> do
-               f <- gen @a @b "f"
+           , Law "rightUnitorInv naturality" \ @a @b mor -> do
+               f <- mor @a @b "f"
                rightUnitorInv @_ @b . f =:= (f ** one) . rightUnitorInv @_ @a
-           , Law "associator naturality" \ @a @b @c @d gen -> do
-               f <- gen @a @b "f"
-               g <- gen @b @c "g"
-               h <- gen @c @d "h"
+           , Law "associator naturality" \ @a @b @c @d mor -> do
+               f <- mor @a @b "f"
+               g <- mor @b @c "g"
+               h <- mor @c @d "h"
                associator @_ @b @c @d . ((f ** g) ** h) =:= (f ** (g ** h)) . associator @_ @a @b @c
-           , Law "associatorInv naturality" \ @a @b @c @d gen -> do
-               f <- gen @a @b "f"
-               g <- gen @b @c "g"
-               h <- gen @c @d "h"
+           , Law "associatorInv naturality" \ @a @b @c @d mor -> do
+               f <- mor @a @b "f"
+               g <- mor @b @c "g"
+               h <- mor @c @d "h"
                associatorInv @_ @b @c @d . (f ** (g ** h)) =:= ((f ** g) ** h) . associatorInv @_ @a @b @c
            , Law "triangle identity" \ @a @b _ ->
                (obj @a ** leftUnitor @_ @b) . associator @_ @a @Unit @b =:= rightUnitor @_ @a ** obj @b
@@ -504,9 +504,9 @@ instance Laws '[Monoidal] where
 instance Laws SymMonoidalStructures where
   laws =
     [ Law "swap self-inverse" \ @a @b _ -> (swap @_ @b @a . swap @_ @a @b =:= id) \\ swap @_ @a @b
-    , Law "swap naturality" \ @a @b @c @d gen -> do
-        f <- gen @a @c "f"
-        g <- gen @b @d "g"
+    , Law "swap naturality" \ @a @b @c @d mor -> do
+        f <- mor @a @c "f"
+        g <- mor @b @d "g"
         swap @_ @c @d . (f ** g) =:= (g ** f) . swap @_ @a @b
     , Law "hexagon identity" \ @a @b @c _ ->
         withOb2 @_ @b @c $

@@ -36,9 +36,9 @@ import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..))
 -- instance Laws '[HasSquare] where
 --   laws =
 --     [ Law "sq identity" \\ \@a _ -> withObSq \@_ \@a (sq (obj \@a) '=:=' id)
---     , Law "sq composition" \\ \@a \@b \@c gen -> do
---         f <- gen \@a \@b "f"
---         g <- gen \@b \@c "g"
+--     , Law "sq composition" \\ \@a \@b \@c mor -> do
+--         f <- mor \@a \@b "f"
+--         g <- mor \@b \@c "g"
 --         sq (g . f) '=:=' sq g . sq f
 --     ]
 -- @
@@ -56,7 +56,7 @@ lawName :: Law cs -> String
 lawName (Law name _) = name
 
 -- | The body of a 'Law': given five object variables and a supply of named arbitrary arrows,
--- produce an @r k@. A body binds as many of the variables as it uses, e.g. @\\ \@a \@b gen -> ...@,
+-- produce an @r k@. A body binds as many of the variables as it uses, e.g. @\\ \@a \@b mor -> ...@,
 -- and gives each arrow it asks for the name to print it as.
 type LawBody :: [Kind -> Constraint] -> (Kind -> Type) -> Type
 type LawBody cs r =
@@ -129,11 +129,11 @@ type BijectionBody cs =
 -- hom-set on the other side discards nothing.
 bijection :: forall cs. String -> BijectionBody cs -> [Law cs]
 bijection name body =
-  [ Law (name ++ " left inverse") \ @a @b @c @d @e gen -> case body @a @b @c @d @e gen of
+  [ Law (name ++ " left inverse") \ @a @b @c @d @e mor -> case body @a @b @c @d @e mor of
       Bijection askF _ to from -> do
         f <- askF
         f =:= from (to f)
-  , Law (name ++ " right inverse") \ @a @b @c @d @e gen -> case body @a @b @c @d @e gen of
+  , Law (name ++ " right inverse") \ @a @b @c @d @e mor -> case body @a @b @c @d @e mor of
       Bijection _ askG to from -> do
         g <- askG
         g =:= to (from g)
@@ -144,16 +144,16 @@ bijection name body =
 -- | 'id' is a unit for composition, which is associative.
 instance Laws '[CategoryOf] where
   laws =
-    [ Law "left identity" \ @a @b gen -> do
-        f <- gen @a @b "f"
+    [ Law "left identity" \ @a @b mor -> do
+        f <- mor @a @b "f"
         f =:= id . f
-    , Law "right identity" \ @a @b gen -> do
-        f <- gen @a @b "f"
+    , Law "right identity" \ @a @b mor -> do
+        f <- mor @a @b "f"
         f =:= f . id
-    , Law "associativity" \ @a @b @c @d gen -> do
-        f <- gen @a @b "f"
-        g <- gen @b @c "g"
-        h <- gen @c @d "h"
+    , Law "associativity" \ @a @b @c @d mor -> do
+        f <- mor @a @b "f"
+        g <- mor @b @c "g"
+        h <- mor @c @d "h"
         h . (g . f) =:= (h . g) . f
     ]
 

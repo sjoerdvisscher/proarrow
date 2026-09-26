@@ -89,7 +89,7 @@ instance (HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs (p :: CAT k
 -- | Every arrow into the terminal object is 'terminate'.
 instance Laws '[HasTerminalObject] where
   laws =
-    [ Law "uniqueness" \ @a gen -> do
-        g <- gen @a @TerminalObject "g"
+    [ Law "uniqueness" \ @a mor -> do
+        g <- mor @a @TerminalObject "g"
         g =:= terminate
     ]

@@ -387,22 +387,22 @@ instance (HasBinaryCoproducts k) => Corepresentable (Rep Diag :: k +-> (k, k)) w
 -- @f '|||' g@, and every arrow out of the coproduct is the copairing of its components.
 instance Laws '[HasBinaryCoproducts] where
   laws =
-    [ Law "lft" \ @a @b @c gen -> do
-        f <- gen @a @c "f"
-        g <- gen @b @c "g"
+    [ Law "lft" \ @a @b @c mor -> do
+        f <- mor @a @c "f"
+        g <- mor @b @c "g"
         f =:= (f ||| g) . lft @_ @a @b
-    , Law "rgt" \ @a @b @c gen -> do
-        f <- gen @a @c "f"
-        g <- gen @b @c "g"
+    , Law "rgt" \ @a @b @c mor -> do
+        f <- mor @a @c "f"
+        g <- mor @b @c "g"
         g =:= (f ||| g) . rgt @_ @a @b
-    , Law "copairing naturality" \ @a @b @c @d gen -> do
-        f <- gen @a @c "f"
-        g <- gen @b @c "g"
-        h <- gen @c @d "h"
+    , Law "copairing naturality" \ @a @b @c @d mor -> do
+        f <- mor @a @c "f"
+        g <- mor @b @c "g"
+        h <- mor @c @d "h"
         (h . f) ||| (h . g) =:= h . (f ||| g)
     , Law "copairing the injections" \ @a @b _ ->
         withObCoprod @_ @a @b (lft @_ @a @b ||| rgt @_ @a @b =:= id)
-    , Law "copairing uniqueness" \ @a @b @c gen -> withObCoprod @_ @a @b do
-        p <- gen @(a || b) @c "p"
+    , Law "copairing uniqueness" \ @a @b @c mor -> withObCoprod @_ @a @b do
+        p <- mor @(a || b) @c "p"
         p =:= (p . lft @_ @a @b) ||| (p . rgt @_ @a @b)
     ]

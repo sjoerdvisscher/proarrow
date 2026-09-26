@@ -49,9 +49,9 @@ instance HasSquare Type where
 instance Laws '[HasSquare] where
   laws =
     [ Law "sq identity" \ @a _ -> withObSq @_ @a (sq (obj @a) =:= id)
-    , Law "sq composition" \ @a @b @c gen -> do
-        f <- gen @a @b "f"
-        g <- gen @b @c "g"
+    , Law "sq composition" \ @a @b @c mor -> do
+        f <- mor @a @b "f"
+        g <- mor @b @c "g"
         sq (g . f) =:= sq g . sq f
     ]
 

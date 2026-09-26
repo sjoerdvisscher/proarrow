@@ -134,16 +134,16 @@ structures the laws mention. For example, from `Proarrow.Category.Monoidal`:
 instance Laws '[Monoidal] where
   laws =
     [ ...
-    , Law "associator naturality" \ @a @b @c @d gen -> do
-        f <- gen @a @b "f"
-        g <- gen @b @c "g"
-        h <- gen @c @d "h"
+    , Law "associator naturality" \ @a @b @c @d mor -> do
+        f <- mor @a @b "f"
+        g <- mor @b @c "g"
+        h <- mor @c @d "h"
         associator @_ @b @c @d . ((f ** g) ** h) =:= (f ** (g ** h)) . associator @_ @a @b @c
     , ...
     ]
 ```
 
-A law binds the object variables it uses and asks the supply `gen` for named arbitrary arrows
+A law binds the object variables it uses and asks the supply `mor` for named arbitrary arrows
 between them, then states its equation with `=:=`. `testLaws` from `Proarrow.Testing.Laws.Run`
 checks each law as its own property. It draws random objects and arrows, runs the law in a
 category whose arrows also describe themselves, and on failure prints both sides as the code
