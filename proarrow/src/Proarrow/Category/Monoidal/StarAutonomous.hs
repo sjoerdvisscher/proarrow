@@ -31,7 +31,15 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj)
 import Proarrow.Optic (PIso, iso)
-import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (=:=))
+import Proarrow.Tools.Laws
+  ( Bijection (..)
+  , Inverses (..)
+  , Law (..)
+  , Laws (..)
+  , bijection
+  , inverses
+  , (=:=)
+  )
 
 -- | A *-autonomous category: a symmetric monoidal closed category with a dualizing object, so
 -- that 'Dual' is a contravariant involution and @Hom(a '**' b, 'Dual' c)@ is symmetric in its three
@@ -44,7 +52,8 @@ import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), i
 --   @'dualInv' ('dual' f) = f@ and @'dual' ('dualInv' g) = g@
 -- * 'linDist' and 'linDistInv' are mutually inverse, giving
 --   @Hom(a '**' b, 'Dual' c) ≅ Hom(a, 'Dual' (b '**' c))@, natural in all three variables
--- * 'doubleNeg' and 'doubleNegInv' are mutually inverse, so @'Dual' ('Dual' a) ≅ a@
+-- * 'doubleNeg' and 'doubleNegInv' are mutually inverse, so @'Dual' ('Dual' a) ≅ a@, and
+--   'doubleNegInv' is 'doubleNegInvDefault', the one the rest of the structure gives
 --
 -- Stated as code by the 'Proarrow.Tools.Laws.Laws' instance for 'StarAutonomousStructures', and
 -- checked by @Proarrow.Testing.Laws.testStarAutonomous@.
@@ -67,14 +76,25 @@ class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
   -- | Inverse to 'linDist'.
   linDistInv :: (Ob (a :: k), Ob b, Ob c) => a ~> Dual (b ** c) -> a ** b ~> Dual c
 
+  -- | Double-negation elimination. Defaults to 'doubleNegDefault'; an instance whose double dual
+  -- is the object itself can say so directly.
+  doubleNeg :: (Ob (a :: k)) => Dual (Dual a) ~> a
+  doubleNeg @a = doubleNegDefault @a
+
+  -- | Double-negation introduction, inverse to 'doubleNeg'. Defaults to 'doubleNegInvDefault'.
+  doubleNegInv :: (Ob (a :: k)) => a ~> Dual (Dual a)
+  doubleNegInv @a = doubleNegInvDefault @a
+
 dualObj :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Obj (Dual a)
 dualObj = dual (obj @a)
 
-doubleNeg :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
-doubleNeg = dualInv @k @a (doubleNegInv @(Dual a)) \\ dualObj @(Dual a) \\ dualObj @a
+-- | 'doubleNeg' from the rest of the structure: 'dualInv' of 'doubleNegInv' at the dual.
+doubleNegDefault :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
+doubleNegDefault = dualInv @k @a (doubleNegInv @k @(Dual a)) \\ dualObj @(Dual a) \\ dualObj @a
 
-doubleNegInv :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual a)
-doubleNegInv =
+-- | 'doubleNegInv' from the rest of the structure, through 'linDistInv' and the duality unit.
+doubleNegInvDefault :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual a)
+doubleNegInvDefault =
   linDistInv @k @Unit @a @(Dual a) (dual (swap @k @a @(Dual a)) . dualityUnitSA @a) . leftUnitorInv @k @a
     \\ dualObj @a
 
@@ -93,11 +113,11 @@ linDistInvS f@Str{} = withObDual @k @c (Str (linDistInv @k @a @b @c (unStr f)))
 type ExpSA a b = Dual (a ** Dual b)
 
 currySA :: forall {k} (a :: k) b c. (StarAutonomous k, Ob a, Ob b) => a ** b ~> c -> a ~> ExpSA b c
-currySA f = linDist @k @a @b @(Dual c) (doubleNegInv @c . f) \\ f \\ dual f
+currySA f = linDist @k @a @b @(Dual c) (doubleNegInv @k @c . f) \\ f \\ dual f
 
 applySA :: forall {k} (b :: k) c. (StarAutonomous k, Ob b, Ob c) => ExpSA b c ** b ~> c
 applySA =
-  doubleNeg @c . withOb2 @k @b @(Dual c) (linDistInv @k @(ExpSA b c) @b @(Dual c) id \\ dualObj @(b ** Dual c))
+  doubleNeg @k @c . withOb2 @k @b @(Dual c) (linDistInv @k @(ExpSA b c) @b @(Dual c) id \\ dualObj @(b ** Dual c))
     \\ dualObj @c
 
 expSA :: forall {k} (a :: k) b x y. (StarAutonomous k) => b ~> y -> x ~> a -> ExpSA a b ~> ExpSA x y
@@ -116,6 +136,8 @@ instance StarAutonomous () where
   dualInv U.Unit = U.Unit
   linDist U.Unit = U.Unit
   linDistInv U.Unit = U.Unit
+  doubleNeg = U.Unit
+  doubleNegInv = U.Unit
 
 instance StarAutonomous BOOL where
   type Dual (a :: BOOL) = Not a
@@ -136,6 +158,8 @@ instance StarAutonomous BOOL where
     (Fls, Fls) -> F2T
     (Fls, Tru) -> Fls
     (Tru, _) -> f
+  doubleNeg @a = case obj @a of Fls -> Fls; Tru -> Tru
+  doubleNegInv @a = case obj @a of Fls -> Fls; Tru -> Tru
 
 -- BOOL is not CompactClosed
 
@@ -146,6 +170,8 @@ instance (StarAutonomous j, StarAutonomous k) => StarAutonomous (j, k) where
   dualInv (f :**: g) = dualInv f :**: dualInv g
   linDist @'(a1, a2) @'(b1, b2) @'(c1, c2) (f :**: g) = linDist @j @a1 @b1 @c1 f :**: linDist @k @a2 @b2 @c2 g
   linDistInv @'(a1, a2) @'(b1, b2) @'(c1, c2) (f :**: g) = linDistInv @j @a1 @b1 @c1 f :**: linDistInv @k @a2 @b2 @c2 g
+  doubleNeg @'(a, b) = doubleNeg @j @a :**: doubleNeg @k @b
+  doubleNegInv @'(a, b) = doubleNegInv @j @a :**: doubleNegInv @k @b
 
 data family DualF (a :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), StarAutonomous `Elem` cs) => IsFreeOb (DualF a) where
@@ -199,20 +225,6 @@ instance Laws StarAutonomousStructures where
         f <- gen @a @b "f"
         g <- gen @b @c "g"
         dual (g . f) =:= dual f . dual g
-    , Law "dualInv after dual" \ @a @b gen -> do
-        f <- gen @a @b "f"
-        f =:= dualInv @_ @b @a (dual f)
-    , Law "dual after dualInv" \ @a @b gen -> withObDual @_ @a $ withObDual @_ @b do
-        g <- gen @(Dual b) @(Dual a) "g"
-        g =:= dual (dualInv @_ @b @a g)
-    , Law "linDistInv after linDist" \ @a @b @c gen ->
-        withOb2 @_ @a @b $ withObDual @_ @c do
-          p <- gen @(a ** b) @(Dual c) "p"
-          p =:= linDistInv @_ @a @b @c (linDist @_ @a @b @c p)
-    , Law "linDist after linDistInv" \ @a @b @c gen ->
-        withOb2 @_ @b @c $ withObDual @_ @(b ** c) do
-          q <- gen @a @(Dual (b ** c)) "q"
-          q =:= linDist @_ @a @b @c (linDistInv @_ @a @b @c q)
     , Law "linDist naturality" \ @a @b @c @d @e gen ->
         withOb2 @_ @a @b $ withOb2 @_ @d @e $ withObDual @_ @c $ withObDual @_ @d do
           p <- gen @(a ** b) @(Dual c) "p"
@@ -221,5 +233,22 @@ instance Laws StarAutonomousStructures where
           h <- gen @d @c "h"
           linDist @_ @d @e @d (dual h . p . (f ** g)) =:= dual (g ** h) . linDist @_ @a @b @c p . f
     ]
-      P.++ inverses "doubleNeg" \ @a ->
-        Inverses (label "doubleNegInv" (doubleNegInv @a)) (label "doubleNeg" (doubleNeg @a))
+      P.++ bijection
+        "dual"
+        ( \ @a @b gen ->
+            withObDual @_ @a $
+              withObDual @_ @b $
+                Bijection (gen @a @b "f") (gen @(Dual b) @(Dual a) "g") dual (dualInv @_ @b @a)
+        )
+      P.++ bijection
+        "linDist"
+        ( \ @a @b @c gen ->
+            withOb2 @_ @a @b $
+              withOb2 @_ @b @c $
+                withObDual @_ @c $
+                  withObDual @_ @(b ** c) $
+                    Bijection (gen @(a ** b) @(Dual c) "p") (gen @a @(Dual (b ** c)) "q") (linDist @_ @a @b @c) (linDistInv @_ @a @b @c)
+        )
+      P.++ [ Law "doubleNegInv definition" \ @a _ -> withObDual @_ @a $ withObDual @_ @(Dual a) (doubleNegInv @_ @a =:= doubleNegInvDefault @a)
+           ]
+      P.++ inverses "doubleNeg" \ @a -> Inverses (doubleNegInv @_ @a) (doubleNeg @_ @a)

@@ -31,7 +31,7 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct ()
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
+import Proarrow.Tools.Laws (Bijection (..), Law (..), Laws (..), bijection, (=:=))
 
 infixr 2 ~~>
 
@@ -221,20 +221,21 @@ instance (ClosedStructures `Elems` cs) => Closed (FREE cs (p :: CAT k)) where
 -- Together these make @(- ** b)@ left adjoint to @(b ~~> -)@, and '^^^' a profunctor.
 instance Laws ClosedStructures where
   laws =
-    [ Law "apply after curry" \ @a @b @c gen -> withOb2 @_ @a @b do
-        p <- gen @(a ** b) @c "p"
-        p =:= apply @_ @b @c . (curry @_ @a @b p ** obj @b)
-    , Law "curry of apply" \ @a @b @c gen -> withObExp @_ @b @c do
-        q <- gen @a @(b ~~> c) "q"
-        q =:= curry @_ @a @b (apply @_ @b @c . (q ** obj @b))
-    , Law "curry naturality" \ @a @b @c @d @e gen -> withOb2 @_ @a @b $ withOb2 @_ @d @d do
-        p <- gen @(a ** b) @c "p"
-        f <- gen @d @a "f"
-        g <- gen @d @b "g"
-        h <- gen @c @e "h"
-        (h ^^^ g) . curry @_ @a @b p . f =:= curry @_ @d @d (h . p . (f ** g))
-    , Law "^^^ from curry" \ @a @b @c @d gen -> do
-        f <- gen @b @d "f"
-        g <- gen @c @a "g"
-        withObExp @_ @a @b (f ^^^ g =:= curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
-    ]
+    bijection
+      "curry"
+      ( \ @a @b @c gen ->
+          withOb2 @_ @a @b $
+            withObExp @_ @b @c $
+              Bijection (gen @(a ** b) @c "p") (gen @a @(b ~~> c) "q") (curry @_ @a @b) (\q -> apply @_ @b @c . (q ** obj @b))
+      )
+      P.++ [ Law "curry naturality" \ @a @b @c @d @e gen -> withOb2 @_ @a @b $ withOb2 @_ @d @d do
+               p <- gen @(a ** b) @c "p"
+               f <- gen @d @a "f"
+               g <- gen @d @b "g"
+               h <- gen @c @e "h"
+               (h ^^^ g) . curry @_ @a @b p . f =:= curry @_ @d @d (h . p . (f ** g))
+           , Law "^^^ from curry" \ @a @b @c @d gen -> do
+               f <- gen @b @d "f"
+               g <- gen @c @a "g"
+               withObExp @_ @a @b (f ^^^ g =:= curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
+           ]

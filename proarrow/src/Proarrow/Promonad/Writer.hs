@@ -20,9 +20,9 @@ import Proarrow.Category.Monoidal
   , swapInner
   , unitObj
   )
-import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual, dualityCounit, dualityUnit)
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual)
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
-import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), doubleNeg, doubleNegInv, expSA)
+import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), expSA)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
@@ -56,9 +56,9 @@ instance (Ob (w :: k), CompactClosed k) => Corepresentable (Writer w :: k +-> k)
   coindex (Writer @b @a f) =
     withObDual @k @w
       ( withObDual @k @a $
-          leftUnitorWith (dualityCounit @w)
+          leftUnitorWith (dualityCounit @k @w)
             . associatorInv @k @(Dual w) @w @b
-            . (obj @(Dual w) ** (f . doubleNeg @a))
+            . (obj @(Dual w) ** (f . doubleNeg @k @a))
             . distribDual @k @w @(Dual a)
       )
       \\ f
@@ -69,8 +69,8 @@ instance (Ob (w :: k), CompactClosed k) => Corepresentable (Writer w :: k +-> k)
             Writer
               ( (obj @w ** (f . combineDual @w @(Dual a)))
                   . associator @k @w @(Dual w) @(Dual (Dual a))
-                  . leftUnitorInvWith (dualityUnit @w)
-                  . doubleNegInv @a
+                  . leftUnitorInvWith (dualityUnit @k @w)
+                  . doubleNegInv @k @a
               )
       )
       \\ f

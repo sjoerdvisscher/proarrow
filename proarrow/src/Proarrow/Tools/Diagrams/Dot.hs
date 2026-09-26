@@ -26,6 +26,8 @@ import Proarrow.Category.Monoidal.Hypergraph
   , Frobenius
   , Hypergraph
   , applyHG
+  , cap
+  , cup
   , curryHG
   , dualHG
   , linDistHG
@@ -270,10 +272,14 @@ instance StarAutonomous DOT where
   dualInv = dualHG
   linDist @a @b @c = linDistHG @a @b @c
   linDistInv @a @b @c = linDistInvHG @a @b @c
+  doubleNeg = id
+  doubleNegInv = id
 
 instance CompactClosed DOT where
   distribDual @a @b = withOb2 @DOT @a @b id
   dualUnit = id
+  dualityUnit @a = cup @a
+  dualityCounit @a = cap @a
 instance Costrong Tensor Dot where
   coact @(D as) @(D xs) @(D ys) (Dot f) = Dot \n ->
     case f n of

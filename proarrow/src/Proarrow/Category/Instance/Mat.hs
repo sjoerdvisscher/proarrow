@@ -25,7 +25,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, distRInv)
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
@@ -320,10 +320,14 @@ instance (P.Num a) => StarAutonomous (MatK a) where
   dualInv = transpose
   linDist @(M x) @(M y) @(M z) (Mat m) = withMultNat @z @y $ Mat (concat (P.fmap (chunks @y @x) m))
   linDistInv @(M x) @(M y) @(M z) (Mat m) = withMultNat @y @x $ Mat (P.fmap concat (chunks @z @y m))
+  doubleNeg = id
+  doubleNegInv = id
 
 instance (P.Num a) => CompactClosed (MatK a) where
   distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ transpose (obj @m) ** transpose (obj @n)
   dualUnit = id
+  dualityUnit @x = cup @x
+  dualityCounit @x = cap @x
 
 instance (P.Num a, MonoidalAction (t :: (MatK a, MatK a) +-> MatK a)) => Costrong t (Mat :: CAT (MatK a)) where
   coact @x = coactCC @t @x

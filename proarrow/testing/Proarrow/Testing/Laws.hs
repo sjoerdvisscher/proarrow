@@ -155,17 +155,7 @@ propNaturalIsoP f g = do
 
 -- | The category laws: 'id' is a left and right identity for @(.)@, and @(.)@ is associative.
 testCategory :: forall k. (Testable k) => TestTree
-testCategory = testProperty "Category" $ do
-  Some @a <- genOb @k
-  Some @b <- genOb
-  f <- genNamed @(a ~> b) "f"
-  testEq "left identity" "id . f" (id . f) "f" f
-  testEq "right identity" "f . id" (f . id) "f" f
-  Some @c <- genOb
-  Some @d <- genOb
-  g <- genNamed @(b ~> c) "g"
-  h <- genNamed @(c ~> d) "h"
-  testEq "associativity" "(h . g) . f" ((h . g) . f) "h . (g . f)" (h . (g . f))
+testCategory = testLaws @'[CategoryOf] @k "Category" (CategoryW :& WNil)
 
 -- | Laws of a dagger category: 'Dagger.dagger' is an identity-on-objects involution, and a
 -- contravariant functor. Being identity-on-objects, it needs no objecthood witness: the dagger of

@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- the identity laws compose with id on purpose
+{- HLINT ignore "Redundant id" -}
+
 -- | Laws stated as code, polymorphic in the category. A law of the structures @cs@ takes five
 -- object variables and a supply of named arbitrary arrows, and returns an equation between two
 -- arrows. The @proarrow:testing@ library checks laws by running them with random objects and
@@ -101,6 +104,58 @@ inverses name body = [side " left inverse" leftInverse, side " right inverse" ri
   where
     side :: String -> (forall k. (CategoryOf k) => Inverses k -> Equation k) -> Law cs
     side suffix eqn = Law (name ++ suffix) \ @a @b @c @d @e _ -> pure (eqn (body @a @b @c @d @e))
+
+-- * Bijections
+
+-- | Two maps between hom-sets claimed to be inverse to each other, see 'bijection', with how to
+-- ask for an arrow of either hom-set.
+type Bijection :: (Type -> Type) -> Kind -> Type
+data Bijection m k where
+  Bijection
+    :: forall {k} m (a :: k) (b :: k) (c :: k) (d :: k)
+     . m (a ~> b) -> m (c ~> d) -> (a ~> b -> c ~> d) -> (c ~> d -> a ~> b) -> Bijection m k
+
+-- | The body of a 'bijection': given five object variables and a supply of named arbitrary arrows,
+-- the two maps, with how to ask for an arrow of each hom-set.
+type BijectionBody :: [Kind -> Constraint] -> Type
+type BijectionBody cs =
+  forall {k} (a :: k) (b :: k) (c :: k) (d :: k) (e :: k) m
+   . (Labelled k, All cs k, Monad m, Ob a, Ob b, Ob c, Ob d, Ob e)
+  => (forall (x :: k) y. (Ob x, Ob y) => String -> m (x ~> y))
+  -> Bijection m k
+
+-- | The two laws saying that maps @to@ and @from@ between hom-sets are inverse to each other:
+-- @from (to f) = f@ and @to (from g) = g@. Each asks only for the arrow it needs, so an empty
+-- hom-set on the other side discards nothing.
+bijection :: forall cs. String -> BijectionBody cs -> [Law cs]
+bijection name body =
+  [ Law (name ++ " left inverse") \ @a @b @c @d @e gen -> case body @a @b @c @d @e gen of
+      Bijection askF _ to from -> do
+        f <- askF
+        f =:= from (to f)
+  , Law (name ++ " right inverse") \ @a @b @c @d @e gen -> case body @a @b @c @d @e gen of
+      Bijection _ askG to from -> do
+        g <- askG
+        g =:= to (from g)
+  ]
+
+-- * The laws of a category
+
+-- | 'id' is a unit for composition, which is associative.
+instance Laws '[CategoryOf] where
+  laws =
+    [ Law "left identity" \ @a @b gen -> do
+        f <- gen @a @b "f"
+        f =:= id . f
+    , Law "right identity" \ @a @b gen -> do
+        f <- gen @a @b "f"
+        f =:= f . id
+    , Law "associativity" \ @a @b @c @d gen -> do
+        f <- gen @a @b "f"
+        g <- gen @b @c "g"
+        h <- gen @c @d "h"
+        h . (g . f) =:= (h . g) . f
+    ]
 
 -- * Naming arrows
 

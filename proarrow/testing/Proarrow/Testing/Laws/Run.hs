@@ -124,6 +124,7 @@ type data TESTED cs k = TLeaf k
 type Witness :: (Kind -> Constraint) -> Kind -> Type
 data family Witness c k
 
+data instance Witness CategoryOf k = CategoryW
 newtype instance Witness M.Monoidal k = MonoidalW (WithTestOb2 k)
 data instance Witness M.SymMonoidal k = SymMonoidalW
 newtype instance Witness BinaryProduct.HasBinaryProducts k = ProductsW (WithTestObProd k)
@@ -379,6 +380,8 @@ instance
     untestOb3 @a @b @c (TestedArr (app "linDist" df) (SA.linDist @k @(Untest a) @(Untest b) @(Untest c) f))
   linDistInv @a @b @c (TestedArr df f) =
     untestOb3 @a @b @c (TestedArr (app "linDistInv" df) (SA.linDistInv @k @(Untest a) @(Untest b) @(Untest c) f))
+  doubleNeg @a = untestOb @a (prim "doubleNeg" (SA.doubleNeg @k @(Untest a)))
+  doubleNegInv @a = untestOb @a (prim "doubleNegInv" (SA.doubleNegInv @k @(Untest a)))
 
 instance
   ( HasWitness M.Monoidal cs
@@ -392,6 +395,8 @@ instance
   where
   distribDual @a @b = untestOb2 @a @b (prim "distribDual" (CC.distribDual @k @(Untest a) @(Untest b)))
   dualUnit = prim "dualUnit" CC.dualUnit
+  dualityUnit @a = untestOb @a (prim "dualityUnit" (CC.dualityUnit @k @(Untest a)))
+  dualityCounit @a = untestOb @a (prim "dualityCounit" (CC.dualityCounit @k @(Untest a)))
 
 instance (CategoryOf k) => Laws.Labelled (TESTED cs k) where
   label s (TestedArr _ f) = prim s f

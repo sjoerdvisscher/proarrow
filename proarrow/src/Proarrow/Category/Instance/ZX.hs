@@ -29,7 +29,7 @@ import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
@@ -185,10 +185,14 @@ instance StarAutonomous Nat where
   linDistInv @a @b (ZX m) =
     withOb2 @_ @a @b $
       ZX (Map.mapKeys (\(bc, a) -> case split bc of (b, c) -> (c, combine a b)) m)
+  doubleNeg = id
+  doubleNegInv = id
 
 instance CompactClosed Nat where
   distribDual @a @b = withOb2 @_ @a @b id
   dualUnit = id
+  dualityUnit @a = cup @a
+  dualityCounit @a = cap @a
 
 instance (MonoidalAction (t :: (Nat, Nat) +-> Nat)) => Costrong t ZX where
   coact @x = coactCC @t @x

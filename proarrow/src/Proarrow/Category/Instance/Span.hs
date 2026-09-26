@@ -9,7 +9,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
+import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, cap, cup, curryHG)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, src)
 import Proarrow.Limit.BinaryProduct
@@ -93,9 +93,13 @@ instance (HasPullbacks k, HasProducts k) => StarAutonomous (SPAN k) where
   dualInv (Span f g) = Span g f
   linDist @(SP a) @(SP b) (Span f g) = Span (fst @k @a @b . f) (snd @k @a @b . f &&& g)
   linDistInv @_ @(SP b) @(SP c) (Span f g) = Span (f &&& fst @k @b @c . g) (snd @k @b @c . g)
+  doubleNeg = id
+  doubleNegInv = id
 instance (HasPullbacks k, HasProducts k) => CompactClosed (SPAN k) where
   distribDual @(SP a) @(SP b) = withObProd @k @a @b id
   dualUnit = id
+  dualityUnit @a = cup @a
+  dualityCounit @a = cap @a
 
 instance (HasPullbacks k, HasProducts k) => DaggerProfunctor (Span :: CAT (SPAN k)) where
   dagger = dual

@@ -122,7 +122,13 @@ instance (TracedMonoidal k) => StarAutonomous (INT k) where
   dualInv (Int @ap @am @bp @bm f) = Int (swap @k @am @bp . f . swap @k @bm @ap)
   linDist @(I ap am) @(I bp bm) @(I cp cm) (Int f) = Int (associator @k @am @bm @cm . f . associatorInv @k @ap @bp @cp) \\ obj2 @(I bp bm) @(I cp cm)
   linDistInv @(I ap am) @(I bp bm) @(I cp cm) (Int f) = Int (associatorInv @k @am @bm @cm . f . associator @k @ap @bp @cp) \\ obj2 @(I ap am) @(I bp bm)
+  doubleNeg = id
+  doubleNegInv = id
 
 instance (TracedMonoidal k) => CompactClosed (INT k) where
   distribDual @(I ap am) @(I bp bm) = Int (swap @k @(am ** bm) @(ap ** bp)) \\ obj2 @(I ap am) @(I bp bm)
   dualUnit = id
+  dualityUnit @(I p n) =
+    withOb2 @k @p @n $ withOb2 @k @n @p $ Int (leftUnitorInv @k @(p ** n) . swap @k @n @p . leftUnitor @k @(n ** p))
+  dualityCounit @(I p n) =
+    withOb2 @k @p @n $ withOb2 @k @n @p $ Int (rightUnitorInv @k @(p ** n) . swap @k @n @p . rightUnitor @k @(n ** p))

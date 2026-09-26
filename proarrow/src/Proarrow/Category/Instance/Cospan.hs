@@ -10,7 +10,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
+import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, cap, cup, curryHG)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Colimit.BinaryCoproduct
   ( HasBinaryCoproducts (..)
@@ -96,9 +96,13 @@ instance (HasPushouts k, HasCoproducts k) => StarAutonomous (COSPAN k) where
   dualInv = dagger
   linDist @(CS a) @(CS b) (Cospan f g) = Cospan (f . lft @k @a @b) (f . rgt @k @a @b ||| g)
   linDistInv @_ @(CS b) @(CS c) (Cospan f g) = Cospan (f ||| g . lft @k @b @c) (g . rgt @k @b @c)
+  doubleNeg = id
+  doubleNegInv = id
 instance (HasPushouts k, HasCoproducts k) => CompactClosed (COSPAN k) where
   distribDual @(CS a) @(CS b) = withObCoprod @k @a @b id
   dualUnit = id
+  dualityUnit @a = cup @a
+  dualityCounit @a = cap @a
 
 instance (HasPushouts k) => DaggerProfunctor (Cospan :: CAT (COSPAN k)) where
   dagger (Cospan f g) = Cospan g f

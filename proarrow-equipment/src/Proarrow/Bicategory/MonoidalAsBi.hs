@@ -64,14 +64,14 @@ instance (M.Comonoid m) => Comonad (MK m) where
   delta = Mon2 M.comult
 
 dualAdj :: forall {k} a. (M.CompactClosed k, Ob (a :: k)) => Adj (MK (M.Dual a)) (MK a)
-dualAdj = M.withObDual @k @a Adj{adjUnit = Mon2 (M.dualityUnit @a), adjCounit = Mon2 (M.dualityCounit @a)}
+dualAdj = M.withObDual @k @a Adj{adjUnit = Mon2 (M.dualityUnit @k @a), adjCounit = Mon2 (M.dualityCounit @k @a)}
 
 dualAdj' :: forall {k} a. (M.CompactClosed k, Ob (a :: k)) => Adj (MK a) (MK (M.Dual a))
 dualAdj' =
   M.withObDual @k @a $
     Adj
-      { adjUnit = Mon2 (M.swap @k @a @(M.Dual a) . M.dualityUnit @a)
-      , adjCounit = Mon2 (M.dualityCounit @a . M.swap @k @a @(M.Dual a))
+      { adjUnit = Mon2 (M.swap @k @a @(M.Dual a) . M.dualityUnit @k @a)
+      , adjCounit = Mon2 (M.dualityCounit @k @a . M.swap @k @a @(M.Dual a))
       }
 
 type Dual a = MK (M.Dual (UN MK a))
@@ -99,13 +99,13 @@ instance (M.CompactClosed k, Ob j) => HasColimits (MK (j :: k) :: MonK k i0 i1) 
   withObColimit @(MK d) r = M.withObDual @k @j (M.withOb2 @k @(M.Dual j) @d r)
   colimit @(MK d) =
     M.withObDual @k @j $
-      Mon2 (M.leftUnitorWith (M.dualityCounit @j . M.swap @k @j @(M.Dual j)) . M.associatorInv @k @j @(M.Dual j) @d)
+      Mon2 (M.leftUnitorWith (M.dualityCounit @k @j . M.swap @k @j @(M.Dual j)) . M.associatorInv @k @j @(M.Dual j) @d)
   colimitUniv @_ @p f =
     M.withObDual @k @j $
       withTightAdjoint
         @_
         @(Dual (MK j) :: MonK k i1 i0)
-        (flipLeftAdjoint @(Dual (Dual (MK j)) :: MonK k i0 i1) @(Dual (MK j)) (f . (Mon2 (M.doubleNeg @j) `o` obj @p)))
+        (flipLeftAdjoint @(Dual (Dual (MK j)) :: MonK k i0 i1) @(Dual (MK j)) (f . (Mon2 (M.doubleNeg @k @j) `o` obj @p)))
 
 instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Ran (MK p) (MK q) = MK (p ~~> q)

@@ -42,20 +42,30 @@ class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
   dualUnit :: Dual (Unit :: k) ~> Unit
 
-dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
-dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit \\ dualObj @(Unit :: k)
+  -- | The unit of the duality between @a@ and its dual. 'dualityUnitDefault' gives it from the
+  -- *-autonomous structure; an instance with cups of its own can use them. (There is no default
+  -- method: @a@ occurs only under type families, so GHC could not instantiate one.)
+  dualityUnit :: (Ob (a :: k)) => Unit ~> a ** Dual a
 
-dualityUnit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Unit ~> a ** Dual a
-dualityUnit = let dualA = dualObj @a in (doubleNeg @a ** dualA) . distribDual @k @(Dual a) @a . dualityUnitSA @a \\ dualA
+  -- | The counit of the duality between @a@ and its dual; see 'dualityCounitDefault'.
+  dualityCounit :: (Ob (a :: k)) => Dual a ** a ~> Unit
+
+dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
+dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @k @Unit \\ dualObj @(Unit :: k)
+
+-- | 'dualityUnit' from the *-autonomous structure.
+dualityUnitDefault :: forall {k} (a :: k). (CompactClosed k, Ob a) => Unit ~> a ** Dual a
+dualityUnitDefault = let dualA = dualObj @a in (doubleNeg @k @a ** dualA) . distribDual @k @(Dual a) @a . dualityUnitSA @a \\ dualA
 
 dualityUnitS :: forall {k} (a :: k). (CompactClosed k, Ob a) => '[] ~> [a, Dual a]
-dualityUnitS = withObDual @k @a (Str @'[] @[a, Dual a] (dualityUnit @a))
+dualityUnitS = withObDual @k @a (Str @'[] @[a, Dual a] (dualityUnit @k @a))
 
-dualityCounit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ** a ~> Unit
-dualityCounit = dualUnit . dualityCounitSA @a
+-- | 'dualityCounit' from the *-autonomous structure.
+dualityCounitDefault :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ** a ~> Unit
+dualityCounitDefault = dualUnit . dualityCounitSA @a
 
 dualityCounitS :: forall {k} (a :: k). (CompactClosed k, Ob a) => [Dual a, a] ~> '[]
-dualityCounitS = withObDual @k @a (Str @[Dual a, a] @'[] (dualityCounit @a))
+dualityCounitS = withObDual @k @a (Str @[Dual a, a] @'[] (dualityCounit @k @a))
 
 combineDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual a ** Dual b ~> Dual (a ** b)
 combineDual =
@@ -63,7 +73,7 @@ combineDual =
     withObDual @k @b $
       withOb2 @k @(Dual a) @(Dual b) $
         linDist @k @_ @a @b $
-          leftUnitorWith (dualityCounit @a . swap @k @a @(Dual a))
+          leftUnitorWith (dualityCounit @k @a . swap @k @a @(Dual a))
             . associatorInv @k @a @(Dual a) @(Dual b)
             . swap @k @(Dual a ** Dual b) @a
 
@@ -90,21 +100,25 @@ coactCC
    . (CompactClosed m, MonoidalAction t, Ob x, Ob y, Ob u) => Act t u x ~> Act t u y -> x ~> y
 coactCC f =
   unitor @t @y
-    . actHom @t (dualityCounit @u) (obj @y)
+    . actHom @t (dualityCounit @_ @u) (obj @y)
     . multiplicatorInv @t @(Dual u) @u @y
     . actHom @t (obj @(Dual u)) f
     . multiplicator @t @(Dual u) @u @x
-    . actHom @t (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
+    . actHom @t (swap @m @u @(Dual u) . dualityUnit @_ @u) (obj @x)
     . unitorInv @t @x
     \\ dualObj @u
 
 instance CompactClosed () where
   distribDual = U.Unit
   dualUnit = U.Unit
+  dualityUnit = U.Unit
+  dualityCounit = U.Unit
 
 instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
   distribDual @'(a, a') @'(b, b') = distribDual @j @a @b :**: distribDual @k @a' @b'
   dualUnit = dualUnit :**: dualUnit
+  dualityUnit @'(a, a') = dualityUnit @j @a :**: dualityUnit @k @a'
+  dualityCounit @'(a, a') = dualityCounit @j @a :**: dualityCounit @k @a'
 
 -- | The structures the free category needs for 'CompactClosed', and those its laws are stated for.
 type CompactClosedStructures :: [Kind -> Constraint]
@@ -130,6 +144,8 @@ instance
   where
   distribDual @a @b = St (DistribDual @a @b) Nil
   dualUnit = St DualUnit Nil
+  dualityUnit @a = dualityUnitDefault @a
+  dualityCounit @a = dualityCounitDefault @a
 
 -- | 'distribDual' and 'dualUnit' are isomorphisms (so 'Dual' is strong monoidal), and 'dualityUnit'
 -- and 'dualityCounit' satisfy the zigzag identities, making @Dual a@ dual to @a@.
@@ -137,14 +153,16 @@ instance Laws CompactClosedStructures where
   laws =
     inverses "distribDual" (\ @a @b -> Inverses (distribDual @_ @a @b) (label "combineDual" (combineDual @a @b)))
       P.++ inverses "dualUnit" (Inverses dualUnit (label "dualUnitInv" dualUnitInv))
-      P.++ [ Law
+      P.++ [ Law "dualityUnit definition" \ @a _ -> withObDual @_ @a (dualityUnit @_ @a =:= dualityUnitDefault @a)
+           , Law "dualityCounit definition" \ @a _ -> withObDual @_ @a (dualityCounit @_ @a =:= dualityCounitDefault @a)
+           , Law
                "zigzag (a)"
                \ @a _ ->
                  withObDual @_ @a $
                    ( rightUnitor @_ @a
-                       . (obj @a ** label "dualityCounit" (dualityCounit @a))
+                       . (obj @a ** dualityCounit @_ @a)
                        . associator @_ @a @(Dual a) @a
-                       . (label "dualityUnit" (dualityUnit @a) ** obj @a)
+                       . (dualityUnit @_ @a ** obj @a)
                        . leftUnitorInv @_ @a
                    )
                      =:= id
@@ -153,9 +171,9 @@ instance Laws CompactClosedStructures where
                \ @a _ ->
                  withObDual @_ @a $
                    ( leftUnitor @_ @(Dual a)
-                       . (label "dualityCounit" (dualityCounit @a) ** obj @(Dual a))
+                       . (dualityCounit @_ @a ** obj @(Dual a))
                        . associatorInv @_ @(Dual a) @a @(Dual a)
-                       . (obj @(Dual a) ** label "dualityUnit" (dualityUnit @a))
+                       . (obj @(Dual a) ** dualityUnit @_ @a)
                        . rightUnitorInv @_ @(Dual a)
                    )
                      =:= id
