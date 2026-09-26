@@ -44,7 +44,7 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity qualified as Id
 import Proarrow.Profunctor.Representable (CorepStar, Rep, RepCostar, Representable (..), repUniv)
-import Proarrow.Tools.Laws (Inverses (..), Law (..), Laws (..), inverses, (===))
+import Proarrow.Tools.Laws (Inverses (..), Law (..), Laws (..), ProLaw (..), ProLaws (..), inverses, (=:=), (===))
 
 infixl 8 **
 infixl 7 ==
@@ -516,4 +516,20 @@ instance Laws SymMonoidalStructures where
             === (obj @b ** swap @_ @a @c)
               . associator @_ @b @a @c
               . (swap @_ @a @b ** obj @c)
+    ]
+
+-- | 'one' is a unit for '**' up to the unitors, '**' is associative up to the associators, and
+-- '**' is natural.
+instance ProLaws MonoidalProfunctor where
+  proLaws =
+    [ ProLaw "left unit" \ @_ @a @b p _ _ -> p =:= dimap (leftUnitorInv @_ @a) (leftUnitor @_ @b) (one ** p)
+    , ProLaw "right unit" \ @_ @a @b p _ _ -> p =:= dimap (rightUnitorInv @_ @a) (rightUnitor @_ @b) (p ** one)
+    , ProLaw3 "associativity" \ @_ @a @b @c @d @e @f p p' p'' _ _ ->
+        (p ** p') ** p'' =:= dimap (associator @_ @a @c @e) (associatorInv @_ @b @d @f) (p ** (p' ** p''))
+    , ProLaw3 "** naturality" \ @_ @a @b @c @d @e @f p p' _ morK morJ -> do
+        g <- morK @e @a "g"
+        g' <- morK @e @c "g'"
+        h <- morJ @b @f "h"
+        h' <- morJ @d @f "h'"
+        dimap (g ** g') (h ** h') (p ** p') =:= dimap g h p ** dimap g' h' p'
     ]

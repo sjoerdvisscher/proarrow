@@ -9,7 +9,6 @@ import Prelude hiding (curry, fst, id, snd, (.))
 
 import Test.Falsify.Generator (Function)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testProperty)
 
 import Proarrow.Core
   ( CAT
@@ -53,11 +52,11 @@ import Proarrow.Testing
   , oneOfTotal
   )
 import Proarrow.Testing.Laws
-  ( propProfunctor
-  , testBinaryProducts
+  ( testBinaryProducts
   , testCategory
   , testClosed
   , testMonoidal
+  , testProfunctor
   , testTerminalObject
   )
 import Props.Hask ()
@@ -525,5 +524,5 @@ test =
     , testBinaryProducts @CON (\ @a @b r -> withTestObProdCON @a @b r)
     , testMonoidal @CON (\ @a @b r -> withTestObProdCON @a @b r)
     , testClosed @CON (\ @a @b r -> withTestObProdCON @a @b r) (\ @a @b r -> withTestObExpCON @a @b r)
-    , testProperty "Tm profunctor" $ propProfunctor @Tm
+    , testGroup "Tm profunctor" [testProfunctor @Tm]
     ]

@@ -64,9 +64,9 @@ test =
     , testPullbacks_ @BOOL
     , testPushouts_ @BOOL
     , testCommutativeMonoid_ @TRU
-    , testProperty "FF,FT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, FLS))
-    , testProperty "FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(FLS, TRU))
-    , testProperty "FF,FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, TRU))
+    , testGroup "FF,FT profunctor" [testProfunctor @(NonTrivialProfunctor '(TRU, FLS))]
+    , testGroup "FT,TT profunctor" [testProfunctor @(NonTrivialProfunctor '(FLS, TRU))]
+    , testGroup "FF,FT,TT profunctor" [testProfunctor @(NonTrivialProfunctor '(TRU, TRU))]
     , testProperty "Booleans decidable" $ propDecidable @Booleans
     , testProperty "FF,FT decidable" $ propDecidable @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT decidable" $ propDecidable @(NonTrivialProfunctor '(FLS, TRU))

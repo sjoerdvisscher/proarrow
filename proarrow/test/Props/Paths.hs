@@ -31,7 +31,7 @@ import Proarrow.Testing
   , oneOfTotal
   , optGen
   )
-import Proarrow.Testing.Laws (propProfunctor, testCategory)
+import Proarrow.Testing.Laws (testCategory, testProfunctor)
 
 -- | The points of the schema, as bare data: two entity points and one attribute point. The
 -- category over them is 'DISCRETE', which supplies the identity arrows and makes 'Ob' the point\'s
@@ -219,5 +219,5 @@ test =
           (all (\e -> staffStep WorksIn (staffStep Mngr e) == staffStep WorksIn e) allEmployees)
           (testFailed "every employee's manager must work in the same department")
     , testCategory @HR
-    , testProperty "Staff is a profunctor" $ propProfunctor @Staff
+    , testGroup "Staff is a profunctor" [testProfunctor @Staff]
     ]

@@ -10,10 +10,12 @@ import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (OP))
-import Proarrow.Core ((\\), type (+->), type (~>))
+import Proarrow.Core (CAT, (\\), type (+->), type (~>))
 import Proarrow.Profunctor.Corepresentable (coindex, cotabulate, withObCorep, type (%%))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Representable (index, tabulate, withObRep, type (%))
 import Proarrow.Promonad.Reader (Reader)
+import Proarrow.Promonad.Writer (Writer)
 
 import Proarrow.Testing
   ( Some (..)
@@ -51,6 +53,10 @@ test =
     , testTraced_ @FINREL
     , -- the tensor-hom (currying) adjunction @(FR Nat2 '**' -) ⊣ (FR Nat2 '~~>' -)@
       testAdjunction_ @(Reader (OP (FR Nat2)) :: FINREL +-> FINREL)
+    , testMonStrong_ @(Reader (OP (FR Nat2)) :: FINREL +-> FINREL)
+    , testMonCostrong_ @FinRel
+    , testGroup "Id -| Id" [testProadjunction @(Id :: CAT FINREL) @Id]
+    , testGroup "Writer -| Reader" [testProadjunction @(Writer (FR Nat2) :: FINREL +-> FINREL) @(Reader (OP (FR Nat2)))]
     , testHypergraph_ @FINREL
     , testCopyDiscard_ @FINREL
     , testCommutativeMonoid_ @(FR Nat0)
@@ -88,6 +94,20 @@ instance (SNatI r) => TestableProfunctor (Reader (OP (FR r)) :: FINREL +-> FINRE
     withObCorep @(Reader (OP (FR r))) @a do
       m <- genNamed @(Reader (OP (FR r)) %% a ~> b) nm
       pure (SomeP (cotabulate @(Reader (OP (FR r))) @a @b m))
+
+instance (SNatI r, TestOb a, TestOb b) => TestingEqShow (Writer (FR r) a b) where
+  eqP l r = eqP (index l) (index r) \\ index l
+  showP m = showP (index m) \\ index m
+
+instance (SNatI r) => TestableProfunctor (Writer (FR r) :: FINREL +-> FINREL) where
+  genProfunctorElt nm = do
+    Some @a <- genOb
+    Some @b <- genOb
+    withObRep @(Writer (FR r)) @b do
+      m <- genNamed @(a ~> Writer (FR r) % b) nm
+      pure (SomeP (tabulate @(Writer (FR r)) @b @a m))
+
+instance TestableProfunctor (Id :: CAT FINREL)
 
 -- | A hom @a '~>' b@ wrapped as the identity profunctor 'Id' is a value of kind 'Type'; in a
 -- biproduct category it is a commutative monoid under morphism addition. It is testable whenever

@@ -9,7 +9,6 @@ import Prelude hiding (fst, id, snd, (.))
 
 import Test.Falsify.Generator (Gen, frequency, oneof)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testProperty)
 
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (//))
@@ -27,7 +26,7 @@ import Proarrow.Testing
   , mapSome
   , pattern GenNonEmpty
   )
-import Proarrow.Testing.Laws (propProfunctor, testBinaryProducts_, testCategory, testTerminalObject)
+import Proarrow.Testing.Laws (testBinaryProducts_, testCategory, testProfunctor, testTerminalObject)
 
 type data CON = Z | S CON
 
@@ -166,7 +165,7 @@ test =
     [ testCategory @CON
     , testTerminalObject @CON
     , testBinaryProducts_ @CON
-    , testProperty "Tm presheaf" $ propProfunctor @Tm'
+    , testGroup "Tm presheaf" [testProfunctor @Tm']
     ]
 
 -- | Two contexts are the same when they have the same length. Not a method of 'Testable': the

@@ -23,11 +23,11 @@ import Proarrow.Testing.Laws.Run
   ( HasWitness (..)
   , TESTED
   , Tested (..)
-  , TestedArr (..)
   , Witness
   , Witnesses (..)
   , app
   , testLaws
+  , pattern TestedArr
   )
 import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 

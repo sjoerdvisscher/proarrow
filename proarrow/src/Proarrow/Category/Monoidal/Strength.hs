@@ -19,7 +19,7 @@ import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
-import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
+import Proarrow.Tools.Laws (Law (..), Laws (..), ProLaw (..), ProLaws (..), (=:=), (===))
 
 -- | Profunctorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
@@ -43,6 +43,25 @@ instance (Strong t p, Strong t q) => Strong t (p :.: q) where
 
 instance (CategoryOf j, CategoryOf k) => Strong ProdAction (Prof :: CAT (j +-> k)) where
   act (Prof n) = Prof \(p :*: q) -> p :*: n q
+
+-- | The laws of strength for the tensor acting on its own category: acting by the 'Unit' does
+-- nothing and acting by a tensor is acting twice, up to the unitor and the associator, and 'act' is
+-- natural in the element and dinatural in the acting object.
+instance ProLaws (Strong Tensor) where
+  proLaws =
+    [ ProLaw "act unit" \ @p @a @b p _ _ -> p =:= dimap (leftUnitorInv @_ @a) (leftUnitor @_ @b) (act @Tensor @p @Unit p)
+    , ProLaw "act tensor" \ @p @a @b @c @d p _ _ ->
+        withOb2 @_ @c @d $
+          act @Tensor @p @(c ** d) p
+            =:= dimap (associator @_ @c @d @a) (associatorInv @_ @c @d @b) (act @Tensor @p @c (act @Tensor @p @d p))
+    , ProLaw "act naturality" \ @p @a @b @c @d @e p morK morJ -> do
+        g <- morK @c @a "g"
+        h <- morJ @b @d "h"
+        act @Tensor @p @e (dimap g h p) =:= dimap (obj @e ** g) (obj @e ** h) (act @Tensor @p @e p)
+    , ProLaw "act dinaturality" \ @p @a @b @c @_ @e p morK _ -> do
+        g <- morK @e @c "g"
+        lmap (g ** obj @a) (act @Tensor @p @c p) =:= rmap (g ** obj @b) (act @Tensor @p @e p)
+    ]
 
 type MonStrong (p :: k +-> k) = (Strong Tensor p, SymMonoidal k)
 
@@ -94,6 +113,45 @@ instance Costrong Tensor (->) where
 
 instance (MonoidalAction t, Costrong t (Hom k)) => Costrong t (Id :: CAT k) where
   coact @a (Id g) = Id (coact @t @(Hom k) @a g)
+
+-- | The laws of costrength for the tensor acting on its own category: 'coact' is natural in the
+-- element and dinatural in the acting object (sliding), and coacting by the 'Unit' or by a tensor
+-- is doing nothing or coacting twice (vanishing). An element with tensored endpoints is made from
+-- the drawn element @p@ with arbitrary arrows into and out of it.
+instance ProLaws (Costrong Tensor) where
+  proLaws =
+    [ ProLaw "coact unit" \ @p @a @b p _ _ ->
+        withOb2 @_ @Unit @a $
+          withOb2 @_ @Unit @b $
+            p =:= coact @Tensor @p @Unit (dimap (leftUnitor @_ @a) (leftUnitorInv @_ @b) p)
+    , ProLaw "coact tensor" \ @p @a @b @c @d @e @f p morK _ ->
+        withOb2 @_ @c @e $
+          withOb2 @_ @(c ** e) @d $
+            withOb2 @_ @(c ** e) @f $
+              withOb2 @_ @e @d $
+                withOb2 @_ @e @f $
+                  withOb2 @_ @c @(e ** d) $ withOb2 @_ @c @(e ** f) do
+                    g <- morK @((c ** e) ** d) @a "g"
+                    h <- morK @b @((c ** e) ** f) "h"
+                    let q = dimap g h p
+                    coact @Tensor @p @(c ** e) q
+                      =:= coact @Tensor @p @e @d @f (coact @Tensor @p @c (dimap (associatorInv @_ @c @e @d) (associator @_ @c @e @f) q))
+    , ProLaw "coact naturality" \ @p @a @b @c @d @e @f p morK _ ->
+        withOb2 @_ @c @d $ withOb2 @_ @c @f $ withOb2 @_ @c @e do
+          g <- morK @(c ** d) @a "g"
+          h <- morK @b @(c ** f) "h"
+          g' <- morK @e @d "g'"
+          h' <- morK @f @e "h'"
+          let q = dimap g h p
+          coact @Tensor @p @c (dimap (obj @c ** g') (obj @c ** h') q) =:= dimap g' h' (coact @Tensor @p @c q)
+    , ProLaw "coact sliding" \ @p @a @b @c @d @e @f p morK _ ->
+        withOb2 @_ @c @d $ withOb2 @_ @c @f $ withOb2 @_ @e @d $ withOb2 @_ @e @f do
+          g <- morK @(c ** d) @a "g"
+          h <- morK @b @(e ** f) "h"
+          k <- morK @e @c "k"
+          let q = dimap g h p
+          coact @Tensor @p @e @d @f (lmap (k ** obj @d) q) =:= coact @Tensor @p @c @d @f (rmap (k ** obj @f) q)
+    ]
 
 trace
   :: forall {k} (p :: k +-> k) u x y

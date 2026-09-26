@@ -157,6 +157,9 @@ instance (Ob a, Ob b) => TestableType (Fold a b) where
     (Fls, IdE) -> optGen [LoopE]
     (Fls, IdV) -> optGen [LoopV]
 
+instance TestableProfunctor Same
+instance TestableProfunctor Fold
+
 -- | The identity on the graph with one vertex and no edges. Empty over 'E', so hom-sets out of it
 -- are the ones that go empty, and the properties discard instead of failing.
 type Dot :: GRAPH +-> BOOL

@@ -53,7 +53,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad 
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Tools.Diagrams.Dot (DOT, Dot)
 import Proarrow.Tools.Diagrams.Dot qualified as Dot
-import Proarrow.Tools.Laws (Equation (..), Labelled (..), Law (..), Laws (..), lawName)
+import Proarrow.Tools.Laws (Labelled (..), Law (..), Laws (..), lawName, withSides)
 
 -- * Wires
 
@@ -1136,8 +1136,8 @@ lawSvgsWith :: forall (cs :: [Kind -> Constraint]). (Laws cs, All cs SVG) => Opt
 lawSvgsWith o = [(lawName law, draw law) | law <- laws @cs]
   where
     draw :: Law cs -> String
-    draw (Law _ body) = case runIdentity (body @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) box) of
-      l@Svg{} :=: r -> renderEquationWith o l r
+    draw (Law _ body) = withSides (runIdentity (body @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) box)) \l@Svg{} r ->
+      renderEquationWith o l r
     box :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Identity (x ~> y)
     box s = Identity (node @(UN S x) @(UN S y) s)
 

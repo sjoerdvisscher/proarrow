@@ -48,6 +48,7 @@ import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
+import Proarrow.Tools.Laws (ProLaw (..), ProLaws (..), (=:=))
 
 -- | A profunctor with finite, numbered hom-sets. 'toIndex' and 'fromIndex' are inverse for indices
 -- below 'size'; @fromIndex@ of anything else is an error, as is 'toIndex' of an element that is not
@@ -71,6 +72,11 @@ class (Profunctor p) => Finitary (p :: j +-> k) where
   -- | All elements of a hom-set, in index order.
   elements :: (Ob (a :: k), Ob (b :: j)) => [p a b]
   elements @a @b = P.map (fromIndex @p) (indices (size @p @a @b))
+
+-- | 'fromIndex' recovers an element from its index. The other laws, that 'elements' has 'size'
+-- entries numbered in order, are not equations between elements.
+instance ProLaws Finitary where
+  proLaws = [ProLaw "fromIndex . toIndex" \ @p @a @b p _ _ -> p =:= fromIndex @p @a @b (toIndex p)]
 
 -- | @[0 .. n-1]@, which @n@ being a 'Natural' rules out writing directly.
 indices :: Natural -> [Natural]

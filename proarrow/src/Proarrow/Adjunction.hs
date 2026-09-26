@@ -42,6 +42,7 @@ import Proarrow.Profunctor.Representable
   , tabulated
   )
 import Proarrow.Promonad (Procomonad (..), bind, extend, extract, return)
+import Proarrow.Tools.Laws (ProLaw (..), ProLaws (..), (=:=))
 
 -- | Adjunctions as heteromorphisms.
 class (Representable p, Corepresentable p) => Adjunction p
@@ -145,6 +146,28 @@ type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j) where
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
+
+-- | 'Proadjunction' with the right adjoint first, so that the laws about elements of the left
+-- adjoint can be indexed by it.
+type LeftProadjoint :: forall {j} {k}. k +-> j -> j +-> k -> Constraint
+class (Proadjunction p q) => LeftProadjoint q p
+
+instance (Proadjunction p q) => LeftProadjoint q p
+
+-- | The zigzag law for elements of the right adjoint @q@: going through the 'unit' and back through
+-- the 'counit' is the identity.
+instance ProLaws (Proadjunction p) where
+  proLaws =
+    [ ProLaw "zigzag" \ @q @a q _ _ -> case unit @p @q @a of
+        uq :.: up -> q =:= rmap (counit (up :.: q)) uq
+    ]
+
+-- | The zigzag law for elements of the left adjoint @p@.
+instance ProLaws (LeftProadjoint q) where
+  proLaws =
+    [ ProLaw "zigzag" \ @p @_ @b p _ _ -> case unit @p @q @b of
+        uq :.: up -> p =:= lmap (counit (p :.: uq)) up
+    ]
 
 unit' :: forall p q. (Proadjunction p q) => (~>) :~> q :.: p
 unit' (f :: a ~> b) = rmap f (unit @p @q @a) \\ f
