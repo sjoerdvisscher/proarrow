@@ -52,6 +52,7 @@ test =
     , testClosed_ @(MatK Int)
     , testStarAutonomous_ @(MatK Int)
     , testCompactClosed_ @(MatK Int)
+    , testTraced_ @(MatK Int)
     , testCopyDiscard_ @(MatK Int)
     , testCommutativeMonoid_ @(M Nat0 :: MatK Int)
     , testCommutativeMonoid_ @(M Nat1 :: MatK Int)

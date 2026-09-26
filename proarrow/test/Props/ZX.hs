@@ -32,6 +32,7 @@ test =
     , testSymMonoidal_ @Nat
     , testClosed_ @Nat
     , testCompactClosed_ @Nat
+    , testTraced_ @Nat
     , testStarAutonomous_ @Nat
     , testCopyDiscard_ @Nat
     , testCommutativeMonoid_ @0

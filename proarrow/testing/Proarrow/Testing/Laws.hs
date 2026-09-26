@@ -42,6 +42,7 @@ import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.Hypergraph qualified as Hypergraph
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
+import Proarrow.Category.Monoidal.Strength qualified as Strength
 import Proarrow.Category.Sheaf qualified as Sheaf
 import Proarrow.Category.Topos qualified as Topos
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
@@ -953,6 +954,22 @@ testHypergraph_
      )
   => TestTree
 testHypergraph_ = testHypergraph @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+
+-- * Traced monoidal categories
+
+-- | The trace laws of "Proarrow.Category.Monoidal.Strength" ('Strength.TracedStructures').
+testTraced
+  :: forall k. (Testable k, Strength.TracedMonoidal k, TestOb (M.Unit @k)) => WithTestOb2 k -> TestTree
+testTraced withTestOb2 =
+  -- small objects: the laws tensor up to three of them together, and a relation or matrix between
+  -- such tensors grows with the product of their sizes
+  testLawsWith @Strength.TracedStructures
+    (genObSmall @k)
+    "Traced"
+    (MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& SymMonoidalW :& TracedW :& WNil)
+
+testTraced_ :: forall k. (Testable k, Strength.TracedMonoidal k, TestObIsOb k) => TestTree
+testTraced_ = testTraced @k (\ @a @b r -> M.withOb2 @k @a @b r)
 
 -- * Monoids and comonoids
 

@@ -6,18 +6,20 @@
 module Proarrow.Category.Monoidal.Strength where
 
 import Data.Kind (Constraint)
+import Prelude (($))
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction, ProdAction, actHom)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), swapCoprod)
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
+import Proarrow.Tools.Laws (Law (..), Laws (..), (=:=))
 
 -- | Profunctorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
@@ -100,3 +102,50 @@ trace p = coact @Tensor @p @u @x @y (dimap (swap @k @u @x) (swap @k @y @u) p) \\
 
 class (Costrong Tensor (Hom k), SymMonoidal k) => TracedMonoidal k
 instance (Costrong Tensor (Hom k), SymMonoidal k) => TracedMonoidal k
+
+-- | The structures the laws of a traced monoidal category are stated for.
+type TracedStructures :: [Kind -> Constraint]
+type TracedStructures = '[Monoidal, SymMonoidal, TracedMonoidal]
+
+-- | The trace laws, for 'trace' over @u@ of @f : x ** u ~> y ** u@: natural in @x@ and @y@,
+-- dinatural in @u@ (sliding), trivial over the unit and iterated over a tensor (vanishing),
+-- compatible with tensoring on the left (superposing), and the trace of a swap is the identity
+-- (yanking).
+instance Laws TracedStructures where
+  laws =
+    [ Law "naturality" \ @x @y @u @d @e gen -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @e @u $ withOb2 @_ @d @u do
+        f <- gen @(x ** u) @(y ** u) "f"
+        g <- gen @y @d "g"
+        h <- gen @e @x "h"
+        g . trace @(~>) @u @x @y f . h =:= trace @(~>) @u @e @d ((g ** obj @u) . f . (h ** obj @u))
+    , Law "sliding" \ @x @y @u @v gen -> withOb2 @_ @x @u $ withOb2 @_ @y @u $ withOb2 @_ @x @v $ withOb2 @_ @y @v do
+        f <- gen @(x ** v) @(y ** u) "f"
+        g <- gen @u @v "g"
+        trace @(~>) @u @x @y (f . (obj @x ** g)) =:= trace @(~>) @v @x @y ((obj @y ** g) . f)
+    , Law "vanishing (unit)" \ @x @y gen -> withOb2 @_ @x @Unit $ withOb2 @_ @y @Unit do
+        f <- gen @(x ** Unit) @(y ** Unit) "f"
+        trace @(~>) @Unit @x @y f =:= rightUnitor @_ @y . f . rightUnitorInv @_ @x
+    , Law "vanishing (tensor)" \ @x @y @u @v gen ->
+        withOb2 @_ @u @v $
+          withOb2 @_ @x @(u ** v) $
+            withOb2 @_ @y @(u ** v) $
+              withOb2 @_ @x @u $
+                withOb2 @_ @y @u $
+                  withOb2 @_ @(x ** u) @v $
+                    withOb2 @_ @(y ** u) @v do
+                      f <- gen @(x ** (u ** v)) @(y ** (u ** v)) "f"
+                      trace @(~>) @(u ** v) @x @y f
+                        =:= trace @(~>) @u @x @y (trace @(~>) @v @(x ** u) @(y ** u) (associatorInv @_ @y @u @v . f . associator @_ @x @u @v))
+    , Law "superposing" \ @x @y @u @w gen ->
+        withOb2 @_ @x @u $
+          withOb2 @_ @y @u $
+            withOb2 @_ @w @x $
+              withOb2 @_ @w @y $
+                withOb2 @_ @w @(x ** u) $
+                  withOb2 @_ @w @(y ** u) do
+                    f <- gen @(x ** u) @(y ** u) "f"
+                    obj @w
+                      ** trace @(~>) @u @x @y f
+                      =:= trace @(~>) @u @(w ** x) @(w ** y) (associatorInv @_ @w @y @u . (obj @w ** f) . associator @_ @w @x @u)
+    , Law "yanking" \ @u _ -> withOb2 @_ @u @u (obj @u =:= trace @(~>) @u @u @u (swap @_ @u @u))
+    ]

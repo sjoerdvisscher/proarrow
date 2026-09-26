@@ -48,6 +48,7 @@ test =
     , testClosed_ @FINREL
     , testStarAutonomous_ @FINREL
     , testCompactClosed_ @FINREL
+    , testTraced_ @FINREL
     , -- the tensor-hom (currying) adjunction @(FR Nat2 '**' -) ⊣ (FR Nat2 '~~>' -)@
       testAdjunction_ @(Reader (OP (FR Nat2)) :: FINREL +-> FINREL)
     , testHypergraph_ @FINREL
@@ -67,6 +68,7 @@ test =
 instance Testable FINREL where
   showOb @(FR a) = show $ snatToNat $ snat @a
   genSome = genSomeDef @'[FR Z, FR (S Z), FR (S (S Z)), FR (S (S (S Z)))]
+  genSomeSmall = genSomeDef @'[FR Z, FR (S Z), FR (S (S Z))]
 
 instance (TestOb a, TestOb b) => TestableType (FinRel a b) where
   gen = invmap FinRel unFinRel gen

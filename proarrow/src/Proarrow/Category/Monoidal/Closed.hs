@@ -234,7 +234,7 @@ instance Laws ClosedStructures where
                g <- gen @d @b "g"
                h <- gen @c @e "h"
                (h ^^^ g) . curry @_ @a @b p . f =:= curry @_ @d @d (h . p . (f ** g))
-           , Law "^^^ from curry" \ @a @b @c @d gen -> do
+           , Law "internal hom on arrows" \ @a @b @c @d gen -> do
                f <- gen @b @d "f"
                g <- gen @c @a "g"
                withObExp @_ @a @b (f ^^^ g =:= curry @_ @(a ~~> b) @c (f . apply @_ @a @b . (obj @(a ~~> b) ** g)))
