@@ -64,6 +64,9 @@ module Proarrow.Core
   , Eq2
   , Show2
 
+    -- * Constraint Continuations
+  , ($)
+
     -- * Type Family Utilities
 
     -- ** Kind Unwrapping
@@ -79,6 +82,7 @@ import Prelude (Eq, Show, type (~))
 infixr 0 ~>, :~>, +->
 infixl 1 \\
 infixr 0 //
+infixr 0 $
 infixr 9 .
 
 -- * Type Infrastructure
@@ -298,6 +302,17 @@ instance (forall x y. Eq (p x y)) => Eq2 p
 class (forall x y. Show (p x y)) => Show2 p
 
 instance (forall x y. Show (p x y)) => Show2 p
+
+-- * Constraint Continuations
+
+-- Workaround for GHC #26543 (fix pending in !16566): on GHC 9.14 and 10.0 some `with… $ body`
+-- applications fail to typecheck with Prelude's $, while the parenthesised form is accepted.
+
+-- | Application of a constraint continuation such as 'Proarrow.Category.Monoidal.withOb2' to its
+-- body, as in @withOb2 \@_ \@a \@b $ body@. Unlike Prelude's @$@ it only applies functions of
+-- this shape.
+($) :: forall (c :: Constraint) r. (((c) => r) -> r) -> ((c) => r) -> r
+f $ r = f r
 
 -- * Type Family Utilities
 

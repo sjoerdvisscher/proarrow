@@ -28,7 +28,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Proarrow.Category.Monoidal.Strictified (Strictified (..))
+import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, singleton)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj)
 import Proarrow.Optic (PIso, iso)
 import Proarrow.Tools.Laws
@@ -104,11 +104,11 @@ doubleNegIso = iso doubleNegInv doubleNeg
 
 linDistS
   :: forall {k} (a :: k) (b :: k) c. (StarAutonomous k, Ob c) => '[a, b] ~> '[Dual c] -> '[a] ~> '[Dual (b ** c)]
-linDistS f@Str{} = withOb2 @k @b @c (withObDual @k @(b ** c) (Str (linDist @k @a @b @c (unStr f))))
+linDistS f@Str{} = singleton (linDist @k @a @b @c (unStr f))
 
 linDistInvS
   :: forall {k} (a :: k) (b :: k) c. (StarAutonomous k, Ob b, Ob c) => '[a] ~> '[Dual (b ** c)] -> '[a, b] ~> '[Dual c]
-linDistInvS f@Str{} = withObDual @k @c (Str (linDistInv @k @a @b @c (unStr f)))
+linDistInvS f@Str{} = withObDual @k @c (Str (linDistInv @k @a @b @c (unStr f)) \\ obj1 @(Dual c))
 
 type ExpSA a b = Dual (a ** Dual b)
 

@@ -6,13 +6,12 @@
 module Proarrow.Category.Monoidal.Strength where
 
 import Data.Kind (Constraint)
-import Prelude (($))
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction, ProdAction, actHom)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), swapCoprod)
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), obj, ($), type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))

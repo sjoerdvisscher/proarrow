@@ -65,7 +65,8 @@ fromExOptic (ExOptic f g) = Pastro (f :.: Yo (tgt f) (src g) :.: g)
 type Tambara :: FLAVOR j k -> j +-> k -> j +-> k
 data Tambara w r a b where
   Tambara
-    :: (Ob a, Ob b)
+    :: forall {j} {k} (w :: FLAVOR j k) (r :: j +-> k) a b
+     . (Ob a, Ob b)
     => (forall (p :: k +-> k) (q :: j +-> j). (w p q, Profunctor p, Profunctor q) => (q |> r <| p) a b)
     -> Tambara w r a b
 

@@ -8,7 +8,6 @@
 module Proarrow.Category.Instance.Duploid where
 
 import Data.Kind (Constraint)
-import Prelude (($))
 
 import Proarrow.Adjunction (AdjMonad, Adjunction)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), StrongMonoidalCorep, SymMonoidal (..))
@@ -23,6 +22,7 @@ import Proarrow.Core
   , lmap
   , obj
   , rmap
+  , ($)
   , (//)
   , type (+->)
   )
@@ -70,7 +70,7 @@ instance (Adjunction adj) => Profunctor (Duploid :: CAT (DUPLOID adj)) where
 
 -- | ATTENTION: a duploid is not associative, so not really a promonad/category!
 instance (Adjunction adj) => Promonad (Duploid :: CAT (DUPLOID adj)) where
-  id @x = Duploid $ case pn @x of
+  id @x = Duploid case pn @x of
     SP -> corepUniv
     SN -> repUniv
   g@(Duploid @y _) . f = case pn @y of
@@ -177,8 +177,7 @@ instance (HasBinaryCoproducts p, Adjunction adj) => HasBinaryCoproducts (DUPLOID
       withPosOb @y $
         withObCoprod @p @(Pos x) @(Pos y) $
           withNegOb @a $
-            Duploid $
-              tabulate (index f ||| index g)
+            Duploid (tabulate (index f ||| index g))
 
 instance (HasBinaryProducts n, Adjunction adj) => HasBinaryProducts (DUPLOID (adj :: n +-> p)) where
   type a && b = N (Neg a && Neg b)

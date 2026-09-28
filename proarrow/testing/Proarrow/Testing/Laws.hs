@@ -529,12 +529,12 @@ propReflectsEq label desc eqComposed k1 k2 = do
 testEqualizers :: forall k. (Testable k, Equalizer.HasEqualizers k) => WithTestOb k -> TestTree
 testEqualizers withTestOb = testProperty "Equalizers" $ do
   Some @a <- genOb @k
-  Some @b <- genOb
+  Some @b <- genOb @k
   f <- genNamed @(a ~> b) "f"
   g <- genNamed @(a ~> b) "g"
-  Equalizer.equalize f g \ @e ee@Objs -> withTestOb @e $ do
+  Equalizer.equalize f g \ @e ee@Objs -> withTestOb @e do
     testEq "equalizing" "f . e" (f . ee) "g . e" (g . ee)
-    Some @z <- genOb
+    Some @z <- genOb @k
     p <- genNamed @(z ~> e) "p"
     let h = ee . p
         factored = Equalizer.factorEqualizer ee h
@@ -561,12 +561,12 @@ testEqualizers_ = testEqualizers @k (\r -> r)
 testCoequalizers :: forall k. (Testable k, Coequalizer.HasCoequalizers k) => WithTestOb k -> TestTree
 testCoequalizers withTestOb = testProperty "Coequalizers" $ do
   Some @a <- genOb @k
-  Some @b <- genOb
+  Some @b <- genOb @k
   f <- genNamed @(a ~> b) "f"
   g <- genNamed @(a ~> b) "g"
-  Coequalizer.coequalize f g \ @c cq@Objs -> withTestOb @c $ do
+  Coequalizer.coequalize f g \ @c cq@Objs -> withTestOb @c do
     testEq "coequalizing" "c . f" (cq . f) "c . g" (cq . g)
-    Some @z <- genOb
+    Some @z <- genOb @k
     p <- genNamed @(c ~> z) "p"
     let h = p . cq
         factored = Coequalizer.factorCoequalizer cq h
@@ -592,13 +592,13 @@ testCoequalizers_ = testCoequalizers @k (\r -> r)
 testPullbacks :: forall k. (Testable k, Pullback.HasPullbacks k) => WithTestOb k -> TestTree
 testPullbacks withTestOb = testProperty "Pullbacks" $ do
   Some @o <- genOb @k
-  Some @a <- genOb
-  Some @b <- genOb
+  Some @a <- genOb @k
+  Some @b <- genOb @k
   f <- genNamed @(a ~> o) "f"
   g <- genNamed @(b ~> o) "g"
-  Pullback.pullback f g \ @p p1@Objs p2 -> withTestOb @p $ do
+  Pullback.pullback f g \ @p p1@Objs p2 -> withTestOb @p do
     testEq "commutes" "f . p1" (f . p1) "g . p2" (g . p2)
-    Some @z <- genOb
+    Some @z <- genOb @k
     k1' <- genNamed @(z ~> p) "k1"
     k2' <- genNamed @(z ~> p) "k2"
     eq1 <- eqP (p1 . k1') (p1 . k2')
@@ -629,13 +629,13 @@ testPullbacks_ = testPullbacks @k (\r -> r)
 testPushouts :: forall k. (Testable k, Pushout.HasPushouts k) => WithTestOb k -> TestTree
 testPushouts withTestOb = testProperty "Pushouts" $ do
   Some @o <- genOb @k
-  Some @a <- genOb
-  Some @b <- genOb
+  Some @a <- genOb @k
+  Some @b <- genOb @k
   f <- genNamed @(o ~> a) "f"
   g <- genNamed @(o ~> b) "g"
-  Pushout.pushout f g \ @p p1@Objs p2 -> withTestOb @p $ do
+  Pushout.pushout f g \ @p p1@Objs p2 -> withTestOb @p do
     testEq "commutes" "p1 . f" (p1 . f) "p2 . g" (p2 . g)
-    Some @z <- genOb
+    Some @z <- genOb @k
     k1' <- genNamed @(p ~> z) "k1"
     k2' <- genNamed @(p ~> z) "k2"
     eq1 <- eqP (k1' . p1) (k2' . p1)
@@ -669,12 +669,12 @@ testEpiMonoFactorization
   :: forall k. (Testable k, Topos.HasEpiMonoFactorization k) => WithTestOb k -> TestTree
 testEpiMonoFactorization withTestOb = testProperty "Epi-mono factorization" $ do
   Some @a <- genOb @k
-  Some @b <- genOb
+  Some @b <- genOb @k
   f <- genNamed @(a ~> b) "f"
   case Topos.factorize f of
-    (:.:) @x e@Objs m -> withTestOb @x $ do
+    (:.:) @x e@Objs m -> withTestOb @x do
       testEq "factorization" "m . e" (m . e) "f" f
-      Some @z <- genOb
+      Some @z <- genOb @k
       k1 <- genNamed @(x ~> z) "k1"
       k2 <- genNamed @(x ~> z) "k2"
       eqEpi <- eqP (k1 . e) (k2 . e)
@@ -841,7 +841,7 @@ testStarAutonomous withTestOb2 withTestObExp withTestObDual =
 
 testStarAutonomous_ :: forall k. (Testable k, SA.StarAutonomous k, TestObIsOb k) => TestTree
 testStarAutonomous_ =
-  testStarAutonomous
+  testStarAutonomous @k
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a @b r -> Exponential.withObExp @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
@@ -871,7 +871,7 @@ testCompactClosed withTestOb2 withTestObExp withTestObDual =
 
 testCompactClosed_ :: forall k. (Testable k, CC.CompactClosed k, TestObIsOb k) => TestTree
 testCompactClosed_ =
-  testCompactClosed
+  testCompactClosed @k
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a @b r -> Exponential.withObExp @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
@@ -1134,8 +1134,8 @@ testSubobjectClassifier
   -> TestTree
 testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ do
   Some @a <- genOb @k
-  Some @b <- genOb
-  Some @z <- genOb
+  Some @b <- genOb @k
+  Some @z <- genOb @k
   f <- genNamed @(a ~> b) "f"
   x <- genNamed @(z ~> a) "x"
   y <- genNamed @(z ~> b) "y"
@@ -1144,7 +1144,7 @@ testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ d
     eqP (Topos.classifyGraph f . (x BinaryProduct.&&& y)) (Terminal.const Topos.true)
   expect "classifyGraph is true exactly on the graph of f" inGraph classified
   g <- genNamed @(a ~> b) "g"
-  withTestObProd @a @b @(Property ()) $ do
+  withTestObProd @a @b @(Property ()) do
     eqChi <- eqP (Topos.classifyGraph f) (Topos.classifyGraph g)
     propReflectsEq "classifier injective" "classifyGraph f == classifyGraph g" eqChi f g
   x' <- genNamed @(z ~> a) "x'"
