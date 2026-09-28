@@ -49,11 +49,22 @@ import Proarrow.Category.Monoidal.Strictified
   , swap2
   , type (++)
   )
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Tools.Diagrams.Dot (DOT, Dot)
 import Proarrow.Tools.Diagrams.Dot qualified as Dot
-import Proarrow.Tools.Laws (Labelled (..), Law (..), Laws (..), lawName, withSides)
+import Proarrow.Tools.Laws
+  ( Labelled (..)
+  , Law (..)
+  , Laws (..)
+  , ProEquation (..)
+  , ProLaw (..)
+  , ProLaws (..)
+  , lawName
+  , proLawName
+  , withSides
+  )
 
 -- * Wires
 
@@ -447,7 +458,11 @@ instance Labelled SVG where
 -- | A box with the given name, its inputs along the top and its outputs along the bottom, each
 -- output labelled with its wire.
 node :: forall (as :: [W]) (bs :: [W]). (IsList as, IsList bs) => String -> Svg (S as) (S bs)
-node s = svg (Dot.node @(Erase as) @(Erase bs) s) (Node s (wireKinds @as) (wires @bs))
+node s = svg (Dot.node @(Erase as) @(Erase bs) s) (Node ArrowBox s (wireKinds @as) (wires @bs))
+
+-- | A shaded box with the given name, for an element of a profunctor: in meaning a 'node'.
+element :: forall (as :: [W]) (bs :: [W]). (IsList as, IsList bs) => String -> Svg (S as) (S bs)
+element s = svg (Dot.node @(Erase as) @(Erase bs) s) (Node ElementBox s (wireKinds @as) (wires @bs))
 
 -- | A wire, the identity on it.
 line :: (KnownSymbol a) => Svg (S '[Wire a]) (S '[Wire a])
@@ -461,11 +476,11 @@ swapNode = Svg (Dot.swapNode @a @b) (Permute True (wireKinds @[Wire a, Wire b]) 
 
 -- | The unit of an adjunction, drawn as a box named η.
 unitAdj :: forall (l :: Symbol) (r :: Symbol). (KnownSymbol l, KnownSymbol r) => Svg (S '[]) (S '[Wire l, Wire r])
-unitAdj = Svg (Dot.unitAdj @l @r) (Node "η" [] (wires @[Wire l, Wire r]))
+unitAdj = Svg (Dot.unitAdj @l @r) (Node ArrowBox "η" [] (wires @[Wire l, Wire r]))
 
 -- | The counit of an adjunction, drawn as a box named ϵ.
 counitAdj :: forall (l :: Symbol) (r :: Symbol). (KnownSymbol l, KnownSymbol r) => Svg (S '[Wire r, Wire l]) (S '[])
-counitAdj = Svg (Dot.counitAdj @l @r) (Node "ϵ" (wireKinds @[Wire r, Wire l]) [])
+counitAdj = Svg (Dot.counitAdj @l @r) (Node ArrowBox "ϵ" (wireKinds @[Wire r, Wire l]) [])
 
 -- | What kind of wire a wire is, which decides how it is drawn.
 data WireKind = Plain | UnitWire | DualWire
@@ -483,8 +498,9 @@ data Diagram
     Permute Bool [WireKind] [Int]
   | -- | wires carrying straight on, as many out as in, possibly of other kinds
     Straight [WireKind] [WireKind]
-  | -- | a box with a name, the kinds of its inputs, and the labels and kinds of its outputs
-    Node String [WireKind] [(String, WireKind)]
+  | -- | a box of the given kind with a name, the kinds of its inputs, and the labels and kinds of
+    -- its outputs
+    Node BoxKind String [WireKind] [(String, WireKind)]
   | -- | a point of the given kind on each wire
     Points PointKind [WireKind]
   | -- | bends joining each wire of the first kinds to its dual, of the second kinds
@@ -504,6 +520,11 @@ data Diagram
   | -- | the first inputs and outputs, of the given kinds, fed back
     Trace [WireKind] Diagram
   deriving (Show)
+
+-- | What a box stands for: an arrow, drawn as an outline, or an element of a profunctor that a
+-- profunctor law is about, drawn shaded.
+data BoxKind = ArrowBox | ElementBox
+  deriving (Eq, Show)
 
 -- | The points a (co)monoid is drawn with.
 data PointKind = UnitPoint | DiscardPoint | CopyPoint | MergePoint
@@ -535,7 +556,7 @@ hideUnits = \case
         renumber i = fromMaybe 0 (List.elemIndex i kept)
     in Permute c (map (ks !!) kept) [renumber i | i <- p, ks !! i /= UnitWire]
   Straight ks ls -> Straight (noUnits ks) (noUnits ls)
-  Node s ks os -> Node s (noUnits ks) [w | w@(_, k) <- os, k /= UnitWire]
+  Node bk s ks os -> Node bk s (noUnits ks) [w | w@(_, k) <- os, k /= UnitWire]
   Points pk ks -> Points pk (noUnits ks)
   Bend b ka kd -> Bend b (noUnits ka) (noUnits kd)
   Rebracket _ ka kb kc -> straight (noUnits (ka ++ kb ++ kc))
@@ -559,7 +580,7 @@ layout o = go . if explicitCoherence o then id else hideUnits
       Ident ks -> identity (explicitIdentities o) ks
       Permute c ks p -> permutation (c || explicitSwaps o) ks p
       Straight ks ls -> Wiring [0 .. length ls - 1] ks ls
-      Node s ks os -> Stage (nodeGeo ks os s)
+      Node bk s ks os -> Stage (nodeGeo bk ks os s)
       Points pk ks -> points (not (fixedSpiders o)) pk ks
       Bend b ka kd -> bend b ka kd
       Rebracket g ka kb kc -> Stage (rebracket g ka kb kc)
@@ -596,8 +617,8 @@ data Path
 data Shape
   = -- | a piece of wire of the given kind: plain, dotted for a unit wire, hollow for a dual one
     Piece WireKind Path
-  | -- | a box between two corners, with a name
-    Box Pt Pt String
+  | -- | a box of the given kind between two corners, with a name
+    Box BoxKind Pt Pt String
   | -- | the dashed frame of an identity, between two corners
     Frame Pt Pt
   | -- | a bracket grouping wires, from one point to another, its ends pointing down or up
@@ -619,7 +640,7 @@ move dx dy = \case
   Piece k (Curve a b) -> Piece k (Curve (at a) (at b))
   Piece k (Loop ps) -> Piece k (Loop (fmap at ps))
   Piece k (Quarter a b) -> Piece k (Quarter (at a) (at b))
-  Box a b s -> Box (at a) (at b) s
+  Box bk a b s -> Box bk (at a) (at b) s
   Frame a b -> Frame (at a) (at b)
   Bracket a b down -> Bracket (at a) (at b) down
   Point a f -> Point (at a) f
@@ -807,10 +828,10 @@ bandHeight d
   | d < 0.5 = 0
   | otherwise = max 16 (min 64 (0.6 * d))
 
--- | A box with inputs of the given kinds, and outputs with the given labels and kinds. Unit wires
--- get no label.
-nodeGeo :: [WireKind] -> [(String, WireKind)] -> String -> Geo
-nodeGeo inKinds outWires s =
+-- | A box of the given kind with inputs of the given kinds, and outputs with the given labels and
+-- kinds. Unit wires get no label.
+nodeGeo :: BoxKind -> [WireKind] -> [(String, WireKind)] -> String -> Geo
+nodeGeo bk inKinds outWires s =
   Geo
     { geoWidth = w
     , geoHeight = h
@@ -819,7 +840,7 @@ nodeGeo inKinds outWires s =
     , geoShapes =
         [Piece u (Line (x, 0) (x, stub)) | (x, u) <- zip ins inKinds]
           ++ [Piece u (Line (x, stub + boxHeight) (x, h)) | (x, (_, u)) <- zip outs outWires]
-          ++ [Box ((w - bw) / 2, stub) ((w + bw) / 2, stub + boxHeight) s]
+          ++ [Box bk ((w - bw) / 2, stub) ((w + bw) / 2, stub + boxHeight) s]
           ++ [Label (x + 3, stub + boxHeight + 9) o | (x, (o, ok)) <- zip outs outWires, ok /= UnitWire]
     }
   where
@@ -984,7 +1005,7 @@ mirror g = g{geoIns = geoOuts g, geoOuts = geoIns g, geoShapes = map flipShape (
       Piece k (Curve a b) -> Piece k (Curve (f b) (f a))
       Piece k (Loop ps) -> Piece k (Loop (NE.reverse (fmap f ps)))
       Piece k (Quarter a b) -> Piece k (Quarter (f a) (f b))
-      Box a b s -> uncurry Box (corners a b) s
+      Box bk a b s -> uncurry (Box bk) (corners a b) s
       Frame a b -> uncurry Frame (corners a b)
       Bracket a b down -> Bracket (f a) (f b) (not down)
       Point a filled -> Point (f a) (not filled)
@@ -1141,6 +1162,50 @@ lawSvgsWith o = [(lawName law, draw law) | law <- laws @cs]
     box :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Identity (x ~> y)
     box s = Identity (node @(UN S x) @(UN S y) s)
 
+-- | The laws of the profunctor class @c@ drawn with the 'defaultOptions', see 'proLawSvgsWith'.
+proLawSvgs :: forall (c :: (SVG +-> SVG) -> Constraint). (ProLaws c, c (Id :: CAT SVG)) => [(String, String)]
+proLawSvgs = proLawSvgsWith @c defaultOptions
+
+-- | The laws of the profunctor class @c@, each drawn as an equation by 'renderEquationWith', with
+-- its name. The profunctor is the identity profunctor on 'SVG', so an element is a diagram: the
+-- elements a law is given are 'element's named p, p' and p'', and the arrows it asks for are
+-- 'node's with the names it gives them. The object variables are single wires @'Wire' "a"@ to
+-- @'Wire' "f"@.
+proLawSvgsWith
+  :: forall (c :: (SVG +-> SVG) -> Constraint). (ProLaws c, c (Id :: CAT SVG)) => Options -> [(String, String)]
+proLawSvgsWith o = [(proLawName law, draw law) | law <- proLaws @c]
+  where
+    draw :: ProLaw c -> String
+    draw (ProLaw _ body) =
+      equation
+        ( runIdentity
+            ( body @Id @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) @(S '[Wire "f"])
+                (el "p")
+                box
+                box
+            )
+        )
+    draw (ProLaw3 _ body) =
+      equation
+        ( runIdentity
+            ( body @Id @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) @(S '[Wire "f"])
+                (el "p")
+                (el "p'")
+                (el "p''")
+                box
+                box
+            )
+        )
+    equation :: ProEquation (Id :: CAT SVG) -> String
+    equation = \case
+      Id l@Svg{} :=: Id r -> renderEquationWith o l r
+      InK e -> withSides e \l@Svg{} r -> renderEquationWith o l r
+      InJ e -> withSides e \l@Svg{} r -> renderEquationWith o l r
+    el :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Id x y
+    el s = Id (element @(UN S x) @(UN S y) s)
+    box :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Identity (x ~> y)
+    box s = Identity (node @(UN S x) @(UN S y) s)
+
 -- | An SVG document showing the geometry. Wires, outlines and text use the current colour. Boxes
 -- are not filled, and the wires stop at the edge of a hollow point, so the background shows
 -- through both. Only the core of a dual wire is painted, in @--sd-paper@ (white when it is not
@@ -1160,6 +1225,7 @@ document g =
     ++ ".sd .di path{stroke:var(--sd-paper,#fff);stroke-width:1.6}"
     ++ ".sd rect,.sd .h{fill:none;stroke:currentColor;stroke-width:1.3}"
     ++ ".sd .f{fill:currentColor}"
+    ++ ".sd .el{fill:currentColor;fill-opacity:0.15}"
     ++ ".sd .id{stroke-width:0.8;stroke-dasharray:3 2}"
     ++ ".sd .br{stroke-width:0.9}"
     ++ ".sd text{fill:currentColor;font-family:'STIX Two Text','Times New Roman',serif;font-style:italic}"
@@ -1220,7 +1286,8 @@ path d = "<path d=\"" ++ d ++ "\"/>"
 -- | One shape as SVG.
 shape :: Shape -> String
 shape = \case
-  Box a@(x0, y0) b@(x1, y1) s -> rect "" 7 a b ++ text "n" ((x0 + x1) / 2, (y0 + y1) / 2) s
+  Box bk a@(x0, y0) b@(x1, y1) s ->
+    rect (if bk == ElementBox then " class=\"el\"" else "") 7 a b ++ text "n" ((x0 + x1) / 2, (y0 + y1) / 2) s
   Frame a b -> rect " class=\"id\"" 4 a b
   Bracket (x0, y0) (x1, y1) down ->
     let tick = if down then 4 else -4

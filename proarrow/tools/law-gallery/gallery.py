@@ -20,7 +20,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 
 # Each section draws the laws of one or more structure lists, each with its options: the fields of
-# Options to switch from defaultOptions, or '' for defaultOptions itself.
+# Options to switch from defaultOptions, or '' for defaultOptions itself. A part with a third field
+# 'pro' draws the laws of a profunctor class instead, with proLawSvgsWith.
 SECTIONS = [
     dict(key='category', title='Category', parts=[("'[CategoryOf]", 'explicitIdentities = True')],
          desc='Identities are units for composition, which is associative. Drawn with explicit identities, so each id is a dashed frame; associativity draws the same on both sides, as a string diagram does not record how a composite was bracketed.'),
@@ -48,6 +49,12 @@ SECTIONS = [
          desc='A copy-discard category copies and discards with its supplied comonoids, and these respect the tensor: copying or discarding a pair is copying or discarding both parts, and on the unit they do nothing. Drawn with explicit coherence, so the unit wire and the regrouping show.'),
     dict(key='frobenius', title='Frobenius', parts=[('FrobeniusStructures', '')],
          desc='The monoids and comonoids together are special Frobenius algebras: a copy then a merge is the identity, and the Frobenius law holds. These are the spiders that make every other bend here work.'),
+    dict(key='monoidalprofunctor', title='Monoidal profunctor', parts=[('MonoidalProfunctor', 'explicitCoherence = True', 'pro')],
+         desc='A monoidal profunctor puts elements side by side with **, with one as its unit. The unit laws and associativity hold up to the unitors and the associator, and ** is natural. The profunctor is drawn as the identity profunctor on diagrams, so an element is a shaded box. Drawn with explicit coherence.'),
+    dict(key='strong', title='Strong', parts=[('(Strong Tensor)', 'explicitCoherence = True', 'pro')],
+         desc='Strength for the tensor: act puts a wire next to an element. Acting with the unit or with a tensor is the unitor or the associator, act is natural in the element, and an arrow on the extra wire can go above the element or below it. Drawn with explicit coherence.'),
+    dict(key='costrong', title='Costrong', parts=[('(Costrong Tensor)', 'explicitCoherence = True', 'pro')],
+         desc='Costrength for the tensor: coact feeds wires of an element back as a loop, as a trace does. An element with tensored ends is made from p with arbitrary arrows g and h around it. Coacting is natural, an arrow slides along the loop, and coacting with the unit or with a tensor is trivial or nests. Drawn with explicit coherence.'),
 ]
 
 GHCI_HEADER = '''\
@@ -63,14 +70,17 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscardStructures)
 import Proarrow.Category.Monoidal.Closed (ClosedStructures)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomousStructures)
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosedStructures)
+import Proarrow.Category.Monoidal.Strength (Strong, Costrong)
 '''
 
 
-def call(structures, opts):
-    """The Haskell expression drawing the laws of one structure list."""
+def call(structures, opts, kind='laws'):
+    """The Haskell expression drawing the laws of one structure list, or of one profunctor class
+    when kind is 'pro'."""
+    fn = 'proLawSvgs' if kind == 'pro' else 'lawSvgs'
     if opts:
-        return f'lawSvgsWith @{structures} defaultOptions{{{opts}}}'
-    return f'lawSvgs @{structures}'
+        return f'{fn}With @{structures} defaultOptions{{{opts}}}'
+    return f'{fn} @{structures}'
 
 
 def draw(out):
@@ -139,7 +149,7 @@ def html_page(svgs, rows, target):
 WIKI_INTRO = '''\
 The laws proarrow states as code, drawn as string diagrams. Each law is an equation between two ways of building an arrow, and each picture draws both sides exactly as the law builds them, without simplifying either one. So where a law says two different constructions agree, you see two different pictures next to each other.
 
-The object variables of a law are single wires, labelled *a* to *e*, and the arbitrary arrows a law asks for are boxes with the names the law gives them. Copying and merging are drawn as points, a dual wire is drawn hollow and labelled with ⁻¹, the unit is a dotted wire labelled **I**, and a trace is a loop round the side.
+The object variables of a law are single wires, labelled *a* to *e*, and the arbitrary arrows a law asks for are boxes with the names the law gives them. In the profunctor sections at the end, the elements a law is about are shaded boxes named *p*, *p′* and *p″* and the wires go up to *f*. Copying and merging are drawn as points, a dual wire is drawn hollow and labelled with ⁻¹, the unit is a dotted wire labelled **I**, and a trace is a loop round the side.
 
 The pictures are made by `Proarrow.Tools.Diagrams.Svg`, which lays each diagram out from how it is built: a tensor puts its sides next to each other, a composite stacks them with a band of wires in between, and a trace draws its loops. Some sections are drawn with options that show more of the structure; the code under each heading says which.
 
