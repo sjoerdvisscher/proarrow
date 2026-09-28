@@ -1,6 +1,9 @@
 : "${CABAL:=cabal}"
 : "${HADDOCK:=haddock}"
 : "${ARG_COMPILER:=}"
+# Where the "Contents" link at the top of each page goes. Empty means the index.html generated
+# below (GitHub Pages); hackage-docs.sh sets it to ../, Hackage's own package page.
+: "${USE_CONTENTS:=}"
 
 # The optics lattice diagram (Proarrow.Optics) is generated from lattice.dot:
 #   dot -Tsvg lattice.dot -o lattice.svg
@@ -24,6 +27,7 @@ ${CABAL} haddock lib:testing ${ARG_COMPILER} \
     --comments-module=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/testing/%{MODULE/.//}.hs
     --comments-entity=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/testing/%{MODULE/.//}.hs#L%L
     --pretty-html
+    ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}}
     --odir=docs
     --dump-interface=docs/testing.haddock"
 
@@ -35,15 +39,20 @@ ${CABAL} haddock lib:proarrow ${ARG_COMPILER} \
     --comments-module=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/src/%{MODULE/.//}.hs
     --comments-entity=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/src/%{MODULE/.//}.hs#L%L
     --pretty-html
+    ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}}
     --odir=docs
     --dump-interface=docs/proarrow.haddock"
 
 # regenerate the contents and index pages covering both libraries
-${HADDOCK} --gen-contents --gen-index -o docs --title=proarrow \
+${HADDOCK} --gen-contents --gen-index -o docs --title=proarrow ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}} \
   --read-interface=,docs/proarrow.haddock \
   --read-interface=,docs/testing.haddock
 
 # the testing pages link to the main library's modules via hackage; make those links local
-grep -rl 'hackage.haskell.org/package/proarrow-' docs | xargs sed -i -E 's|https://hackage.haskell.org/package/proarrow-[0-9.]+/docs/||g'
+grep -rl 'hackage.haskell.org/package/proarrow-' docs | xargs perl -pi -e 's|https://hackage.haskell.org/package/proarrow-[0-9.]+/docs/||g'
 
-grep -rilE '>(User )?Comments<' docs | xargs sed -i -E 's/>(User )?Comments</>Github</gI'
+grep -rilE '>(User )?Comments<' docs | xargs perl -pi -e 's/>(User )?Comments</>Github</gi'
+
+# haddock's --comments-entity links use the page's module and the enclosing declaration's line;
+# make each one agree with the Source link beside it
+python3 fix-github-links.py docs https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/

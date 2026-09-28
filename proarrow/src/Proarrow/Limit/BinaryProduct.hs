@@ -50,7 +50,7 @@ infixl 5 ***
 -- * @'snd' . (f '&&&' g) = g@
 -- * Uniqueness: @(f . h) '&&&' (g . h) = (f '&&&' g) . h@
 --
--- Checked by @Proarrow.Testing.Laws.testBinaryProducts@.
+-- Checked by 'Proarrow.Testing.Laws.testBinaryProducts'.
 class (CategoryOf k) => HasBinaryProducts k where
   -- | The product object.
   type (a :: k) && (b :: k) :: k

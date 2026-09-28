@@ -55,7 +55,7 @@ instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributivePr
 -- * @'distL'@ is inverse to 'distLInv', and @'distR'@ to 'distRInv'
 -- * @'absorbL'@ and @'absorbR'@ are inverse to 'Proarrow.Colimit.Initial.initiate'
 --
--- Checked by @Proarrow.Testing.Laws.testDistributive@.
+-- Checked by 'Proarrow.Testing.Laws.testDistributive'.
 class (Monoidal k, HasCoproducts k) => Distributive k where
   -- | Distributes a tensor on the left over a coproduct.
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)

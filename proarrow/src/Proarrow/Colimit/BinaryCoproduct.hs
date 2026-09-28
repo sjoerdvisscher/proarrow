@@ -57,7 +57,7 @@ infixl 4 +++
 -- * @(f '|||' g) . 'rgt' = g@
 -- * Uniqueness: @(h . f) '|||' (h . g) = h . (f '|||' g)@
 --
--- Checked by @Proarrow.Testing.Laws.testBinaryCoproducts@.
+-- Checked by 'Proarrow.Testing.Laws.testBinaryCoproducts'.
 class (CategoryOf k) => HasBinaryCoproducts k where
   -- | The coproduct object.
   type (a :: k) || (b :: k) :: k

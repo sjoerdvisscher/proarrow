@@ -128,17 +128,17 @@ proarrow's own tests are built from exactly these pieces.
 
 A class's laws are written down next to the class, as ordinary proarrow code that works in any
 category with the structure: a `Laws` instance from `Proarrow.Tools.Laws`, keyed by the list of
-structures the laws mention. For example, from `Proarrow.Category.Monoidal`:
+structures the laws mention. For example, from `Proarrow.Category.Monoidal`, where
+`SymMonoidalStructures` is `'[Monoidal, SymMonoidal]`:
 
 ```haskell
-instance Laws '[Monoidal] where
+instance Laws SymMonoidalStructures where
   laws =
     [ ...
-    , Law "associator naturality" \ @a @b @c @d mor -> do
-        f <- mor @a @b "f"
-        g <- mor @b @c "g"
-        h <- mor @c @d "h"
-        associator @_ @b @c @d . ((f ** g) ** h) === (f ** (g ** h)) . associator @_ @a @b @c
+    , Law "swap naturality" \ @a @b @c @d mor -> do
+        f <- mor @a @c "f"
+        g <- mor @b @d "g"
+        swap @_ @c @d . (f ** g) === (g ** f) . swap @_ @a @b
     , ...
     ]
 ```
@@ -158,3 +158,24 @@ swap . (f ** g) = ...
 `testMonoidal`, `testClosed` and the other checks for proarrow's own classes are built this way,
 and a class of your own can be checked the same way: `test/Examples/CustomLaws.hs` walks through
 a complete one.
+
+## Laws as code × code as diagrams = laws as diagrams
+
+`Proarrow.Tools.Diagrams.Svg` defines a category `SVG` whose objects are lists of wires and whose
+arrows are string diagrams. It is symmetric monoidal, closed, \*-autonomous and compact closed, has
+traces, and can copy and merge wires, so code written for any category with that structure also
+runs in `SVG`, where it builds a picture of itself. `node "f"` is a box named `f`, and `render`
+turns a diagram into an SVG image. The layout follows how the diagram was built: a tensor puts its
+two sides next to each other, a composite stacks them with a band of curved wires in between, and
+a trace draws its loops round the side. `Options` can draw more of the structure, such as the
+identities, the unitors and associators, or the swaps.
+
+Laws are code too, so running one in `SVG` draws it: `lawSvgs @'[Monoidal]` gives every law of
+`Monoidal` as a named SVG, an equation between its two sides, each drawn the way the law builds it.
+This is swap naturality from above, drawn with explicit swaps:
+
+![swap naturality](https://raw.githubusercontent.com/wiki/sjoerdvisscher/proarrow/images/law-diagrams/symmetric-2.svg)
+
+`proLawSvgs` does the same for profunctor classes such as `Strong`. The
+[Law diagrams](https://github.com/sjoerdvisscher/proarrow/wiki/Law-diagrams) wiki page shows the
+laws of proarrow's classes drawn this way.
