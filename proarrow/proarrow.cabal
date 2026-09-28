@@ -234,9 +234,6 @@ library testing
 test-suite test
     import: extensions
     type: exitcode-stdio-1.0
-    -- The test suite is type-level heavy and never performance sensitive, so skip optimisation:
-    -- at -O1 the simplifier and code generator are about half the cost of compiling it.
-    ghc-options:      -O0
     hs-source-dirs:   test
     main-is:          Main.hs
     other-modules:

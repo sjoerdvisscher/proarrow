@@ -1147,6 +1147,10 @@ sideBySide o ds =
          , geoShapes = concat (zipWith3 placed [0 ..] offsets fs)
          }
 
+-- | The arrows a law asks for, drawn as 'node's with the names the law gives them.
+lawNode :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Identity (x ~> y)
+lawNode s = Identity (node @(UN S x) @(UN S y) s)
+
 -- | The laws of @cs@ drawn with the 'defaultOptions', see 'lawSvgsWith'.
 lawSvgs :: forall (cs :: [Kind -> Constraint]). (Laws cs, All cs SVG) => [(String, String)]
 lawSvgs = lawSvgsWith @cs defaultOptions
@@ -1158,10 +1162,10 @@ lawSvgsWith :: forall (cs :: [Kind -> Constraint]). (Laws cs, All cs SVG) => Opt
 lawSvgsWith o = [(lawName law, draw law) | law <- laws @cs]
   where
     draw :: Law cs -> String
-    draw (Law _ body) = withSides (runIdentity (body @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) box)) \l@Svg{} r ->
-      renderEquationWith o l r
-    box :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Identity (x ~> y)
-    box s = Identity (node @(UN S x) @(UN S y) s)
+    draw (Law _ body) = withSides
+      (runIdentity (body @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) lawNode))
+      \l@Svg{} r ->
+        renderEquationWith o l r
 
 -- | The laws of the profunctor class @c@ drawn with the 'defaultOptions', see 'proLawSvgsWith'.
 proLawSvgs :: forall (c :: (SVG +-> SVG) -> Constraint). (ProLaws c, c (Id :: CAT SVG)) => [(String, String)]
@@ -1182,8 +1186,8 @@ proLawSvgsWith o = [(proLawName law, draw law) | law <- proLaws @c]
         ( runIdentity
             ( body @Id @(S '[Wire "a"]) @(S '[Wire "b"]) @(S '[Wire "c"]) @(S '[Wire "d"]) @(S '[Wire "e"]) @(S '[Wire "f"])
                 (el "p")
-                box
-                box
+                lawNode
+                lawNode
             )
         )
     draw (ProLaw3 _ body) =
@@ -1193,19 +1197,18 @@ proLawSvgsWith o = [(proLawName law, draw law) | law <- proLaws @c]
                 (el "p")
                 (el "p'")
                 (el "p''")
-                box
-                box
+                lawNode
+                lawNode
             )
         )
     equation :: ProEquation (Id :: CAT SVG) -> String
     equation = \case
       Id l@Svg{} :=: Id r -> renderEquationWith o l r
-      InK e -> withSides e \l@Svg{} r -> renderEquationWith o l r
-      InJ e -> withSides e \l@Svg{} r -> renderEquationWith o l r
+      InK e -> arrows e
+      InJ e -> arrows e
+    arrows e = withSides e \l@Svg{} r -> renderEquationWith o l r
     el :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Id x y
     el s = Id (element @(UN S x) @(UN S y) s)
-    box :: forall (x :: SVG) (y :: SVG). (Ob x, Ob y) => String -> Identity (x ~> y)
-    box s = Identity (node @(UN S x) @(UN S y) s)
 
 -- | An SVG document showing the geometry. Wires, outlines and text use the current colour. Boxes
 -- are not filled, and the wires stop at the edge of a hollow point, so the background shows

@@ -109,6 +109,7 @@ import Proarrow.Testing
 import Proarrow.Testing.Laws.Run
   ( CorepresentedBy
   , RepresentedBy
+  , TESTED
   , TestedP
   , Witness (..)
   , Witnesses (..)
@@ -116,6 +117,7 @@ import Proarrow.Testing.Laws.Run
   , testLawsWith
   , testProLaws
   )
+import Proarrow.Tools.Laws qualified as Laws
 
 -- * Isomorphisms
 
@@ -172,14 +174,17 @@ testDagger = testDaggerProfunctor @(Hom k)
 -- reverses 'dimap'.
 testDaggerProfunctor :: forall {k} (p :: k +-> k). (Dagger.DaggerProfunctor p, TestableProfunctor p) => TestTree
 testDaggerProfunctor =
-  testProLaws @'[CategoryOf] @'[CategoryOf] @Dagger.DaggerProfunctor @p
-    defaultTestOptions
-    genSome
-    "Dagger"
-    (CategoryW :& WNil)
-    (CategoryW :& WNil)
+  testCategoryProLaws @Dagger.DaggerProfunctor @p defaultTestOptions "Dagger"
 
 -- * Profunctors
+
+-- | 'testProLaws' for a profunctor class whose laws need only the categories of @p@, with the given
+-- options.
+testCategoryProLaws
+  :: forall {j} {k} cl (p :: j +-> k)
+   . (Laws.ProLaws cl, TestableProfunctor p, cl (TestedP p :: TESTED '[CategoryOf] j +-> TESTED '[CategoryOf] k))
+  => TestOptions -> String -> TestTree
+testCategoryProLaws opts name = testProLaws @'[CategoryOf] @'[CategoryOf] @cl @p opts genSome name (CategoryW :& WNil) (CategoryW :& WNil)
 
 -- | The falsify options of a plain 'testProperty', to adjust for one test, e.g. a larger
 -- 'overrideMaxRatio' where a law's arrows rarely exist.
@@ -193,12 +198,7 @@ testProfunctor = testProfunctorWith @p defaultTestOptions
 -- | 'testProfunctor' with the given falsify options for each law.
 testProfunctorWith :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestOptions -> TestTree
 testProfunctorWith opts =
-  testProLaws @'[CategoryOf] @'[CategoryOf] @Profunctor @p
-    opts
-    genSome
-    "Profunctor"
-    (CategoryW :& WNil)
-    (CategoryW :& WNil)
+  testCategoryProLaws @Profunctor @p opts "Profunctor"
 
 -- | 'Thin.decide' agrees with the generator: an element of @p a b@ can be generated exactly
 -- when @'Thin.Holds' p a b@ decides to 'Proarrow.Category.Instance.Bool.TRU', and then (the
@@ -234,9 +234,9 @@ propNaturalTransformation n = do
 -- | The numbering laws of a 'Finitary.Finitary' profunctor: 'Finitary.elements' has
 -- 'Finitary.size' entries and is numbered in order, and 'Finitary.fromIndex' recovers any element
 -- from its index ('Laws.ProLaws' 'Finitary.Finitary'), including elements the instance did not
--- itself produce. That last law checks
--- that 'Finitary.size' is correct and not merely self-consistent, but only as far as the
--- 'TestableType' generator is independent of the instance. One defined as
+-- itself produce. That law, @fromIndex . toIndex@, checks that 'Finitary.size' is correct and not
+-- merely self-consistent, but only as far as the 'TestableType' generator is independent of the
+-- instance. One defined as
 -- @optGen 'Finitary.elements'@ makes it vacuous. The label names the profunctor, which nothing in
 -- its type can supply.
 testFinitary
@@ -248,12 +248,7 @@ testFinitary nm =
   testGroup
     ("Finitary " ++ nm)
     [ testProperty "numbering" (propNumbering @p)
-    , testProLaws @'[CategoryOf] @'[CategoryOf] @Finitary.Finitary @p
-        defaultTestOptions
-        genSome
-        "laws"
-        (CategoryW :& WNil)
-        (CategoryW :& WNil)
+    , testCategoryProLaws @Finitary.Finitary @p defaultTestOptions "laws"
     ]
 
 -- | 'Finitary.elements' has 'Finitary.size' entries, numbered in order, and every index is below
@@ -351,8 +346,10 @@ testMonStrong withTestOb2 =
     defaultTestOptions
     genSome
     "Strong Tensor"
-    (CategoryW :& MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil)
-    (CategoryW :& MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil)
+    ws
+    ws
+  where
+    ws = CategoryW :& MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil
 
 testMonStrong_
   :: forall {k} (p :: k +-> k). (Strength.Strong M.Tensor p, M.Monoidal k, TestableProfunctor p, TestObIsOb k) => TestTree
@@ -373,8 +370,10 @@ testMonCostrong withTestOb2 =
     defaultTestOptions
     genSomeSmall
     "Costrong Tensor"
-    (CategoryW :& MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil)
-    (CategoryW :& MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil)
+    ws
+    ws
+  where
+    ws = CategoryW :& MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil
 
 testMonCostrong_
   :: forall {k} (p :: k +-> k). (Strength.Costrong M.Tensor p, M.Monoidal k, TestableProfunctor p, TestObIsOb k) => TestTree
@@ -423,24 +422,14 @@ testCorepresentable_ = testCorepresentable @p (\ @a r -> withObCorep @p @a r)
 -- associative, and both are natural.
 testPromonad :: forall {k} (p :: k +-> k). (Promonad p, TestableProfunctor p) => TestTree
 testPromonad =
-  testProLaws @'[CategoryOf] @'[CategoryOf] @Promonad @p
-    defaultTestOptions
-    genSome
-    "Promonad"
-    (CategoryW :& WNil)
-    (CategoryW :& WNil)
+  testCategoryProLaws @Promonad @p defaultTestOptions "Promonad"
 
 -- | The 'Promonad.Procomonad' laws of @p@ stated as code: 'Promonad.proextract' is natural and a
 -- counit for 'Promonad.produplicate'. The middle object of 'Promonad.produplicate' is only known to
 -- be an object, hence 'TestObIsOb'.
 testProcomonad :: forall {k} (p :: k +-> k). (Promonad.Procomonad p, TestableProfunctor p, TestObIsOb k) => TestTree
 testProcomonad =
-  testProLaws @'[CategoryOf] @'[CategoryOf] @Promonad.Procomonad @p
-    defaultTestOptions
-    genSome
-    "Procomonad"
-    (CategoryW :& WNil)
-    (CategoryW :& WNil)
+  testCategoryProLaws @Promonad.Procomonad @p defaultTestOptions "Procomonad"
 
 -- | The zigzag laws of the adjunction between @p@ and @q@ stated as code, for elements of each:
 -- 'Laws.ProLaws' @('Adj.LeftProadjoint' q)@ and @('Adj.Proadjunction' p)@. The middle object of
@@ -452,18 +441,8 @@ testProadjunction
 testProadjunction =
   testGroup
     "Proadjunction"
-    [ testProLaws @'[CategoryOf] @'[CategoryOf] @(Adj.LeftProadjoint (TestedP q)) @p
-        defaultTestOptions
-        genSome
-        "left adjoint"
-        (CategoryW :& WNil)
-        (CategoryW :& WNil)
-    , testProLaws @'[CategoryOf] @'[CategoryOf] @(Adj.Proadjunction (TestedP p)) @q
-        defaultTestOptions
-        genSome
-        "right adjoint"
-        (CategoryW :& WNil)
-        (CategoryW :& WNil)
+    [ testCategoryProLaws @(Adj.LeftProadjoint (TestedP q)) @p defaultTestOptions "left adjoint"
+    , testCategoryProLaws @(Adj.Proadjunction (TestedP p)) @q defaultTestOptions "right adjoint"
     ]
 
 -- | Check the adjunction laws of an 'Adjunction' @p@. An adjunction here is a profunctor that is

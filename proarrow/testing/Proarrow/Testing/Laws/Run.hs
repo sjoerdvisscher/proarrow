@@ -17,7 +17,16 @@
 --   with a 'Tested' instance giving its 'Untest' and rebuilding its 'Ob' and 'TestOb';
 -- * a 'Witness' instance for the structure, holding how 'TestOb' is closed under its formers;
 -- * the structure's class instance for 'TESTED', whose arrows describe themselves ('prim' for a
---   named arrow, 'app', 'infixlDoc', 'infixrDoc' for operations on arrows).
+--   named arrow, 'app', 'apps', 'infixlDoc', 'infixrDoc' for operations on arrows).
+--
+-- 'testProLaws' checks the laws of a profunctor class ("Proarrow.Tools.Laws" 'Laws.ProLaws') the
+-- same way, with the profunctor interpreted as 'TestedP', whose elements describe themselves like
+-- the arrows of 'TESTED' do ('TestedArr' is 'TestedP' at the hom profunctor). Its domain and
+-- codomain each get their own 'Witnesses'. An object former that crosses from one to the other,
+-- like 'RepF' for @p '%' b@, carries the witnesses of the side it comes from in its structure's
+-- 'Witness' ('RepresentedBy', 'CorepresentedBy'). The laws of 'Adj.Proadjunction' and
+-- 'Promonad.Procomonad' build composites whose middle object is only known to be an object; the
+-- runner makes it a leaf, which needs 'TestOb' to follow from 'Ob'.
 module Proarrow.Testing.Laws.Run
   ( testLaws
   , testLawsWith
@@ -57,7 +66,7 @@ module Proarrow.Testing.Laws.Run
 import Data.Kind (Constraint, Type)
 import Test.Falsify.Generator (Gen)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, TestOptions, genWith, testProperty, testPropertyWith)
+import Test.Tasty.Falsify (Property, TestOptions, testProperty, testPropertyWith)
 import Prelude hiding (fst, id, snd, (.))
 
 import Proarrow.Adjunction qualified as Adj
@@ -87,7 +96,6 @@ import Proarrow.Testing
   , TestObIsOb
   , Testable (..)
   , TestableProfunctor (..)
-  , TestableTypeP
   , WithTestOb2
   , WithTestObCoprod
   , WithTestObCorep
@@ -97,7 +105,7 @@ import Proarrow.Testing
   , WithTestObRep
   , genNamed
   , genOb
-  , genSuchThat
+  , genObSuchThatWith
   , isGenNonEmpty
   , obFromTestOb
   , testEq
@@ -153,10 +161,10 @@ testProLaws opts genObjects name wsj wsk =
     checkLaw :: Laws.ProLaw cl -> Property ()
     checkLaw (Laws.ProLaw lawName body) = do
       SomeP @a @b p0 <- genProfunctorElt @p "p"
-      Some @c <- objectSuchThat @k \(Some @c') -> isGenNonEmpty @(c' ~> a)
-      Some @d <- objectSuchThat @j \(Some @d') -> isGenNonEmpty @(b ~> d')
-      Some @e <- objectSuchThat @k \(Some @e') -> isGenNonEmpty @(e' ~> c)
-      Some @f <- objectSuchThat @j \(Some @f') -> isGenNonEmpty @(d ~> f')
+      Some @c <- genObSuchThatWith (genObjects @k) \(Some @c') -> isGenNonEmpty @(c' ~> a)
+      Some @d <- genObSuchThatWith (genObjects @j) \(Some @d') -> isGenNonEmpty @(b ~> d')
+      Some @e <- genObSuchThatWith (genObjects @k) \(Some @e') -> isGenNonEmpty @(e' ~> c)
+      Some @f <- genObSuchThatWith (genObjects @j) \(Some @f') -> isGenNonEmpty @(d ~> f')
       eq <-
         body @(TestedP p) @(TLeaf a :: TESTED csk k) @(TLeaf b :: TESTED csj j) @(TLeaf c) @(TLeaf d) @(TLeaf e) @(TLeaf f)
           (prim "p" p0)
@@ -175,8 +183,6 @@ testProLaws opts genObjects name wsj wsk =
           (genArr wsk)
           (genArr wsj)
       testProEquation lawName eq
-    objectSuchThat :: forall i. (Testable i) => (Some i -> Bool) -> Property (Some i)
-    objectSuchThat = genWith (Just . show) . genSuchThat (genObjects @i)
     testProEquation :: String -> Laws.ProEquation (TestedP p :: TESTED csj j +-> TESTED csk k) -> Property ()
     testProEquation lawName = \case
       l Laws.:=: r -> testTested wsj wsk lawName l r
@@ -187,18 +193,10 @@ testProLaws opts genObjects name wsj wsk =
 testEquation :: forall cs k. (Testable k) => Witnesses cs k -> String -> Laws.Equation (TESTED cs k) -> Property ()
 testEquation ws lawName eq = Laws.withSides eq (testTested ws ws lawName)
 
--- | A named arbitrary element of @p@ between the objects of @k@ and @j@ that the endpoints stand
--- for. With @p@ the hom profunctor, a named arbitrary arrow.
-genTested
-  :: forall {csj} {csk} {j} {k} (p :: j +-> k) (x :: TESTED csk k) (y :: TESTED csj j)
-   . (TestableTypeP p, Tested x, Tested y)
-  => Witnesses csj j -> Witnesses csk k -> String -> Property (TestedP p x y)
-genTested wsj wsk s = untestTestOb @x wsk $ untestTestOb @y wsj $ prim s <$> genNamed @(p (Untest x) (Untest y)) s
-
--- | A named arbitrary arrow, 'genTested' at the hom profunctor.
+-- | A named arbitrary arrow between the objects the endpoints stand for.
 genArr
   :: forall cs k (x :: TESTED cs k) y. (Testable k, Tested x, Tested y) => Witnesses cs k -> String -> Property (x ~> y)
-genArr ws = genTested @(Hom k) ws ws
+genArr ws s = untestTestOb2 @x @y ws (prim s <$> genNamed @(Untest x ~> Untest y) s)
 
 -- | Compare two elements of @p@, printing their descriptions on failure.
 testTested
@@ -670,9 +668,9 @@ instance (DaggerProfunctor p) => DaggerProfunctor (TestedP p :: CAT (TESTED cs k
   dagger (TestedP d x) = TestedP (app "dagger" d) (dagger x)
 
 instance (Finitary p) => Finitary (TestedP p :: TESTED csj j +-> TESTED csk k) where
-  size @a @b = untestOb @a (untestOb @b (size @p @(Untest a) @(Untest b)))
-  toIndex @a @b (TestedP _ x) = untestOb @a (untestOb @b (toIndex @p @(Untest a) @(Untest b) x))
-  fromIndex @a @b i = untestOb @a (untestOb @b (TestedP (app "fromIndex" (\_ -> shows i)) (fromIndex @p @(Untest a) @(Untest b) i)))
+  size @a @b = untestOb2 @a @b (size @p @(Untest a) @(Untest b))
+  toIndex @a @b (TestedP _ x) = untestOb2 @a @b (toIndex @p @(Untest a) @(Untest b) x)
+  fromIndex @a @b i = untestOb2 @a @b (TestedP (app "fromIndex" (\_ -> shows i)) (fromIndex @p @(Untest a) @(Untest b) i))
 
 -- | The adjunction of the profunctors the objects stand for. The middle object of the 'Adj.unit'
 -- is only known to be an object, so it becomes a leaf, which needs 'TestOb' to follow from 'Ob'.
@@ -681,18 +679,12 @@ instance
   => Adj.Proadjunction (TestedP p :: TESTED csj j +-> TESTED csk k) (TestedP q :: TESTED csk k +-> TESTED csj j)
   where
   unit @a = untestOb @a case Adj.unit @p @q @(Untest a) of
-    (:.:) @m l r -> (leaf @m (TestedP (atom "unitQ") l) :.: TestedP (atom "unitP") r) \\ l
-    where
-      leaf :: forall m (x :: TESTED csj j). TestedP q x (TLeaf m :: TESTED csk k) -> TestedP q x (TLeaf m :: TESTED csk k)
-      leaf x = x
+    (:.:) @m l r -> (:.:) @(TLeaf m :: TESTED csk k) (TestedP (atom "unitQ") l) (TestedP (atom "unitP") r) \\ l
   counit (TestedP dp x :.: TestedP dq y) = TestedArr (app "counit" (infixlDoc 9 " :.: " dp dq)) (Adj.counit (x :.: y))
 
 -- | The procomonad the objects stand for. The middle object of 'Promonad.produplicate' is only
 -- known to be an object, so it becomes a leaf, which needs 'TestOb' to follow from 'Ob'.
 instance (Promonad.Procomonad p, Testable k, TestObIsOb k) => Promonad.Procomonad (TestedP p :: CAT (TESTED cs k)) where
   proextract (TestedP d x) = TestedArr (app "proextract" d) (Promonad.proextract x)
-  produplicate @a (TestedP d x) = case Promonad.produplicate x of
-    (:.:) @m l r -> (leaf @m (TestedP (app "produplicate1" d) l) :.: TestedP (app "produplicate2" d) r) \\ l
-    where
-      leaf :: forall m. TestedP p a (TLeaf m :: TESTED cs k) -> TestedP p a (TLeaf m :: TESTED cs k)
-      leaf y = y
+  produplicate (TestedP d x) = case Promonad.produplicate x of
+    (:.:) @m l r -> (:.:) @(TLeaf m :: TESTED cs k) (TestedP (app "produplicate1" d) l) (TestedP (app "produplicate2" d) r) \\ l

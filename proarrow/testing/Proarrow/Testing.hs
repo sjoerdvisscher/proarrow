@@ -33,6 +33,7 @@ module Proarrow.Testing
   , genOb
   , genObSmall
   , genObSuchThat
+  , genObSuchThatWith
   , genSomeDef
   , genSomeFinite
   , genSomeList
@@ -293,7 +294,11 @@ maxTries = 100
 
 -- | 'genOb', but resampled (see 'genSuchThat') until @isUsable@ accepts the object.
 genObSuchThat :: forall k. (Testable k) => (Some k -> Bool) -> Property (Some k)
-genObSuchThat = genWith (Just . show) . genSuchThat (genSome @k)
+genObSuchThat = genObSuchThatWith (genSome @k)
+
+-- | 'genObSuchThat' with objects drawn from the given generator, e.g. 'genSomeSmall'.
+genObSuchThatWith :: forall k. (Testable k) => Gen (Some k) -> (Some k -> Bool) -> Property (Some k)
+genObSuchThatWith objects = genWith (Just . show) . genSuchThat objects
 
 type SomeProfunctorElt :: (j +-> k) -> Type
 data SomeProfunctorElt p where
@@ -317,13 +322,13 @@ class
   (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (p a b)) =>
   TestableProfunctor (p :: j +-> k)
   where
-  -- | The default implementation generates types @a@ and @b@ and then generates a value of type @p a b@.
-  -- But that can cause too many discarded tests.
+  -- | The default implementation generates an object @a@, then an object @b@ for which @p a b@
+  -- has elements (see 'genObSuchThat'), and then a value of type @p a b@.
   genProfunctorElt :: String -> Property (SomeProfunctorElt p)
   default genProfunctorElt :: (TestableTypeP p) => String -> Property (SomeProfunctorElt p)
   genProfunctorElt nm = do
     Some @a <- genOb
-    Some @b <- genOb
+    Some @b <- genObSuchThat \(Some @b') -> isGenNonEmpty @(p a b')
     p <- genNamed @(p a b) nm
     pure $ SomeP p
 
