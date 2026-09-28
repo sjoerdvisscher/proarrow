@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- the identity laws compose with id on purpose
+{- HLINT ignore "Redundant id" -}
+
 -- | Promonads as effects: a 'Promonad' ("Proarrow.Core") that is 'Representable' is an ordinary 'Monad'
 -- on objects ('return', 'bind'); a 'Promonad' that is 'Corepresentable' is a 'Comonad' ('extract',
 -- 'extend'). Also 'Procomonad's and relative (co)monads ('RelativeMonad', 'RelativeComonad'). Concrete
@@ -28,11 +31,51 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Tools.Laws (ProLaw (..), ProLaws (..), (=:=), (===))
 
 type Procomonad :: k +-> k -> Constraint
 class (Profunctor p) => Procomonad p where
   proextract :: p :~> (~>)
   produplicate :: p :~> p :.: p
+
+-- | 'id' is a unit for composition, which is associative, and both are natural. Elements that
+-- start where another one ends are made from the drawn ones with 'lmap' and an arbitrary arrow.
+instance ProLaws Promonad where
+  proLaws =
+    [ ProLaw "left identity" \p _ _ -> p =:= id . p
+    , ProLaw "right identity" \p _ _ -> p =:= p . id
+    , ProLaw3 "associativity" \ @_ @_ @b @c @d @e p p' p'' mor _ -> do
+        g <- mor @b @c "g"
+        h <- mor @d @e "h"
+        let q = lmap g p'
+            r = lmap h p''
+        r . (q . p) =:= (r . q) . p
+    , ProLaw "id dinaturality" \ @_ @a @_ @c _ mor _ -> do
+        g <- mor @c @a "g"
+        rmap g id =:= lmap g id
+    , ProLaw3 "composition naturality" \ @_ @a @b @c @d @e @f p p' _ mor _ -> do
+        k <- mor @b @c "k"
+        g <- mor @e @a "g"
+        h <- mor @d @f "h"
+        let q = lmap k p'
+        dimap g h (q . p) =:= rmap h q . lmap g p
+    , ProLaw3 "composition dinaturality" \ @_ @_ @b @c p p' _ mor _ -> do
+        g <- mor @b @c "g"
+        p' . rmap g p =:= lmap g p' . p
+    ]
+
+-- | 'proextract' is natural, and extracting either half of 'produplicate' gives back the element.
+-- Coassociativity is not an equation between elements: its two sides are composites whose middle
+-- objects cannot be compared.
+instance ProLaws Procomonad where
+  proLaws =
+    [ ProLaw "proextract naturality" \ @_ @a @b @c @d p morK morJ -> do
+        g <- morK @c @a "g"
+        h <- morJ @b @d "h"
+        proextract (dimap g h p) === h . proextract p . g
+    , ProLaw "left counit" \p _ _ -> case produplicate p of q :.: r -> p =:= lmap (proextract q) r
+    , ProLaw "right counit" \p _ _ -> case produplicate p of q :.: r -> p =:= rmap (proextract r) q
+    ]
 
 instance (CategoryOf k) => Procomonad (Id :: CAT k) where
   proextract (Id f) = f

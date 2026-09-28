@@ -13,7 +13,8 @@ type Id :: CAT k
 newtype Id a b = Id {unId :: a ~> b}
 
 instance (CategoryOf k) => Profunctor (Id :: CAT k) where
-  dimap l r (Id f) = Id (r . f . l)
+  lmap l (Id f) = Id (f . l)
+  rmap r (Id f) = Id (r . f)
   r \\ Id f = r \\ f
 
 instance (CategoryOf k) => Promonad (Id :: CAT k) where

@@ -59,6 +59,7 @@ test =
           (testFailed "speciality unexpectedly held for [()]")
     , testProfunctor @(Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
     , testProfunctor @(Star (Prelude Maybe) :: Type +-> Type)
+    , testPromonad @(Star (Prelude Maybe) :: Type +-> Type)
     , testRepresentable @(Star (Prelude Maybe) :: Type +-> Type) (\r -> r)
     , testMonoidalProfunctor @(Star (Prelude Maybe) :: Type +-> Type) (\r -> r) (\r -> r)
     , testCorepresentable @(Costar (Prelude Maybe) :: Type +-> Type) (\r -> r)

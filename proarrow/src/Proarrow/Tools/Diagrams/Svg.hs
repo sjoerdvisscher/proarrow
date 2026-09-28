@@ -269,7 +269,8 @@ instance Show (Svg a b) where
   show (Svg d _) = show d
 
 instance Profunctor Svg where
-  dimap = dimapDefault
+  lmap l f = f . l
+  rmap r f = r . f
   r \\ Svg{} = r
 instance Promonad Svg where
   id @(S as) = drawnAs @as @as (Ident (wireKinds @as))

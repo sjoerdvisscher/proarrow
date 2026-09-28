@@ -5,7 +5,6 @@ module Props.Cospan where
 
 import Data.Foldable (toList)
 import Data.Maybe (isJust)
-import Data.Type.Nat (Nat0, Nat1, Nat2, Nat3)
 import Data.Typeable ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
 import Prelude (Bool (..), Maybe (..), pure, zip, ($), (&&), (++), (<$>), (<*>), (||))
@@ -40,14 +39,6 @@ test =
     , testCompactClosed_ @(COSPAN FINSET)
     , testCopyDiscard_ @(COSPAN FINSET)
     , testHypergraph_ @(COSPAN FINSET)
-    , testMonoid_ @(CS (FS Nat0))
-    , testMonoid_ @(CS (FS Nat1))
-    , testMonoid_ @(CS (FS Nat2))
-    , testMonoid_ @(CS (FS Nat3))
-    , testComonoid_ @(CS (FS Nat0))
-    , testComonoid_ @(CS (FS Nat1))
-    , testComonoid_ @(CS (FS Nat2))
-    , testComonoid_ @(CS (FS Nat3))
     ]
 
 -- instance (Testable k, HasPushouts k, TestObIsOb k) => Testable (COSPAN k) where

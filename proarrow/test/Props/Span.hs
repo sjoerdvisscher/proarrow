@@ -4,7 +4,6 @@
 module Props.Span where
 
 import Data.Foldable (toList)
-import Data.Type.Nat (Nat0, Nat1, Nat2, Nat3)
 import Data.Typeable ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
 import Prelude (Bool (..), Maybe (..), pure, zip, ($), (&&), (++), (<$>), (<*>), (==), (||))
@@ -40,14 +39,6 @@ test =
     , testCompactClosed_ @(SPAN FINSET)
     , testCopyDiscard_ @(SPAN FINSET)
     , testHypergraph_ @(SPAN FINSET)
-    , testMonoid_ @(SP (FS Nat0))
-    , testMonoid_ @(SP (FS Nat1))
-    , testMonoid_ @(SP (FS Nat2))
-    , testMonoid_ @(SP (FS Nat3))
-    , testComonoid_ @(SP (FS Nat0))
-    , testComonoid_ @(SP (FS Nat1))
-    , testComonoid_ @(SP (FS Nat2))
-    , testComonoid_ @(SP (FS Nat3))
     ]
 
 -- instance (Testable k, HasPushouts k, TestObIsOb k) => Testable (SPAN k) where

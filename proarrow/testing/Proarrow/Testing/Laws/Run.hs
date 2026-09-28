@@ -80,6 +80,7 @@ import Proarrow.Monoid qualified as Monoid
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
+import Proarrow.Promonad qualified as Promonad
 import Proarrow.Testing
   ( Some (..)
   , SomeProfunctorElt (..)
@@ -685,3 +686,13 @@ instance
       leaf :: forall m (x :: TESTED csj j). TestedP q x (TLeaf m :: TESTED csk k) -> TestedP q x (TLeaf m :: TESTED csk k)
       leaf x = x
   counit (TestedP dp x :.: TestedP dq y) = TestedArr (app "counit" (infixlDoc 9 " :.: " dp dq)) (Adj.counit (x :.: y))
+
+-- | The procomonad the objects stand for. The middle object of 'Promonad.produplicate' is only
+-- known to be an object, so it becomes a leaf, which needs 'TestOb' to follow from 'Ob'.
+instance (Promonad.Procomonad p, Testable k, TestObIsOb k) => Promonad.Procomonad (TestedP p :: CAT (TESTED cs k)) where
+  proextract (TestedP d x) = TestedArr (app "proextract" d) (Promonad.proextract x)
+  produplicate @a (TestedP d x) = case Promonad.produplicate x of
+    (:.:) @m l r -> (leaf @m (TestedP (app "produplicate1" d) l) :.: TestedP (app "produplicate2" d) r) \\ l
+    where
+      leaf :: forall m. TestedP p a (TLeaf m :: TESTED cs k) -> TestedP p a (TLeaf m :: TESTED cs k)
+      leaf y = y

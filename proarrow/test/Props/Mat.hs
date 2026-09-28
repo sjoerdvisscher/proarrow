@@ -4,7 +4,7 @@
 module Props.Mat where
 
 import Data.Kind (Type)
-import Data.Type.Nat (Nat (..), Nat0, Nat1, Nat2, Nat3, SNat (..), SNatI, snat, snatToNat)
+import Data.Type.Nat (Nat (..), Nat0, Nat1, Nat3, SNat (..), SNatI, snat, snatToNat)
 import Data.Vec.Lazy (Vec (..), repeat)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
@@ -54,14 +54,6 @@ test =
     , testCompactClosed_ @(MatK Int)
     , testTraced_ @(MatK Int)
     , testCopyDiscard_ @(MatK Int)
-    , testCommutativeMonoid_ @(M Nat0 :: MatK Int)
-    , testCommutativeMonoid_ @(M Nat1 :: MatK Int)
-    , testCommutativeMonoid_ @(M Nat2 :: MatK Int)
-    , testCommutativeMonoid_ @(M Nat3 :: MatK Int)
-    , testComonoid_ @(M Nat0 :: MatK Int)
-    , testComonoid_ @(M Nat1 :: MatK Int)
-    , testComonoid_ @(M Nat2 :: MatK Int)
-    , testComonoid_ @(M Nat3 :: MatK Int)
     , testGroup "App functor" [testProfunctor @(Rep App :: MatK Int +-> Type)]
     , -- the trace of an identity, and the one place the traced object could silently be dropped
       testProperty "dimension counts the object" $

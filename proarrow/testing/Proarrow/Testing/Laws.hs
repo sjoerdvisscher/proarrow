@@ -79,6 +79,7 @@ import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Representable, withObRep)
+import Proarrow.Promonad qualified as Promonad
 import Proarrow.Testing
   ( Some (..)
   , SomeProfunctorElt (..)
@@ -418,6 +419,29 @@ testCorepresentable_
   => TestTree
 testCorepresentable_ = testCorepresentable @p (\ @a r -> withObCorep @p @a r)
 
+-- | The 'Promonad' laws of @p@ stated as code: 'id' is a unit for composition, which is
+-- associative, and both are natural.
+testPromonad :: forall {k} (p :: k +-> k). (Promonad p, TestableProfunctor p) => TestTree
+testPromonad =
+  testProLaws @'[CategoryOf] @'[CategoryOf] @Promonad @p
+    defaultTestOptions
+    genSome
+    "Promonad"
+    (CategoryW :& WNil)
+    (CategoryW :& WNil)
+
+-- | The 'Promonad.Procomonad' laws of @p@ stated as code: 'Promonad.proextract' is natural and a
+-- counit for 'Promonad.produplicate'. The middle object of 'Promonad.produplicate' is only known to
+-- be an object, hence 'TestObIsOb'.
+testProcomonad :: forall {k} (p :: k +-> k). (Promonad.Procomonad p, TestableProfunctor p, TestObIsOb k) => TestTree
+testProcomonad =
+  testProLaws @'[CategoryOf] @'[CategoryOf] @Promonad.Procomonad @p
+    defaultTestOptions
+    genSome
+    "Procomonad"
+    (CategoryW :& WNil)
+    (CategoryW :& WNil)
+
 -- | The zigzag laws of the adjunction between @p@ and @q@ stated as code, for elements of each:
 -- 'Laws.ProLaws' @('Adj.LeftProadjoint' q)@ and @('Adj.Proadjunction' p)@. The middle object of
 -- the unit is only known to be an object, hence 'TestObIsOb'.
@@ -706,73 +730,6 @@ testSymMonoidal withTestOb2 =
 
 testSymMonoidal_ :: forall k. (Testable k, M.SymMonoidal k, TestObIsOb k) => TestTree
 testSymMonoidal_ = testSymMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
-
--- | Laws of a lax monoidal profunctor ('M.MonoidalProfunctor'): @'M.**'@ is natural in both
--- arguments and coherent with the unitors and the associator. For a monoidal category take
--- @p = 'Hom' k@; there naturality is bifunctoriality of the tensor,
--- @(g ** g\') . (f ** f\') == (g . f) ** (g\' . f\')@, which 'testMonoidal' checks as one of the
--- monoidal laws.
-propMonoidalProfunctor
-  :: forall {j} {k} (p :: j +-> k)
-   . (M.MonoidalProfunctor p, TestableProfunctor p, TestOb (M.Unit @k), TestOb (M.Unit @j))
-  => WithTestOb2 k
-  -> WithTestOb2 j
-  -> Property ()
-propMonoidalProfunctor withTestObK withTestObJ = do
-  SomeP @a @b x <- genProfunctorElt @p "x"
-  SomeP @c @d y <- genProfunctorElt @p "y"
-  withTestObK @a @c @(Property ()) $ withTestObJ @b @d @(Property ()) $ do
-    Some @a' <- genObSuchThat @k \(Some @a') -> isGenNonEmpty @(a' ~> a)
-    Some @c' <- genObSuchThat @k \(Some @c') -> isGenNonEmpty @(c' ~> c)
-    l1 <- genNamed @(a' ~> a) "l1"
-    l2 <- genNamed @(c' ~> c) "l2"
-    withTestObK @a' @c' @(Property ()) $
-      testEq
-        "lmap naturality"
-        "lmap (l1 ** l2) (x ** y)"
-        (lmap (l1 M.** l2) (x M.** y))
-        "lmap l1 x ** lmap l2 y"
-        (lmap l1 x M.** lmap l2 y)
-    Some @b' <- genObSuchThat @j \(Some @b') -> isGenNonEmpty @(b ~> b')
-    Some @d' <- genObSuchThat @j \(Some @d') -> isGenNonEmpty @(d ~> d')
-    r1 <- genNamed @(b ~> b') "r1"
-    r2 <- genNamed @(d ~> d') "r2"
-    withTestObJ @b' @d' @(Property ()) $
-      testEq
-        "rmap naturality"
-        "rmap (r1 ** r2) (x ** y)"
-        (rmap (r1 M.** r2) (x M.** y))
-        "rmap r1 x ** rmap r2 y"
-        (rmap r1 x M.** rmap r2 y)
-    withTestObK @(M.Unit @k) @a @(Property ()) $
-      withTestObJ @(M.Unit @j) @b @(Property ()) $
-        testEq
-          "left unit"
-          "dimap leftUnitorInv leftUnitor (one ** x)"
-          (dimap (M.leftUnitorInv @k @a) (M.leftUnitor @j @b) (M.one @p M.** x))
-          "x"
-          x
-    withTestObK @a @(M.Unit @k) @(Property ()) $
-      withTestObJ @b @(M.Unit @j) @(Property ()) $
-        testEq
-          "right unit"
-          "dimap rightUnitorInv rightUnitor (x ** one)"
-          (dimap (M.rightUnitorInv @k @a) (M.rightUnitor @j @b) (x M.** M.one @p))
-          "x"
-          x
-    SomeP @e @f z <- genProfunctorElt @p "z"
-    withTestObK @c @e @(Property ()) $
-      withTestObJ @d @f @(Property ()) $
-        withTestObK @a @(c M.** e) @(Property ()) $
-          withTestObJ @b @(d M.** f) @(Property ()) $
-            withTestObK @(a M.** c) @e @(Property ()) $
-              withTestObJ @(b M.** d) @f @(Property ()) $
-                testEq
-                  "associativity"
-                  "dimap associatorInv associator ((x ** y) ** z)"
-                  (dimap (M.associatorInv @k @a @c @e) (M.associator @j @b @d @f) ((x M.** y) M.** z))
-                  "x ** (y ** z)"
-                  (x M.** (y M.** z))
 
 -- | The laws of a copy-discard category: every object is a cocommutative comonoid (the laws of its
 -- supply, in "Proarrow.Monoid"), and 'CopyDiscard.copy' and 'CopyDiscard.discard' are that comonoid

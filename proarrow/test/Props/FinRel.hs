@@ -57,6 +57,9 @@ test =
     , testMonCostrong_ @FinRel
     , testGroup "Id -| Id" [testProadjunction @(Id :: CAT FINREL) @Id]
     , testGroup "Writer -| Reader" [testProadjunction @(Writer (FR Nat2) :: FINREL +-> FINREL) @(Reader (OP (FR Nat2)))]
+    , testGroup "Id procomonad" [testProcomonad @(Id :: CAT FINREL)]
+    , testGroup "Writer procomonad" [testProcomonad @(Writer (FR Nat2) :: FINREL +-> FINREL)]
+    , testGroup "Reader procomonad" [testProcomonad @(Reader (OP (FR Nat2)) :: FINREL +-> FINREL)]
     , testHypergraph_ @FINREL
     , testCopyDiscard_ @FINREL
     , testCommutativeMonoid_ @(FR Nat0)
