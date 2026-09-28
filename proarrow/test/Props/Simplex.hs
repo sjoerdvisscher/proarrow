@@ -3,12 +3,13 @@
 
 module Props.Simplex where
 
+import Data.Falsify.ConcreteFun qualified as ConcreteFun
 import Data.Fin (Fin (..), absurd, isMin)
 import Data.Foldable (Foldable (..), toList)
 import Data.Monoid (All (..), Ap (..))
 import Data.Vec.Lazy (Vec (..), universe, zipWith)
 import Data.Void qualified as Void
-import Test.Falsify.Generator (Function (..), choose, functionMap)
+import Test.Falsify.Generator (Function (..), choose)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (fst, id, snd, zipWith)
 
@@ -75,8 +76,8 @@ instance (IsNat n) => TestableType (Fin n) where
 
 instance (IsNat n) => Function (Fin n) where
   function = case singNat @n of
-    SZ -> fmap (functionMap absurd Void.absurd) . function @Void.Void
-    SS @m -> fmap (functionMap isMin (maybe FZ FS)) . function @(Maybe (Fin m))
+    SZ -> fmap (ConcreteFun.map absurd Void.absurd) . function @Void.Void
+    SS @m -> fmap (ConcreteFun.map isMin (maybe FZ FS)) . function @(Maybe (Fin m))
 
 instance (TestableType a, IsNat n) => TestableType (Vec n a) where
   gen = case gen @a of
@@ -89,8 +90,8 @@ instance (TestingEqShow a, IsNat n) => TestingEqShow (Vec n a) where
 
 instance (IsNat n, Function a) => Function (Vec n a) where
   function = case singNat @n of
-    SZ -> fmap (functionMap (\VNil -> ()) (\() -> VNil)) . function @()
-    SS @m -> fmap (functionMap (\(x ::: xs) -> (x, xs)) (uncurry (:::))) . function @(a, Vec m a)
+    SZ -> fmap (ConcreteFun.map (\VNil -> ()) (\() -> VNil)) . function @()
+    SS @m -> fmap (ConcreteFun.map (\(x ::: xs) -> (x, xs)) (uncurry (:::))) . function @(a, Vec m a)
 
 instance TestableProfunctor (Rep Forget)
 instance TestableProfunctor (Rep (Pick Bool))

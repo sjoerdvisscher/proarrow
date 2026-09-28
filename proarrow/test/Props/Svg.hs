@@ -8,9 +8,10 @@ module Props.Svg where
 
 import Control.Monad (forM_, replicateM, when)
 import Data.List qualified as List
+import Test.Falsify (testFailed)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (Monoid, elem, id, (.))
 
 import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, SymMonoidalStructures, withOb2)

@@ -9,8 +9,9 @@ import Data.Foldable (for_)
 import Data.Kind (Type)
 import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (Nat2)
+import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (Monoid, curry, fst, id, mempty, snd, (**), (.))
 import Prelude qualified as P
 

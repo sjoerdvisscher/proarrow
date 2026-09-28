@@ -15,8 +15,9 @@ import Data.Bifunctor (bimap, first, second)
 import Data.Maybe (maybeToList)
 import Data.Tuple (swap)
 import Data.Type.Nat (Nat2, Nat3)
+import Test.Falsify (Property, genWith, testFailed)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude
 
 import GHC.Generics qualified as G

@@ -3,6 +3,7 @@
 
 module Props.Hask where
 
+import Data.Falsify.ConcreteFun qualified as ConcreteFun
 import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.Void (Void)
@@ -12,8 +13,8 @@ import Proarrow.Functor (Prelude (..))
 import Proarrow.Profunctor.Instance.Costar (Costar)
 import Proarrow.Profunctor.Instance.Star (Star)
 import Proarrow.Profunctor.Representable (Rep)
-import Test.Falsify.Generator (Function, choose, function, functionMap, list)
-import Test.Falsify.Range (between)
+import Test.Falsify.Generator (Function, choose, function, list)
+import Test.Falsify.Range (inclusive)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude hiding (elem, (.))
@@ -35,7 +36,8 @@ import Proarrow.Testing
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Falsify (testFailed)
+import Test.Tasty.Falsify (testProperty)
 
 test :: TestTree
 test =
@@ -121,7 +123,7 @@ instance (TestingEqShow a) => TestingEqShow [a] where
 instance (TestableType a) => TestableType [a] where
   gen = case gen @a of
     GenEmpty _ -> GenNonEmpty (pure [])
-    GenNonEmpty g -> GenNonEmpty (list (between (0, 4)) g)
+    GenNonEmpty g -> GenNonEmpty (list (inclusive (0, 4)) g)
 
 -- Hard to write and also unused instances.
 instance Function (a -> b) where
@@ -135,7 +137,7 @@ instance (TestingEqShow (f a)) => TestingEqShow (Prelude f a) where
   eqP (Prelude l) (Prelude r) = eqP l r
   showP (Prelude f) = showP f
 instance (Function (f a)) => Function (Prelude f a) where
-  function = fmap (functionMap unPrelude Prelude) . function
+  function = fmap (ConcreteFun.map unPrelude Prelude) . function
 
 instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Star (Prelude f))
 

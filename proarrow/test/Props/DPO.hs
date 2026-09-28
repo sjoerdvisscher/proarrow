@@ -9,8 +9,9 @@ module Props.DPO (test) where
 
 import Data.List (genericIndex, genericLength)
 import Numeric.Natural (Natural)
+import Test.Falsify (Property, testFailed)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
 
 import Examples.Graph (GRAPH (..), GraphHom (..))

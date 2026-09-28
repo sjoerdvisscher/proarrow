@@ -39,8 +39,9 @@ import Proarrow.Testing
 import Proarrow.Testing.Laws
 import Proarrow.Tools.DPO (pushoutComplement)
 import Props.Hask ()
+import Test.Falsify (testFailed)
 import Test.Falsify.Generator (minimalValue)
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 
 test :: TestTree
 test =

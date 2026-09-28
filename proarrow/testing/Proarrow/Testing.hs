@@ -69,7 +69,7 @@ module Proarrow.Testing
     -- * Generating functions
 
     -- | 'ShowP' supplies the 'Show' instance @falsify@ needs on both parameters of a generated
-    -- 'Test.Falsify.Generator.Fun', derived from 'showP'; 'applyFunP' unwraps on the way back out.
+    -- 'Test.Falsify.Fun', derived from 'showP'; 'applyFunP' unwraps on the way back out.
   , ShowP (..)
   , applyFunP
 
@@ -87,12 +87,13 @@ module Proarrow.Testing
   , sampleK
   ) where
 
+import Data.Falsify.ConcreteFun qualified as ConcreteFun
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Maybe (mapMaybe)
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (Fun, Function (..), Gen, applyFun, elem, fun, functionMap, minimalValue, oneof)
-import Test.Tasty.Falsify (Property, discard, genWith, testFailed)
+import Test.Falsify (Fun, Property, applyFun, discard, genWith, testFailed)
+import Test.Falsify.Generator (Function (..), Gen, elem, fun, minimalValue, oneof)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Control.Applicative (Alternative (..))
@@ -214,7 +215,7 @@ instance (TestingEqShow a) => Show (ShowP a) where
   show (ShowP a) = showP a
 
 instance (Function a) => Function (ShowP a) where
-  function = fmap (functionMap unShowP ShowP) . function
+  function = fmap (ConcreteFun.map unShowP ShowP) . function
 
 -- | Apply a generated function, wrapping and unwrapping the 'ShowP' it was
 -- generated at. Both directions are ordinary newtype constructor applications.

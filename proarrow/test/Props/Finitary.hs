@@ -12,8 +12,9 @@ module Props.Finitary (test) where
 
 import Data.List (genericIndex, genericLength, sort)
 import Numeric.Natural (Natural)
+import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), sizes)

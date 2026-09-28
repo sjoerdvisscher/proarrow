@@ -11,8 +11,9 @@ module Props.Paths (test) where
 
 import Control.Monad (unless)
 import Data.Type.Equality ((:~:) (..))
+import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Member (..), memberIndex)

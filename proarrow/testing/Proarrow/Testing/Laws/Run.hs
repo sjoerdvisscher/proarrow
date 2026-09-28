@@ -64,9 +64,10 @@ module Proarrow.Testing.Laws.Run
   ) where
 
 import Data.Kind (Constraint, Type)
+import Test.Falsify (Property)
 import Test.Falsify.Generator (Gen)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, TestOptions, testProperty, testPropertyWith)
+import Test.Tasty.Falsify (TestOptions, testProperty, testPropertyWith)
 import Prelude hiding (fst, id, snd, (.))
 
 import Proarrow.Adjunction qualified as Adj

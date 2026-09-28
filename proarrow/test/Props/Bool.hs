@@ -4,8 +4,9 @@
 module Props.Bool where
 
 import Data.Type.Equality ((:~:) (Refl))
+import Test.Falsify (discard)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (discard, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (**), (.))
 
 import Proarrow.Category.Enriched qualified as E

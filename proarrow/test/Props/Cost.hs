@@ -17,8 +17,9 @@ import Data.Type.Equality ((:~:) (Refl))
 import Data.Type.Ord (OrderingI (..))
 import GHC.TypeNats (cmpNat, natVal)
 import Numeric.Natural (Natural)
+import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testFailed, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude
 
 import Proarrow.Category.Enriched (EnrichedProfunctor (..))

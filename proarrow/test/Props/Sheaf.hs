@@ -34,8 +34,9 @@ module Props.Sheaf (test) where
 
 import Data.Foldable (for_)
 import Data.List (genericIndex, genericLength)
+import Test.Falsify (Property)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, testProperty)
+import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (const, id, (.))
 
 import Examples.Graph (ByEnds, GRAPH (..), GraphHom (..))
