@@ -94,15 +94,23 @@ def draw(out):
     script.append('writeFile (out ++ "/index.txt") ""')
     for s in SECTIONS:
         script.append(f'save {hs_string(s["key"])} (' + ' ++ '.join(call(*p) for p in s['parts']) + ')')
-    result = subprocess.run(['cabal', 'repl', '-v0', 'lib:proarrow'], cwd=ROOT, input='\n'.join(script) + '\n',
-                            capture_output=True, text=True)
-    if result.returncode != 0 or re.search(r'error|exception', result.stdout + result.stderr, re.I):
-        sys.exit(result.stdout + result.stderr)
+    output = run_repl('lib:proarrow', script)
     with open(os.path.join(out, 'index.txt'), encoding='utf-8') as f:
         rows = [line.rstrip('\n').split('\t') for line in f if line.strip()]
     if not rows:
-        sys.exit('no diagrams were drawn:\n' + result.stdout + result.stderr)
+        sys.exit('no diagrams were drawn:\n' + output)
     return rows
+
+
+def run_repl(target, script):
+    """Run the lines of script in `cabal repl target` from the repository root, exiting with its
+    output if anything went wrong. Returns the output."""
+    result = subprocess.run(['cabal', 'repl', '-v0', target], cwd=ROOT, input='\n'.join(script) + '\n',
+                            capture_output=True, text=True)
+    output = result.stdout + result.stderr
+    if result.returncode != 0 or re.search(r'error|exception', output, re.I):
+        sys.exit(output)
+    return output
 
 
 def hs_string(s):

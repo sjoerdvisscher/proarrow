@@ -10,6 +10,7 @@ import Examples.Database qualified as Database
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
+import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
@@ -85,6 +86,7 @@ main =
           , Graph.test
           , STLC.test
           , ULC.test
+          , Toffoli.test
           , Vitrea.test
           ]
       ]
