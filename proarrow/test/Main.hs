@@ -10,6 +10,7 @@ import Examples.Database qualified as Database
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
+import Examples.IntComposition qualified as IntComposition
 import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
@@ -21,6 +22,7 @@ import Props.Discrete qualified as Discrete
 import Props.Dot qualified as Dot
 import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
+import Props.IntConstruction qualified as IntConstruction
 import Props.FinSet qualified as FinSet
 import Props.Finitary qualified as Finitary
 import Props.Finitary.Graph qualified as FinitaryGraph
@@ -57,6 +59,7 @@ main =
           , Dot.test
           , FinHask.test
           , FinRel.test
+          , IntConstruction.test
           , FinSet.test
           , Finitary.test
           , FinitaryGraph.test
@@ -86,6 +89,7 @@ main =
           , Graph.test
           , STLC.test
           , ULC.test
+          , IntComposition.test
           , Toffoli.test
           , Vitrea.test
           ]

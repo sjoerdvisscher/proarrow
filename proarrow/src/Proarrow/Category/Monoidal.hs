@@ -284,8 +284,10 @@ instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
 (==) :: (CategoryOf k) => (a :: k) ~> b -> b ~> c -> a ~> c
 f == g = g . f
 
+-- | The identity on a tensor. It is built from 'withOb2' rather than as @obj \@a '**' obj \@b@,
+-- so that an instance's own '**' can use it without calling itself.
 obj2 :: forall {k} a b. (Monoidal k, Ob (a :: k), Ob b) => Obj (a ** b)
-obj2 = obj @a ** obj @b
+obj2 = withOb2 @k @a @b (obj @(a ** b))
 
 leftUnitor' :: (Monoidal k) => (a :: k) ~> b -> Unit ** a ~> b
 leftUnitor' f = f . leftUnitor \\ f
