@@ -1,6 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE LinearTypes #-}
-{-# LANGUAGE QualifiedDo #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Monoids and comonoids internal to a monoidal category: a 'Monoid' @m@ has @'mempty' :: 'Unit' '~>' m@
@@ -29,7 +27,6 @@ import Proarrow.Category.Monoidal
   , type (**!)
   )
 import Proarrow.Category.Monoidal.Action (Act, ActionAt, CoprodAction, MonoidalAction (..), actHom)
-import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1)
 import Proarrow.Colimit.BinaryCoproduct
@@ -48,8 +45,6 @@ import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
-import Proarrow.Tools.SMC (SYN (..), dropUnit, lam, lift, toSMC, ($$), (*))
-import Proarrow.Tools.SMC qualified as SMC
 
 -- | A monoid object in a monoidal category: a unit and an (associative, unital) multiplication
 -- for the object @m@. At @k = Type@ (with tensor @(,)@) this is the ordinary 'P.Monoid'.
@@ -230,47 +225,6 @@ instance (SymMonoidal k, Ob (m :: k)) => Strong Tensor (Rep (ActionAt Tensor m) 
 instance (Monoidal k, HasCoproducts k, Monoid (m :: k)) => Strong CoprodAction (Rep (ActionAt Tensor m) :: k +-> k) where
   act @(COPR a) (Rep @y p) =
     p // withObCoprod @k @a @y (Rep ((obj @m ** lft @k @a @y) . memptyAct @Tensor @m @a ||| (obj @m ** rgt @k @a @y) . p))
-
--- | The exponential by a comonoid, @m ~~> -@, is an applicative functor (the reader applicative):
--- @pure@ discards the argument with the counit and @<*>@ duplicates it with the comultiplication.
--- Rendered on @'Rep' ('Exp' m)@ (legs @a ~> (m ~~> b)@) this is a
--- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', so a
--- 'Proarrow.Optic.Grate.Grate' is a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope'.
-instance (Closed k, SymMonoidal k, Comonoid (m :: k)) => MonoidalProfunctor (Rep (Exp m) :: k +-> k) where
-  one = Rep (toSMC @I @(F m :-> I) \u -> lam \i -> dropUnit u (lift @(F m) @I (counit @m) i))
-  Rep @x2 @_ @x1 l@Objs ** Rep @y2 @_ @y1 r@Objs =
-    withOb2 @k @x2 @y2 (Rep both)
-    where
-      both = toSMC @(F x1 :** F y1) @(F m :-> F x2 :** F y2) \p -> SMC.do
-        let l' = lift @(F x1) @(F m :-> F x2) l
-            r' = lift @(F y1) @(F m :-> F y2) r
-        (x, y) <- p
-        lam \i -> SMC.do
-          (i1, i2) <- lift @(F m) @(F m :** F m) (comult @m) i
-          (l' x $$ i1) * (r' y $$ i2)
-
-instance (Closed k, HasCoproducts k, Ob (m :: k)) => MonoidalProfunctor (Coprod (Rep (Exp m)) :: COPROD k +-> COPROD k) where
-  one = withObExp @k @m @InitialObject (Coprod (Rep initiate))
-  Coprod (Rep @x2 l) ** Coprod (Rep @y2 r) =
-    withObCoprod @k @x2 @y2 (Coprod (Rep ((lft @k @x2 @y2 ^^^ obj @m) . l ||| (rgt @k @x2 @y2 ^^^ obj @m) . r)))
-instance (Closed k, SymMonoidal k, Ob (m :: k)) => Strong Tensor (Rep (Exp m) :: k +-> k) where
-  act @a (Rep @y @_ @x p@Objs) =
-    withOb2 @k @a @y (Rep strong)
-    where
-      strong = toSMC @(F a :** F x) @(F m :-> F a :** F y) \q -> SMC.do
-        (a, x) <- q
-        lam \i -> a * (lift @(F x) @(F m :-> F y) p x $$ i)
-instance (Closed k, HasCoproducts k, Comonoid (m :: k)) => Strong CoprodAction (Rep (Exp m) :: k +-> k) where
-  act @(COPR a) (Rep @y p) =
-    p //
-      withObCoprod @k @a @y
-        ( withObExp @k @m @a
-            ( withObExp @k @m @y
-                ( Rep
-                    ((lft @k @a @y ^^^ obj @m) . curry @k @a @m (rightUnitor @k @a . (obj @a ** counit @m)) ||| (rgt @k @a @y ^^^ obj @m) . p)
-                )
-            )
-        )
 
 -- | The free-category structure for @'Supplies' 'Monoid'@: every object gets formal 'mappend'
 -- ('Join') and 'mempty' ('Sprout') generators, interpreted by 'foldStructure' through the

@@ -59,13 +59,16 @@ module Proarrow.Tools.SMC
   , Term (..)
   , toSMC
   , lift
+  , dup
+  , drop
   , call
   , (*)
   , split
   , unit
-  , dropUnit
   , lam
   , loop
+  , produce
+  , annihilate
   , ($$)
 
     -- * Contexts
@@ -102,6 +105,9 @@ module Proarrow.Tools.SMC
   , rotT
   , traceT
   , loopT
+  , loopCC
+  , snakeT
+  , combineDualT
   ) where
 
 import Data.Kind (Constraint, Type)
@@ -120,8 +126,11 @@ import Proarrow.Category.Monoidal
   , associatorInv'
   )
 import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal, trace)
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
+import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object (Obj)
 
 infixl 7 *
@@ -129,9 +138,9 @@ infixl 8 $$
 infixl 7 :**
 infixr 5 :->
 
--- | Type expressions over the objects of @k@: an object of @k@, the unit, the tensor and the
--- internal hom.
-type data SYN k = F k | I | SYN k :** SYN k | SYN k :-> SYN k
+-- | Type expressions over the objects of @k@: an object of @k@, the unit, the tensor, the
+-- internal hom and the dual.
+type data SYN k = F k | I | SYN k :** SYN k | SYN k :-> SYN k | D (SYN k)
 
 -- | The object of @k@ a type expression stands for.
 type Interp :: forall {k}. SYN k -> k
@@ -140,6 +149,7 @@ type family Interp s where
   Interp I = Unit
   Interp (a :** b) = Interp a ** Interp b
   Interp (a :-> b) = Interp a ~~> Interp b
+  Interp (D a) = Dual (Interp a)
 
 type KnownObj :: forall {k}. SYN k -> Constraint
 class (CategoryOf k) => KnownObj (s :: SYN k) where
@@ -156,6 +166,9 @@ instance (Monoidal k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :** b) w
 
 instance (Closed k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :-> b) where
   withSynOb r = withSynOb @a (withSynOb @b (withObExp @k @(Interp a) @(Interp b) r))
+
+instance (StarAutonomous k, KnownObj (a :: SYN k)) => KnownObj (D a) where
+  withSynOb r = withSynOb @a (withObDual @k @(Interp a) r)
 
 -- | The identity on the object a type expression stands for.
 synOb :: forall {k} (s :: SYN k). (KnownObj s) => Obj (Interp s)
@@ -331,6 +344,14 @@ toSMC
   -> Interp a ~> Interp b
 toSMC k = case k (var @0 @a) of MkTerm f -> f
 
+-- | Copy a term whose type is a comonoid, in "Proarrow.Tools.SMC": @(x1, x2) <- dup x@.
+dup :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s %1 -> Term d g (s :** s)
+dup = lift @s @(s :** s) comult
+
+-- | Discard a term whose type is a comonoid, in "Proarrow.Tools.SMC": @() <- drop x@.
+drop :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s %1 -> Term d g I
+drop = lift @s @I counit
+
 -- | Lift a morphism of the target category to a function on terms.
 lift :: forall {k} (a :: SYN k) b d g. (CategoryOf k) => (Interp a ~> Interp b) -> Term d g a %1 -> Term d g b
 lift f (MkTerm t) = MkTerm (f . t)
@@ -382,13 +403,6 @@ split (MkTerm p) k = case k (var @d @a) (var @(d + 1) @b) of
 unit :: forall {k} d. (Monoidal k) => Term d ('[] :: Ctx k) I
 unit = MkTerm id
 
--- | Use up a term of the unit type, continuing with another term.
-dropUnit
-  :: forall {k} d g1 g2 (c :: SYN k)
-   . (Monoidal k, KnownObj c, Merge g1 g2)
-  => Term d g1 I %1 -> Term d g2 c %1 -> Term d (Union g1 g2) c
-dropUnit (MkTerm u) (MkTerm t) = withSynOb @c (MkTerm (leftUnitor @k @(Interp c) . (u ** t) . merge @g1 @g2))
-
 -- | Bind a variable, which the body must use exactly once. This needs the category to be closed.
 lam
   :: forall {k} d r (a :: SYN k) b da
@@ -411,6 +425,18 @@ loop k = case k (var @d @u) of
       ( withSynOb @u
           (withSynOb @b (MkTerm (trace @(~>) @(Interp u) @(Interp (Mul r)) @(Interp b) (body . snoc @d @u @r))))
       )
+
+-- | A new pair of wires, a variable and its dual, from nothing: the unit of the duality. This
+-- needs the category to be compact closed.
+produce :: forall {k} (a :: SYN k) d. (CompactClosed k, KnownObj a) => Term d '[] (a :** D a)
+produce = withSynOb @a (MkTerm (dualityUnit @k @(Interp a)))
+
+-- | Join a dual and its wire into nothing: the counit of the duality.
+annihilate
+  :: forall {k} (a :: SYN k) d g1 g2
+   . (CompactClosed k, KnownObj a, Merge g1 g2)
+  => Term d g1 (D a) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) I
+annihilate (MkTerm x) (MkTerm y) = withSynOb @a (MkTerm (dualityCounit @k @(Interp a) . (x ** y) . merge @g1 @g2))
 
 -- | Function application. The function and its argument must have disjoint contexts.
 ($$)
@@ -473,6 +499,7 @@ type family PSize t where
 type PCtx :: forall {k}. Type -> Nat -> Ctx k -> SYN k -> Ctx k -> Ctx k
 type family PCtx t d g a g' where
   PCtx (x, y) d g (a1 :** a2) g' = Union (Drop2 (PCtxPair x y d a1 a2 g')) g
+  PCtx () d g a g' = Union g g'
   PCtx t d g a g' = g'
 
 -- | The context of the body of the 'split' that a pair pattern starts with.
@@ -482,6 +509,12 @@ type PCtxPair x y d a1 a2 g' =
 
 -- Both instances are incoherent: a variable pattern's type is often still unknown when the
 -- instance is chosen, and a pair pattern's type is always a pair by then.
+
+-- | The pattern @()@ uses up a term of the unit type.
+instance {-# INCOHERENT #-} (Monoidal k, a ~ I, KnownObj c, Merge g g') => Pat k () d g (a :: SYN k) g' c where
+  pat (MkTerm u) k = case k () of
+    MkTerm t -> withSynOb @c (MkTerm (leftUnitor @k @(Interp c) . (u ** t) . merge @g @g'))
+
 instance {-# INCOHERENT #-} (t ~ Term (DepthOf t) g a) => Pat k t d g a g' c where
   pat x k = k (retag x)
 
@@ -729,3 +762,31 @@ traceT h = toSMC @(F a) \a -> Proarrow.Tools.SMC.do
 -- [1,1,1]
 loopT :: forall {k} (a :: k) b u. (TracedMonoidal k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
 loopT h = toSMC @(F a) \a -> loop @(F u) \u -> lift @(F a :** F u) @(F b :** F u) h (a * u)
+
+-- | A trace from the duality alone, so for any compact closed category: feed @u@ in along one
+-- end of a new pair and join its new value with the other end.
+loopCC :: forall {k} (a :: k) b u. (CompactClosed k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
+loopCC h = toSMC @(F a) \a -> Proarrow.Tools.SMC.do
+  (u, u') <- produce
+  (b, v) <- lift @(F a :** F u) @(F b :** F u) h (a * u)
+  () <- annihilate u' v
+  b
+
+-- | A snake: create a pair, join its dual with the input, and continue with the other end. By the
+-- zigzag law it is the identity.
+snakeT :: forall {k} (a :: k). (CompactClosed k, Ob a) => a ~> a
+snakeT = toSMC @(F a) \x -> Proarrow.Tools.SMC.do
+  (a, a') <- produce
+  () <- annihilate a' x
+  a
+
+-- | The inverse of 'distribDual': make a pair for @a ** b@, and annihilate the two halves of its
+-- plain end with the given duals.
+combineDualT :: forall {k} (a :: k) b. (CompactClosed k, Ob a, Ob b) => Dual a ** Dual b ~> Dual (a ** b)
+combineDualT = toSMC @(D (F a) :** D (F b)) @(D (F a :** F b)) \x -> Proarrow.Tools.SMC.do
+  (da, db) <- x
+  (ab, ab') <- produce
+  (a, b) <- ab
+  () <- annihilate da a
+  () <- annihilate db b
+  ab'

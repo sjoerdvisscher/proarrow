@@ -1,4 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE LinearTypes #-}
+{-# LANGUAGE QualifiedDo #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The __cotraversal__ and the __kaleidoscope__: two flavors with the same witnesses (the
 -- representable 'StrongDistributiveProfunctor's, i.e. applicative functors rendered as profunctors,
@@ -52,14 +55,17 @@ module Proarrow.Optic.Kaleidoscope
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, Tensor)
-import Proarrow.Category.Monoidal.Action (ActionAt)
-import Proarrow.Category.Monoidal.Closed (Closed, Exp)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
+import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction)
+import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), StrongDistributiveProfunctor, Traversable)
-import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (\\), type (+->))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
+import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), (\\), type (+->))
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Monoid (Comonoid, Monoid)
+import Proarrow.Monoid (Comonoid (..), Monoid)
+import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), legs2prof, withLegs)
 import Proarrow.Optic.Setter (SetterFl (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -67,6 +73,8 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representable (..), repUniv)
+import Proarrow.Tools.SMC (SYN (..), drop, dup, lam, lift, toSMC, ($$), (*))
+import Proarrow.Tools.SMC qualified as SMC
 
 -- * Carriers
 
@@ -154,6 +162,47 @@ instance
   => KaleidoFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m))
   where
   kaleidoP (Rep h) (Corep i) rab = dimap h i (kaleidoAct @_ @(Rep (ActionAt Tensor m)) rab)
+
+-- | The exponential by a comonoid, @m ~~> -@, is an applicative functor (the reader applicative):
+-- @pure@ discards the argument with the counit and @<*>@ duplicates it with the comultiplication.
+-- Rendered on @'Rep' ('Exp' m)@ (legs @a ~> (m ~~> b)@) this is a
+-- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', so a
+-- 'Proarrow.Optic.Grate.Grate' is a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope'.
+instance (Closed k, SymMonoidal k, Comonoid (m :: k)) => MonoidalProfunctor (Rep (Exp m) :: k +-> k) where
+  one = Rep (toSMC @I @(F m :-> I) \u -> lam \i -> SMC.do () <- drop i; u)
+  Rep @x2 @_ @x1 l@Objs ** Rep @y2 @_ @y1 r@Objs =
+    withOb2 @k @x2 @y2 (Rep both)
+    where
+      both = toSMC @(F x1 :** F y1) @(F m :-> F x2 :** F y2) \p -> SMC.do
+        let l' = lift @(F x1) @(F m :-> F x2) l
+            r' = lift @(F y1) @(F m :-> F y2) r
+        (x, y) <- p
+        lam \i -> SMC.do
+          (i1, i2) <- dup i
+          (l' x $$ i1) * (r' y $$ i2)
+
+instance (Closed k, HasCoproducts k, Ob (m :: k)) => MonoidalProfunctor (Coprod (Rep (Exp m)) :: COPROD k +-> COPROD k) where
+  one = withObExp @k @m @InitialObject (Coprod (Rep initiate))
+  Coprod (Rep @x2 l) ** Coprod (Rep @y2 r) =
+    withObCoprod @k @x2 @y2 (Coprod (Rep ((lft @k @x2 @y2 ^^^ obj @m) . l ||| (rgt @k @x2 @y2 ^^^ obj @m) . r)))
+instance (Closed k, SymMonoidal k, Ob (m :: k)) => Strong Tensor (Rep (Exp m) :: k +-> k) where
+  act @a (Rep @y @_ @x p@Objs) =
+    withOb2 @k @a @y (Rep strong)
+    where
+      strong = toSMC @(F a :** F x) @(F m :-> F a :** F y) \q -> SMC.do
+        (a, x) <- q
+        lam \i -> a * (lift @(F x) @(F m :-> F y) p x $$ i)
+instance (Closed k, HasCoproducts k, Comonoid (m :: k)) => Strong CoprodAction (Rep (Exp m) :: k +-> k) where
+  act @(COPR a) (Rep @y p) =
+    p //
+      withObCoprod @k @a @y
+        ( withObExp @k @m @a
+            ( withObExp @k @m @y
+                ( Rep
+                    ((lft @k @a @y ^^^ obj @m) . curry @k @a @m (rightUnitor @k @a . (obj @a ** counit @m)) ||| (rgt @k @a @y ^^^ obj @m) . p)
+                )
+            )
+        )
 
 -- | The exponential pair for a comonoid exponent: @m ~~> -@ is the reader applicative. So every
 -- 'Proarrow.Optic.Grate.Grate' is a kaleidoscope.

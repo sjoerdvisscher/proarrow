@@ -10,6 +10,7 @@ import Examples.Database qualified as Database
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
+import Examples.Duality qualified as Duality
 import Examples.IntComposition qualified as IntComposition
 import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
@@ -89,6 +90,7 @@ main =
           , Graph.test
           , STLC.test
           , ULC.test
+          , Duality.test
           , IntComposition.test
           , Toffoli.test
           , Vitrea.test
