@@ -22,6 +22,7 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual)
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), expSA)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, tgt, (//), (:~>), type (+->))

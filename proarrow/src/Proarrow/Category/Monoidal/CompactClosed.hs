@@ -2,9 +2,10 @@
 {-# LANGUAGE RequiredTypeArguments #-}
 {-# OPTIONS_GHC -Wno-unused-foralls #-}
 
--- | Compact closed categories: star-autonomous categories whose dual distributes over the tensor
--- ('distribDual', 'dualUnit'), so that every object has a duality unit and counit ('dualityUnit',
--- 'dualityCounit') and every morphism @x ** u ~> y ** u@ has a trace ('traceCC').
+-- | Compact closed categories: isomix categories whose dual distributes over the tensor
+-- ('distribDual', with 'dualUnit' from 'IsoMix'), so that every object has a duality unit and
+-- counit ('dualityUnit', 'dualityCounit') and every morphism @x ** u ~> y ** u@ has a trace
+-- ('traceCC').
 module Proarrow.Category.Monoidal.CompactClosed where
 
 import Data.Kind (Constraint)
@@ -18,7 +19,6 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
-  , UnitF
   , leftUnitorWith
   , swap
   , unitObj
@@ -26,32 +26,25 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed)
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous
   ( DualF
   , StarAutonomous (..)
   , doubleNeg
   , dualObj
-  , dualityCounitSA
   , dualityUnitSA
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (===))
 
-class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
+class (IsoMix k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
-  dualUnit :: Dual (Unit :: k) ~> Unit
 
   -- | The unit of the duality between @a@ and its dual. 'dualityUnitDefault' gives it from the
   -- *-autonomous structure; an instance with cups of its own can use them. (There is no default
   -- method: @a@ occurs only under type families, so GHC could not instantiate one.)
   dualityUnit :: (Ob (a :: k)) => Unit ~> a ** Dual a
-
-  -- | The counit of the duality between @a@ and its dual; see 'dualityCounitDefault'.
-  dualityCounit :: (Ob (a :: k)) => Dual a ** a ~> Unit
-
-dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
-dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @k @Unit \\ dualObj @(Unit :: k)
 
 -- | 'dualityUnit' from the *-autonomous structure.
 dualityUnitDefault :: forall {k} (a :: k). (CompactClosed k, Ob a) => Unit ~> a ** Dual a
@@ -59,10 +52,6 @@ dualityUnitDefault = let dualA = dualObj @a in (doubleNeg @k @a ** dualA) . dist
 
 dualityUnitS :: forall {k} (a :: k). (CompactClosed k, Ob a) => '[] ~> [a, Dual a]
 dualityUnitS = withObDual @k @a (Str @'[] @[a, Dual a] (dualityUnit @k @a))
-
--- | 'dualityCounit' from the *-autonomous structure.
-dualityCounitDefault :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ** a ~> Unit
-dualityCounitDefault = dualUnit . dualityCounitSA @a
 
 dualityCounitS :: forall {k} (a :: k). (CompactClosed k, Ob a) => [Dual a, a] ~> '[]
 dualityCounitS = withObDual @k @a (Str @[Dual a, a] @'[] (dualityCounit @k @a))
@@ -110,19 +99,15 @@ coactCC f =
 
 instance CompactClosed () where
   distribDual = U.Unit
-  dualUnit = U.Unit
   dualityUnit = U.Unit
-  dualityCounit = U.Unit
 
 instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
   distribDual @'(a, a') @'(b, b') = distribDual @j @a @b :**: distribDual @k @a' @b'
-  dualUnit = dualUnit :**: dualUnit
   dualityUnit @'(a, a') = dualityUnit @j @a :**: dualityUnit @k @a'
-  dualityCounit @'(a, a') = dualityCounit @j @a :**: dualityCounit @k @a'
 
 -- | The structures the free category needs for 'CompactClosed', and those its laws are stated for.
 type CompactClosedStructures :: [Kind -> Constraint]
-type CompactClosedStructures = '[Monoidal, SymMonoidal, Closed, StarAutonomous, CompactClosed]
+type CompactClosedStructures = '[Monoidal, SymMonoidal, Closed, StarAutonomous, IsoMix, CompactClosed]
 
 instance
   (CompactClosedStructures `Elems` cs)
@@ -130,31 +115,24 @@ instance
   where
   data Struct CompactClosed a b where
     DistribDual :: (Ob a, Ob b) => Struct CompactClosed (DualF (a **! b)) (DualF a **! DualF b)
-    DualUnit :: Struct CompactClosed (DualF UnitF) UnitF
   foldStructure @f _ (DistribDual @a @b) =
     withLowerOb @f @a (withLowerOb @f @b (distribDual @_ @(Lower f a) @(Lower f b)))
-  foldStructure _ DualUnit = dualUnit
 instance P.Show (Struct CompactClosed a b) where
   showsPrec _ DistribDual = P.showString "distribDual"
-  showsPrec _ DualUnit = P.showString "dualUnit"
 
 instance
   (CompactClosedStructures `Elems` cs)
   => CompactClosed (FREE cs (p :: CAT k))
   where
   distribDual @a @b = St (DistribDual @a @b) Nil
-  dualUnit = St DualUnit Nil
   dualityUnit @a = dualityUnitDefault @a
-  dualityCounit @a = dualityCounitDefault @a
 
--- | 'distribDual' and 'dualUnit' are isomorphisms (so 'Dual' is strong monoidal), and 'dualityUnit'
+-- | 'distribDual' is an isomorphism (with 'dualUnit' from 'IsoMix', so 'Dual' is strong monoidal), and 'dualityUnit'
 -- and 'dualityCounit' satisfy the zigzag identities, making @Dual a@ dual to @a@.
 instance Laws CompactClosedStructures where
   laws =
     inverses "distribDual" (\ @a @b -> Inverses (distribDual @_ @a @b) (label "combineDual" (combineDual @a @b)))
-      P.++ inverses "dualUnit" (Inverses dualUnit (label "dualUnitInv" dualUnitInv))
       P.++ [ Law "dualityUnit definition" \ @a _ -> withObDual @_ @a (dualityUnit @_ @a === dualityUnitDefault @a)
-           , Law "dualityCounit definition" \ @a _ -> withObDual @_ @a (dualityCounit @_ @a === dualityCounitDefault @a)
            , Law
                "zigzag (a)"
                \ @a _ ->

@@ -23,6 +23,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..))
@@ -252,6 +253,13 @@ instance StarAutonomous LINEAR where
   linDistInv (Linear f) = Linear (\(a, b) c -> f a (b, c))
   doubleNeg = Linear dn
   doubleNegInv = Linear (\a na -> na a)
+
+-- | The unit of par is @() %1 -> ()@, which has one value, just like @()@: apply it to @()@, or
+-- give back the identity. So LINEAR is isomix, while tensor and par still differ.
+instance IsoMix LINEAR where
+  dualUnit = Linear (\f -> f ())
+  dualUnitInv = Linear (\() u -> u)
+  dualityCounit = Linear (\(na, a) -> na a)
 
 -- | Double negation is possible with linear functions, though using `unsafeDupablePerformIO`.
 -- Derived from https://gist.github.com/ant-arctica/7563282c57d9d1ce0c4520c543187932

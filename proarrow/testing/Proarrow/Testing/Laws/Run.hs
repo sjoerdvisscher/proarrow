@@ -79,6 +79,7 @@ import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
+import Proarrow.Category.Monoidal.IsoMix qualified as IsoMix
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Category.Monoidal.Strength qualified as Strength
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
@@ -235,6 +236,7 @@ data instance Witness Initial.HasInitialObject k = InitialW
 data instance Witness Distributive.Distributive k = DistributiveW
 newtype instance Witness Exponential.Closed k = ClosedW (WithTestObExp k)
 newtype instance Witness SA.StarAutonomous k = StarAutonomousW (WithTestObDual k)
+data instance Witness IsoMix.IsoMix k = IsoMixW
 data instance Witness CC.CompactClosed k = CompactClosedW
 data instance Witness Strength.TracedMonoidal k = TracedW
 data instance Witness CopyDiscard.CopyDiscard k = CopyDiscardW
@@ -507,15 +509,27 @@ instance
   , HasWitness Exponential.Closed cs
   , HasWitness SA.StarAutonomous cs
   , Testable k
+  , IsoMix.IsoMix k
+  , TestOb (M.Unit :: k)
+  )
+  => IsoMix.IsoMix (TESTED cs k)
+  where
+  dualUnit = prim "dualUnit" IsoMix.dualUnit
+  dualUnitInv = prim "dualUnitInv" IsoMix.dualUnitInv
+  dualityCounit @a = untestOb @a (prim "dualityCounit" (IsoMix.dualityCounit @k @(Untest a)))
+
+instance
+  ( HasWitness M.Monoidal cs
+  , HasWitness Exponential.Closed cs
+  , HasWitness SA.StarAutonomous cs
+  , Testable k
   , CC.CompactClosed k
   , TestOb (M.Unit :: k)
   )
   => CC.CompactClosed (TESTED cs k)
   where
   distribDual @a @b = untestOb2 @a @b (prim "distribDual" (CC.distribDual @k @(Untest a) @(Untest b)))
-  dualUnit = prim "dualUnit" CC.dualUnit
   dualityUnit @a = untestOb @a (prim "dualityUnit" (CC.dualityUnit @k @(Untest a)))
-  dualityCounit @a = untestOb @a (prim "dualityCounit" (CC.dualityCounit @k @(Untest a)))
 
 -- | Every object is a monoid when the category supplies them, with the monoid of the object it
 -- stands for.

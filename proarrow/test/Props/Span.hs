@@ -36,6 +36,7 @@ test =
     , testSymMonoidal_ @(SPAN FINSET)
     , testClosed_ @(SPAN FINSET)
     , testStarAutonomous_ @(SPAN FINSET)
+    , testIsoMix_ @(SPAN FINSET)
     , testCompactClosed_ @(SPAN FINSET)
     , testCopyDiscard_ @(SPAN FINSET)
     , testHypergraph_ @(SPAN FINSET)

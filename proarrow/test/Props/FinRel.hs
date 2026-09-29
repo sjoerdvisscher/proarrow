@@ -49,6 +49,7 @@ test =
     , testDistributive_ @FINREL
     , testClosed_ @FINREL
     , testStarAutonomous_ @FINREL
+    , testIsoMix_ @FINREL
     , testCompactClosed_ @FINREL
     , testTraced_ @FINREL
     , -- the tensor-hom (currying) adjunction @(FR Nat2 '**' -) ⊣ (FR Nat2 '~~>' -)@

@@ -44,6 +44,7 @@ import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.Hypergraph qualified as Hypergraph
+import Proarrow.Category.Monoidal.IsoMix qualified as IsoMix
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Category.Monoidal.Strength qualified as Strength
 import Proarrow.Category.Sheaf qualified as Sheaf
@@ -847,9 +848,37 @@ testStarAutonomous_ =
     (\ @a @b r -> Exponential.withObExp @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
 
+-- | Laws of an isomix category, from @'Proarrow.Tools.Laws.Laws' 'IsoMix.IsoMixStructures'@:
+-- 'IsoMix.dualUnit' and 'IsoMix.dualUnitInv' are inverses. See 'testStarAutonomous' for the
+-- exponential witness.
+testIsoMix
+  :: forall k
+   . (Testable k, IsoMix.IsoMix k, TestOb (M.Unit @k))
+  => WithTestOb2 k
+  -> WithTestObExp k
+  -> WithTestObDual k
+  -> TestTree
+testIsoMix withTestOb2 withTestObExp withTestObDual =
+  testLaws @IsoMix.IsoMixStructures
+    "Isomix"
+    ( MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
+        :& SymMonoidalW
+        :& ClosedW (\ @a @b r -> withTestObExp @a @b r)
+        :& StarAutonomousW (\ @a r -> withTestObDual @a r)
+        :& IsoMixW
+        :& WNil
+    )
+
+testIsoMix_ :: forall k. (Testable k, IsoMix.IsoMix k, TestObIsOb k) => TestTree
+testIsoMix_ =
+  testIsoMix @k
+    (\ @a @b r -> M.withOb2 @k @a @b r)
+    (\ @a @b r -> Exponential.withObExp @k @a @b r)
+    (\ @a r -> r \\ SA.dualObj @a)
+
 -- | Laws of a compact closed category, from
 -- @'Proarrow.Tools.Laws.Laws' 'CC.CompactClosedStructures'@:
--- 'CC.distribDual' and 'CC.dualUnit' are isomorphisms (so 'SA.Dual' is strong monoidal), and
+-- 'CC.distribDual' and 'IsoMix.dualUnit' are isomorphisms (so 'SA.Dual' is strong monoidal), and
 -- 'CC.dualityUnit' and 'CC.dualityCounit' satisfy the zigzag identities. See
 -- 'testStarAutonomous' for the exponential witness.
 testCompactClosed
@@ -866,6 +895,7 @@ testCompactClosed withTestOb2 withTestObExp withTestObDual =
         :& SymMonoidalW
         :& ClosedW (\ @a @b r -> withTestObExp @a @b r)
         :& StarAutonomousW (\ @a r -> withTestObDual @a r)
+        :& IsoMixW
         :& CompactClosedW
         :& WNil
     )

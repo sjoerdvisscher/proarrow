@@ -62,6 +62,7 @@ test =
     , testHypergraph @SVG (\ @a @b r -> withOb2 @SVG @a @b r)
     , testClosed_ @SVG
     , testStarAutonomous_ @SVG
+    , testIsoMix_ @SVG
     , testCompactClosed_ @SVG
     , testTraced_ @SVG
     , testProperty "every law draws as an equation" $ do

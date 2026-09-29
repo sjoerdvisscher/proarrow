@@ -15,6 +15,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..), combine)
@@ -59,11 +60,14 @@ instance (CommutativeMonoid m) => StarAutonomous (MONOID m) where
   linDistInv _ = id
   doubleNeg = id
   doubleNegInv = id
+instance (CommutativeMonoid m) => IsoMix (MONOID m) where
+  dualUnit = Mon mempty
+  dualUnitInv = Mon mempty
+  dualityCounit = Mon mempty
+
 instance (CommutativeMonoid m) => CompactClosed (MONOID m) where
   distribDual = Mon mempty
-  dualUnit = Mon mempty
   dualityUnit = Mon mempty
-  dualityCounit = Mon mempty
 instance (CommutativeMonoid m) => Closed (MONOID m) where
   type a ~~> b = M
   withObExp r = r

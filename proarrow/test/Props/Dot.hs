@@ -67,6 +67,7 @@ test =
     , testHypergraph @DOT (\ @a @b r -> withOb2 @DOT @a @b r)
     , testClosed_ @DOT
     , testStarAutonomous_ @DOT
+    , testIsoMix_ @DOT
     , testCompactClosed_ @DOT
     , testTraced_ @DOT
     ]

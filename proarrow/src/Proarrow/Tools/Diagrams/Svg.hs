@@ -38,6 +38,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified
@@ -429,6 +430,11 @@ dualCupS = withObDual @SVG @a $ Str (dualCup @a)
 dualCapS :: forall (a :: SVG). (Ob a) => [Dual a, a] ~> '[]
 dualCapS = withObDual @SVG @a $ Str (dualCap @a)
 
+instance IsoMix SVG where
+  dualUnit = relabel
+  dualUnitInv = relabel
+  dualityCounit @a = dualCap @a
+
 instance CompactClosed SVG where
   distribDual @a @b =
     withOb2 @SVG @a @b $
@@ -438,9 +444,7 @@ instance CompactClosed SVG where
             withOb2 @SVG @(Dual a) @(Dual b) $
               withDualAppend @(UN S a) @(UN S b) $
                 relabel @(Dual (a ** b)) @(Dual a ** Dual b)
-  dualUnit = relabel
   dualityUnit @a = dualCup @a
-  dualityCounit @a = dualCap @a
 
 -- | The traced wires loop round the side of the diagram they are nearest to.
 instance Costrong Tensor Svg where

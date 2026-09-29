@@ -19,9 +19,10 @@ import Proarrow.Category.Monoidal
 import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC, dualityCounitDefault, dualityUnitDefault)
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC, dualityUnitDefault)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..), dualityCounitDefault)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified ()
@@ -185,11 +186,19 @@ instance FunctorForRep (DualUnit :: OPPOSITE () +-> ()) where
   type DualUnit @ OP '() = '()
   fmap (Op Unit) = Unit
 
+data family DualUnitInv :: () +-> OPPOSITE ()
+instance FunctorForRep (DualUnitInv :: () +-> OPPOSITE ()) where
+  type DualUnitInv @ '() = OP '()
+  fmap Unit = Op Unit
+
+instance IsoMix KIND where
+  dualUnit = Cat @(Rep DualUnit)
+  dualUnitInv = Cat @(Rep DualUnitInv)
+  dualityCounit @a = dualityCounitDefault @a
+
 instance CompactClosed KIND where
   distribDual = Cat @(Rep DistribDual)
-  dualUnit = Cat @(Rep DualUnit)
   dualityUnit @a = dualityUnitDefault @a
-  dualityCounit @a = dualityCounitDefault @a
 
 data family Succ :: DISCRETE Nat +-> DISCRETE Nat
 instance FunctorForRep Succ where

@@ -23,6 +23,7 @@ import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasBiproducts)
@@ -201,11 +202,14 @@ instance StarAutonomous FINREL where
   doubleNeg = id
   doubleNegInv = id
 
+instance IsoMix FINREL where
+  dualUnit = id
+  dualUnitInv = id
+  dualityCounit @a = cap @a
+
 instance CompactClosed FINREL where
   distribDual @m @n = dagger (obj @m) ** dagger (obj @n)
-  dualUnit = id
   dualityUnit @a = cup @a
-  dualityCounit @a = cap @a
 
 instance (MonoidalAction (t :: (FINREL, FINREL) +-> FINREL)) => Costrong t FinRel where
   coact @x = coactCC @t @x

@@ -51,6 +51,7 @@ test =
     , testDistributive_ @(MatK Int)
     , testClosed_ @(MatK Int)
     , testStarAutonomous_ @(MatK Int)
+    , testIsoMix_ @(MatK Int)
     , testCompactClosed_ @(MatK Int)
     , testTraced_ @(MatK Int)
     , testCopyDiscard_ @(MatK Int)

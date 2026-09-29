@@ -13,6 +13,7 @@ import Prelude (($), type (~))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (\\))
@@ -141,10 +142,13 @@ instance (TracedMonoidal k) => StarAutonomous (INT k) where
   doubleNeg = id
   doubleNegInv = id
 
-instance (TracedMonoidal k) => CompactClosed (INT k) where
-  distribDual @(I ap am) @(I bp bm) = withOb2 @(INT k) @(I ap am) @(I bp bm) (Int (swap @k @(am ** bm) @(ap ** bp)))
+instance (TracedMonoidal k) => IsoMix (INT k) where
   dualUnit = id
-  dualityUnit @(I p n) =
-    withOb2 @k @p @n $ withOb2 @k @n @p $ Int (leftUnitorInv @k @(p ** n) . swap @k @n @p . leftUnitor @k @(n ** p))
+  dualUnitInv = id
   dualityCounit @(I p n) =
     withOb2 @k @p @n $ withOb2 @k @n @p $ Int (rightUnitorInv @k @(p ** n) . swap @k @n @p . rightUnitor @k @(n ** p))
+
+instance (TracedMonoidal k) => CompactClosed (INT k) where
+  distribDual @(I ap am) @(I bp bm) = withOb2 @(INT k) @(I ap am) @(I bp bm) (Int (swap @k @(am ** bm) @(ap ** bp)))
+  dualityUnit @(I p n) =
+    withOb2 @k @p @n $ withOb2 @k @n @p $ Int (leftUnitorInv @k @(p ** n) . swap @k @n @p . leftUnitor @k @(n ** p))

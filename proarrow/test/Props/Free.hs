@@ -24,6 +24,7 @@ import Proarrow.Category.Monoidal.Cartesian (Cartesian, prodToTensor, tensorToPr
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Distributive (Distributive)
+import Proarrow.Category.Monoidal.IsoMix (IsoMix)
 import Proarrow.Category.Monoidal.StarAutonomous (DualF, StarAutonomous)
 import Proarrow.Category.Sheaf (Cover (..), Leg (..), Sheaf (..), Summands, Sums, legArrow)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
@@ -64,6 +65,7 @@ type FREECS =
    , Closed
    , Distributive
    , StarAutonomous
+   , IsoMix
    , CompactClosed
    , Supplies Monoid
    , Supplies Comonoid
@@ -108,6 +110,10 @@ test =
       -- of its checks need to generate a random Dual-involving morphism, only compose the fixed
       -- ones 'CompactClosed' already provides.
       testCompactClosed @FREEKIND
+        (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+        (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
+        (\r -> r)
+    , testIsoMix @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)

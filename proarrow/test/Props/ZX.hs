@@ -31,6 +31,7 @@ test =
     , testHypergraph_ @Nat
     , testSymMonoidal_ @Nat
     , testClosed_ @Nat
+    , testIsoMix_ @Nat
     , testCompactClosed_ @Nat
     , testTraced_ @Nat
     , testStarAutonomous_ @Nat

@@ -30,6 +30,7 @@ import Proarrow.Category.Monoidal.Hypergraph
   , linDistHG
   , linDistInvHG
   )
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
@@ -271,11 +272,14 @@ instance StarAutonomous DOT where
   doubleNeg = id
   doubleNegInv = id
 
+instance IsoMix DOT where
+  dualUnit = id
+  dualUnitInv = id
+  dualityCounit @a = cap @a
+
 instance CompactClosed DOT where
   distribDual @a @b = withOb2 @DOT @a @b id
-  dualUnit = id
   dualityUnit @a = cup @a
-  dualityCounit @a = cap @a
 instance Costrong Tensor Dot where
   coact @(D as) @(D xs) @(D ys) (Dot f) = Dot \n ->
     case f n of

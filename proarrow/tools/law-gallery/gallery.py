@@ -31,12 +31,14 @@ SECTIONS = [
          desc='The swap undoes itself, is natural, and satisfies the hexagon. Drawn with explicit swaps, so each swap is a crossing of its own; without them, a swap only moves wires and most of these draw the same.'),
     dict(key='traced', title='Traced', parts=[('TracedStructures', 'explicitCoherence = True')],
          desc='The trace of f over u feeds its u output back to its u input, drawn as a loop round the side. It is natural in the other wires, slides along the loop, is trivial over the unit and nests over a tensor, lets a wire run past, and turns a swap into a plain wire. Drawn with explicit coherence, so the trace over the unit is a dotted loop and the regroupings the nested traces need show as brackets.'),
-    dict(key='starautonomous', title='*-autonomous', parts=[('StarAutonomousStructures', 'fixedSpiders = False')],
-         desc='Duals and linear distribution. The dual of a wire is a wire of its own, labelled with ⁻¹ and drawn hollow. A wire is bent with a cup or a cap, drawn as one bend: the half that runs backwards is the dual wire, and the style switches at the apex. Double negation is only a relabelling here, so its inverse laws are straight wires; the definition law compares it with the one derived from linDist and the duality unit. Drawn with free spider legs.'),
-    dict(key='closed', title='Closed', parts=[('ClosedStructures', 'fixedSpiders = False')],
-         desc='Currying and apply. The exponential is the *-autonomous one, the dual of a ⊗ b⁻¹, so curry bends a wire round, and the part running backwards is a dual wire. Drawn with free spider legs, so the legs of a point trade places to avoid crossings.'),
-    dict(key='compactclosed', title='Compact closed', parts=[('CompactClosedStructures', 'fixedSpiders = False')],
-         desc='The zigzag identities, with the duality unit and counit drawn as one bend each, so a zigzag is a wire bent up and down again, dual on its middle stretch. The definition laws compare them with the ones derived from the *-autonomous structure.'),
+    dict(key='starautonomous', title='*-autonomous', parts=[('StarAutonomousStructures', '')],
+         desc='Duals and linear distribution. The dual of a wire is a wire of its own, labelled with ⁻¹ and drawn hollow. A wire is bent with a cup or a cap, drawn as one bend: the half that runs backwards is the dual wire, and the style switches at the apex. Double negation is only a relabelling here, so its inverse laws are straight wires; the definition law compares it with the one derived from linDist and the duality unit.'),
+    dict(key='closed', title='Closed', parts=[('ClosedStructures', '')],
+         desc='Currying and apply. The exponential is the *-autonomous one, the dual of a ⊗ b⁻¹, so curry bends a wire round, and the part running backwards is a dual wire.'),
+    dict(key='isomix', title='Isomix', parts=[('IsoMixStructures', '')],
+         desc='The unit of par is isomorphic to the unit: dualUnit and its inverse are drawn as a relabelling of the unit wire, so both inverse laws are empty diagrams. The duality counit joins a dual and its wire into the unit, drawn as one bend; its definition law compares it with the one derived from the *-autonomous structure, which goes into the unit of par first.'),
+    dict(key='compactclosed', title='Compact closed', parts=[('CompactClosedStructures', '')],
+         desc='The dual distributes over the tensor, and the zigzag identities hold, with the duality unit and counit drawn as one bend each, so a zigzag is a wire bent up and down again, dual on its middle stretch. The definition law compares the unit with the one derived from the *-autonomous structure; the counit comes from the isomix structure.'),
     dict(key='monoids', title='Monoids',
          parts=[("'[Monoidal, Supplies Monoid]", 'explicitCoherence = True'),
                 ("'[Monoidal, SymMonoidal, Supplies CommutativeMonoid]", '')],
@@ -69,6 +71,7 @@ import Proarrow.Category.Monoidal.Strength (TracedStructures)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscardStructures)
 import Proarrow.Category.Monoidal.Closed (ClosedStructures)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomousStructures)
+import Proarrow.Category.Monoidal.IsoMix (IsoMixStructures)
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosedStructures)
 import Proarrow.Category.Monoidal.Strength (Strong, Costrong)
 '''

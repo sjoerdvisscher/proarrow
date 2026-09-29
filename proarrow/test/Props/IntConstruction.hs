@@ -26,6 +26,7 @@ test =
     , testSymMonoidal_ @(INT FINREL)
     , testClosed_ @(INT FINREL)
     , testStarAutonomous_ @(INT FINREL)
+    , testIsoMix_ @(INT FINREL)
     , testCompactClosed_ @(INT FINREL)
     ]
 
