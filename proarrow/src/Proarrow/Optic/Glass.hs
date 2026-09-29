@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE LinearTypes #-}
 
 -- | The __glass__ (Clarke et al., /Profunctor optics: a categorical update/): the optic for the
 -- combined action of the product and the exponential,
@@ -39,6 +40,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Tools.SMC (SYN (..), lam, toSMC, ($$))
 
 -- | The glass flavor. Its one method is the collapsed leg; everything is stated in a cartesian
 -- closed category, where the residual can be copied and selectors can be internalised.
@@ -136,6 +138,10 @@ instance
 type Glass (s :: k) (t :: k) a b = Optic (Prostrong GlassFl) s t a b
 type Glass' s a = Glass s s a a
 
+-- | Evaluation at a point: @s@ goes to the functions out of it, applied to it.
+evalAt :: forall {k} (s :: k) a. (Closed k, SymMonoidal k, Ob s, Ob a) => s ~> ((s ~~> a) ~~> a)
+evalAt = toSMC @(F s) @((F s :-> F a) :-> F a) \s -> lam ($$ s)
+
 -- | Build a glass from its single leg. The residuals are the whole source and the "logarithm"
 -- @s ~~> a@, so the witness is the lens witness at @s@ composed with the grate witness at @s ~~> a@.
 glass
@@ -145,10 +151,9 @@ glass
 glass f =
   withObSel @s @a @a $
     withObExp @k @(s ~~> a) @b $
-      let ev = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
-      in legs2prof @GlassFl
-           (Rep @(Mod s a a) @(Product s) (id P.&&& ev) :.: Rep @a @(Exp (s ~~> a)) (obj @(Mod s a a)))
-           (Corep @b @(Exp (s ~~> a)) (obj @(Mod s a b)) :.: Corep @(Mod s a b) @(Product s) f)
+      legs2prof @GlassFl
+        (Rep @(Mod s a a) @(Product s) (id P.&&& evalAt @s @a) :.: Rep @a @(Exp (s ~~> a)) (obj @(Mod s a a)))
+        (Corep @b @(Exp (s ~~> a)) (obj @(Mod s a b)) :.: Corep @(Mod s a b) @(Product s) f)
 
 -- | Eliminate any glass-flavored optic (a lens, a grate, or a composite of both, in either
 -- encoding) to its single leg.

@@ -3,8 +3,6 @@
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE RecursiveDo #-}
 
-{- HLINT ignore "Redundant $" -}
-
 -- | A small HOAS front end for building morphisms in any symmetric monoidal category, the linear
 -- counterpart of "Proarrow.Tools.CCC". Each variable is used exactly once: the functions on terms
 -- are linear, so GHC's linear types check that every variable is used once, and a 'Term' is
@@ -68,7 +66,7 @@ module Proarrow.Tools.SMC
   , dropUnit
   , lam
   , loop
-  , ($)
+  , ($$)
 
     -- * Contexts
   , Ctx
@@ -127,7 +125,7 @@ import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Object (Obj)
 
 infixl 7 *
-infixr 0 $
+infixl 8 $$
 infixl 7 :**
 infixr 5 :->
 
@@ -415,11 +413,12 @@ loop k = case k (var @d @u) of
       )
 
 -- | Function application. The function and its argument must have disjoint contexts.
-($)
+($$)
   :: forall {k} d g1 g2 (a :: SYN k) b
    . (Closed k, KnownObj a, KnownObj b, Merge g1 g2)
   => Term d g1 (a :-> b) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) b
-MkTerm f $ MkTerm x = withSynOb @a (withSynOb @b (MkTerm (apply @k @(Interp a) @(Interp b) . (f ** x) . merge @g1 @g2)))
+MkTerm f $$ MkTerm x =
+  withSynOb @a (withSynOb @b (MkTerm (apply @k @(Interp a) @(Interp b) . (f ** x) . merge @g1 @g2)))
 
 -- Do notation
 
@@ -693,7 +692,7 @@ swapT = toSMC @(F a :** F b) (\p -> split p (\x y -> y * x))
 -- >>> applyT @Bool @Bool (not, True)
 -- False
 applyT :: forall {k} (a :: k) b. (Closed k, SymMonoidal k, Ob a, Ob b) => (a ~~> b) ** a ~> b
-applyT = toSMC @((F a :-> F b) :** F a) (\p -> split p (\f x -> f $ x))
+applyT = toSMC @((F a :-> F b) :** F a) (\p -> split p (\f x -> f $$ x))
 
 -- | Curry the tensor.
 --

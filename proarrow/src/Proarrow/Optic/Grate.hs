@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE LinearTypes #-}
 
 -- | The __grate__: the closed-category optic whose residual sits under an exponential,
 --
@@ -14,7 +15,7 @@ module Proarrow.Optic.Grate where
 
 import Prelude (($))
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), first, second, swap, type (**))
+import Proarrow.Category.Monoidal (SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, type (+->))
@@ -28,12 +29,13 @@ import Proarrow.Optic
   , legs2prof
   , withLegs
   )
-import Proarrow.Optic.Glass (GlassFl, Mod)
+import Proarrow.Optic.Glass (GlassFl, Mod, evalAt)
 import Proarrow.Optic.Kaleidoscope (KaleidoFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Tools.SMC (SYN (..), lam, toSMC, ($$))
 
 -- | A grate is a "residual lens" whose residual @m@ sits under an exponential instead of a
 -- tensor: @s ~> (m ~~> a)@ and @(m ~~> b) ~> t@. Unlike a 'Proarrow.Optic.Traversal.Traversal',
@@ -53,19 +55,7 @@ flipExp
   :: forall {k} (x :: k) m a
    . (Closed k, SymMonoidal k, Ob x, Ob m, Ob a)
   => (x ~~> (m ~~> a)) ~> (m ~~> (x ~~> a))
-flipExp =
-  withObExp @k @m @a $
-    withObExp @k @x @(m ~~> a) $
-      withOb2 @k @(x ~~> (m ~~> a)) @m $
-        curry @k @(x ~~> (m ~~> a)) @m
-          ( curry @k @((x ~~> (m ~~> a)) ** m) @x
-              ( apply @k @m @a
-                  . first @m (apply @k @x @(m ~~> a))
-                  . associatorInv @k @(x ~~> (m ~~> a)) @x @m
-                  . second @(x ~~> (m ~~> a)) (swap @k @m @x)
-                  . associator @k @(x ~~> (m ~~> a)) @m @x
-              )
-          )
+flipExp = toSMC @(F x :-> F m :-> F a) @(F m :-> F x :-> F a) \f -> lam \m -> lam \x -> f $$ x $$ m
 
 instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid m) => GrateFl (Rep (Exp m) :: k +-> k) (Corep (Exp m) :: k +-> k) where
   zipWithP @_ @a (Rep sm) (Corep mbt) @x kk = mbt . (kk ^^^ obj @m) . flipExp @x @m @a . (sm ^^^ obj @x)
@@ -95,5 +85,4 @@ grate
   => (Mod s a b ~> t) -> Grate s t a b
 grate f@Objs =
   withObExp @k @s @a $
-    let sa = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
-    in legs2prof @GrateFl (Rep @a @(Exp (s ~~> a)) sa) (Corep @b @(Exp (s ~~> a)) f)
+    legs2prof @GrateFl (Rep @a @(Exp (s ~~> a)) (evalAt @s @a)) (Corep @b @(Exp (s ~~> a)) f)

@@ -26,9 +26,10 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), type (**!))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), concatMany, obj1, singleton, splitMany, (==))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct ()
+import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 import Proarrow.Tools.Laws (Bijection (..), Law (..), Laws (..), bijection, (===))
@@ -67,11 +68,9 @@ class (Monoidal k) => Closed k where
 
   -- | The exponential's action on arrows: covariant in the result, contravariant in the argument.
   (^^^) :: forall (a :: k) b x y. b ~> y -> x ~> a -> a ~~> b ~> x ~~> y
-  f ^^^ g =
-    f //
-      g //
-        withObExp @k @a @b $
-          let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . apply @k @a @b . (ab ** g))
+  f@Objs ^^^ g@Objs =
+    withObExp @k @a @b $
+      let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . apply @k @a @b . (ab ** g))
 
 uncurry :: forall {k} b c (a :: k). (Closed k) => (Ob b, Ob c) => a ~> b ~~> c -> a ** b ~> c
 uncurry f = apply @k @b @c . (f ** obj @b)
