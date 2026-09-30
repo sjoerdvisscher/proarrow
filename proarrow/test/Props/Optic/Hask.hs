@@ -10,12 +10,11 @@
 -- like the optic it came from.
 module Props.Optic.Hask where
 
-import Control.Monad (unless)
 import Data.Bifunctor (bimap, first, second)
 import Data.Maybe (maybeToList)
 import Data.Tuple (swap)
 import Data.Type.Nat (Nat2, Nat3)
-import Test.Falsify (Property, genWith, testFailed)
+import Test.Falsify (Property, genWith)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude
@@ -66,7 +65,7 @@ import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Repres
 import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer)
 
-import Proarrow.Testing (GenTotal (..), TestableType (..), pattern GenNonEmpty)
+import Proarrow.Testing (GenTotal (..), TestableType (..), expect, pattern GenNonEmpty)
 import Props.Hask ()
 
 -- * The subtyping lattice
@@ -293,7 +292,7 @@ propFnEq nm f g = testProperty nm case gen @a of
     assertEq (f a) (g a)
 
 assertEq :: (Show b, Eq b) => b -> b -> Property ()
-assertEq l r = unless (l == r) (testFailed (show l ++ " /= " ++ show r))
+assertEq got want = expect "wrong value" want got
 
 test :: TestTree
 test =

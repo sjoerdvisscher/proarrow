@@ -6,9 +6,8 @@
 -- with every option switched.
 module Props.Svg where
 
-import Control.Monad (forM_, replicateM, when)
+import Control.Monad (forM_, replicateM)
 import Data.List qualified as List
-import Test.Falsify (testFailed)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
@@ -43,6 +42,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
@@ -88,10 +88,10 @@ test =
                   ]
               ]
         forM_ structures \drawn -> do
-          when (null drawn) (testFailed "a structure drew no laws")
+          check "a structure drew no laws" (not (null drawn))
           -- reads every character of the drawing, so its layout is computed in full
           forM_ drawn \(name, d) ->
-            when (count '<' d == 0 || count '<' d /= count '>' d) (testFailed (name ++ " drew malformed markup"))
+            check (name ++ " drew malformed markup") (count '<' d > 0 && count '<' d == count '>' d)
     ]
 
 -- | A wire of the palette objects are drawn from.

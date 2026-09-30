@@ -4,15 +4,14 @@
 -- "Proarrow.Category.Instance.IntConstruction".
 module Examples.IntComposition (test, compositionPicture) where
 
-import Control.Monad (unless)
 import Data.List (isInfixOf)
-import Test.Falsify (Property, testFailed)
 import Test.Tasty (TestTree)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..))
 import Proarrow.Core (Promonad (..))
+import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
 
 type W1 s = S '[Wire s]
@@ -26,9 +25,6 @@ fInt = Int (node @'[Wire "b⁺", Wire "c⁻"] @'[Wire "b⁻", Wire "c⁺"] "f")
 -- | @f . g@ in the Int construction, as the underlying traced diagram.
 compositionPicture :: String
 compositionPicture = case fInt . gInt of Int h -> render h
-
-check :: String -> Bool -> Property ()
-check msg ok = unless ok (testFailed msg)
 
 test :: TestTree
 test =

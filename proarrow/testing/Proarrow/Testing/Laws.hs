@@ -17,12 +17,12 @@
 -- every object is a 'TestOb', typically those that leave 'TestOb' at its @'Ob'@ default.
 module Proarrow.Testing.Laws where
 
-import Control.Monad (unless, when)
+import Control.Monad (when)
 import Data.Default (def)
 import Data.Foldable (for_)
 import Data.List (genericLength, sort)
 import Numeric.Natural (Natural)
-import Test.Falsify (Property, testFailed)
+import Test.Falsify (Property)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (TestOptions, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
@@ -99,6 +99,7 @@ import Proarrow.Testing
   , WithTestObExp
   , WithTestObProd
   , WithTestObRep
+  , check
   , expect
   , genNamed
   , genOb
@@ -216,10 +217,10 @@ propDecidable = do
     obFromTestOb @b $
       case Thin.decide @p @a @b of
         Thin.Yes x -> do
-          unless (isGenNonEmpty @(p a b)) $ testFailed "decide: TRU, but no element can be generated"
+          check "decide: TRU, but no element can be generated" (isGenNonEmpty @(p a b))
           y <- genNamed @(p a b) "y"
           testEq "decide" "decide" x "y" y
-        Thin.No -> when (isGenNonEmpty @(p a b)) $ testFailed "decide: FLS, but an element can be generated"
+        Thin.No -> check "decide: FLS, but an element can be generated" (not (isGenNonEmpty @(p a b)))
 
 -- | A transformation @n :: p ':~>' q@ is natural: @n ('dimap' f g p) = 'dimap' f g (n p)@.
 propNaturalTransformation
@@ -262,16 +263,19 @@ propNumbering = do
   Some @b <- genOb @j
   let n = Finitary.size @p @a @b
       es = Finitary.elements @p @a @b
-  unless (genericLength es == n) $
-    testFailed ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
-  unless (map (Finitary.toIndex @p @a @b) es == Finitary.indices n) $
-    testFailed ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
+  check
+    ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
+    (genericLength es == n)
+  check
+    ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
+    (map (Finitary.toIndex @p @a @b) es == Finitary.indices n)
   x <- genNamed @(p a b) "x"
   -- The numbering claims every index is below 'Finitary.size', which a @Fin@-typed index would
   -- have given for free. Without this check an undersized 'Finitary.size' goes unnoticed, since
   -- the other laws only ever look at the elements it admits.
-  unless (Finitary.toIndex x < n) $
-    testFailed ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
+  check
+    ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
+    (Finitary.toIndex x < n)
 
 -- * Functors, representability and adjunctions
 
@@ -519,9 +523,9 @@ testBinaryCoproducts_ = testBinaryCoproducts @k (\ @a @b r -> BinaryCoproduct.wi
 propReflectsEq :: (TestingEqShow x) => String -> String -> Bool -> x -> x -> Property ()
 propReflectsEq label desc eqComposed k1 k2 = do
   eqDirect <- eqP k1 k2
-  unless (eqComposed == eqDirect) $
-    testFailed $
-      "Failed " ++ label ++ ": (" ++ desc ++ ") = " ++ show eqComposed ++ " but (k1 == k2) = " ++ show eqDirect
+  check
+    ("Failed " ++ label ++ ": (" ++ desc ++ ") = " ++ show eqComposed ++ " but (k1 == k2) = " ++ show eqDirect)
+    (eqComposed == eqDirect)
 
 -- | Checks the equalizer laws: the equalizer arrow @e@ equalizes @f@ and @g@; any @h@ that factors
 -- through @e@ (generated as @e . p@) is recovered by 'Equalizer.factorEqualizer'; and @e@ is mono.

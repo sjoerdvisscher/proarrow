@@ -21,7 +21,6 @@
 -- category's laws rather than migration.
 module Examples.Database (test) where
 
-import Control.Monad (unless)
 import Data.Type.Equality ((:~:) (..))
 import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
@@ -39,6 +38,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (corepUn
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Ran (Ran (..), runRan, type (|>))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (repUniv))
+import Proarrow.Testing (check)
 
 -- * The detailed schema @A@
 
@@ -407,25 +407,25 @@ test =
   testGroup
     "Database"
     [ testProperty "the left pushforward unions the two seat tables" $
-        unless
+        check
+          "the merged table should hold all four seats, tagged by where they came from"
           (map seatName mergedSeats == ["economy E1", "economy E2", "first class F1", "first class F2"])
-          (testFailed "the merged table should hold all four seats, tagged by where they came from")
     , testProperty "restriction copies a merged seat into both tables" $ do
-        unless (readRow economyRow == "economy E1") (testFailed "E1 should appear as an economy row")
-        unless (readRow firstClassRow == "economy E1") (testFailed "E1 should appear as a first class row too")
+        check "E1 should appear as an economy row" (readRow economyRow == "economy E1")
+        check "E1 should appear as a first class row too" (readRow firstClassRow == "economy E1")
     , testProperty "the right pushforward joins the two tables" $ case theJoin of
         [p] -> do
-          unless (fromPi @Economy p == E1) (testFailed "the economy half should be E1")
-          unless (fromPi @FirstClass p == F2) (testFailed "the first class half should be F2")
-          unless (atPi @DollarsA (emb PriceB) p == P 300) (testFailed "the shared price should be 300")
-          unless (atPi @StringA (emb PosB) p == Pos "12A") (testFailed "the shared position should be 12A")
+          check "the economy half should be E1" (fromPi @Economy p == E1)
+          check "the first class half should be F2" (fromPi @FirstClass p == F2)
+          check "the shared price should be 300" (atPi @DollarsA (emb PriceB) p == P 300)
+          check "the shared position should be 12A" (atPi @StringA (emb PosB) p == Pos "12A")
         ps -> testFailed ("exactly one pair of seats agrees, found " ++ show (length ps))
     , testProperty "restriction turns the machine into the book's graph" $ do
-        unless
+        check
+          "the source column should be the identity"
           (map (fromDelta . sourceOf . asArrow) states == states)
-          (testFailed "the source column should be the identity")
-        unless
+        check
+          "the target column should be one step of the machine"
           (map (fromDelta . targetOf . asArrow) states == [St4, St4, St5, St5, St5, St7, St6])
-          (testFailed "the target column should be one step of the machine")
-        unless (pathLength twoSteps == 2) (testFailed "the loop schema should have a two-step arrow")
+        check "the loop schema should have a two-step arrow" (pathLength twoSteps == 2)
     ]

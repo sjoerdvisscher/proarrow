@@ -16,7 +16,6 @@
 -- Toffoli gate followed by a swap of the controls. Here one more bind puts them back in order.
 module Examples.Toffoli (test) where
 
-import Control.Monad (unless)
 import Data.Complex (Complex (..), cis, magnitude)
 import Data.Foldable (toList)
 import Data.Kind (Type)
@@ -25,7 +24,6 @@ import Data.Map.Strict qualified as Map
 import Data.Type.Nat (Nat1, Nat2)
 import Data.Vec.Lazy (Vec (..))
 import GHC.TypeNats qualified as TN
-import Test.Falsify (Property, testFailed)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, sum, (*), (**), (.))
@@ -39,6 +37,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Colimit.BinaryCoproduct (HasBiproducts (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..))
+import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
 import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, lift, toSMC, (*))
 import Proarrow.Tools.SMC qualified as SMC
@@ -97,9 +96,6 @@ toffoliManual (Gates h t t' cnot) =
 
 bools :: [Bool]
 bools = [False, True]
-
-check :: String -> Bool -> Property ()
-check msg ok = unless ok (testFailed msg)
 
 -- * Matrices
 

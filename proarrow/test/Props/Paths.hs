@@ -9,9 +9,7 @@
 -- properties check the separate obligation that the data satisfies the equations.
 module Props.Paths (test) where
 
-import Control.Monad (unless)
 import Data.Type.Equality ((:~:) (..))
-import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (.))
@@ -28,6 +26,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
   , genSomeFinite
   , oneOfTotal
   , optGen
@@ -203,22 +202,22 @@ test =
   testGroup
     "Paths"
     [ testProperty "the schema's equations hold in the schema, by construction" $ do
-        unless
+        check
+          "a secretary followed by where they work should be the identity"
           (pathLength (emb WorksIn . emb Secr :: Department ~> Department) == 0)
-          (testFailed "a secretary followed by where they work should be the identity")
-        unless
+        check
+          "a manager followed by where they work should be just where they work"
           (pathLength (emb WorksIn . emb Mngr :: Employee ~> Department) == 1)
-          (testFailed "a manager followed by where they work should be just where they work")
     , -- Normalisation makes the equations hold of the /schema/ whatever the data says, so this is
       -- not implied by the test above: it is the separate, unchecked obligation that the instance
       -- satisfies the constraints, and that is the property the approach is sold on.
       testProperty "and the instance satisfies them, which is a separate matter" $ do
-        unless
+        check
+          "every department's secretary must work in that department"
           (all (\d -> staffStep WorksIn (staffStep Secr d) == d) allDepartments)
-          (testFailed "every department's secretary must work in that department")
-        unless
+        check
+          "every employee's manager must work in the same department"
           (all (\e -> staffStep WorksIn (staffStep Mngr e) == staffStep WorksIn e) allEmployees)
-          (testFailed "every employee's manager must work in the same department")
     , testCategory @HR
     , testGroup "Staff is a profunctor" [testProfunctor @Staff]
     ]

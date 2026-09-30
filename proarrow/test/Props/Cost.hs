@@ -11,13 +11,11 @@
 -- associativity and commutativity of @+@, and @distL@ \/ @distR@, which rely on monotonicity of @+@.
 module Props.Cost where
 
-import Control.Monad (unless)
 import Data.Proxy (Proxy (..))
 import Data.Type.Equality ((:~:) (Refl))
 import Data.Type.Ord (OrderingI (..))
 import GHC.TypeNats (cmpNat, natVal)
 import Numeric.Natural (Natural)
-import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude
@@ -36,6 +34,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
   , genSomeDef
   , oneElem
   )
@@ -48,14 +47,14 @@ test =
     [ testCategory @COST
     , testProperty "GTE decidable" $ propDecidable @GTE
     , testProperty "shortest paths computed at the value level" $ do
-        unless (distance @(D P) @(D R) == Just 7) (testFailed "P -> R should be 7")
-        unless (distance @(D Q) @(D P) == Just 11) (testFailed "Q -> P should be 11")
-        unless (distance @(D P) @(D P) == Just 0) (testFailed "P -> P should be 0")
-        unless (distance @(D P) @(D Y) == Nothing) (testFailed "P -> Y should be unreachable")
+        check "P -> R should be 7" (distance @(D P) @(D R) == Just 7)
+        check "Q -> P should be 11" (distance @(D Q) @(D P) == Just 11)
+        check "P -> P should be 0" (distance @(D P) @(D P) == Just 0)
+        check "P -> Y should be unreachable" (distance @(D P) @(D Y) == Nothing)
     , testProperty "shortest paths as witnesses" $ do
-        unless (steps (shortest @COST @N @G @(D P) @(D R)) == 2) (testFailed "P -> R should take the detour via Q")
-        unless (steps (shortest @COST @N @G @(D Q) @(D P)) == 3) (testFailed "Q -> P should go around the cycle")
-        unless (steps (shortest @COST @N @G @(D P) @(D P)) == 0) (testFailed "P -> P should stay put")
+        check "P -> R should take the detour via Q" (steps (shortest @COST @N @G @(D P) @(D R)) == 2)
+        check "Q -> P should go around the cycle" (steps (shortest @COST @N @G @(D Q) @(D P)) == 3)
+        check "P -> P should stay put" (steps (shortest @COST @N @G @(D P) @(D P)) == 0)
     , testTerminalObject @COST
     , testInitialObject @COST
     , testBinaryProducts_ @COST

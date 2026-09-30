@@ -9,6 +9,7 @@
   (`dualityCounit`). It is a superclass of `CompactClosed`, which no longer has `dualUnit` or
   `dualityCounit`: instances move them to an `IsoMix` instance, and `dualUnitInv` is now a method.
   `dualityCounitDefault` moved to the new module. `LINEAR` is isomix without being compact closed.
+* `Proarrow.Testing` has `check`, which fails with a message unless a condition holds.
 * Fixed: in the Int construction, the tensor of morphisms, the associators, `linDist`,
   `linDistInv` and `distribDual` looped forever. The Int construction over `FinRel` is now
   law-tested.

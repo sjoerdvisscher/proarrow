@@ -19,7 +19,6 @@ import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude hiding (elem, (.))
 
-import Control.Monad (unless)
 import Proarrow.Core (Promonad (..), type (+->))
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Testing
@@ -29,6 +28,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
   , genSomeDef
   , invmap
   , oneElem
@@ -36,7 +36,6 @@ import Proarrow.Testing
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
-import Test.Falsify (testFailed)
 import Test.Tasty.Falsify (testProperty)
 
 test :: TestTree
@@ -56,9 +55,9 @@ test =
     , testClosed @Type (\r -> r) (\r -> r)
     , testFrobenius @() (\r -> r)
     , testProperty "list monoid is not Frobenius: copy-comonoid breaks speciality" $
-        unless
+        check
+          "speciality unexpectedly held for [()]"
           ((Monoid.mappend . Monoid.comult @[()]) [()] /= [()])
-          (testFailed "speciality unexpectedly held for [()]")
     , testProfunctor @(Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
     , testProfunctor @(Star (Prelude Maybe) :: Type +-> Type)
     , testPromonad @(Star (Prelude Maybe) :: Type +-> Type)

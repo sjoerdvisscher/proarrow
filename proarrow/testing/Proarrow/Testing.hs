@@ -74,6 +74,7 @@ module Proarrow.Testing
   , applyFunP
 
     -- * Assertions
+  , check
   , expect
   , testEq
   , eqHask
@@ -234,10 +235,14 @@ genNamed nm = case gen of
   GenFun f g -> f . applyFunP <$> genWithNamed nm (Just . show) g
   GenEmpty _ -> discard
 
--- | Check a measured value against the expected one, showing both. For the assertions a worked
--- example makes, which no generic law-checking property covers.
+-- | Fail with the message unless the condition holds. For the assertions a worked example makes,
+-- which no generic law-checking property covers.
+check :: String -> Bool -> Property ()
+check msg ok = unless ok (testFailed msg)
+
+-- | Check a measured value against the expected one, showing both.
 expect :: (Eq a, Show a) => String -> a -> a -> Property ()
-expect what want got = unless (got == want) (testFailed (what ++ ", found " ++ show got ++ ", expected " ++ show want))
+expect what want got = check (what ++ ", found " ++ show got ++ ", expected " ++ show want) (got == want)
 
 -- | Check that two values are semantically equal, naming both sides so a failure says which law
 -- broke and what the two sides came out as.

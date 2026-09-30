@@ -4,12 +4,10 @@
 module Props.Free where
 
 import Control.Applicative (Alternative (..))
-import Control.Monad (unless)
 import Data.Foldable (for_)
 import Data.Kind (Type)
 import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (Nat2)
-import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (Monoid, curry, fst, id, mempty, snd, (**), (.))
@@ -46,6 +44,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
   , expect
   , genNamed
   , genSomeDef
@@ -122,11 +121,11 @@ test =
     , testProperty "cartesian coercions interpret to identities" P.$ do
         let roundTrip = retract @CARTCS @(Rep InterpT) (tensorToProd @(EMB '()) @(EMB '()) . prodToTensor @(EMB '()) @(EMB '()))
             unitTrip = retract @CARTCS @(Rep InterpT) (unitToTerm . termToUnit)
-        unless (roundTrip (True, False) P.== (True, False) P.&& unitTrip () P.== ()) (testFailed "cartesian coercions")
+        check "cartesian coercions" (roundTrip (True, False) P.== (True, False) P.&& unitTrip () P.== ())
     , testProperty "retract . widen = retract" P.$ do
         let l = retract @NARROWCS @(Rep Interp) narrowTerm
             r = retract @FREECS @(Rep Interp) (widen @FREECS narrowTerm)
-        unless (l P.== r) (testFailed (P.show l P.++ " /= " P.++ P.show r))
+        expect "retract . widen" r l
     ]
 
 -- * The cartesian coercions
