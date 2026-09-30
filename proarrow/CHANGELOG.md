@@ -3,7 +3,8 @@
 ## Unreleased
 
 * New `Proarrow.Tools.SMC`: linear HOAS for symmetric monoidal categories, with `do` notation,
-  traces (`rec`, `loop`) and duals (`produce`, `annihilate`).
+  traces (`rec`, `loop`), duals (`produce`, `annihilate`), classical reasoning (`refute`,
+  `byContradiction`) and additives (`with`, `caseOf`).
 * New `Proarrow.Category.Monoidal.IsoMix`: *-autonomous categories whose unit of par is isomorphic to
   the unit (`dualUnit`, `dualUnitInv`), so that a dual and its object join into the unit
   (`dualityCounit`). It is a superclass of `CompactClosed`, which no longer has `dualUnit` or

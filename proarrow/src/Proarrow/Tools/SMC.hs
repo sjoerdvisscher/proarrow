@@ -44,7 +44,8 @@
 -- 'loop' traces without GHC's translation, so it has neither restriction, but the type of the fed
 -- back variable has to be given.
 --
--- The approach follows /Evaluating Linear Functions to Symmetric Monoidal Categories/, whose
+-- The approach follows Bernardy and Spiwack,
+-- [Evaluating Linear Functions to Symmetric Monoidal Categories](https://arxiv.org/abs/2103.06195), whose
 -- @P k r a@ ports correspond to 'Term', @encode@ to 'lift', @decode@ to 'toSMC', @(!:)@ to
 -- '(*)' and @split@ to 'split'. It keeps the context thinned instead of computing in the
 -- cartesian structure and arguing afterwards that the result is monoidal.
@@ -71,6 +72,23 @@ module Proarrow.Tools.SMC
   , annihilate
   , ($$)
 
+    -- * Classical
+    -- $classical
+  , cut
+  , refute
+  , byContradiction
+
+    -- * Additives
+    -- $additives
+  , with
+  , exl
+  , exr
+  , absorb
+  , inl
+  , inr
+  , caseOf
+  , absurd
+
     -- * Contexts
   , Ctx
   , Mul
@@ -78,9 +96,7 @@ module Proarrow.Tools.SMC
   , ctxOb
   , withCtxOb
   , Union
-  , UnionBy
   , Merge (..)
-  , MergeBy (..)
   , snoc
   , push2
 
@@ -90,13 +106,10 @@ module Proarrow.Tools.SMC
   , mfix
   , fail
   , Bind
-  , Pat (..)
-  , PSize
-  , PCtx
-  , Ret (..)
-  , unRet
-  , Rec (..)
-  , RecVars (..)
+  , Pat
+  , Ret
+  , Rec
+  , RecVars
 
     -- * Examples
   , swapT
@@ -107,7 +120,14 @@ module Proarrow.Tools.SMC
   , loopT
   , loopCC
   , snakeT
+  , snakeDualT
   , combineDualT
+  , dniT
+  , dneT
+  , contraT
+  , distT
+  , swapEitherT
+  , bothWaysT
   ) where
 
 import Data.Kind (Constraint, Type)
@@ -127,20 +147,38 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
-import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..), dualityCounitSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal, trace)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object (Obj)
 
 infixl 7 *
 infixl 8 $$
 infixl 7 :**
+infixl 6 :&&
+infixl 6 :||
 infixr 5 :->
 
 -- | Type expressions over the objects of @k@: an object of @k@, the unit, the tensor, the
--- internal hom and the dual.
-type data SYN k = F k | I | SYN k :** SYN k | SYN k :-> SYN k | D (SYN k)
+-- internal hom and the dual, and the additives: the product and its unit 'Top', and the
+-- coproduct and its unit 'Zero'.
+type data SYN k
+  = F k
+  | I
+  | SYN k :** SYN k
+  | SYN k :-> SYN k
+  | D (SYN k)
+  | SYN k :&& SYN k
+  | Top
+  | SYN k :|| SYN k
+  | Zero
 
 -- | The object of @k@ a type expression stands for.
 type Interp :: forall {k}. SYN k -> k
@@ -150,7 +188,12 @@ type family Interp s where
   Interp (a :** b) = Interp a ** Interp b
   Interp (a :-> b) = Interp a ~~> Interp b
   Interp (D a) = Dual (Interp a)
+  Interp (a :&& b) = Interp a && Interp b
+  Interp Top = TerminalObject
+  Interp (a :|| b) = Interp a || Interp b
+  Interp Zero = InitialObject
 
+-- | Type expressions whose 'Interp' is an object, given that their leaves are.
 type KnownObj :: forall {k}. SYN k -> Constraint
 class (CategoryOf k) => KnownObj (s :: SYN k) where
   withSynOb :: ((Ob (Interp s)) => r) -> r
@@ -169,6 +212,18 @@ instance (Closed k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :-> b) whe
 
 instance (StarAutonomous k, KnownObj (a :: SYN k)) => KnownObj (D a) where
   withSynOb r = withSynOb @a (withObDual @k @(Interp a) r)
+
+instance (HasBinaryProducts k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :&& b) where
+  withSynOb r = withSynOb @a (withSynOb @b (withObProd @k @(Interp a) @(Interp b) r))
+
+instance (HasTerminalObject k) => KnownObj (Top :: SYN k) where
+  withSynOb r = r
+
+instance (HasBinaryCoproducts k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :|| b) where
+  withSynOb r = withSynOb @a (withSynOb @b (withObCoprod @k @(Interp a) @(Interp b) r))
+
+instance (HasInitialObject k) => KnownObj (Zero :: SYN k) where
+  withSynOb r = r
 
 -- | The identity on the object a type expression stands for.
 synOb :: forall {k} (s :: SYN k). (KnownObj s) => Obj (Interp s)
@@ -431,12 +486,130 @@ loop k = case k (var @d @u) of
 produce :: forall {k} (a :: SYN k) d. (CompactClosed k, KnownObj a) => Term d '[] (a :** D a)
 produce = withSynOb @a (MkTerm (dualityUnit @k @(Interp a)))
 
--- | Join a dual and its wire into nothing: the counit of the duality.
+-- | Join a dual and its wire into nothing: the counit of the duality, which an isomix category
+-- has.
 annihilate
   :: forall {k} (a :: SYN k) d g1 g2
-   . (CompactClosed k, KnownObj a, Merge g1 g2)
+   . (IsoMix k, KnownObj a, Merge g1 g2)
   => Term d g1 (D a) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) I
-annihilate (MkTerm x) (MkTerm y) = withSynOb @a (MkTerm (dualityCounit @k @(Interp a) . (x ** y) . merge @g1 @g2))
+annihilate x y = lift @(D a :** a) @I (withSynOb @a (dualityCounit @k @(Interp a))) (x * y)
+
+-- $classical
+-- In a *-autonomous category the dual of @a@ is a way to refute it: a term of @'D' a@ turns an @a@
+-- into the unit of par, @'D' 'I'@. With 'refute' and 'byContradiction' this is classical linear
+-- logic in the style of continuations, which needs no compact closure: 'produce' does.
+
+-- | A dual meets its wire, into the unit of par @'D' 'I'@. This needs the category to be
+-- *-autonomous.
+cut
+  :: forall {k} (a :: SYN k) d g1 g2
+   . (StarAutonomous k, KnownObj a, Merge g1 g2)
+  => Term d g1 (D a) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) (D I)
+cut x y = lift @(D a :** a) @(D I) (withSynOb @a (dualityCounitSA @(Interp a))) (x * y)
+
+-- | Refute @a@: bind a variable for it, which the body must use exactly once to reach the unit of
+-- par.
+refute
+  :: forall {k} d r (a :: SYN k) da
+   . (StarAutonomous k, KnownObj a, KnownCtx r)
+  => (Term da '[ '(d, a)] a %1 -> Term (d + 1) ('(d, a) ': r) (D I))
+  %1 -> Term d r (D a)
+refute k = case k (var @d @a) of
+  MkTerm body ->
+    withCtxOb @r
+      ( withSynOb @a
+          ( MkTerm
+              ( dual (rightUnitorInv @k @(Interp a))
+                  . linDist @k @(Interp (Mul r)) @(Interp a) @Unit (body . snoc @d @a @r)
+              )
+          )
+      )
+
+-- | Proof by contradiction: assume a refutation of @a@ and reach the unit of par. The classical
+-- rule, 'doubleNeg' after 'refute'.
+byContradiction
+  :: forall {k} d r (a :: SYN k) da
+   . (StarAutonomous k, KnownObj a, KnownCtx r)
+  => (Term da '[ '(d, D a)] (D a) %1 -> Term (d + 1) ('(d, D a) ': r) (D I))
+  %1 -> Term d r a
+byContradiction k = case refute @d @r @(D a) k of
+  MkTerm t -> withSynOb @a (MkTerm (doubleNeg @k @(Interp a) . t))
+
+-- $additives
+-- The additives share their context between alternatives, of which only one is used. Terms that
+-- share variables can't both be written in a linear function, so the alternatives are functions of
+-- their own, compiled with 'toSMC' like the argument of 'call', and what they share is passed in as
+-- one term.
+
+-- | Both of two alternatives on the same input: the product. This needs products.
+with
+  :: forall {k} (s :: SYN k) a b d g d1 d2
+   . (Monoidal k, HasBinaryProducts k, KnownObj s)
+  => (Term d1 '[ '(0, s)] s %1 -> Term 1 '[ '(0, s)] a)
+  -> (Term d2 '[ '(0, s)] s %1 -> Term 1 '[ '(0, s)] b)
+  -> Term d g s
+  %1 -> Term d g (a :&& b)
+with f h = lift @s @(a :&& b) (toSMC f &&& toSMC h)
+
+-- | The first alternative of a product.
+exl
+  :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) %1 -> Term d g a
+exl = lift @(a :&& b) @a (withSynOb @a (withSynOb @b (fst @k @(Interp a) @(Interp b))))
+
+-- | The second alternative of a product.
+exr
+  :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) %1 -> Term d g b
+exr = lift @(a :&& b) @b (withSynOb @a (withSynOb @b (snd @k @(Interp a) @(Interp b))))
+
+-- | Use up a term into the unit of the product.
+absorb :: forall {k} (s :: SYN k) d g. (HasTerminalObject k, KnownObj s) => Term d g s %1 -> Term d g Top
+absorb = lift @s @Top (withSynOb @s (terminate @k @(Interp s)))
+
+-- | The left injection into a coproduct.
+inl
+  :: forall {k} (a :: SYN k) b d g
+   . (HasBinaryCoproducts k, KnownObj a, KnownObj b)
+  => Term d g a %1 -> Term d g (a :|| b)
+inl = lift @a @(a :|| b) (withSynOb @a (withSynOb @b (lft @k @(Interp a) @(Interp b))))
+
+-- | The right injection into a coproduct.
+inr
+  :: forall {k} (a :: SYN k) b d g
+   . (HasBinaryCoproducts k, KnownObj a, KnownObj b)
+  => Term d g b %1 -> Term d g (a :|| b)
+inr = lift @b @(a :|| b) (withSynOb @a (withSynOb @b (rgt @k @(Interp a) @(Interp b))))
+
+-- | Case analysis on a coproduct, given first a term to share between the branches. Both branches
+-- get the shared term and the contents of their alternative. This needs the tensor to distribute
+-- over the coproduct.
+caseOf
+  :: forall {k} (s :: SYN k) a b c d g1 g2 da db dx dy
+   . (Distributive k, KnownObj s, KnownObj a, KnownObj b, Merge g1 g2)
+  => Term d g1 s
+  %1 -> Term d g2 (a :|| b)
+  %1 -> (Term da '[ '(1, s)] s %1 -> Term dx '[ '(2, a)] a %1 -> Term 3 '[ '(2, a), '(1, s)] c)
+  -> (Term db '[ '(1, s)] s %1 -> Term dy '[ '(2, b)] b %1 -> Term 3 '[ '(2, b), '(1, s)] c)
+  -> Term d (Union g1 g2) c
+caseOf e x f h =
+  lift @(s :** (a :|| b)) @c
+    ( withSynOb @s
+        ( withSynOb @a
+            ( withSynOb @b
+                ( (toSMC @(s :** a) @c (`split` f) ||| toSMC @(s :** b) @c (`split` h))
+                    . distL @k @(Interp s) @(Interp a) @(Interp b)
+                )
+            )
+        )
+    )
+    (e * x)
+
+-- | There is no term of 'Zero', so from one, together with the rest of the context, anything
+-- follows.
+absurd
+  :: forall {k} (s :: SYN k) c d g1 g2
+   . (Distributive k, KnownObj s, KnownObj c, Merge g1 g2)
+  => Term d g1 s %1 -> Term d g2 Zero %1 -> Term d (Union g1 g2) c
+absurd e z = lift @(s :** Zero) @c (withSynOb @s (withSynOb @c (initiate @k @(Interp c) . absorbL @k @(Interp s)))) (e * z)
 
 -- | Function application. The function and its argument must have disjoint contexts.
 ($$)
@@ -453,6 +626,7 @@ MkTerm f $$ MkTerm x =
 -- needs it before it knows the rest.
 type Bind :: Type -> Type -> Type -> Multiplicity -> Type -> Type -> Constraint
 class Bind k m t p cont r | m -> k p where
+  -- | Bind the right hand side to the pattern of the continuation.
   (>>=) :: m %1 -> (t %p -> cont) %1 -> r
 
 -- The types of the continuation and the result are matched with equalities, so that the
@@ -773,7 +947,8 @@ loopCC h = toSMC @(F a) \a -> Proarrow.Tools.SMC.do
   b
 
 -- | A snake: create a pair, join its dual with the input, and continue with the other end. By the
--- zigzag law it is the identity.
+-- zigzag law it is the identity. The input is older than the pair, so it sits to the left of it,
+-- and the join needs a swap.
 snakeT :: forall {k} (a :: k). (CompactClosed k, Ob a) => a ~> a
 snakeT = toSMC @(F a) \x -> Proarrow.Tools.SMC.do
   (a, a') <- produce
@@ -790,3 +965,53 @@ combineDualT = toSMC @(D (F a) :** D (F b)) @(D (F a :** F b)) \x -> Proarrow.To
   () <- annihilate da a
   () <- annihilate db b
   ab'
+
+-- | The tensor distributes over the coproduct: the shared @a@ goes to whichever branch is taken.
+--
+-- >>> import Prelude (Bool (..), Char, Either (..), Int)
+-- >>> distT @Int @Bool @Char (1, Left True)
+-- Left (1,True)
+distT
+  :: forall {k} (a :: k) b c. (Distributive k, SymMonoidal k, Ob a, Ob b, Ob c) => a ** (b || c) ~> (a ** b) || (a ** c)
+distT = toSMC @(F a :** (F b :|| F c)) \p -> Proarrow.Tools.SMC.do
+  (a, bc) <- p
+  caseOf a bc (\a' b -> inl (a' * b)) (\a' c -> inr (a' * c))
+
+-- | Swap a coproduct, with nothing to share.
+--
+-- >>> import Prelude (Bool (..), Either (..), Int)
+-- >>> swapEitherT @Int @Bool (Left 1)
+-- Right 1
+swapEitherT :: forall {k} (a :: k) b. (Distributive k, SymMonoidal k, Ob a, Ob b) => a || b ~> b || a
+swapEitherT = toSMC @(F a :|| F b) \x ->
+  caseOf unit x (\u a -> Proarrow.Tools.SMC.do () <- u; inr a) (\u b -> Proarrow.Tools.SMC.do () <- u; inl b)
+
+-- | A pair both as it is and swapped: each alternative takes the same pair apart in its own way.
+--
+-- >>> import Prelude (Bool (..), Int)
+-- >>> bothWaysT @Int @Bool (1, True)
+-- ((1,True),(True,1))
+bothWaysT
+  :: forall {k} (a :: k) b. (SymMonoidal k, HasBinaryProducts k, Ob a, Ob b) => a ** b ~> (a ** b) && (b ** a)
+bothWaysT = toSMC @(F a :** F b) \p -> with (\q -> q) (\q -> Proarrow.Tools.SMC.do (x, y) <- q; y * x) p
+
+-- | Double negation introduction: to refute a refutation of @a@, use it on @a@.
+dniT :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual a)
+dniT = toSMC @(F a) @(D (D (F a))) \x -> refute (`cut` x)
+
+-- | Double negation elimination, the classical direction: by contradiction, refuting with the
+-- given refutation of a refutation.
+dneT :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
+dneT = toSMC @(D (D (F a))) @(F a) \nn -> byContradiction \k -> cut nn k
+
+-- | Contraposition: a refutation of @b@ refutes @a@ through @f@.
+contraT :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => (a ~> b) -> Dual b ~> Dual a
+contraT f = toSMC @(D (F b)) @(D (F a)) \nb -> refute \x -> cut nb (lift @(F a) @(F b) f x)
+
+-- | The snake on the dual: join the input with the first end of a new pair, and continue with the
+-- second. Here the wires meet in the order they come, so no swap is needed.
+snakeDualT :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ~> Dual a
+snakeDualT = toSMC @(D (F a)) \x -> Proarrow.Tools.SMC.do
+  (a, a') <- produce
+  () <- annihilate x a
+  a'

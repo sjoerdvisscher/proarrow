@@ -3,7 +3,8 @@
 
     python3 proarrow/tools/smc/smc.py PATH/TO/proarrow.wiki
 
-The pictures are Examples.Toffoli.toffoliPicture and Examples.IntComposition.compositionPicture,
+The pictures are Examples.Toffoli.toffoliPicture, Examples.IntComposition.compositionPicture and
+Examples.LinearLogic.snakePicture,
 rendered through `cabal repl test:test` run from the repository root, and coloured for GitHub's
 light and dark themes the same way as the law diagrams.
 """
@@ -19,6 +20,7 @@ from gallery import hs_string, read, run_repl, standalone, write  # noqa: E402
 PICTURES = [
     ('Examples.Toffoli', 'toffoliPicture', 'toffoli-circuit.svg'),
     ('Examples.IntComposition', 'compositionPicture', 'int-composition.svg'),
+    ('Examples.LinearLogic', 'snakePicture', 'snake.svg'),
 ]
 
 

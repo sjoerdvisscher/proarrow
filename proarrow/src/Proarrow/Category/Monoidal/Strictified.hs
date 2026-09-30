@@ -96,7 +96,7 @@ concatFold =
       h k =
         listCase @cs
           (k leftUnitor)
-          (\ @c -> k $ listCase @bs rightUnitor (obj @c ** fbs) (obj @c ** fbs))
+          (\ @c -> k $ listCase @bs rightUnitor (withObFold @(c ': bs) id) (withObFold @(c ': bs) id))
           (\ @c @cs' -> h @cs' \cbs -> withOb2 @k @c @(Fold cs') $ k $ (obj @c ** cbs) . associator @_ @c @(Fold cs') @(Fold bs))
           \\ fbs
   in h @as id
@@ -111,10 +111,32 @@ splitFold =
       h k =
         listCase @cs
           (k leftUnitorInv)
-          (\ @c -> k $ listCase @bs rightUnitorInv (obj @c ** fbs) (obj @c ** fbs))
+          (\ @c -> k $ listCase @bs rightUnitorInv (withObFold @(c ': bs) id) (withObFold @(c ': bs) id))
           (\ @c @cs' -> h @cs' \cbs -> withOb2 @k @c @(Fold cs') $ k $ associatorInv @_ @c @(Fold cs') @(Fold bs) . (obj @c ** cbs))
           \\ fbs
   in h @as id
+
+-- | Whether @Fold (as ++ bs)@ already is @Fold as ** Fold bs@: when @as@ is one object and @bs@
+-- is not empty.
+foldAppendCase
+  :: forall {k} (as :: [k]) (bs :: [k]) r
+   . (Ob as, Ob bs, Monoidal k)
+  => ((Fold (as ++ bs) ~ (Fold as ** Fold bs)) => r) -> r -> r
+foldAppendCase yes no = listCase @as no (listCase @bs no yes yes) no
+
+-- | Precompose 'splitFold', unless it is the identity.
+splitThen
+  :: forall {k} (as :: [k]) (bs :: [k]) x
+   . (Ob as, Ob bs, Monoidal k)
+  => (Fold as ** Fold bs ~> x) -> Fold (as ++ bs) ~> x
+splitThen h = foldAppendCase @as @bs h (h . splitFold @as @bs)
+
+-- | Postcompose 'concatFold', unless it is the identity.
+thenConcat
+  :: forall {k} (as :: [k]) (bs :: [k]) x
+   . (Ob as, Ob bs, Monoidal k)
+  => (x ~> Fold as ** Fold bs) -> x ~> Fold (as ++ bs)
+thenConcat h = foldAppendCase @as @bs h (concatFold @as @bs . h)
 
 type Strictified :: CAT [k]
 data Strictified as bs where
@@ -137,7 +159,7 @@ instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   r \\ Str{} = r
 
 instance (Monoidal k) => Promonad (Strictified :: CAT [k]) where
-  id @as = Str (fold @as)
+  id @as = withObFold @as (Str id)
   Str f . Str g = Str (f . g)
 
 -- | The strictified monoidal category, making the unitors and associators identities.
@@ -150,7 +172,7 @@ instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
   Str @as @bs f ** Str @cs @ds g =
     withOb2 @[k] @as @cs $
       withOb2 @[k] @bs @ds $
-        Str (concatFold @bs @ds . (f ** g) . splitFold @as @cs)
+        Str (thenConcat @bs @ds (splitThen @as @cs (f ** g)))
 
 -- | List concatenation as monoidal tensor.
 instance (Monoidal k) => Monoidal [k] where
