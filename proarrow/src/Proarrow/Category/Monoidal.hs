@@ -228,10 +228,10 @@ withObNFold r = case snat @n of
 -- associatorInv \@a \@b \@c = associatorDefault \@a \@b \@c
 -- @
 type Strictly :: forall {k}. k -> Constraint
-class (a ** Unit ~ a, Unit ** a ~ a, forall b c. (Ob b, Ob c) => StrictlyAssoc a b c) => Strictly (a :: k) where
+class (a ** Unit ~ a, Unit ** a ~ a, forall b c. StrictlyAssoc a b c) => Strictly (a :: k) where
   associatorDefault :: forall b c. (Monoidal k, Ob a, Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
 
-instance (a ** Unit ~ a, Unit ** a ~ a, forall b c. (Ob b, Ob c) => StrictlyAssoc a b c) => Strictly (a :: k) where
+instance (a ** Unit ~ a, Unit ** a ~ a, forall b c. StrictlyAssoc a b c) => Strictly (a :: k) where
   associatorDefault @b @c = withOb2 @_ @b @c (withOb2 @_ @a @(b ** c) id)
 
 instance Monoidal () where

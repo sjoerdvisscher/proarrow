@@ -14,7 +14,7 @@ import Proarrow.Category.Monoidal.Cartesian (BiCCC, Cartesian, distLProd, distRP
 import Proarrow.Category.Monoidal.Strength (Costrong (..), Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), right)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
-import Proarrow.Functor (map)
+import Proarrow.Functor (map, withObF)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
@@ -49,8 +49,8 @@ instance (BiCCC k) => Strong CoprodAction (Fold :: k +-> k) where
 instance (Cartesian k) => Costrong ProdAction (Fold :: k +-> k) where
   coact @(PR a) @_ @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . leftUnitorInvWith (fst @k @a @y . f . z)) m z
 
-trav :: (Applicative f) => Fold a b -> Fold (f a) (f b)
-trav (Fold @m k h m z) = Fold (map k) (map h) (liftA2 @_ @m @m m) (pure z)
+trav :: forall {k} (f :: k -> k) (a :: k) (b :: k). (Applicative f) => Fold a b -> Fold (f a) (f b)
+trav (Fold @m k h m z) = withObF @f @m (Fold (map k) (map h) (liftA2 @_ @m @m m) (pure z))
 
 instance Corepresentable (Fold :: Type +-> Type) where
   type Fold %% a = [a]

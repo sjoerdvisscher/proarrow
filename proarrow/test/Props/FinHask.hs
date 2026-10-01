@@ -110,6 +110,7 @@ withTestObFinHaskViaFin body = case cardinality @(UN FH e) of
 
 instance Testable FINHASK where
   type TestOb a = (Ob a, Typeable (UN FH a), TestableType (UN FH a))
+  obFromTestOb r = r
   showOb @(FH a) = P.show (typeRep @a)
   genSome = genSomeDef @'[FH Void, FH (), FH P.Bool, FH (Fin 3)]
 

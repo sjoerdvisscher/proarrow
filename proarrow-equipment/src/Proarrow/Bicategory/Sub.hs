@@ -39,7 +39,9 @@ class WithObO2 tag kk where
      . (Ob a, Ob b, IsOb tag a, IsOb tag b) => ((IsOb tag (a `O` b), Ob (a `O` b)) => r) -> r
 
 class (IsOb tag (I :: kk i i)) => IsObI tag kk i
-instance (IsOb tag (I :: kk i i)) => IsObI tag kk i
+
+-- Overlappable for the same reason as 'Proarrow.Bicategory.ObUnit'.
+instance {-# OVERLAPPABLE #-} (IsOb tag (I :: kk i i)) => IsObI tag kk i
 
 instance
   ( Bicategory kk

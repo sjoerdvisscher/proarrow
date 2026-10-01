@@ -90,6 +90,7 @@ instance
 
 instance (TestableProfunctor p, TestableTypeP p, Promonad p) => Testable (KLEISLI (p :: Type +-> Type)) where
   type TestOb a = (Ob a, TestOb (UN KL a))
+  obFromTestOb r = r
   showOb @(KL a) = "KL " ++ showOb @_ @a
   genSome = genSomeDef @'[KL Bool, KL (), KL (Maybe Bool)]
 

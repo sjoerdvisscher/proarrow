@@ -53,7 +53,7 @@ type instance Map0 (ThinFunctor p) a = p % a
 type instance Map1 (ThinFunctor p) THIN = THIN
 instance (Representable p, Thin' j, Thin' k) => LaxFunctor (ThinFunctor (p :: j +-> k)) where
   map2 @a Id = withMap1Ob @(ThinFunctor p) @a Id
-  laxId @i = withObRep @p @i Id
+  laxId @i = withObRep @p @i (withArr (obj @(p % i)) Id)
   laxComp @(THIN :: THINK j b c) @(THIN :: THINK j a b) =
     withArr (repMap @p (arr @_ @b @c) . repMap @p (arr @_ @a @b)) Id
   withMap0Ob0 @i r = withObRep @p @i r

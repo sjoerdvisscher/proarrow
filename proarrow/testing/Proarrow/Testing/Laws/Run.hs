@@ -111,6 +111,7 @@ import Proarrow.Testing
   , isGenNonEmpty
   , obFromTestOb
   , testEq
+  , testObFromOb
   )
 import Proarrow.Tools.Laws qualified as Laws
 
@@ -282,7 +283,7 @@ class Tested (a :: TESTED cs k) where
 
 instance (Testable k, TestOb (a :: k)) => Tested (TLeaf a :: TESTED cs k) where
   type Untest (TLeaf a) = a
-  untestOb r = obFromTestOb @a r
+  untestOb r = obFromTestOb @_ @a r
   untestTestOb _ r = r
 instance (Testable k, M.Monoidal k, TestOb (M.Unit :: k)) => Tested (M.UnitF :: TESTED cs k) where
   type Untest M.UnitF = M.Unit
@@ -694,7 +695,7 @@ instance
   => Adj.Proadjunction (TestedP p :: TESTED csj j +-> TESTED csk k) (TestedP q :: TESTED csk k +-> TESTED csj j)
   where
   unit @a = untestOb @a case Adj.unit @p @q @(Untest a) of
-    (:.:) @m l r -> (:.:) @(TLeaf m :: TESTED csk k) (TestedP (atom "unitQ") l) (TestedP (atom "unitP") r) \\ l
+    (:.:) @m l r -> testObFromOb @m ((:.:) @(TLeaf m :: TESTED csk k) (TestedP (atom "unitQ") l) (TestedP (atom "unitP") r)) \\ l
   counit (TestedP dp x :.: TestedP dq y) = TestedArr (app "counit" (infixlDoc 9 " :.: " dp dq)) (Adj.counit (x :.: y))
 
 -- | The procomonad the objects stand for. The middle object of 'Promonad.produplicate' is only

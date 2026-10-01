@@ -16,6 +16,7 @@ import Proarrow.Bicategory.Kan
   , RightKanExtension (..)
   , RightKanLift (..)
   )
+import Proarrow.Bicategory.Sub (IsObI)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault)
 import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 
@@ -60,6 +61,8 @@ instance (WithObO2 Cotight kk) => WithObO2 Tight (OPK kk) where
   withObO2 @p @q r = withObO2 @Cotight @kk @(UN OP q) @(UN OP p) r
 instance (WithObO2 Tight kk) => WithObO2 Cotight (OPK kk) where
   withObO2 @p @q r = withObO2 @Tight @kk @(UN OP q) @(UN OP p) r
+instance (IsObI Cotight kk i) => IsObI Tight (OPK kk) i
+instance (IsObI Tight kk i) => IsObI Cotight (OPK kk) i
 instance (Equipment kk) => Equipment (OPK kk) where
   withTightAdjoint @(OP f) r = withCotightAdjoint @kk @f r
   withCotightAdjoint @(OP f) r = withTightAdjoint @kk @f r

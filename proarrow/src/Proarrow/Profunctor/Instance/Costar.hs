@@ -67,11 +67,12 @@ instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor
   Costar @a f ** Costar @b g = withOb2 @j @a @b (Costar (f . map (fst @j @a @b) &&& g . map (snd @j @a @b)))
 
 instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
-  cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'
+  cotraverse @_ @a (p :.: Costar f) =
+    p // withObF @t @a (Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p')
 
 instance (Functor f, Thin j) => ThinProfunctor (Costar f :: j +-> k) where
   type HasArrow (Costar f :: j +-> k) a b = HasArrow (Hom j) (f a) b
-  arr = Costar arr
+  arr @a = withObF @f @a (Costar arr)
   withArr (Costar f) r = withArr f r
 
 instance (Functor f, DecidableProfunctor (Hom j)) => DecidableProfunctor (Costar f :: j +-> k) where

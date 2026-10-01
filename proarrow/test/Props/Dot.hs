@@ -118,7 +118,7 @@ boxes box = do
   if stacked
     then do
       Some @m <- genSome @k
-      (.) <$> labelled @m @b <*> labelled @a @m
+      obFromTestOb @_ @m $ (.) <$> labelled @m @b <*> labelled @a @m
     else labelled @a @b
   where
     labelled :: forall (x :: k) (y :: k). (Ob x, Ob y) => Gen (x ~> y)

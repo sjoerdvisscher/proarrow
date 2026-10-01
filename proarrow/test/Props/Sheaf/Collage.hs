@@ -145,6 +145,7 @@ instance TestableProfunctor (Prof :: CAT (Presheaf (BOOL, BOOL)))
 
 instance Testable (Presheaf (BOOL, BOOL)) where
   type TestOb p = Finitary p
+  obFromTestOb r = r
   showOb @p = show (sizes @p)
   genSome = genSomeList "Presheaf (BOOL, BOOL)" [Some @Pair, Some @(TerminalProfunctor :: Presheaf (BOOL, BOOL))]
 
@@ -152,6 +153,7 @@ instance TestableProfunctor (Prof :: CAT (Presheaf Patches))
 
 instance Testable (Presheaf Patches) where
   type TestOb p = Finitary p
+  obFromTestOb r = r
   showOb @p = show (sizes @p)
   genSome =
     genSomeList "Presheaf Patches" [Some @AtApex, Some @(TerminalProfunctor :: Presheaf Patches)]
@@ -166,6 +168,7 @@ instance TestableProfunctor (Prof :: CAT (Copresheaf (BOOL, BOOL)))
 
 instance Testable (Copresheaf (BOOL, BOOL)) where
   type TestOb p = Finitary p
+  obFromTestOb r = r
   showOb @p = show (sizes @p)
   genSome =
     genSomeList
@@ -179,6 +182,7 @@ instance TestableProfunctor (Prof :: CAT (Copresheaf Patches))
 
 instance Testable (Copresheaf Patches) where
   type TestOb p = Finitary p
+  obFromTestOb r = r
   showOb @p = show (sizes @p)
   genSome =
     genSomeList

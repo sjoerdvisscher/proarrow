@@ -19,7 +19,7 @@ import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), baseTraverse)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, (++))
-import Proarrow.Colimit.Initial (initiate)
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..), withObF)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -64,7 +64,7 @@ instance (Applicative f, Monoidal j, Monoidal k) => MonoidalProfunctor (Star (f 
   Star @a f ** Star @b g = withOb2 @_ @a @b (Star (liftA2 @f @a @b id . (f ** g)))
 
 instance (Functor f, HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (Star (f :: j -> k))) where
-  one = Coprod (Star initiate)
+  one = withObF @f @(InitialObject :: j) (Coprod (Star initiate))
   Coprod (Star @a f) ** Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star (map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g)))
 
 -- Hmm, another wrapper required...
@@ -132,7 +132,7 @@ starTraverse = baseTraverse @(Star t) @(Star f)
 
 instance (Functor f, Thin k) => ThinProfunctor (Star f :: j +-> k) where
   type HasArrow (Star f :: j +-> k) a b = HasArrow (Hom k) a (f b)
-  arr = Star arr
+  arr @_ @b = withObF @f @b (Star arr)
   withArr (Star f) r = withArr f r
 
 instance (Functor f, DecidableProfunctor (Hom k)) => DecidableProfunctor (Star f :: j +-> k) where

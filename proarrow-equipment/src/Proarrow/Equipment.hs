@@ -14,7 +14,7 @@ module Proarrow.Equipment
   ) where
 
 import Proarrow.Bicategory (Adjunction, Adjunction_, Bicategory (..))
-import Proarrow.Bicategory.Sub (IsOb, IsOb0, SUBCAT, WithObO2 (..))
+import Proarrow.Bicategory.Sub (IsOb, IsOb0, IsObI, SUBCAT, WithObO2 (..))
 import Proarrow.Core (Any, CategoryOf (..))
 
 type data Tight
@@ -35,6 +35,8 @@ class
   ( Bicategory kk
   , Bicategory (SUBCAT Tight kk)
   , Bicategory (SUBCAT Cotight kk)
+  , forall i. (Ob0 kk i) => IsObI Tight kk i
+  , forall i. (Ob0 kk i) => IsObI Cotight kk i
   , WithObO2 Cotight kk
   , WithObO2 Tight kk
   ) =>

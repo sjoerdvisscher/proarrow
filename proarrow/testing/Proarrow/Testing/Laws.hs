@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE ImpredicativeTypes #-}
 
 {- HLINT ignore "Redundant id" -}
 
@@ -74,41 +75,15 @@ import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (ExOptic, Flip, Optic)
 import Proarrow.Optic.Getter (GetterFl, review, view)
-import Proarrow.Profunctor.Corepresentable (Corepresentable, coindex, withObCorep)
+import Proarrow.Profunctor.Corepresentable (Corepresentable, coindex, withObCorep, type (%%))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Ran (Ran (..))
 import Proarrow.Profunctor.Instance.Rift (Rift (..))
 import Proarrow.Profunctor.Instance.Sieve (Sieve (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
-import Proarrow.Profunctor.Representable (Representable, withObRep)
+import Proarrow.Profunctor.Representable (Representable, withObRep, type (%))
 import Proarrow.Promonad qualified as Promonad
 import Proarrow.Testing
-  ( Some (..)
-  , SomeProfunctorElt (..)
-  , TestOb'
-  , TestObIsOb
-  , Testable (..)
-  , TestableProfunctor (..)
-  , TestableTypeP
-  , TestingEqShow (..)
-  , WithTestOb
-  , WithTestOb2
-  , WithTestObCoprod
-  , WithTestObCorep
-  , WithTestObDual
-  , WithTestObExp
-  , WithTestObProd
-  , WithTestObRep
-  , check
-  , expect
-  , genNamed
-  , genOb
-  , genObSmall
-  , genObSuchThat
-  , isGenNonEmpty
-  , obFromTestOb
-  , testEq
-  )
 import Proarrow.Testing.Laws.Run
   ( CorepresentedBy
   , RepresentedBy
@@ -126,7 +101,7 @@ import Proarrow.Tools.Laws qualified as Laws
 
 -- | Two arrows are mutually inverse: @f . g = id@ and @g . f = id@.
 propIso :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => a ~> b -> b ~> a -> Property ()
-propIso f g = do
+propIso f g = obFromTestOb @_ @a $ obFromTestOb @_ @b $ do
   testEq "right inverse" "f . g" (f . g) "id" id
   testEq "left inverse" "g . f" (g . f) "id" id
 
@@ -213,8 +188,8 @@ propDecidable
 propDecidable = do
   Some @a <- genOb @k
   Some @b <- genOb @j
-  obFromTestOb @a $
-    obFromTestOb @b $
+  obFromTestOb @_ @a $
+    obFromTestOb @_ @b $
       case Thin.decide @p @a @b of
         Thin.Yes x -> do
           check "decide: TRU, but no element can be generated" (isGenNonEmpty @(p a b))
@@ -261,21 +236,22 @@ propNumbering
 propNumbering = do
   Some @a <- genOb @k
   Some @b <- genOb @j
-  let n = Finitary.size @p @a @b
-      es = Finitary.elements @p @a @b
-  check
-    ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
-    (genericLength es == n)
-  check
-    ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
-    (map (Finitary.toIndex @p @a @b) es == Finitary.indices n)
-  x <- genNamed @(p a b) "x"
-  -- The numbering claims every index is below 'Finitary.size', which a @Fin@-typed index would
-  -- have given for free. Without this check an undersized 'Finitary.size' goes unnoticed, since
-  -- the other laws only ever look at the elements it admits.
-  check
-    ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
-    (Finitary.toIndex x < n)
+  obFromTestOb @_ @a $ obFromTestOb @_ @b $ do
+    let n = Finitary.size @p @a @b
+        es = Finitary.elements @p @a @b
+    check
+      ("size is " ++ show n ++ " but elements has " ++ show (genericLength es :: Natural) ++ " entries")
+      (genericLength es == n)
+    check
+      ("elements should be numbered in order, found " ++ show (map (Finitary.toIndex @p @a @b) es))
+      (map (Finitary.toIndex @p @a @b) es == Finitary.indices n)
+    x <- genNamed @(p a b) "x"
+    -- The numbering claims every index is below 'Finitary.size', which a @Fin@-typed index would
+    -- have given for free. Without this check an undersized 'Finitary.size' goes unnoticed, since
+    -- the other laws only ever look at the elements it admits.
+    check
+      ("toIndex " ++ showP x ++ " is " ++ show (Finitary.toIndex x) ++ ", not below size " ++ show n)
+      (Finitary.toIndex x < n)
 
 -- * Functors, representability and adjunctions
 
@@ -297,17 +273,18 @@ propFunctor withTestObF = do
   g <- genNamed @(b ~> c) "g"
   withTestObF @a $
     withTestObF @c $
-      -- 'Functor.withObF' recovers @Ob (f a)@\/@Ob (f c)@ from the functor (GHC will not extract
-      -- them from the quantified @Ob' (f a)@ superclass on its own)
-      Functor.withObF @f @a $
-        Functor.withObF @f @c $ do
-          testEq "identity" "map id" (Functor.map @f (obj @a)) "id" (obj @(f a))
-          testEq
-            "composition"
-            "map (g . f)"
-            (Functor.map @f (g . f))
-            "map g . map f"
-            (Functor.map @f g . Functor.map @f f)
+      obFromTestOb @_ @a $
+        obFromTestOb @_ @c $
+          -- 'Functor.withObF' recovers @Ob (f a)@\/@Ob (f c)@ from the functor
+          Functor.withObF @f @a $
+            Functor.withObF @f @c $ do
+              testEq "identity" "map id" (Functor.map @f (obj @a)) "id" (obj @(f a))
+              testEq
+                "composition"
+                "map (g . f)"
+                (Functor.map @f (g . f))
+                "map g . map f"
+                (Functor.map @f g . Functor.map @f f)
 
 -- | The functor laws of @f@ ('propFunctor') as a ready-made test.
 testFunctor
@@ -359,7 +336,7 @@ testMonStrong withTestOb2 =
 
 testMonStrong_
   :: forall {k} (p :: k +-> k). (Strength.Strong M.Tensor p, M.Monoidal k, TestableProfunctor p, TestObIsOb k) => TestTree
-testMonStrong_ = testMonStrong @p (\ @a @b r -> M.withOb2 @k @a @b r)
+testMonStrong_ = testMonStrong @p (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The laws of costrength of @p@ for the tensor acting on its own category, stated as code
 -- ('Laws.ProLaws' @('Strength.Costrong' 'M.Tensor')@). The witness says how 'TestOb' is closed
@@ -383,7 +360,7 @@ testMonCostrong withTestOb2 =
 
 testMonCostrong_
   :: forall {k} (p :: k +-> k). (Strength.Costrong M.Tensor p, M.Monoidal k, TestableProfunctor p, TestObIsOb k) => TestTree
-testMonCostrong_ = testMonCostrong @p (\ @a @b r -> M.withOb2 @k @a @b r)
+testMonCostrong_ = testMonCostrong @p (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The 'Representable' laws of @p@ stated as code ('Laws.ProLaws' 'Representable'): 'index' and
 -- 'tabulate' are inverse and natural. The witness lifts 'TestOb' along @p '%' -@.
@@ -401,7 +378,7 @@ testRepresentable withTestObRep =
     (CategoryW :& RepresentedW (CategoryW :& WNil) (\ @b r -> withTestObRep @b r) :& WNil)
 
 testRepresentable_ :: forall {j} {k} (p :: j +-> k). (Representable p, TestableProfunctor p, TestObIsOb k) => TestTree
-testRepresentable_ = testRepresentable @p (\ @b r -> withObRep @p @b r)
+testRepresentable_ = testRepresentable @p (\ @b r -> obFromTestOb @_ @b (withObRep @p @b r))
 
 -- | The 'Corepresentable' laws of @p@ stated as code ('Laws.ProLaws' 'Corepresentable'): 'coindex'
 -- and 'cotabulate' are inverse and natural. The witness lifts 'TestOb' along @p '%%' -@.
@@ -422,7 +399,7 @@ testCorepresentable_
   :: forall {j} {k} (p :: j +-> k)
    . (Corepresentable p, TestableProfunctor p, TestObIsOb j)
   => TestTree
-testCorepresentable_ = testCorepresentable @p (\ @a r -> withObCorep @p @a r)
+testCorepresentable_ = testCorepresentable @p (\ @a r -> obFromTestOb @_ @a (withObCorep @p @a r))
 
 -- | The 'Promonad' laws of @p@ stated as code: 'id' is a unit for composition, which is
 -- associative, and both are natural.
@@ -474,7 +451,10 @@ testAdjunction_
   :: forall {j} {k} (p :: j +-> k)
    . (Adjunction p, TestableProfunctor p, TestObIsOb j, TestObIsOb k)
   => TestTree
-testAdjunction_ = testAdjunction @p (\ @a r -> withObCorep @p @a r) (\ @b r -> withObRep @p @b r)
+testAdjunction_ =
+  testAdjunction @p
+    (\ @a r -> obFromTestOb @_ @a (withObCorep @p @a (testObFromOb @(p %% a) r)))
+    (\ @b r -> obFromTestOb @_ @b (withObRep @p @b (testObFromOb @(p % b) r)))
 
 -- * Limits and colimits
 
@@ -500,7 +480,7 @@ testBinaryProducts withTestObProd =
   testLaws @'[BinaryProduct.HasBinaryProducts] "Binary products" (ProductsW (\ @a @b r -> withTestObProd @a @b r) :& WNil)
 
 testBinaryProducts_ :: forall k. (Testable k, BinaryProduct.HasBinaryProducts k, TestObIsOb k) => TestTree
-testBinaryProducts_ = testBinaryProducts @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
+testBinaryProducts_ = testBinaryProducts @k (\ @a @b -> withTestObProdDef @a @b)
 
 -- | The universal property of the binary coproduct, dual to 'testBinaryProducts', from
 -- @'Proarrow.Tools.Laws.Laws' '['BinaryCoproduct.HasBinaryCoproducts']@.
@@ -511,7 +491,7 @@ testBinaryCoproducts withTestObCoprod =
     (CoproductsW (\ @a @b r -> withTestObCoprod @a @b r) :& WNil)
 
 testBinaryCoproducts_ :: forall k. (Testable k, BinaryCoproduct.HasBinaryCoproducts k, TestObIsOb k) => TestTree
-testBinaryCoproducts_ = testBinaryCoproducts @k (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
+testBinaryCoproducts_ = testBinaryCoproducts @k (\ @a @b -> withTestObCoprodDef @a @b)
 
 -- | Check that composing with an arrow /reflects/ equality: the composites agree exactly when the
 -- two arrows already did. @eqComposed@ is the caller\'s comparison of the composites (a
@@ -702,7 +682,7 @@ testMonoidal :: forall k. (Testable k, M.Monoidal k, TestOb (M.Unit @k)) => With
 testMonoidal withTestOb2 = testLaws @'[M.Monoidal] "Monoidal" (MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& WNil)
 
 testMonoidal_ :: forall k. (Testable k, M.Monoidal k, TestObIsOb k) => TestTree
-testMonoidal_ = testMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
+testMonoidal_ = testMonoidal @k (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The laws of a symmetric monoidal category, from
 -- @'Proarrow.Tools.Laws.Laws' 'M.SymMonoidalStructures'@: 'M.swap' is a natural
@@ -714,7 +694,7 @@ testSymMonoidal withTestOb2 =
     (MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& SymMonoidalW :& WNil)
 
 testSymMonoidal_ :: forall k. (Testable k, M.SymMonoidal k, TestObIsOb k) => TestTree
-testSymMonoidal_ = testSymMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
+testSymMonoidal_ = testSymMonoidal @k (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The laws of a copy-discard category: every object is a cocommutative comonoid (the laws of its
 -- supply, in "Proarrow.Monoid"), and 'CopyDiscard.copy' and 'CopyDiscard.discard' are that comonoid
@@ -724,8 +704,10 @@ testCopyDiscard
 testCopyDiscard withTestOb2 =
   testGroup
     "CopyDiscard"
-    [ testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Comonoid] "Comonoids" (monoidal :& ComonoidSupplyW :& WNil)
-    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CocommutativeComonoid]
+    [ testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Comonoid] @k
+        "Comonoids"
+        (monoidal :& ComonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CocommutativeComonoid] @k
         "Cocommutative comonoids"
         (monoidal :& SymMonoidalW :& CocommutativeComonoidSupplyW :& WNil)
     , testLaws @CopyDiscard.CopyDiscardStructures "Copy and discard" (monoidal :& SymMonoidalW :& CopyDiscardW :& WNil)
@@ -733,10 +715,9 @@ testCopyDiscard withTestOb2 =
   where
     monoidal = MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
 
--- | 'testCopyDiscard' where 'TestOb' is 'Ob'. 'Ob' goes through 'obFromTestOb', because with the
--- comonoid supply in scope GHC does not find the @TestOb a => Ob' a => Ob a@ route on its own.
+-- | 'testCopyDiscard' where 'TestOb' is 'Ob'.
 testCopyDiscard_ :: forall k. (Testable k, CopyDiscard.CopyDiscard k, TestObIsOb k) => TestTree
-testCopyDiscard_ = testCopyDiscard @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+testCopyDiscard_ = testCopyDiscard @k (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The coherence law tying 'Cartesian.Cartesian' to its 'CopyDiscard.CopyDiscard' superclass
 -- (Fox's theorem): the comonoid supplied on every object is the natural one, @copy = id &&& id@
@@ -770,7 +751,7 @@ propCartesianAt = do
 
 testCartesian_ :: forall k. (Testable k, Cartesian.Cartesian k, TestObIsOb k, TestOb (M.Unit @k)) => TestTree
 testCartesian_ =
-  testCartesian @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+  testCartesian @k (\ @a r -> obFromTestOb @_ @a r) (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The tensor distributes over coproducts and is absorbed by the initial object, from
 -- @'Proarrow.Tools.Laws.Laws' 'Distributive.DistributiveStructures'@: 'Distributive.distL',
@@ -795,8 +776,8 @@ testDistributive withTestOb2 withTestObCoprod =
 testDistributive_ :: forall k. (Testable k, Distributive.Distributive k, TestObIsOb k) => TestTree
 testDistributive_ =
   testDistributive @k
-    (\ @a @b r -> M.withOb2 @k @a @b r)
-    (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
+    (\ @a @b -> withTestOb2Def @a @b)
+    (\ @a @b -> withTestObCoprodDef @a @b)
 
 -- | The laws of a closed monoidal category, from
 -- @'Proarrow.Tools.Laws.Laws' 'Exponential.ClosedStructures'@: 'Exponential.apply' undoes
@@ -818,8 +799,8 @@ testClosed withTestOb2 withTestObExp =
 testClosed_ :: forall k. (Testable k, Exponential.Closed k, TestObIsOb k) => TestTree
 testClosed_ =
   testClosed @k
-    (\ @a @b r -> M.withOb2 @k @a @b r)
-    (\ @a @b r -> Exponential.withObExp @k @a @b r)
+    (\ @a @b -> withTestOb2Def @a @b)
+    (\ @a @b -> withTestObExpDef @a @b)
 
 -- | Laws of a *-autonomous category, from
 -- @'Proarrow.Tools.Laws.Laws' 'SA.StarAutonomousStructures'@:
@@ -848,9 +829,9 @@ testStarAutonomous withTestOb2 withTestObExp withTestObDual =
 testStarAutonomous_ :: forall k. (Testable k, SA.StarAutonomous k, TestObIsOb k) => TestTree
 testStarAutonomous_ =
   testStarAutonomous @k
-    (\ @a @b r -> M.withOb2 @k @a @b r)
-    (\ @a @b r -> Exponential.withObExp @k @a @b r)
-    (\ @a r -> r \\ SA.dualObj @a)
+    (\ @a @b -> withTestOb2Def @a @b)
+    (\ @a @b -> withTestObExpDef @a @b)
+    (\ @a -> withTestObDualDef @a)
 
 -- | Laws of an isomix category, from @'Proarrow.Tools.Laws.Laws' 'IsoMix.IsoMixStructures'@:
 -- 'IsoMix.dualUnit' and 'IsoMix.dualUnitInv' are inverses. See 'testStarAutonomous' for the
@@ -876,9 +857,9 @@ testIsoMix withTestOb2 withTestObExp withTestObDual =
 testIsoMix_ :: forall k. (Testable k, IsoMix.IsoMix k, TestObIsOb k) => TestTree
 testIsoMix_ =
   testIsoMix @k
-    (\ @a @b r -> M.withOb2 @k @a @b r)
-    (\ @a @b r -> Exponential.withObExp @k @a @b r)
-    (\ @a r -> r \\ SA.dualObj @a)
+    (\ @a @b -> withTestOb2Def @a @b)
+    (\ @a @b -> withTestObExpDef @a @b)
+    (\ @a -> withTestObDualDef @a)
 
 -- | Laws of a compact closed category, from
 -- @'Proarrow.Tools.Laws.Laws' 'CC.CompactClosedStructures'@:
@@ -907,9 +888,9 @@ testCompactClosed withTestOb2 withTestObExp withTestObDual =
 testCompactClosed_ :: forall k. (Testable k, CC.CompactClosed k, TestObIsOb k) => TestTree
 testCompactClosed_ =
   testCompactClosed @k
-    (\ @a @b r -> M.withOb2 @k @a @b r)
-    (\ @a @b r -> Exponential.withObExp @k @a @b r)
-    (\ @a r -> r \\ SA.dualObj @a)
+    (\ @a @b -> withTestOb2Def @a @b)
+    (\ @a @b -> withTestObExpDef @a @b)
+    (\ @a -> withTestObDualDef @a)
 
 -- | The laws of a category that supplies special commutative Frobenius algebras, stated for
 -- every object: the monoid and comonoid laws of its points, their commutativity, and the Frobenius laws of
@@ -927,15 +908,19 @@ testHypergraph
 testHypergraph withTestOb2 =
   testGroup
     "Hypergraph (Frobenius supply)"
-    [ testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Monoid] "Monoids" (monoidal :& MonoidSupplyW :& WNil)
-    , testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Comonoid] "Comonoids" (monoidal :& ComonoidSupplyW :& WNil)
-    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CommutativeMonoid]
+    [ testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Monoid] @k
+        "Monoids"
+        (monoidal :& MonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, Monoid.Supplies Monoid.Comonoid] @k
+        "Comonoids"
+        (monoidal :& ComonoidSupplyW :& WNil)
+    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CommutativeMonoid] @k
         "Commutative monoids"
         (monoidal :& SymMonoidalW :& CommutativeMonoidSupplyW :& WNil)
-    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CocommutativeComonoid]
+    , testLaws @'[M.Monoidal, M.SymMonoidal, Monoid.Supplies Monoid.CocommutativeComonoid] @k
         "Cocommutative comonoids"
         (monoidal :& SymMonoidalW :& CocommutativeComonoidSupplyW :& WNil)
-    , testLaws @Hypergraph.FrobeniusStructures
+    , testLaws @Hypergraph.FrobeniusStructures @k
         "Frobenius"
         (monoidal :& SymMonoidalW :& MonoidSupplyW :& ComonoidSupplyW :& WNil)
     ]
@@ -951,7 +936,7 @@ testHypergraph_
      , Monoid.Supplies Monoid.CocommutativeComonoid k
      )
   => TestTree
-testHypergraph_ = testHypergraph @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
+testHypergraph_ = testHypergraph @k (\ @a @b -> withTestOb2Def @a @b)
 
 -- * Traced monoidal categories
 
@@ -967,7 +952,7 @@ testTraced withTestOb2 =
     (MonoidalW (\ @a @b r -> withTestOb2 @a @b r) :& SymMonoidalW :& TracedW :& WNil)
 
 testTraced_ :: forall k. (Testable k, Strength.TracedMonoidal k, TestObIsOb k) => TestTree
-testTraced_ = testTraced @k (\ @a @b r -> M.withOb2 @k @a @b r)
+testTraced_ = testTraced @k (\ @a @b -> withTestOb2Def @a @b)
 
 -- * Monoids and comonoids
 
@@ -1077,7 +1062,7 @@ testMonoid
 testMonoid f = testProperty ("Monoid " ++ showOb @k @m) (propMonoid @m \ @a @b -> f @a @b)
 
 testMonoid_ :: forall {k} m. (Testable k, Monoid.Monoid (m :: k), TestObIsOb k) => TestTree
-testMonoid_ = testMonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
+testMonoid_ = testMonoid @m (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The comonoid laws of @m@, as the monoid laws of @m@ in the opposite category.
 testComonoid
@@ -1088,7 +1073,7 @@ testComonoid
 testComonoid f = testProperty ("Comonoid " ++ showOb @k @m) (propMonoid @(OP m) \ @(OP a) @(OP b) r -> f @a @b r)
 
 testComonoid_ :: forall {k} m. (Testable k, Monoid.Comonoid (m :: k), TestObIsOb k) => TestTree
-testComonoid_ = testComonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
+testComonoid_ = testComonoid @m (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The laws of a commutative monoid ('propCommutativeMonoid') as a ready-made test.
 testCommutativeMonoid
@@ -1099,7 +1084,7 @@ testCommutativeMonoid
 testCommutativeMonoid f = testProperty ("CommutativeMonoid " ++ showOb @k @m) (propCommutativeMonoid @m \ @a @b -> f @a @b)
 
 testCommutativeMonoid_ :: forall {k} m. (Testable k, Monoid.CommutativeMonoid (m :: k), TestObIsOb k) => TestTree
-testCommutativeMonoid_ = testCommutativeMonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
+testCommutativeMonoid_ = testCommutativeMonoid @m (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The laws of a cocommutative comonoid ('propCocommutativeComonoid') as a ready-made test.
 testCocommutativeComonoid
@@ -1113,7 +1098,7 @@ testCocommutativeComonoid_
   :: forall {k} m
    . (Testable k, Monoid.CocommutativeComonoid (m :: k), TestObIsOb k)
   => TestTree
-testCocommutativeComonoid_ = testCocommutativeComonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
+testCocommutativeComonoid_ = testCocommutativeComonoid @m (\ @a @b -> withTestOb2Def @a @b)
 
 -- | The laws of a special commutative Frobenius algebra ('propFrobenius') as a ready-made test.
 testFrobenius
@@ -1136,7 +1121,7 @@ testFrobenius_
      , TestObIsOb k
      )
   => TestTree
-testFrobenius_ = testFrobenius @m (\ @a @b r -> M.withOb2 @k @a @b r)
+testFrobenius_ = testFrobenius @m (\ @a @b -> withTestOb2Def @a @b)
 
 -- * Toposes
 
@@ -1172,7 +1157,7 @@ testSubobjectClassifier withTestObProd = testProperty "Subobject classifier" $ d
   Some @b <- genOb @k
   Some @z <- genOb @k
   f <- genNamed @(a ~> b) "f"
-  x <- genNamed @(z ~> a) "x"
+  x@Objs <- genNamed @(z ~> a) "x"
   y <- genNamed @(z ~> b) "y"
   inGraph <- eqP (f . x) y
   classified <-
@@ -1217,7 +1202,7 @@ testSubobjectClassifier_
      )
   => TestTree
 testSubobjectClassifier_ =
-  testSubobjectClassifier @k (\ @a @b r -> BinaryProduct.withObProd @k @a @b r)
+  testSubobjectClassifier @k (\ @a @b -> withTestObProdDef @a @b)
 
 -- | Negation is implication into false:
 -- @'Topos.not' = 'Topos.implies' . (id '&&&' 'Terminal.const' 'Topos.false')@. A theorem of
@@ -1296,7 +1281,7 @@ testLawvereTierney_
   => (Topos.Omega :: k) ~> Topos.Omega
   -> TestTree
 testLawvereTierney_ =
-  testLawvereTierney @k (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (BinaryProduct.withObProd @k @a @b r)))
+  testLawvereTierney @k (\ @a @b -> withTestObProdDef @a @b)
 
 testLawvereTierneyFamily_
   :: forall k
@@ -1310,7 +1295,7 @@ testLawvereTierneyFamily_
   -> ((Terminal.TerminalObject :: k) ~> Topos.Omega -> (Topos.Omega :: k) ~> Topos.Omega)
   -> TestTree
 testLawvereTierneyFamily_ name =
-  testLawvereTierneyFamily @k name (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (BinaryProduct.withObProd @k @a @b r)))
+  testLawvereTierneyFamily @k name (\ @a @b -> withTestObProdDef @a @b)
 
 -- * Sites and sheaves
 
@@ -1544,11 +1529,11 @@ testGluesBack
    . (Sheaf.HasFiniteCovers t k, Sheaf.Sheaf t p, TestableProfunctor p, TestableTypeP p, TestObIsOb k)
   => TestTree
 testGluesBack = testProperty "glues back" do
-  Some @a <- genObSuchThat @k \(Some @a) -> not (null (Sheaf.covers @t @k @a))
+  Some @a <- genObSuchThat @k \(Some @a) -> obFromTestOb @_ @a (not (null (Sheaf.covers @t @k @a)))
   Some @b <- genOb @j
   x <- genNamed @(p a b) "x"
-  obFromTestOb @a $
-    obFromTestOb @b $
+  obFromTestOb @_ @a $
+    obFromTestOb @_ @b $
       for_ (Sheaf.covers @t @k @a) \(Sheaf.SomeCover c) -> propGluesBack @t c x
 
 -- | 'propGluesBack' at one named cover, for a site whose covers cannot be listed. The label names
@@ -1562,7 +1547,7 @@ testGluesBackAt
 testGluesBackAt lbl c = testProperty ("glues back at " ++ lbl) do
   Some @b <- genOb @j
   x <- genNamed @(p a b) "x"
-  obFromTestOb @a $ obFromTestOb @b $ propGluesBack @t c x
+  obFromTestOb @_ @a $ obFromTestOb @_ @b $ propGluesBack @t c x
 
 -- | An equalizer of sheaves is a sheaf, for every coverage: the 'Sheaf.Sheaf' instance for
 -- 'FinTopos.Reindex' presupposes that the table cuts out a /subsheaf/, and this decides it, by

@@ -51,6 +51,7 @@ instance TestableProfunctor Pointed
 
 instance Testable POINTED where
   type TestOb a = (Ob a, TestOb (UN P a))
+  obFromTestOb r = r
   showOb @(P a) = showOb @_ @a
   genSome = genSomeDef @'[P Bool, P (Bool, Bool), P (Maybe Bool)]
 

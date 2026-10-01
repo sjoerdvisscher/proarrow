@@ -14,7 +14,7 @@ import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
 import Proarrow.Core (CategoryOf (..), Profunctor, Promonad (..), rmap, (\\), type (+->))
-import Proarrow.Object (Ob', obj)
+import Proarrow.Object (obj)
 
 infixr 0 .~>
 
@@ -26,7 +26,7 @@ type f .~> g = forall a. (Ob a) => f a ~> g a
 -- written as type constructors like this; the rest are encoded as representable profunctors
 -- instead ('FunctorForRep', "Proarrow.Profunctor.Representable").
 type Functor :: forall {k1} {k2}. (k1 -> k2) -> Constraint
-class (CategoryOf k1, CategoryOf k2, forall a. (Ob a) => Ob' (f a)) => Functor (f :: k1 -> k2) where
+class (CategoryOf k1, CategoryOf k2) => Functor (f :: k1 -> k2) where
   map :: a ~> b -> f a ~> f b
 
 -- | Makes a @base@-style 'P.Functor' (kind @Type -> Type@) a 'Functor', to use with @deriving via@
@@ -78,8 +78,6 @@ withMappedOb :: forall {j} {k} (f :: j +-> k) (a :: j) r. (FunctorForRep f, Ob a
 withMappedOb r = r \\ fmap @f (obj @a)
 
 -- | Recover @'Ob' (f a)@ from a 'Functor' @f@ and @'Ob' a@, the @map@-based analog of
--- 'withMappedOb'. The @'Proarrow.Object.Ob'' (f a)@ superclass of 'Functor' is a quantified
--- constraint, and GHC will not extract its own @'Ob' (f a)@ superclass on demand, so it is observed
--- from the mapped identity morphism instead.
+-- 'withMappedOb': it is observed from the mapped identity morphism.
 withObF :: forall {k1} {k2} (f :: k1 -> k2) a r. (Functor f, Ob a) => ((Ob (f a)) => r) -> r
 withObF r = r \\ map @f (obj @a)

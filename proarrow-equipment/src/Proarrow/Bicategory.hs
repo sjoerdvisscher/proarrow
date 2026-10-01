@@ -19,6 +19,7 @@ module Proarrow.Bicategory
   , rightUnitorInvWith
   , Ob0'
   , Ob'
+  , ObUnit
 
     -- * More
   , Monad (..)
@@ -60,7 +61,10 @@ class (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 instance (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 
 class (Ob (I :: kk i i)) => ObUnit kk i
-instance (Ob (I :: kk i i)) => ObUnit kk i
+
+-- Overlappable so that bicategories built from others, like products, can give their own
+-- instance in terms of the units of their parts.
+instance {-# OVERLAPPABLE #-} (Ob (I :: kk i i)) => ObUnit kk i
 
 -- | Bicategories.
 --

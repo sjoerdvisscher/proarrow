@@ -11,15 +11,13 @@ import Data.Type.Nat (SNat (..), snat)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin
-  ( CodiscreteProfunctor (..)
-  , Discrete (..)
-  , Enumerable (..)
+  ( Enumerable (..)
   , Finite (..)
   , Indexed (..)
   , ThinProfunctor (..)
   )
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 
 type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
@@ -44,7 +42,7 @@ instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :**: q)
   dagger (f :**: g) = dagger f :**: dagger g
 
 instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
-  type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)
+  type HasArrow (p :**: q) a b = (HasArrow p (Fst @ a) (Fst @ b), HasArrow q (Snd @ a) (Snd @ b))
   arr = arr :**: arr
   withArr (f :**: g) r = withArr f (withArr g r)
 
@@ -62,16 +60,6 @@ data family Diag :: k +-> (k, k)
 instance (CategoryOf k) => FunctorForRep (Diag :: k +-> (k, k)) where
   type Diag @ a = '(a, a)
   fmap f = f :**: f
-
-checkDiscrete :: (Discrete j, Discrete k) => Hom (j, k) a b -> ((a ~ b) => r) -> r
-checkDiscrete f r = withEq f r
-
--- Does not work
--- checkDiscreteProfunctor :: (DiscreteProfunctor p, DiscreteProfunctor q) => (p :**: q) a b -> r
--- checkDiscreteProfunctor f = exfalso f
-
-checkCodiscreteProfunctor :: (CodiscreteProfunctor p, CodiscreteProfunctor q, Ob a, Ob b) => (p :**: q) a b
-checkCodiscreteProfunctor = anyArr
 
 -- | The product of two enumerable kinds is enumerable, but numbering one in general needs type-level
 -- division to invert the pairing, which @fin@ does not provide, so this instance for

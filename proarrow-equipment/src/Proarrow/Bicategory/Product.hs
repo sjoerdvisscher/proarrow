@@ -2,7 +2,8 @@ module Proarrow.Bicategory.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Bicategory (Adj (..), Adjunction_ (..), Bicategory (..), Comonad (..), Monad (..))
+import Proarrow.Bicategory (Adj (..), Adjunction_ (..), Bicategory (..), Comonad (..), Monad (..), ObUnit)
+import Proarrow.Bicategory.Sub (IsObI)
 import Proarrow.Category.Instance.Product (Fst, Snd)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
@@ -36,6 +37,8 @@ instance
 instance (CategoryOf (jj (Fst @ ik) (Fst @ jl)), CategoryOf (kk (Snd @ ik) (Snd @ jl))) => CategoryOf (PRODK jj kk ik jl) where
   type (~>) = Prod
   type Ob (p :: PRODK jj kk ik jl) = (Ob (PRODFST p), Ob (PRODSND p), p ~ PROD (PRODFST p) (PRODSND p))
+
+instance (ObUnit jj (Fst @ i), ObUnit kk (Snd @ i)) => ObUnit (PRODK jj kk) i
 
 instance (Bicategory jj, Bicategory kk) => Bicategory (PRODK jj kk) where
   type Ob0 (PRODK jj kk) jk = (Ob0 jj (Fst @ jk), Ob0 kk (Snd @ jk))
@@ -72,6 +75,8 @@ instance (WithObO2 Tight jj, WithObO2 Tight kk) => WithObO2 Tight (PRODK jj kk) 
   withObO2 @p @q r = withObO2 @Tight @jj @(PRODFST p) @(PRODFST q) (withObO2 @Tight @kk @(PRODSND p) @(PRODSND q) r)
 instance (WithObO2 Cotight jj, WithObO2 Cotight kk) => WithObO2 Cotight (PRODK jj kk) where
   withObO2 @p @q r = withObO2 @Cotight @jj @(PRODFST p) @(PRODFST q) (withObO2 @Cotight @kk @(PRODSND p) @(PRODSND q) r)
+instance (IsObI Tight jj (Fst @ i), IsObI Tight kk (Snd @ i)) => IsObI Tight (PRODK jj kk) i
+instance (IsObI Cotight jj (Fst @ i), IsObI Cotight kk (Snd @ i)) => IsObI Cotight (PRODK jj kk) i
 instance (Equipment jj, Equipment kk) => Equipment (PRODK jj kk) where
   withTightAdjoint @(PROD p q) r = withTightAdjoint @jj @p (withTightAdjoint @kk @q r)
   withCotightAdjoint @(PROD p q) r = withCotightAdjoint @jj @p (withCotightAdjoint @kk @q r)

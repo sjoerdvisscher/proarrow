@@ -68,6 +68,7 @@ test =
 
 instance Testable Type where
   type TestOb a = (TestableType a, Typeable a, Function a)
+  obFromTestOb r = r
   showOb @a = show (typeRep @a)
   genSome = genSomeDef @'[Bool, (Bool, Bool), Maybe Bool, Void]
 

@@ -15,7 +15,7 @@ module Proarrow.Testing
   , TestingEqShow (..)
   , TestObIsOb
   , TestOb'
-  , obFromTestOb
+  , testObFromOb
 
     -- * Objecthood witnesses
   , WithTestOb
@@ -26,6 +26,11 @@ module Proarrow.Testing
   , WithTestObDual
   , WithTestObRep
   , WithTestObCorep
+  , withTestOb2Def
+  , withTestObProdDef
+  , withTestObCoprodDef
+  , withTestObExpDef
+  , withTestObDualDef
 
     -- * Objects
   , Some (..)
@@ -119,7 +124,6 @@ import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
-import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Corepresentable (type (%%))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
@@ -311,7 +315,7 @@ data SomeProfunctorElt p where
   SomeP :: (TestOb a, TestOb b) => p a b -> SomeProfunctorElt p
 
 someP :: forall {k} {j} (p :: k +-> j) a b. (Profunctor p, TestObIsOb j, TestObIsOb k) => p a b -> SomeProfunctorElt p
-someP p = SomeP p \\ p
+someP p = testObFromOb @a (testObFromOb @b (SomeP p)) \\ p
 
 instance
   (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (p a b), Testable k, Testable j)
@@ -333,17 +337,20 @@ class
   genProfunctorElt :: String -> Property (SomeProfunctorElt p)
   default genProfunctorElt :: (TestableTypeP p) => String -> Property (SomeProfunctorElt p)
   genProfunctorElt nm = do
-    Some @a <- genOb
-    Some @b <- genObSuchThat \(Some @b') -> isGenNonEmpty @(p a b')
+    Some @a <- genOb @k
+    Some @b <- genObSuchThat @j \(Some @b') -> isGenNonEmpty @(p a b')
     p <- genNamed @(p a b) nm
     pure $ SomeP p
 
 -- | A kind whose objects can be enumerated and displayed.
-class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor (Hom k), TestableTypeP (Hom k), CategoryOf k) => Testable k where
+class (TestableProfunctor (Hom k), TestableTypeP (Hom k), CategoryOf k) => Testable k where
   type TestOb (a :: k) :: GHC.Constraint
   type TestOb a = Ob a
   showOb :: forall (a :: k). (TestOb a) => String
   genSome :: Gen (Some k)
+  obFromTestOb :: forall (a :: k) r. (TestOb a) => ((Ob a) => r) -> r
+  default obFromTestOb :: forall (a :: k) r. (TestOb a ~ Ob a, TestOb a) => ((Ob a) => r) -> r
+  obFromTestOb r = r
 
   -- | The palette for properties whose cost grows steeply with object size: in practice those
   -- that enumerate an internal hom, which is brute force over tables and doubly exponential (an
@@ -371,6 +378,7 @@ instance (TestableProfunctor p) => TestableProfunctor (Op p) where
     pure $ SomeP (Op p)
 instance (Testable k) => Testable (OPPOSITE k) where
   type TestOb a = (Is OP a, TestOb (UN OP a))
+  obFromTestOb @(OP a) r = obFromTestOb @_ @a r
   showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
   genSome = mapSome OP <$> genSome
   genSomeSmall = mapSome OP <$> genSomeSmall
@@ -383,6 +391,7 @@ instance (TestableProfunctor p) => TestableProfunctor (Prod p) where
 
 instance (Testable k) => Testable (PROD k) where
   type TestOb a = (Is PR a, TestOb (UN PR a))
+  obFromTestOb @(PR a) r = obFromTestOb @_ @a r
   showOb @(PR a) = "PR (" ++ showOb @k @a ++ ")"
   genSome = mapSome PR <$> genSome
   genSomeSmall = mapSome PR <$> genSomeSmall
@@ -396,36 +405,30 @@ instance (TestableProfunctor p, TestableProfunctor q) => TestableProfunctor (p :
   genProfunctorElt nm = do
     SomeP p <- genProfunctorElt @p (nm ++ "_0")
     SomeP q <- genProfunctorElt @q (nm ++ "_1")
-    pure $ SomeP (p :**: q)
+    pure (SomeP (p :**: q) \\ p \\ q)
 instance (Testable j, Testable k) => Testable (j, k) where
   type TestOb a = (a ~ '(Fst @ a, Snd @ a), TestOb (Fst @ a), TestOb (Snd @ a))
+  obFromTestOb @'(a, b) r = obFromTestOb @_ @a $ obFromTestOb @_ @b r
   showOb @'(a, b) = "(" ++ showOb @j @a ++ ", " ++ showOb @k @b ++ ")"
   genSome = do
     Some @a <- genSome @j
     Some @b <- genSome @k
-    pure $ Some @'(a, b)
+    pure $ obFromTestOb @_ @a $ obFromTestOb @_ @b $ Some @'(a, b)
   genSomeSmall = do
     Some @a <- genSomeSmall @j
     Some @b <- genSomeSmall @k
-    pure $ Some @'(a, b)
+    pure $ obFromTestOb @_ @a $ obFromTestOb @_ @b $ Some @'(a, b)
 
 class (TestOb a) => TestOb' a
 instance (TestOb a) => TestOb' a
 
-class (forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
-instance (forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
+class (Testable k, forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
+instance (Testable k, forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
 
--- | Recover @'Ob' a@ from @'TestOb' a@ (the 'Testable' superclass entailment), packaged as a
--- function so that call sites with other quantified givens in scope (e.g. the comonoid supply of a
--- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category, whose head has @Ob@ as a
--- superclass) don't have to rely on GHC expanding superclasses of quantified-constraint heads.
--- With such a given in scope, @\\r -> r@ at this type fails with "Could not deduce Ob a", while
--- the same lambda compiles without it (cf. 'Proarrow.Testing.Laws.testSymMonoidal_' versus
--- 'Proarrow.Testing.Laws.testCopyDiscard_').
-obFromTestOb :: forall {k} (a :: k) r. (Testable k, TestOb a) => ((Ob a) => r) -> r
--- Seen on GHC 9.10.3, likely a solver limitation. Worth retrying without this helper after a
--- GHC upgrade.
-obFromTestOb r = r
+-- | Recover @'TestOb' a@ from @'Ob' a@ where 'TestObIsOb' provides it: the converse of
+-- 'obFromTestOb @_', a function for the same reason.
+testObFromOb :: forall {k} (a :: k) r. (TestObIsOb k, Ob a) => ((TestOb a) => r) -> r
+testObFromOb r = r
 
 -- * Objecthood witnesses
 
@@ -440,17 +443,32 @@ type WithTestOb k = forall (a :: k) r. (Ob a) => ((TestOb a) => r) -> r
 -- | @'TestOb'@ is closed under the tensor.
 type WithTestOb2 k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r
 
+withTestOb2Def :: forall {k}. (TestObIsOb k, M.Monoidal k) => WithTestOb2 k
+withTestOb2Def @a @b r = obFromTestOb @_ @a $ obFromTestOb @_ @b $ M.withOb2 @_ @a @b r
+
 -- | @'TestOb'@ is closed under the binary product.
 type WithTestObProd k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryProduct.&& b)) => r) -> r
+
+withTestObProdDef :: forall {k}. (TestObIsOb k, BinaryProduct.HasBinaryProducts k) => WithTestObProd k
+withTestObProdDef @a @b r = obFromTestOb @_ @a $ obFromTestOb @_ @b $ BinaryProduct.withObProd @_ @a @b r
 
 -- | @'TestOb'@ is closed under the binary coproduct.
 type WithTestObCoprod k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryCoproduct.|| b)) => r) -> r
 
+withTestObCoprodDef :: forall {k}. (TestObIsOb k, BinaryCoproduct.HasBinaryCoproducts k) => WithTestObCoprod k
+withTestObCoprodDef @a @b r = obFromTestOb @_ @a $ obFromTestOb @_ @b $ BinaryCoproduct.withObCoprod @_ @a @b r
+
 -- | @'TestOb'@ is closed under the internal hom.
 type WithTestObExp k = forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Exponential.~~> b)) => r) -> r
 
+withTestObExpDef :: forall {k}. (TestObIsOb k, Exponential.Closed k) => WithTestObExp k
+withTestObExpDef @a @b r = obFromTestOb @_ @a $ obFromTestOb @_ @b $ Exponential.withObExp @_ @a @b r
+
 -- | @'TestOb'@ is closed under dualization.
 type WithTestObDual k = forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r
+
+withTestObDualDef :: forall {k}. (TestObIsOb k, SA.StarAutonomous k) => WithTestObDual k
+withTestObDualDef @a r = obFromTestOb @_ @a $ SA.withObDual @_ @a r
 
 -- | @'TestOb'@ is closed under a representable profunctor.
 type WithTestObRep k p = forall (a :: k) r. (TestOb a) => ((TestOb (p % a)) => r) -> r
@@ -632,7 +650,7 @@ instance
   )
   => TestableType (Tabulated t lm rm a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Tabulated t lm rm)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(Tabulated t lm rm)))
 
 instance
   ( Testable j
@@ -650,7 +668,7 @@ instance TestingEqShow (TerminalProfunctor a b) where
   showP _ = "TerminalProfunctor"
 
 instance (Testable j, Testable k, TestOb (a :: k), TestOb (b :: j)) => TestableType (TerminalProfunctor a b) where
-  gen = obFromTestOb @a (obFromTestOb @b (oneElem TerminalProfunctor))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (oneElem TerminalProfunctor))
 
 instance (Testable j, Testable k) => TestableProfunctor (TerminalProfunctor :: j +-> k)
 
@@ -689,7 +707,7 @@ instance
   (Testable j, Testable k, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
   => TestableType (Sieve a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Sieve :: j +-> k)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(Sieve :: j +-> k)))
 
 instance (Testable j, Testable k, FiniteCat j, FiniteCat k) => TestableProfunctor (Sieve :: j +-> k)
 
@@ -708,7 +726,7 @@ instance
   (Testable j, Testable k, Finitary p, Finitary q, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
   => TestableType ((p :~>: q) a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(p :~>: q)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(p :~>: q)))
 
 instance
   (Testable j, Testable k, Finitary p, Finitary q, FiniteCat j, FiniteCat k)
@@ -739,7 +757,7 @@ instance
   (Testable j, Testable k, Finitary w, Finitary p, FiniteCat i, FiniteCat j, TestOb (a :: k), TestOb (b :: j))
   => TestableType (Rift (OP (w :: k +-> i)) p a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Rift (OP w) p)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(Rift (OP w) p)))
 
 instance
   (Testable j, Testable k, Finitary w, Finitary p, FiniteCat i, FiniteCat j)
@@ -756,7 +774,7 @@ instance
   (Testable j, Testable k, Finitary v, Finitary p, FiniteCat i, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
   => TestableType (Ran (OP (v :: i +-> j)) p a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Ran (OP v) p)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(Ran (OP v) p)))
 
 instance
   (Testable j, Testable k, Finitary v, Finitary p, FiniteCat i, FiniteCat k)
@@ -779,7 +797,7 @@ instance
   )
   => TestableType (ClosedSieve t a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(ClosedSieve t :: j +-> k)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(ClosedSieve t :: j +-> k)))
 
 instance
   (Testable j, Testable k, HasFiniteCovers t k, FiniteCat j, FiniteCat k)
@@ -798,7 +816,7 @@ instance
   (Testable j, Testable k, HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k, TestOb (a :: k), TestOb (b :: j))
   => TestableType (Plus t p a b)
   where
-  gen = obFromTestOb @a (obFromTestOb @b (genElements @(Plus t p :: j +-> k)))
+  gen = obFromTestOb @_ @a (obFromTestOb @_ @b (genElements @(Plus t p :: j +-> k)))
 
 instance
   (Testable j, Testable k, HasFiniteCovers t k, Finitary p, FiniteCat j, FiniteCat k)

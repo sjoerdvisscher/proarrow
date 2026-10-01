@@ -310,6 +310,7 @@ genTerm fuel sa sb =
 -- instance override (like 'CategoryOf FINREL'\'s own 'Ob' equation) does.
 instance Testable FREEKIND where
   type TestOb a = (KnownFree a, Ob (LowerT a))
+  obFromTestOb r = r
   showOb @a = showSFree (theFree @a)
   genSome = genSomeDef @Palette
 

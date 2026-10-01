@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfun
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), nil, unCoprod, (++))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
+import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..), withObF)
 import Proarrow.Monoid (Comonoid (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
@@ -27,13 +27,17 @@ class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where
   liftA2 :: (Ob a, Ob b) => (a ** b ~> c) -> f a ** f b ~> f c
 
 ap :: forall {j} {k} f a b. (Applicative (f :: j -> k), Closed j, Closed k, Ob a, Ob b) => f (a ~~> b) ~> f a ~~> f b
-ap = withObExp @j @a @b $ curry @k @_ @(f a) @(f b) (liftA2 @f @(a ~~> b) @a (apply @j @a))
+ap =
+  withObExp @j @a @b $
+    withObF @f @(a ~~> b) $
+      withObF @f @a $
+        curry @k @_ @(f a) @(f b) (liftA2 @f @(a ~~> b) @a (apply @j @a))
 
 fmapDefault :: forall f a b. (Applicative f) => a ~> b -> f a ~> f b
-fmapDefault f = liftA2 @_ @Unit @a (f . leftUnitor @_ @a) . leftUnitorInvWith (pure @f id) \\ f
+fmapDefault f = withObF @f @a (liftA2 @_ @Unit @a (f . leftUnitor @_ @a) . leftUnitorInvWith (pure @f id)) \\ f
 
 liftA3 :: forall f a b c d. (Applicative f, Ob a, Ob b, Ob c) => (a ** b ** c ~> d) -> f a ** f b ** f c ~> f d
-liftA3 f = withOb2 @_ @a @b (liftA2 @_ @(a ** b) @c f . first @(f c) (liftA2 @f @a @b id))
+liftA3 f = withObF @f @c $ withOb2 @_ @a @b (liftA2 @_ @(a ** b) @c f . first @(f c) (liftA2 @f @a @b id))
 
 instance (MonoidalProfunctor (p :: j +-> k), Comonoid x) => Applicative (FromProfunctor p x) where
   pure a () = FromProfunctor $ dimap counit a one
