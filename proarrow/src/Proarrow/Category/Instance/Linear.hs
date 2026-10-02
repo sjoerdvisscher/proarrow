@@ -12,12 +12,14 @@
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard'.
 module Proarrow.Category.Instance.Linear where
 
+import Control.Exception (evaluate)
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Kind (Type)
 import Data.Void (Void)
-import System.IO.Unsafe (unsafeDupablePerformIO)
+import System.IO.Unsafe (unsafeDupablePerformIO, unsafePerformIO)
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude (Bool (..), Either (..), Eq (..), Show (..), error, showParen, showString, (&&), (>))
+import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (CoprodAction)
@@ -52,6 +54,8 @@ instance Profunctor Linear where
   dimap = dimapDefault
   r \\ Linear{} = r
 instance Promonad Linear where
+  {-# INLINE id #-}
+  {-# INLINE (.) #-}
   id = Linear \x -> x
   Linear f . Linear g = Linear \x -> f (g x)
 
@@ -61,11 +65,20 @@ instance CategoryOf LINEAR where
   type Ob (a :: LINEAR) = Is L a
 
 instance MonoidalProfunctor Linear where
+  {-# INLINE one #-}
+  {-# INLINE (**) #-}
   one = id
   Linear f ** Linear g = Linear \(x, y) -> (f x, g y)
 
 -- | Tuples as monoidal tensor. Tuples are not the binary product in LINEAR.
 instance Monoidal LINEAR where
+  {-# INLINE withOb2 #-}
+  {-# INLINE leftUnitor #-}
+  {-# INLINE leftUnitorInv #-}
+  {-# INLINE rightUnitor #-}
+  {-# INLINE rightUnitorInv #-}
+  {-# INLINE associator #-}
+  {-# INLINE associatorInv #-}
   type Unit = L ()
   type L a ** L b = L (a, b)
   withOb2 r = r
@@ -77,6 +90,7 @@ instance Monoidal LINEAR where
   associatorInv = Linear \(x, (y, z)) -> ((x, y), z)
 
 instance SymMonoidal LINEAR where
+  {-# INLINE swap #-}
   swap = Linear \(x, y) -> (y, x)
 
 instance Closed LINEAR where
@@ -101,11 +115,15 @@ instance Corepresentable (Rep Forget :: LINEAR +-> Type) where
 
 -- | Forget is a lax monoidal functor
 instance MonoidalProfunctor (Rep Forget) where
+  {-# INLINE one #-}
+  {-# INLINE (**) #-}
   one = Rep \() -> ()
   Rep f ** Rep g = Rep \(x, y) -> (f x, g y)
 
 -- | Forget is also a colax monoidal functor
 instance MonoidalProfunctor (Corep Forget) where
+  {-# INLINE one #-}
+  {-# INLINE (**) #-}
   one = Corep id
   Corep f ** Corep g = Corep \(x, y) -> (f x, g y)
 
@@ -194,6 +212,8 @@ instance Copowered Type LINEAR where
   uncopower (Linear f) n = Linear \x -> f (Ur n, x)
 
 instance MonoidalProfunctor (Coprod Linear) where
+  {-# INLINE one #-}
+  {-# INLINE (**) #-}
   one = Coprod (Linear \x -> x)
   Coprod f ** Coprod g = Coprod (f +++ g)
 
@@ -245,6 +265,13 @@ questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left
 -- LINEAR is not CompactClosed. And hence it is also not traced,
 -- since any star autonomous category with a trace is compact closed.
 instance StarAutonomous LINEAR where
+  {-# INLINE withObDual #-}
+  {-# INLINE dual #-}
+  {-# INLINE dualInv #-}
+  {-# INLINE linDist #-}
+  {-# INLINE linDistInv #-}
+  {-# INLINE doubleNeg #-}
+  {-# INLINE doubleNegInv #-}
   type Dual (L a) = L (Not a)
   withObDual r = r
   dual (Linear f) = Linear (\nb a -> nb (f a))
@@ -261,15 +288,16 @@ instance IsoMix LINEAR where
   dualUnitInv = Linear (\() u -> u)
   dualityCounit = Linear (\(na, a) -> na a)
 
--- | Double negation is possible with linear functions, though using `unsafeDupablePerformIO`.
+-- | Double negation is possible with linear functions, though using `unsafePerformIO`.
 -- Derived from https://gist.github.com/ant-arctica/7563282c57d9d1ce0c4520c543187932
--- TODO: only tested in GHCi, might get ruined by optimizations
 dn :: Not (Not a) %1 -> a
-dn nna =
-  let ref = unsafeDupablePerformIO (newIORef (error "Linear.dn: write failed"))
-  in case nna (unsafeLinear (fill ref)) of () -> unsafeDupablePerformIO (readIORef ref)
-  where
-    fill ref x = unsafeDupablePerformIO (writeIORef ref x)
+-- One IO action that depends on the argument, so that optimisation can't share the reference
+-- between calls by floating it out.
+dn = unsafeLinear \nna ->
+  unsafePerformIO
+    ( newIORef (error "Linear.dn: the continuation was not called") P.>>= \ref ->
+        evaluate (nna (unsafeLinear \x -> unsafeDupablePerformIO (writeIORef ref x))) P.>> readIORef ref
+    )
 
 unsafeLinear :: (a -> b) -> (a %1 -> b)
 unsafeLinear = unsafeCoerce

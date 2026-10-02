@@ -110,6 +110,57 @@ linDistInvS
   :: forall {k} (a :: k) (b :: k) c. (StarAutonomous k, Ob b, Ob c) => '[a] ~> '[Dual (b ** c)] -> '[a, b] ~> '[Dual c]
 linDistInvS f@Str{} = withObDual @k @c (Str (linDistInv @k @a @b @c (unStr f)) \\ obj1 @(Dual c))
 
+-- | Par, the dual of the tensor of the duals.
+type Par :: forall {k}. k -> k -> k
+type Par a b = Dual (Dual a ** Dual b)
+
+-- | Recovers @'Ob' ('Par' a b)@, and the objecthood of the duals it is made of, from the objecthood
+-- of @a@ and @b@.
+withObPar
+  :: forall {k} (a :: k) b r. (StarAutonomous k, Ob a, Ob b) => ((Ob (Dual a), Ob (Dual b), Ob (Par a b)) => r) -> r
+withObPar r = withObDual @k @a (withObDual @k @b (withOb2 @k @(Dual a) @(Dual b) (withObDual @k @(Dual a ** Dual b) r)))
+
+-- | 'Par'\'s action on arrows.
+par :: forall {k} (a :: k) b c d. (StarAutonomous k) => a ~> c -> b ~> d -> Par a b ~> Par c d
+par f g = dual (dual f ** dual g)
+
+-- | The symmetry of 'Par'.
+parSwap :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => Par a b ~> Par b a
+parSwap = withObPar @a @b (dual (swap @k @(Dual b) @(Dual a)))
+
+-- | Linear distributivity: the tensor distributes into the left of a 'Par'. Given the dual of
+-- @a '**' b@, the @a@ turns it into the dual of @b@, which the 'Par' answers with @c@.
+weakDistL :: forall {k} (a :: k) b c. (StarAutonomous k, Ob a, Ob b, Ob c) => a ** Par b c ~> Par (a ** b) c
+weakDistL =
+  withObPar @b @c
+    ( withOb2 @k @a @b
+        ( withObDual @k @(a ** b)
+            ( withOb2 @k @a @(Par b c)
+                ( linDist @k @(a ** Par b c) @(Dual (a ** b)) @(Dual c)
+                    ( linDistInv @k @(Par b c) @(Dual b) @(Dual c) id
+                        . (obj @(Par b c) ** linDistInv @k @(Dual (a ** b)) @a @b id)
+                        . (obj @(Par b c) ** swap @k @a @(Dual (a ** b)))
+                        . associator @k @(Par b c) @a @(Dual (a ** b))
+                        . (swap @k @a @(Par b c) ** obj @(Dual (a ** b)))
+                    )
+                )
+            )
+        )
+    )
+
+-- | Linear distributivity on the other side, from 'weakDistL' by symmetry.
+weakDistR :: forall {k} (a :: k) b c. (StarAutonomous k, Ob a, Ob b, Ob c) => Par a b ** c ~> Par a (b ** c)
+weakDistR =
+  withObPar @b @a
+    ( withOb2 @k @c @b
+        ( par (obj @a) (swap @k @c @b)
+            . parSwap @(c ** b) @a
+            . weakDistL @c @b @a
+            . swap @k @(Par b a) @c
+            . (parSwap @a @b ** obj @c)
+        )
+    )
+
 type ExpSA a b = Dual (a ** Dual b)
 
 currySA :: forall {k} (a :: k) b c. (StarAutonomous k, Ob a, Ob b) => a ** b ~> c -> a ~> ExpSA b c

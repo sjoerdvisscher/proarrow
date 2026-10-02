@@ -40,7 +40,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Tools.SMC (SYN (..), lam, toSMC, ($$))
+import Proarrow.Tools.SMC (SYN (..), lam, toSMC, (!))
 
 -- | The glass flavor. Its one method is the collapsed leg; everything is stated in a cartesian
 -- closed category, where the residual can be copied and selectors can be internalised.
@@ -140,7 +140,7 @@ type Glass' s a = Glass s s a a
 
 -- | Evaluation at a point: @s@ goes to the functions out of it, applied to it.
 evalAt :: forall {k} (s :: k) a. (Closed k, SymMonoidal k, Ob s, Ob a) => s ~> ((s ~~> a) ~~> a)
-evalAt = toSMC @(F s) @((F s :-> F a) :-> F a) \s -> lam ($$ s)
+evalAt = toSMC @(F s) @((F s :-> F a) :-> F a) \s -> lam (! s)
 
 -- | Build a glass from its single leg. The residuals are the whole source and the "logarithm"
 -- @s ~~> a@, so the witness is the lens witness at @s@ composed with the grate witness at @s ~~> a@.

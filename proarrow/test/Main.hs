@@ -11,6 +11,7 @@ import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
 import Examples.LinearLogic qualified as LinearLogic
+import Examples.Sessions qualified as Sessions
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
@@ -92,6 +93,7 @@ main =
           , ULC.test
           , IntComposition.test
           , LinearLogic.test
+          , Sessions.test
           , Toffoli.test
           , Vitrea.test
           ]

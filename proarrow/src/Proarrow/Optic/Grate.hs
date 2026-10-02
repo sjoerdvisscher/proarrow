@@ -35,7 +35,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Tools.SMC (SYN (..), lam, toSMC, ($$))
+import Proarrow.Tools.SMC (SYN (..), lam, toSMC, (!))
 
 -- | A grate is a "residual lens" whose residual @m@ sits under an exponential instead of a
 -- tensor: @s ~> (m ~~> a)@ and @(m ~~> b) ~> t@. Unlike a 'Proarrow.Optic.Traversal.Traversal',
@@ -55,7 +55,7 @@ flipExp
   :: forall {k} (x :: k) m a
    . (Closed k, SymMonoidal k, Ob x, Ob m, Ob a)
   => (x ~~> (m ~~> a)) ~> (m ~~> (x ~~> a))
-flipExp = toSMC @(F x :-> F m :-> F a) @(F m :-> F x :-> F a) \f -> lam \m -> lam \x -> f $$ x $$ m
+flipExp = toSMC @(F x :-> F m :-> F a) @(F m :-> F x :-> F a) \f -> lam \m -> lam \x -> f ! x ! m
 
 instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid m) => GrateFl (Rep (Exp m) :: k +-> k) (Corep (Exp m) :: k +-> k) where
   zipWithP @_ @a (Rep sm) (Corep mbt) @x kk = mbt . (kk ^^^ obj @m) . flipExp @x @m @a . (sm ^^^ obj @x)

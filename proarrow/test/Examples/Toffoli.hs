@@ -54,8 +54,7 @@ data Gates q = Gates
   }
 
 toffoliWith :: forall {k} (q :: k). (SymMonoidal k, Ob q) => Gates q -> q ** q ** q ~> q ** q ** q
-toffoliWith gates = toSMC @(F q :** F q :** F q) \p -> SMC.do
-  ((a0, b0), x0) <- p
+toffoliWith gates = toSMC @(F q :** F q :** F q) \(a0, b0, x0) -> SMC.do
   (a1, x1) <- cnot a0 (h x0)
   (b1, x2) <- cnot b0 (t' x1)
   (a2, x3) <- cnot a1 (t x2)

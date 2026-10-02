@@ -59,6 +59,8 @@ instance StarAutonomous (KLEISLI (Cont (r :: Type))) where
   dualInv (Kleisli (Cont f)) = Kleisli (Cont \k b -> f (\g -> g b) k)
   linDist (Kleisli (Cont f)) = Kleisli (Cont \k a -> k (\(b, c) -> f (\g -> g c) (a, b)))
   linDistInv (Kleisli (Cont f)) = Kleisli (Cont \k (a, b) -> k (\c -> f (\g -> g (b, c)) a))
+  doubleNeg = Kleisli (Cont \k nn -> nn k)
+  doubleNegInv = Kleisli (Cont \k a -> k (\g -> g a))
 instance Closed (KLEISLI (Cont (r :: Type))) where
   type a ~~> b = ExpSA a b
   withObExp r = r

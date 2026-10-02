@@ -18,19 +18,25 @@
 -- Every variable has an id, the number of binders around it, and a context lists its variables
 -- by descending id. Merging compares ids, so it only reduces where the depths are known, which is
 -- the case for terms built directly inside 'toSMC'. A reusable piece that binds variables of its
--- own is compiled on its own and used through 'call'.
+-- own is compiled on its own: with 'closed' when it has no inputs, and used through 'call'
+-- otherwise.
 --
 -- The module also provides @do@ notation, for use with @QualifiedDo@:
 --
--- > import Proarrow.Tools.SMC (SYN (..), toSMC, (*))
+-- > import Prelude hiding ((*))
+-- > import Proarrow.Tools.SMC (SYN (..), lift, toSMC, (*))
 -- > import Proarrow.Tools.SMC qualified as SMC
 -- >
--- > rotT = toSMC @(F a :** F b :** F c) \x -> SMC.do
--- >   ((a, b), c) <- x
--- >   b * c * a
+-- > rot2T = toSMC @(F a :** F b :** F c) \x -> SMC.do
+-- >   (b, c, a) <- lift @(F a :** F b :** F c) @(F b :** F c :** F a) rotT x
+-- >   c * a * b
 --
--- A bind takes its right hand side apart with a pattern of (nested) pairs, as 'split' does, and
--- the rest of the block must use every variable exactly once.
+-- Without the import of '(*)', Prelude's is used on terms, and GHC reports that as variables used
+-- more than once (@Many@ against @One@) and mismatched depths, not as a missing instance.
+--
+-- A bind takes its right hand side apart with a pattern of (nested) tuples, as 'split' does, and
+-- the rest of the block must use every variable exactly once. The argument of 'toSMC' is such a
+-- pattern too, as in 'rotT', and @()@ there compiles a term without inputs.
 --
 -- With @RecursiveDo@, a @rec@ block traces, so it needs a traced monoidal category. Its variables
 -- that are used before they are bound are fed back, and the others are passed on to the rest of
@@ -44,11 +50,11 @@
 -- 'loop' traces without GHC's translation, so it has neither restriction, but the type of the fed
 -- back variable has to be given.
 --
--- The approach follows Bernardy and Spiwack,
+-- The module is inspired by Bernardy and Spiwack,
 -- [Evaluating Linear Functions to Symmetric Monoidal Categories](https://arxiv.org/abs/2103.06195), whose
 -- @P k r a@ ports correspond to 'Term', @encode@ to 'lift', @decode@ to 'toSMC', @(!:)@ to
--- '(*)' and @split@ to 'split'. It keeps the context thinned instead of computing in the
--- cartesian structure and arguing afterwards that the result is monoidal.
+-- '(*)' and @split@ to 'split'. Unlike their implementation, it keeps the context thinned instead
+-- of computing in the cartesian structure and arguing afterwards that the result is monoidal.
 module Proarrow.Tools.SMC
   ( -- * Types
     SYN (..)
@@ -63,6 +69,7 @@ module Proarrow.Tools.SMC
   , dup
   , drop
   , call
+  , closed
   , (*)
   , split
   , unit
@@ -70,13 +77,22 @@ module Proarrow.Tools.SMC
   , loop
   , produce
   , annihilate
-  , ($$)
+  , (!)
 
-    -- * Classical
-    -- $classical
+    -- * Inputs and outputs
+    -- $inout
+  , Consumer
+  , Command
+  , type (:##)
   , cut
-  , refute
-  , byContradiction
+  , (|>)
+  , accept
+  , emit
+  , CoPat
+  , CoTy
+  , both
+  , asConsumer
+  , asProducer
 
     -- * Additives
     -- $additives
@@ -106,6 +122,7 @@ module Proarrow.Tools.SMC
   , mfix
   , fail
   , Bind
+  , Binds
   , Pat
   , Ret
   , Rec
@@ -125,6 +142,8 @@ module Proarrow.Tools.SMC
   , dniT
   , dneT
   , contraT
+  , parSwapT
+  , weakDistT
   , distT
   , swapEitherT
   , bothWaysT
@@ -149,7 +168,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
-import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..), dualityCounitSA)
+import Proarrow.Category.Monoidal.StarAutonomous (Par, StarAutonomous (..), dualityCounitSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal, trace)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -160,8 +179,10 @@ import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object (Obj)
 
 infixl 7 *
-infixl 8 $$
+infixl 1 |>
+infixl 8 !
 infixl 7 :**
+infixl 7 :##
 infixl 6 :&&
 infixl 6 :||
 infixr 5 :->
@@ -199,33 +220,43 @@ class (CategoryOf k) => KnownObj (s :: SYN k) where
   withSynOb :: ((Ob (Interp s)) => r) -> r
 
 instance (CategoryOf k, Ob (a :: k)) => KnownObj (F a) where
+  {-# INLINE withSynOb #-}
   withSynOb r = r
 
 instance (Monoidal k) => KnownObj (I :: SYN k) where
+  {-# INLINE withSynOb #-}
   withSynOb r = r
 
 instance (Monoidal k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :** b) where
+  {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withSynOb @b (withOb2 @k @(Interp a) @(Interp b) r))
 
 instance (Closed k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :-> b) where
+  {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withSynOb @b (withObExp @k @(Interp a) @(Interp b) r))
 
 instance (StarAutonomous k, KnownObj (a :: SYN k)) => KnownObj (D a) where
+  {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withObDual @k @(Interp a) r)
 
 instance (HasBinaryProducts k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :&& b) where
+  {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withSynOb @b (withObProd @k @(Interp a) @(Interp b) r))
 
 instance (HasTerminalObject k) => KnownObj (Top :: SYN k) where
+  {-# INLINE withSynOb #-}
   withSynOb r = r
 
 instance (HasBinaryCoproducts k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :|| b) where
+  {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withSynOb @b (withObCoprod @k @(Interp a) @(Interp b) r))
 
 instance (HasInitialObject k) => KnownObj (Zero :: SYN k) where
+  {-# INLINE withSynOb #-}
   withSynOb r = r
 
 -- | The identity on the object a type expression stands for.
+{-# INLINE synOb #-}
 synOb :: forall {k} (s :: SYN k). (KnownObj s) => Obj (Interp s)
 synOb = withSynOb @s (obj @(Interp s))
 
@@ -247,7 +278,7 @@ type family Mul g where
 -- the context to @a@.
 type Term :: forall {k}. Nat -> Ctx k -> SYN k -> Type
 data Term d g a where
-  MkTerm :: (Interp (Mul g) ~> Interp a) %Many -> Term d g a
+  MkTerm :: (Interp (Mul g) ~> Interp a) -> Term d g a
 
 -- | A context that is known to be empty or not, all the way down.
 type KnownCtx :: forall {k}. Ctx k -> Constraint
@@ -255,27 +286,30 @@ class KnownCtx (g :: Ctx k) where
   -- | Case analysis on the context, which is what lets @'Mul' ('(n, a) ': g)@ reduce.
   ctxCase :: ((g ~ '[]) => r) -> (forall n a g'. (g ~ ('(n, a) ': g'), KnownObj a, KnownCtx g') => r) -> r
 
+  -- | The tensor of a context is an object. A method rather than a function over 'ctxCase', so that
+  -- at a known context it is not recursive and can be inlined.
+  withCtxOb :: (Monoidal k) => ((Ob (Interp (Mul g))) => r) -> r
+
 instance KnownCtx ('[] :: Ctx k) where
+  {-# INLINE ctxCase #-}
+  {-# INLINE withCtxOb #-}
   ctxCase e _ = e
+  withCtxOb r = r
 
 instance (KnownObj a, KnownCtx g) => KnownCtx ('(n, a) ': g) where
+  {-# INLINE ctxCase #-}
+  {-# INLINE withCtxOb #-}
   ctxCase _ c = c
-
--- | The tensor of a context is an object.
-withCtxOb :: forall {k} (g :: Ctx k) r. (Monoidal k, KnownCtx g) => ((Ob (Interp (Mul g))) => r) -> r
-withCtxOb r =
-  ctxCase @g
-    r
-    ( \ @_ @a @g' ->
-        ctxCase @g' (withSynOb @a r) (withCtxOb @g' (withSynOb @a (withOb2 @k @(Interp (Mul g')) @(Interp a) r)))
-    )
+  withCtxOb r = ctxCase @g (withSynOb @a r) (withCtxOb @g (withSynOb @a (withOb2 @_ @(Interp (Mul g)) @(Interp a) r)))
 
 -- | The identity on the tensor of a context.
+{-# INLINE ctxOb #-}
 ctxOb :: forall {k} (g :: Ctx k). (Monoidal k, KnownCtx g) => Obj (Interp (Mul g))
 ctxOb = withCtxOb @g (obj @(Interp (Mul g)))
 
 -- | A new variable on the right of a context: a unitor if the context was empty, and nothing
 -- otherwise.
+{-# INLINE snoc #-}
 snoc
   :: forall {k} n (a :: SYN k) g
    . (Monoidal k, KnownObj a, KnownCtx g) => Interp (Mul g) ** Interp a ~> Interp (Mul ('(n, a) ': g))
@@ -302,10 +336,14 @@ class (KnownCtx g1, KnownCtx g2) => Merge (g1 :: Ctx k) g2 where
   unmerge :: Interp (Mul g1) ** Interp (Mul g2) ~> Interp (Mul (Union g1 g2))
 
 instance (Monoidal k, KnownCtx g2) => Merge ('[] :: Ctx k) g2 where
+  {-# INLINE merge #-}
+  {-# INLINE unmerge #-}
   merge = withCtxOb @g2 leftUnitorInv
   unmerge = withCtxOb @g2 leftUnitor
 
 instance (Monoidal k, KnownCtx ('(n, a) ': g1)) => Merge ('(n, a) ': g1 :: Ctx k) '[] where
+  {-# INLINE merge #-}
+  {-# INLINE unmerge #-}
   merge = withCtxOb @('(n, a) ': g1) rightUnitorInv
   unmerge = withCtxOb @('(n, a) ': g1) rightUnitor
 
@@ -319,6 +357,8 @@ instance
   )
   => Merge ('(n, a) ': g1 :: Ctx k) ('(m, b) ': g2)
   where
+  {-# INLINE merge #-}
+  {-# INLINE unmerge #-}
   merge = mergeBy @(CmpNat n m) @('(n, a) ': g1) @('(m, b) ': g2)
   unmerge = unmergeBy @(CmpNat n m) @('(n, a) ': g1) @('(m, b) ': g2)
 
@@ -340,6 +380,8 @@ instance
   )
   => MergeBy GT ('(n, a) ': g1) ('(m, b) ': g2)
   where
+  {-# INLINE mergeBy #-}
+  {-# INLINE unmergeBy #-}
   mergeBy =
     withCtxOb @('(m, b) ': g2)
       ( withSynOb @a
@@ -374,6 +416,8 @@ instance
   )
   => MergeBy LT ('(n, a) ': g1) ('(m, b) ': g2)
   where
+  {-# INLINE mergeBy #-}
+  {-# INLINE unmergeBy #-}
   mergeBy =
     ctxCase @g2
       (ctxOb @('(m, b) ': '(n, a) ': g1))
@@ -388,41 +432,56 @@ instance
       )
 
 -- | The variable with id @n@: the identity on its type.
+{-# INLINE var #-}
 var :: forall {k} n (a :: SYN k) d. (CategoryOf k, KnownObj a) => Term d '[ '(n, a)] a
 var = withSynOb @a (MkTerm (obj @(Interp a)))
 
--- | Compile a function on terms, whose argument is used exactly once, to a morphism.
+-- | Compile a function on terms to a morphism. Its argument is a pattern, as on the left of a bind
+-- in @do@ notation: a variable, which must be used exactly once, @()@ for the unit, or a pair of
+-- patterns.
+{-# INLINE toSMC #-}
 toSMC
-  :: forall {k} (a :: SYN k) b d
-   . (Monoidal k, KnownObj a)
-  => (Term d '[ '(0, a)] a %1 -> Term 1 '[ '(0, a)] b)
+  :: forall {k} (a :: SYN k) b t cont
+   . (Monoidal k, Binds t 0 a cont '[] b)
+  => (t %1 -> cont)
   -> Interp a ~> Interp b
-toSMC k = case k (var @0 @a) of MkTerm f -> f
+toSMC k = case bound @0 @'[] @a @b k of MkTerm f -> f
 
 -- | Copy a term whose type is a comonoid, in "Proarrow.Tools.SMC": @(x1, x2) <- dup x@.
+{-# INLINE dup #-}
 dup :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s %1 -> Term d g (s :** s)
 dup = lift @s @(s :** s) comult
 
 -- | Discard a term whose type is a comonoid, in "Proarrow.Tools.SMC": @() <- drop x@.
+{-# INLINE drop #-}
 drop :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s %1 -> Term d g I
 drop = lift @s @I counit
 
 -- | Lift a morphism of the target category to a function on terms.
+{-# INLINE lift #-}
 lift :: forall {k} (a :: SYN k) b d g. (CategoryOf k) => (Interp a ~> Interp b) -> Term d g a %1 -> Term d g b
 lift f (MkTerm t) = MkTerm (f . t)
 
--- | Use a function on terms inside another term, compiled on its own with 'toSMC'. This is how
--- a reusable piece that binds variables of its own is used, and unlike 'lift' of the compiled
--- morphism it needs no type annotations.
+-- | A term without variables, written at depth 0, for use at any depth. A reusable piece that
+-- has no inputs but binds variables of its own is defined with it.
+{-# INLINE closed #-}
+closed :: forall {k} (a :: SYN k) d. Term 0 '[] a -> Term d '[] a
+closed t = retag t
+
+-- | Use a function on terms inside another term, compiled on its own with 'toSMC', so that its
+-- argument is a pattern too. This is how a reusable piece that binds variables of its own is used,
+-- and unlike 'lift' of the compiled morphism it needs no type annotations.
+{-# INLINE call #-}
 call
-  :: forall {k} (a :: SYN k) b d g d'
-   . (Monoidal k, KnownObj a)
-  => (Term d' '[ '(0, a)] a %1 -> Term 1 '[ '(0, a)] b)
+  :: forall {k} (a :: SYN k) b d g t cont
+   . (Monoidal k, Binds t 0 a cont '[] b)
+  => (t %1 -> cont)
   -> Term d g a
   %1 -> Term d g b
-call f = lift (toSMC f)
+call f = lift @a @b (toSMC @a @b f)
 
 -- | Two terms side by side. Their contexts must be disjoint.
+{-# INLINE (*) #-}
 (*)
   :: forall {k} d g1 g2 (a :: SYN k) b
    . (Monoidal k, Merge g1 g2)
@@ -431,6 +490,7 @@ MkTerm f * MkTerm g = MkTerm ((f ** g) . merge @g1 @g2)
 
 -- | Two new variables @(n, a)@ and @(m, b)@ on the right of the context @r@, for 'split'. When @r@
 -- is empty the pair is the whole context.
+{-# INLINE push2 #-}
 push2
   :: forall {k} r n (a :: SYN k) m b g
    . (Monoidal k, KnownObj a, KnownObj b, Merge r g)
@@ -442,6 +502,7 @@ push2 p =
     (associatorInv' (ctxOb @r) (synOb @a) (synOb @b) . (ctxOb @r ** p) . merge @r @g)
 
 -- | Take a tensor apart: the continuation gets a variable for each side and must use both.
+{-# INLINE split #-}
 split
   :: forall {k} d g r (a :: SYN k) b c da db
    . (Monoidal k, KnownObj a, KnownObj b, Merge r g)
@@ -455,66 +516,103 @@ split (MkTerm p) k = case k (var @d @a) (var @(d + 1) @b) of
   MkTerm body -> MkTerm (body . push2 @r @d @a @(d + 1) @b @g p)
 
 -- | The unit, which uses no variables.
+{-# INLINE unit #-}
 unit :: forall {k} d. (Monoidal k) => Term d ('[] :: Ctx k) I
 unit = MkTerm id
 
--- | Bind a variable, which the body must use exactly once. This needs the category to be closed.
+-- | Bind a pattern, as for 'toSMC', whose variables the body must use exactly once. This needs the
+-- category to be closed.
+{-# INLINE lam #-}
 lam
-  :: forall {k} d r (a :: SYN k) b da
-   . (Closed k, KnownObj a, KnownCtx r)
-  => (Term da '[ '(d, a)] a %1 -> Term (d + 1) ('(d, a) ': r) b)
+  :: forall {k} d r (a :: SYN k) b t cont
+   . (Closed k, Binds t d a cont r b)
+  => (t %1 -> cont)
   %1 -> Term d r (a :-> b)
-lam k = case k (var @d @a) of
+lam k = case bound @d @r @a @b k of
   MkTerm body -> withCtxOb @r (withSynOb @a (MkTerm (curry @k @(Interp (Mul r)) @(Interp a) (body . snoc @d @a @r))))
 
--- | Trace: bind a variable for the value fed back, which the body must use exactly once, and
--- return it again next to the result. This needs the category to be traced.
+-- | The body of a binder, with the pattern taking apart its new variable: what 'toSMC', 'lam',
+-- 'loop' and 'accept' share.
+{-# INLINE bound #-}
+bound
+  :: forall {k} d r (a :: SYN k) b t cont
+   . (Binds t d a cont r b)
+  => (t %1 -> cont)
+  %1 -> Term (d + 1) ('(d, a) ': r) b
+bound k = var @d @a @(d + 1) >>= k
+
+-- | Trace: bind a pattern, as for 'toSMC', for the value fed back, whose variables the body must
+-- use exactly once, and return it again next to the result. This needs the category to be traced.
+{-# INLINE loop #-}
 loop
-  :: forall {k} (u :: SYN k) b d r du
-   . (TracedMonoidal k, KnownObj u, KnownObj b, KnownCtx r)
-  => (Term du '[ '(d, u)] u %1 -> Term (d + 1) ('(d, u) ': r) (b :** u))
+  :: forall {k} (u :: SYN k) b d r t cont
+   . (TracedMonoidal k, KnownObj b, Binds t d u cont r (b :** u))
+  => (t %1 -> cont)
   %1 -> Term d r b
-loop k = case k (var @d @u) of
+loop k = case bound @d @r @u @(b :** u) k of
   MkTerm body ->
     withCtxOb @r
-      ( withSynOb @u
-          (withSynOb @b (MkTerm (trace @(~>) @(Interp u) @(Interp (Mul r)) @(Interp b) (body . snoc @d @u @r))))
-      )
+      (withSynOb @u (withSynOb @b (MkTerm (trace @(~>) @(Interp u) @(Interp (Mul r)) @(Interp b) (body . snoc @d @u @r)))))
 
 -- | A new pair of wires, a variable and its dual, from nothing: the unit of the duality. This
 -- needs the category to be compact closed.
+{-# INLINE produce #-}
 produce :: forall {k} (a :: SYN k) d. (CompactClosed k, KnownObj a) => Term d '[] (a :** D a)
 produce = withSynOb @a (MkTerm (dualityUnit @k @(Interp a)))
 
 -- | Join a dual and its wire into nothing: the counit of the duality, which an isomix category
 -- has.
+{-# INLINE annihilate #-}
 annihilate
   :: forall {k} (a :: SYN k) d g1 g2
    . (IsoMix k, KnownObj a, Merge g1 g2)
-  => Term d g1 (D a) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) I
+  => Consumer d g1 a %1 -> Term d g2 a %1 -> Term d (Union g1 g2) I
 annihilate x y = lift @(D a :** a) @I (withSynOb @a (dualityCounit @k @(Interp a))) (x * y)
 
--- $classical
--- In a *-autonomous category the dual of @a@ is a way to refute it: a term of @'D' a@ turns an @a@
--- into the unit of par, @'D' 'I'@. With 'refute' and 'byContradiction' this is classical linear
--- logic in the style of continuations, which needs no compact closure: 'produce' does.
+-- $inout
+-- In a *-autonomous category a term of @'D' a@ consumes an @a@. Terms then read as in System L
+-- (the μμ̃-calculus): a 'Term' produces, a 'Consumer' consumes, and a 'Command' is the two meeting
+-- in a 'cut', a term of @'D' 'I'@. A command can have any number of inputs and outputs. None of
+-- this needs compact closure: 'produce' does.
 
--- | A dual meets its wire, into the unit of par @'D' 'I'@. This needs the category to be
--- *-autonomous.
+-- | A consumer of @a@: a term of its dual.
+type Consumer :: forall {k}. Nat -> Ctx k -> SYN k -> Type
+type Consumer d g a = Term d g (D a)
+
+-- | A producer and a consumer meeting: a term of the unit of par.
+type Command :: forall {k}. Nat -> Ctx k -> Type
+type Command d g = Term d g (D I)
+
+-- | Par, the dual of the tensor of the duals, interpreted as 'Proarrow.Category.Monoidal.StarAutonomous.Par'.
+type (:##) :: forall {k}. SYN k -> SYN k -> SYN k
+type a :## b = D (D a :** D b)
+
+-- | A consumer meets a producer: @cut k t@ gives @t@ to @k@, like applying a continuation. This
+-- needs the category to be *-autonomous.
+{-# INLINE cut #-}
 cut
   :: forall {k} (a :: SYN k) d g1 g2
    . (StarAutonomous k, KnownObj a, Merge g1 g2)
-  => Term d g1 (D a) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) (D I)
+  => Consumer d g1 a %1 -> Term d g2 a %1 -> Command d (Union g1 g2)
 cut x y = lift @(D a :** a) @(D I) (withSynOb @a (dualityCounitSA @(Interp a))) (x * y)
 
--- | Refute @a@: bind a variable for it, which the body must use exactly once to reach the unit of
--- par.
-refute
-  :: forall {k} d r (a :: SYN k) da
-   . (StarAutonomous k, KnownObj a, KnownCtx r)
-  => (Term da '[ '(d, a)] a %1 -> Term (d + 1) ('(d, a) ': r) (D I))
-  %1 -> Term d r (D a)
-refute k = case k (var @d @a) of
+-- | 'cut' with the producer first, as System L writes @⟨t | k⟩@: @t |> k@ sends @t@ into @k@.
+{-# INLINE (|>) #-}
+(|>)
+  :: forall {k} (a :: SYN k) d g1 g2
+   . (StarAutonomous k, KnownObj a, Merge g2 g1)
+  => Term d g1 a %1 -> Consumer d g2 a %1 -> Command d (Union g2 g1)
+t |> k = cut k t
+
+-- | Bind an input: a pattern for an @a@, as for 'toSMC', whose variables the command must use
+-- exactly once, gives a consumer of @a@. As logic, this refutes @a@.
+{-# INLINE accept #-}
+accept
+  :: forall {k} d r (a :: SYN k) t cont
+   . (StarAutonomous k, Binds t d a cont r (D I))
+  => (t %1 -> cont)
+  %1 -> Consumer d r a
+accept k = case bound @d @r @a @(D I) k of
   MkTerm body ->
     withCtxOb @r
       ( withSynOb @a
@@ -525,15 +623,110 @@ refute k = case k (var @d @a) of
           )
       )
 
--- | Proof by contradiction: assume a refutation of @a@ and reach the unit of par. The classical
--- rule, 'doubleNeg' after 'refute'.
-byContradiction
-  :: forall {k} d r (a :: SYN k) da
-   . (StarAutonomous k, KnownObj a, KnownCtx r)
-  => (Term da '[ '(d, D a)] (D a) %1 -> Term (d + 1) ('(d, D a) ': r) (D I))
+-- | Bind an output: a consumer of @a@, which the command must use exactly once, gives a producer of
+-- @a@. As logic, this is proof by contradiction, and in Haskell it is @callCC@. The consumer can be
+-- taken apart with a pattern that describes @a@ from the other side: a pair for a par, giving a
+-- consumer of each side, and @()@ for the unit of par, @'D' 'I'@.
+{-# INLINE emit #-}
+emit
+  :: forall {k} d r (a :: SYN k) t cont
+   . (StarAutonomous k, CoPat t a, Binds t d (CoTy t a) cont r (D I))
+  => (t %1 -> cont)
   %1 -> Term d r a
-byContradiction k = case refute @d @r @(D a) k of
-  MkTerm t -> withSynOb @a (MkTerm (doubleNeg @k @(Interp a) . t))
+emit k = lift @(D (CoTy t a)) @a (coEmit @t @a) (accept @d @r @(CoTy t a) k)
+
+-- | What a pattern for an output takes apart: the consumer of a par as the tensor of the consumers
+-- of its sides, the consumer of the unit of par as the unit, and anything else as it is. A triple
+-- or quadruple is pairs nested to the left.
+type CoTy :: forall {k}. Type -> SYN k -> SYN k
+type family CoTy t a where
+  CoTy (x, y) (D (D a :** D b)) = CoTy x a :** CoTy y b
+  CoTy (x, y, z) a = CoTy ((x, y), z) a
+  CoTy (w, x, y, z) a = CoTy (((w, x), y), z) a
+  CoTy () (D I) = I
+  CoTy t a = D a
+
+-- | A pattern for an output of type @a@: 'emit' binds what the pattern takes apart, @'CoTy' t a@,
+-- and makes the output from a consumer of it with 'coEmit'.
+type CoPat :: forall {k}. Type -> SYN k -> Constraint
+class (KnownObj a, KnownObj (CoTy t a)) => CoPat t (a :: SYN k) where
+  -- | The output, from a consumer of what the pattern takes apart.
+  coEmit :: Interp (D (CoTy t a)) ~> Interp a
+
+  -- | What the pattern takes apart, from a consumer of the output: nothing to do for a variable,
+  -- and otherwise a morphism.
+  coView :: ((CoTy t a ~ D a) => r) -> ((Interp (D a) ~> Interp (CoTy t a)) -> r) -> r
+
+-- | What a pattern takes apart, from a consumer of the output, as a morphism.
+{-# INLINE coPat #-}
+coPat :: forall {k} t (a :: SYN k). (StarAutonomous k, CoPat t a) => Interp (D a) ~> Interp (CoTy t a)
+coPat = coView @t @a (synOb @(D a)) (\f -> f)
+
+instance
+  {-# INCOHERENT #-}
+  (StarAutonomous k, a ~ D (D p :** D q), CoPat x p, CoPat y q)
+  => CoPat (x, y) (a :: SYN k)
+  where
+  {-# INLINE coEmit #-}
+  {-# INLINE coView #-}
+
+  -- a par with variables on both sides is already the dual of the tensor of their consumers
+  coEmit =
+    coView @x @p
+      (coView @y @q (synOb @a) (\g -> dual (synOb @(D p) ** g)))
+      (\f -> dual (f ** coPat @y @q))
+  coView _ m = m (withSynOb @(D p :** D q) ((coPat @x @p ** coPat @y @q) . doubleNeg @k @(Interp (D p :** D q))))
+
+instance
+  {-# INCOHERENT #-}
+  (CoPat ((x, y), z) a, KnownObj a, KnownObj (CoTy ((x, y), z) a))
+  => CoPat (x, y, z) a
+  where
+  {-# INLINE coEmit #-}
+  {-# INLINE coView #-}
+  coEmit = coEmit @((x, y), z) @a
+  coView = coView @((x, y), z) @a
+
+instance
+  {-# INCOHERENT #-}
+  (CoPat (((w, x), y), z) a, KnownObj a, KnownObj (CoTy (((w, x), y), z) a))
+  => CoPat (w, x, y, z) a
+  where
+  {-# INLINE coEmit #-}
+  {-# INLINE coView #-}
+  coEmit = coEmit @(((w, x), y), z) @a
+  coView = coView @(((w, x), y), z) @a
+
+instance {-# INCOHERENT #-} (StarAutonomous k, a ~ D I) => CoPat () (a :: SYN k) where
+  {-# INLINE coEmit #-}
+  {-# INLINE coView #-}
+  coEmit = synOb @(D I :: SYN k)
+  coView _ m = m (doubleNeg @k @Unit)
+
+instance {-# INCOHERENT #-} (StarAutonomous k, KnownObj a, CoTy t a ~ D a) => CoPat t (a :: SYN k) where
+  {-# INLINE coEmit #-}
+  {-# INLINE coView #-}
+  coEmit = withSynOb @a (doubleNeg @k @(Interp a))
+  coView v _ = v
+
+-- | A producer of @a@ as a consumer of its dual: double negation introduction.
+{-# INLINE asConsumer #-}
+asConsumer :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Term d g a %1 -> Consumer d g (D a)
+asConsumer = withSynOb @a (lift @a @(D (D a)) (doubleNegInv @k @(Interp a)))
+
+-- | A consumer of the dual of @a@ as a producer of @a@: double negation elimination.
+{-# INLINE asProducer #-}
+asProducer :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Consumer d g (D a) %1 -> Term d g a
+asProducer = withSynOb @a (lift @(D (D a)) @a (doubleNeg @k @(Interp a)))
+
+-- | A consumer of a par from a consumer of each side. Cutting the par against the tensor of the two
+-- consumers does the same with less structure.
+{-# INLINE both #-}
+both
+  :: forall {k} d g1 g2 (a :: SYN k) b
+   . (StarAutonomous k, KnownObj a, KnownObj b, Merge g1 g2)
+  => Consumer d g1 a %1 -> Consumer d g2 b %1 -> Consumer d (Union g1 g2) (a :## b)
+both x y = lift @(D a :** D b) @(D (a :## b)) (withSynOb @(D a :** D b) (doubleNegInv @k @(Interp (D a :** D b)))) (x * y)
 
 -- $additives
 -- The additives share their context between alternatives, of which only one is used. Terms that
@@ -541,31 +734,37 @@ byContradiction k = case refute @d @r @(D a) k of
 -- their own, compiled with 'toSMC' like the argument of 'call', and what they share is passed in as
 -- one term.
 
--- | Both of two alternatives on the same input: the product. This needs products.
+-- | Both of two alternatives on the same input: the product. Each alternative takes the input with
+-- a pattern, as for 'toSMC'. This needs products.
+{-# INLINE with #-}
 with
-  :: forall {k} (s :: SYN k) a b d g d1 d2
-   . (Monoidal k, HasBinaryProducts k, KnownObj s)
-  => (Term d1 '[ '(0, s)] s %1 -> Term 1 '[ '(0, s)] a)
-  -> (Term d2 '[ '(0, s)] s %1 -> Term 1 '[ '(0, s)] b)
+  :: forall {k} (s :: SYN k) a b d g t1 cont1 t2 cont2
+   . (Monoidal k, HasBinaryProducts k, Binds t1 0 s cont1 '[] a, Binds t2 0 s cont2 '[] b)
+  => (t1 %1 -> cont1)
+  -> (t2 %1 -> cont2)
   -> Term d g s
   %1 -> Term d g (a :&& b)
-with f h = lift @s @(a :&& b) (toSMC f &&& toSMC h)
+with f h = lift @s @(a :&& b) (toSMC @s @a f &&& toSMC @s @b h)
 
 -- | The first alternative of a product.
+{-# INLINE exl #-}
 exl
   :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) %1 -> Term d g a
 exl = lift @(a :&& b) @a (withSynOb @a (withSynOb @b (fst @k @(Interp a) @(Interp b))))
 
 -- | The second alternative of a product.
+{-# INLINE exr #-}
 exr
   :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) %1 -> Term d g b
 exr = lift @(a :&& b) @b (withSynOb @a (withSynOb @b (snd @k @(Interp a) @(Interp b))))
 
 -- | Use up a term into the unit of the product.
+{-# INLINE absorb #-}
 absorb :: forall {k} (s :: SYN k) d g. (HasTerminalObject k, KnownObj s) => Term d g s %1 -> Term d g Top
 absorb = lift @s @Top (withSynOb @s (terminate @k @(Interp s)))
 
 -- | The left injection into a coproduct.
+{-# INLINE inl #-}
 inl
   :: forall {k} (a :: SYN k) b d g
    . (HasBinaryCoproducts k, KnownObj a, KnownObj b)
@@ -573,6 +772,7 @@ inl
 inl = lift @a @(a :|| b) (withSynOb @a (withSynOb @b (lft @k @(Interp a) @(Interp b))))
 
 -- | The right injection into a coproduct.
+{-# INLINE inr #-}
 inr
   :: forall {k} (a :: SYN k) b d g
    . (HasBinaryCoproducts k, KnownObj a, KnownObj b)
@@ -580,22 +780,30 @@ inr
 inr = lift @b @(a :|| b) (withSynOb @a (withSynOb @b (rgt @k @(Interp a) @(Interp b))))
 
 -- | Case analysis on a coproduct, given first a term to share between the branches. Both branches
--- get the shared term and the contents of their alternative. This needs the tensor to distribute
--- over the coproduct.
+-- take the pair of the shared term and the contents of their alternative with a pattern, as for
+-- 'toSMC'. This needs the tensor to distribute over the coproduct.
+{-# INLINE caseOf #-}
 caseOf
-  :: forall {k} (s :: SYN k) a b c d g1 g2 da db dx dy
-   . (Distributive k, KnownObj s, KnownObj a, KnownObj b, Merge g1 g2)
+  :: forall {k} (s :: SYN k) a b c d g1 g2 t1 cont1 t2 cont2
+   . ( Distributive k
+     , KnownObj s
+     , KnownObj a
+     , KnownObj b
+     , Merge g1 g2
+     , Binds t1 0 (s :** a) cont1 '[] c
+     , Binds t2 0 (s :** b) cont2 '[] c
+     )
   => Term d g1 s
   %1 -> Term d g2 (a :|| b)
-  %1 -> (Term da '[ '(1, s)] s %1 -> Term dx '[ '(2, a)] a %1 -> Term 3 '[ '(2, a), '(1, s)] c)
-  -> (Term db '[ '(1, s)] s %1 -> Term dy '[ '(2, b)] b %1 -> Term 3 '[ '(2, b), '(1, s)] c)
+  %1 -> (t1 %1 -> cont1)
+  -> (t2 %1 -> cont2)
   -> Term d (Union g1 g2) c
 caseOf e x f h =
   lift @(s :** (a :|| b)) @c
     ( withSynOb @s
         ( withSynOb @a
             ( withSynOb @b
-                ( (toSMC @(s :** a) @c (`split` f) ||| toSMC @(s :** b) @c (`split` h))
+                ( (toSMC @(s :** a) @c f ||| toSMC @(s :** b) @c h)
                     . distL @k @(Interp s) @(Interp a) @(Interp b)
                 )
             )
@@ -605,6 +813,7 @@ caseOf e x f h =
 
 -- | There is no term of 'Zero', so from one, together with the rest of the context, anything
 -- follows.
+{-# INLINE absurd #-}
 absurd
   :: forall {k} (s :: SYN k) c d g1 g2
    . (Distributive k, KnownObj s, KnownObj c, Merge g1 g2)
@@ -612,14 +821,22 @@ absurd
 absurd e z = lift @(s :** Zero) @c (withSynOb @s (withSynOb @c (initiate @k @(Interp c) . absorbL @k @(Interp s)))) (e * z)
 
 -- | Function application. The function and its argument must have disjoint contexts.
-($$)
+{-# INLINE (!) #-}
+(!)
   :: forall {k} d g1 g2 (a :: SYN k) b
    . (Closed k, KnownObj a, KnownObj b, Merge g1 g2)
   => Term d g1 (a :-> b) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) b
-MkTerm f $$ MkTerm x =
+MkTerm f ! MkTerm x =
   withSynOb @a (withSynOb @b (MkTerm (apply @k @(Interp a) @(Interp b) . (f ** x) . merge @g1 @g2)))
 
 -- Do notation
+
+-- | The pattern @t@ of a binder: it takes apart the variable @(n, a)@, and the binder's body
+-- @cont@ then gives a term at depth @n + 1@ with type @b@, whose context is that variable and @g@.
+-- Both the variable's type and the rest of the context must be known.
+type Binds :: forall k. Type -> Nat -> SYN k -> Type -> Ctx k -> SYN k -> Constraint
+type Binds @k t n a cont g b =
+  (KnownObj a, KnownCtx g, Bind k (Term (n + 1) '[ '(n, a)] a) t One cont (Term (n + 1) ('(n, a) ': g) b))
 
 -- | A bind in a @do@ block: a term taken apart by a pattern, or the variables of a @rec@ block.
 -- The multiplicity @p@ of the continuation depends only on the right hand side @m@, since GHC
@@ -639,6 +856,7 @@ instance
   )
   => Bind k (Term d g (a :: SYN k)) t One cont r
   where
+  {-# INLINE (>>=) #-}
   (>>=) = pat @k @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont)
 
 -- | The statement of a @rec@ block, whose continuation is its 'return'.
@@ -646,6 +864,7 @@ instance
   (Bind k (Term d g a) t One cont r', r ~ Ret tt r')
   => Bind k (Term d g (a :: SYN k)) t One (Ret tt cont) r
   where
+  {-# INLINE (>>=) #-}
   x >>= k = Ret (x >>= \p -> unRet (k p))
 
 -- | The body of a @rec@ block, tagged with the tuple of its variables. GHC's translation passes
@@ -656,8 +875,9 @@ newtype Ret t x = Ret x
 unRet :: Ret t x %1 -> x
 unRet (Ret x) = x
 
--- | A pattern: a variable, or a pair of patterns. Binding it at depth @d@ to a term with context
--- @g@ and type @a@, with a continuation with context @g'@ and type @c@.
+-- | A pattern: a variable, @()@, or a pair of patterns. A triple or quadruple stands for pairs
+-- nested to the left, as @a ':**' b ':**' c@ is: @(x, y, z)@ is @((x, y), z)@. Binding it at depth
+-- @d@ to a term with context @g@ and type @a@, with a continuation with context @g'@ and type @c@.
 type Pat :: forall k -> Type -> Nat -> Ctx k -> SYN k -> Ctx k -> SYN k -> Constraint
 class Pat k t d g a g' c where
   pat :: Term d g a %1 -> (t %1 -> Term (d + PSize t) g' c) %1 -> Term d (PCtx t d g a g') c
@@ -666,6 +886,8 @@ class Pat k t d g a g' c where
 type PSize :: Type -> Nat
 type family PSize t where
   PSize (x, y) = 2 + PSize x + PSize y
+  PSize (x, y, z) = PSize ((x, y), z)
+  PSize (w, x, y, z) = PSize (((w, x), y), z)
   PSize t = 0
 
 -- | The context of a pattern match, from the context of the right hand side and of the
@@ -673,6 +895,8 @@ type family PSize t where
 type PCtx :: forall {k}. Type -> Nat -> Ctx k -> SYN k -> Ctx k -> Ctx k
 type family PCtx t d g a g' where
   PCtx (x, y) d g (a1 :** a2) g' = Union (Drop2 (PCtxPair x y d a1 a2 g')) g
+  PCtx (x, y, z) d g a g' = PCtx ((x, y), z) d g a g'
+  PCtx (w, x, y, z) d g a g' = PCtx (((w, x), y), z) d g a g'
   PCtx () d g a g' = Union g g'
   PCtx t d g a g' = g'
 
@@ -686,10 +910,12 @@ type PCtxPair x y d a1 a2 g' =
 
 -- | The pattern @()@ uses up a term of the unit type.
 instance {-# INCOHERENT #-} (Monoidal k, a ~ I, KnownObj c, Merge g g') => Pat k () d g (a :: SYN k) g' c where
+  {-# INLINE pat #-}
   pat (MkTerm u) k = case k () of
     MkTerm t -> withSynOb @c (MkTerm (leftUnitor @k @(Interp c) . (u ** t) . merge @g @g'))
 
 instance {-# INCOHERENT #-} (t ~ Term (DepthOf t) g a) => Pat k t d g a g' c where
+  {-# INLINE pat #-}
   pat x k = k (retag x)
 
 instance
@@ -706,6 +932,7 @@ instance
   )
   => Pat k (x, y) d g (a :: SYN k) g' c
   where
+  {-# INLINE pat #-}
   pat s k =
     split
       s
@@ -715,6 +942,14 @@ instance
             (\px -> pat @k @y @(d + 2 + PSize x) @'[ '(d + 1, a2)] @a2 @g' @c b (\py -> k (px, py)))
       )
 
+instance {-# INCOHERENT #-} (Pat k ((x, y), z) d g a g' c) => Pat k (x, y, z) d g a g' c where
+  {-# INLINE pat #-}
+  pat s k = pat @k @((x, y), z) @d @g @a @g' @c s (\((px, py), pz) -> k (px, py, pz))
+
+instance {-# INCOHERENT #-} (Pat k (((w, x), y), z) d g a g' c) => Pat k (w, x, y, z) d g a g' c where
+  {-# INLINE pat #-}
+  pat s k = pat @k @(((w, x), y), z) @d @g @a @g' @c s (\(((pw, px), py), pz) -> k (pw, px, py, pz))
+
 -- | The variables of a @rec@ block, as GHC tuples them up.
 type RecVars :: Type -> Type -> Constraint
 class RecVars k t | t -> k where
@@ -723,26 +958,36 @@ class RecVars k t | t -> k where
   consume :: t %1 -> r %1 -> r
 
 instance (Monoidal k, KnownObj (a :: SYN k)) => RecVars k (Term d '[ '(n, a)] a) where
+  {-# INLINE recVars #-}
+  {-# INLINE consume #-}
   type Vars k (Term d '[ '(n, a)] a) = '[ '(n, a)]
   recVars = var @n @a
   consume (MkTerm _) r = r
 
 instance (RecVars k x, RecVars k y) => RecVars k (x, y) where
+  {-# INLINE recVars #-}
+  {-# INLINE consume #-}
   type Vars k (x, y) = Union (Vars k x) (Vars k y)
   recVars = (recVars, recVars)
   consume (x, y) r = consume x (consume y r)
 
 instance (RecVars k x, RecVars k y, RecVars k z) => RecVars k (x, y, z) where
+  {-# INLINE recVars #-}
+  {-# INLINE consume #-}
   type Vars k (x, y, z) = Union (Vars k x) (Vars k (y, z))
   recVars = (recVars, recVars, recVars)
   consume (x, y, z) r = consume x (consume (y, z) r)
 
 instance (RecVars k x, RecVars k y, RecVars k z, RecVars k w) => RecVars k (x, y, z, w) where
+  {-# INLINE recVars #-}
+  {-# INLINE consume #-}
   type Vars k (x, y, z, w) = Union (Vars k x) (Vars k (y, z, w))
   recVars = (recVars, recVars, recVars, recVars)
   consume (x, y, z, w) r = consume x (consume (y, z, w) r)
 
 instance (RecVars k x, RecVars k y, RecVars k z, RecVars k w, RecVars k v) => RecVars k (x, y, z, w, v) where
+  {-# INLINE recVars #-}
+  {-# INLINE consume #-}
   type Vars k (x, y, z, w, v) = Union (Vars k x) (Vars k (y, z, w, v))
   recVars = (recVars, recVars, recVars, recVars, recVars)
   consume (x, y, z, w, v) r = consume x (consume (y, z, w, v) r)
@@ -751,11 +996,14 @@ instance
   (RecVars k x, RecVars k y, RecVars k z, RecVars k w, RecVars k v, RecVars k u)
   => RecVars k (x, y, z, w, v, u)
   where
+  {-# INLINE recVars #-}
+  {-# INLINE consume #-}
   type Vars k (x, y, z, w, v, u) = Union (Vars k x) (Vars k (y, z, w, v, u))
   recVars = (recVars, recVars, recVars, recVars, recVars, recVars)
   consume (x, y, z, w, v, u) r = consume x (consume (y, z, w, v, u) r)
 
 -- | The end of a @rec@ block: all its variables, as the tensor of their context.
+{-# INLINE return #-}
 return
   :: forall k t d. (Monoidal k, RecVars k t, KnownCtx (Vars k t)) => t %1 -> Ret t (Term d (Vars k t) (Mul (Vars k t)))
 return t = Ret (consume t (MkTerm (ctxOb @(Vars k t))))
@@ -764,9 +1012,10 @@ return t = Ret (consume t (MkTerm (ctxOb @(Vars k t))))
 -- it passes on.
 type Rec :: forall {k}. Nat -> Type -> Ctx k -> Ctx k -> Type
 data Rec d t g0 outs where
-  Rec :: (Interp (Mul g0) ~> Interp (Mul outs)) %Many -> Rec d t g0 outs
+  Rec :: (Interp (Mul g0) ~> Interp (Mul outs)) -> Rec d t g0 outs
 
 -- | Trace a @rec@ block: the variables it uses before binding them are fed back.
+{-# INLINE mfix #-}
 mfix
   :: forall {k} t d (g :: Ctx k)
    . ( TracedMonoidal k
@@ -815,6 +1064,7 @@ instance
   )
   => Bind k (Rec d t (g0 :: Ctx k) outs) t' Many cont r
   where
+  {-# INLINE (>>=) #-}
   Rec h >>= k = case k recVars of
     MkTerm body ->
       MkTerm
@@ -828,6 +1078,7 @@ instance
 fail :: a
 fail = P.error "Proarrow.Tools.SMC.fail: a pattern did not match"
 
+{-# INLINE retag #-}
 retag :: Term d g a %1 -> Term d' g a
 retag (MkTerm f) = MkTerm f
 
@@ -891,7 +1142,7 @@ type Inter g h = Minus g (Minus g h)
 -- >>> swapT @Bool @Bool (True, False)
 -- (False,True)
 swapT :: forall {k} (a :: k) b. (SymMonoidal k, Ob a, Ob b) => a ** b ~> b ** a
-swapT = toSMC @(F a :** F b) (\p -> split p (\x y -> y * x))
+swapT = toSMC @(F a :** F b) \(a, b) -> b * a
 
 -- | Apply a function to an argument, both in a tensor.
 --
@@ -899,7 +1150,7 @@ swapT = toSMC @(F a :** F b) (\p -> split p (\x y -> y * x))
 -- >>> applyT @Bool @Bool (not, True)
 -- False
 applyT :: forall {k} (a :: k) b. (Closed k, SymMonoidal k, Ob a, Ob b) => (a ~~> b) ** a ~> b
-applyT = toSMC @((F a :-> F b) :** F a) (\p -> split p (\f x -> f $$ x))
+applyT = toSMC @((F a :-> F b) :** F a) (\p -> split p (\f x -> f ! x))
 
 -- | Curry the tensor.
 --
@@ -909,15 +1160,13 @@ applyT = toSMC @((F a :-> F b) :** F a) (\p -> split p (\f x -> f $$ x))
 curryT :: forall {k} (a :: k) b. (Closed k, SymMonoidal k, Ob a, Ob b) => a ~> b ~~> a ** b
 curryT = toSMC @(F a) @(F b :-> F a :** F b) (\x -> lam (\y -> x * y))
 
--- | Rotate a triple, with a nested pattern.
+-- | Rotate a triple, with a triple pattern.
 --
 -- >>> import Prelude (Bool (..), Int)
 -- >>> rotT @Int @Bool @Int ((1, True), 2)
 -- ((True,2),1)
 rotT :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => a ** b ** c ~> b ** c ** a
-rotT = toSMC @(F a :** F b :** F c) \x -> Proarrow.Tools.SMC.do
-  ((a, b), c) <- x
-  b * c * a
+rotT = toSMC @(F a :** F b :** F c) \(a, b, c) -> b * c * a
 
 -- | Trace out @u@ with a @rec@ block. In 'Data.Kind.Type' the trace is a lazy fixed point.
 --
@@ -958,8 +1207,7 @@ snakeT = toSMC @(F a) \x -> Proarrow.Tools.SMC.do
 -- | The inverse of 'distribDual': make a pair for @a ** b@, and annihilate the two halves of its
 -- plain end with the given duals.
 combineDualT :: forall {k} (a :: k) b. (CompactClosed k, Ob a, Ob b) => Dual a ** Dual b ~> Dual (a ** b)
-combineDualT = toSMC @(D (F a) :** D (F b)) @(D (F a :** F b)) \x -> Proarrow.Tools.SMC.do
-  (da, db) <- x
+combineDualT = toSMC @(D (F a) :** D (F b)) @(D (F a :** F b)) \(da, db) -> Proarrow.Tools.SMC.do
   (ab, ab') <- produce
   (a, b) <- ab
   () <- annihilate da a
@@ -973,9 +1221,8 @@ combineDualT = toSMC @(D (F a) :** D (F b)) @(D (F a :** F b)) \x -> Proarrow.To
 -- Left (1,True)
 distT
   :: forall {k} (a :: k) b c. (Distributive k, SymMonoidal k, Ob a, Ob b, Ob c) => a ** (b || c) ~> (a ** b) || (a ** c)
-distT = toSMC @(F a :** (F b :|| F c)) \p -> Proarrow.Tools.SMC.do
-  (a, bc) <- p
-  caseOf a bc (\a' b -> inl (a' * b)) (\a' c -> inr (a' * c))
+distT = toSMC @(F a :** (F b :|| F c)) \(a, bc) ->
+  caseOf a bc (\(a', b) -> inl (a' * b)) (\(a', c) -> inr (a' * c))
 
 -- | Swap a coproduct, with nothing to share.
 --
@@ -984,7 +1231,7 @@ distT = toSMC @(F a :** (F b :|| F c)) \p -> Proarrow.Tools.SMC.do
 -- Right 1
 swapEitherT :: forall {k} (a :: k) b. (Distributive k, SymMonoidal k, Ob a, Ob b) => a || b ~> b || a
 swapEitherT = toSMC @(F a :|| F b) \x ->
-  caseOf unit x (\u a -> Proarrow.Tools.SMC.do () <- u; inr a) (\u b -> Proarrow.Tools.SMC.do () <- u; inl b)
+  caseOf unit x (\((), a) -> inr a) (\((), b) -> inl b)
 
 -- | A pair both as it is and swapped: each alternative takes the same pair apart in its own way.
 --
@@ -993,20 +1240,35 @@ swapEitherT = toSMC @(F a :|| F b) \x ->
 -- ((1,True),(True,1))
 bothWaysT
   :: forall {k} (a :: k) b. (SymMonoidal k, HasBinaryProducts k, Ob a, Ob b) => a ** b ~> (a ** b) && (b ** a)
-bothWaysT = toSMC @(F a :** F b) \p -> with (\q -> q) (\q -> Proarrow.Tools.SMC.do (x, y) <- q; y * x) p
+bothWaysT = toSMC @(F a :** F b) \p -> with (\q -> q) (\(x, y) -> y * x) p
 
--- | Double negation introduction: to refute a refutation of @a@, use it on @a@.
+-- | Double negation introduction: a consumer of a consumer of @a@ hands it the @a@.
 dniT :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual a)
-dniT = toSMC @(F a) @(D (D (F a))) \x -> refute (`cut` x)
+dniT = toSMC @(F a) @(D (D (F a))) \x -> accept (`cut` x)
 
--- | Double negation elimination, the classical direction: by contradiction, refuting with the
--- given refutation of a refutation.
+-- | Double negation elimination, the classical direction: emit an @a@ by giving its consumer to
+-- the input.
 dneT :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
-dneT = toSMC @(D (D (F a))) @(F a) \nn -> byContradiction \k -> cut nn k
+dneT = toSMC @(D (D (F a))) @(F a) \nn -> emit \k -> cut nn k
 
--- | Contraposition: a refutation of @b@ refutes @a@ through @f@.
+-- | Contraposition: a consumer of @b@ consumes @a@ through @f@.
 contraT :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => (a ~> b) -> Dual b ~> Dual a
-contraT f = toSMC @(D (F b)) @(D (F a)) \nb -> refute \x -> cut nb (lift @(F a) @(F b) f x)
+contraT f = toSMC @(D (F b)) @(D (F a)) \nb -> accept \x -> cut nb (lift @(F a) @(F b) f x)
+
+-- | Par is symmetric: emit both outputs and hand them to the input the other way round. This is
+-- 'Proarrow.Category.Monoidal.StarAutonomous.parSwap'.
+parSwapT :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => Par a b ~> Par b a
+parSwapT = toSMC @(F a :## F b) @(F b :## F a) \p -> emit \(kb, ka) -> ka * kb |> p
+
+-- | Linear (weak) distributivity, @a ⊗ (b ⅋ c) ⊸ (a ⊗ b) ⅋ c@: the @b@ the input emits is paired
+-- with @a@ and sent to the first output, and its @c@ goes to the second. This is
+-- 'Proarrow.Category.Monoidal.StarAutonomous.weakDistL'.
+weakDistT
+  :: forall {k} (a :: k) b c
+   . (StarAutonomous k, Ob a, Ob b, Ob c)
+  => a ** Par b c ~> Par (a ** b) c
+weakDistT = toSMC @(F a :** (F b :## F c)) @((F a :** F b) :## F c) \(a, bc) ->
+  emit \(kab, kc) -> accept (\b -> a * b |> kab) * kc |> bc
 
 -- | The snake on the dual: join the input with the first end of a new pair, and continue with the
 -- second. Here the wires meet in the order they come, so no swap is needed.
