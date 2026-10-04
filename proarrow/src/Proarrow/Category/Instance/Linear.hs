@@ -24,6 +24,7 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
@@ -264,22 +265,24 @@ questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left
 
 -- LINEAR is not CompactClosed. And hence it is also not traced,
 -- since any star autonomous category with a trace is compact closed.
-instance StarAutonomous LINEAR where
+instance Dialogue LINEAR where
   {-# INLINE withObDual #-}
   {-# INLINE dual #-}
-  {-# INLINE dualInv #-}
   {-# INLINE linDist #-}
   {-# INLINE linDistInv #-}
-  {-# INLINE doubleNeg #-}
   {-# INLINE doubleNegInv #-}
   type Dual (L a) = L (Not a)
   withObDual r = r
   dual (Linear f) = Linear (\nb a -> nb (f a))
-  dualInv (Linear f) = Linear (\b -> dn (\na -> f na b))
   linDist (Linear f) = Linear (\a (b, c) -> f (a, b) c)
   linDistInv (Linear f) = Linear (\(a, b) c -> f a (b, c))
-  doubleNeg = Linear dn
   doubleNegInv = Linear (\a na -> na a)
+
+instance StarAutonomous LINEAR where
+  {-# INLINE dualInv #-}
+  {-# INLINE doubleNeg #-}
+  dualInv (Linear f) = Linear (\b -> dn (\na -> f na b))
+  doubleNeg = Linear dn
 
 -- | The unit of par is @() %1 -> ()@, which has one value, just like @()@: apply it to @()@, or
 -- give back the identity. So LINEAR is isomix, while tensor and par still differ.

@@ -17,6 +17,7 @@ import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, SymMonoidalStructures,
 import Proarrow.Category.Monoidal.Closed (ClosedStructures)
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosedStructures)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscardStructures)
+import Proarrow.Category.Monoidal.Dialogue (DialogueStructures)
 import Proarrow.Category.Monoidal.Hypergraph (FrobeniusStructures)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomousStructures)
 import Proarrow.Category.Monoidal.Strength (TracedStructures)
@@ -61,6 +62,7 @@ test =
     , testComonoid_ @(S '[Wire "A", I, Co "B"])
     , testHypergraph @SVG (\ @a @b r -> withOb2 @SVG @a @b r)
     , testClosed_ @SVG
+    , testDialogue_ @SVG
     , testStarAutonomous_ @SVG
     , testIsoMix_ @SVG
     , testCompactClosed_ @SVG
@@ -76,6 +78,7 @@ test =
                   , lawSvgsWith @'[Monoidal] o
                   , lawSvgsWith @SymMonoidalStructures o
                   , lawSvgsWith @ClosedStructures o
+                  , lawSvgsWith @DialogueStructures o
                   , lawSvgsWith @StarAutonomousStructures o
                   , lawSvgsWith @CompactClosedStructures o
                   , lawSvgsWith @'[Monoidal, Supplies Monoid] o

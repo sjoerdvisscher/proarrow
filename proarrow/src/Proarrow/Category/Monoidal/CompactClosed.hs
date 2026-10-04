@@ -26,19 +26,14 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), DualF, dualObj, dualityUnitSA)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
-import Proarrow.Category.Monoidal.StarAutonomous
-  ( DualF
-  , StarAutonomous (..)
-  , doubleNeg
-  , dualObj
-  , dualityUnitSA
-  )
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Law (..), Laws (..), inverses, (===))
 
-class (IsoMix k, SymMonoidal k) => CompactClosed k where
+class (IsoMix k, StarAutonomous k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
 
   -- | The unit of the duality between @a@ and its dual. 'dualityUnitDefault' gives it from the
@@ -107,7 +102,7 @@ instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
 
 -- | The structures the free category needs for 'CompactClosed', and those its laws are stated for.
 type CompactClosedStructures :: [Kind -> Constraint]
-type CompactClosedStructures = '[Monoidal, SymMonoidal, Closed, StarAutonomous, IsoMix, CompactClosed]
+type CompactClosedStructures = '[Monoidal, SymMonoidal, Closed, Dialogue, StarAutonomous, IsoMix, CompactClosed]
 
 instance
   (CompactClosedStructures `Elems` cs)

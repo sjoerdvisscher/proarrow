@@ -21,6 +21,7 @@ import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC, dualityUnitDefault)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..), dualityCounitDefault)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
@@ -163,13 +164,15 @@ instance Closed KIND where
   apply = Cat @(Uncurry Id)
   Cat @p ^^^ Cat @q = Cat @(Op q :**: p)
 
-instance StarAutonomous KIND where
+instance Dialogue KIND where
   type Dual (K a) = K (OPPOSITE a)
   withObDual r = r
   dual (Cat @p) = Cat @(Op p)
-  dualInv (Cat @p) = Cat @(UnOp p)
   linDist (Cat @p) = Cat @(Rep CombineDual :.: Curry p)
   linDistInv (Cat @p) = Cat @(Uncurry (Rep DistribDual :.: p))
+
+instance StarAutonomous KIND where
+  dualInv (Cat @p) = Cat @(UnOp p)
 
 data family CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)) where

@@ -8,6 +8,7 @@ import Prelude (($))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), Tensor)
 import Proarrow.Category.Monoidal.Closed (Closed (..), curry, uncurry)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
@@ -52,15 +53,17 @@ instance (HasCoproducts k) => MonoidalProfunctor (Coprod (Cont (r :: k))) where
       withObCoprod @k @bf @bg $
         Coprod (Cont (\k -> f (k . lft @_ @bf @bg) ||| g (k . rgt @_ @bf @bg)))
 
-instance StarAutonomous (KLEISLI (Cont (r :: Type))) where
+instance Dialogue (KLEISLI (Cont (r :: Type))) where
   type Dual @(KLEISLI (Cont r)) (KL a) = KL (a ~~> r)
   withObDual r = r
   dual (Kleisli (Cont f)) = Kleisli (Cont \k br -> k (f br))
-  dualInv (Kleisli (Cont f)) = Kleisli (Cont \k b -> f (\g -> g b) k)
   linDist (Kleisli (Cont f)) = Kleisli (Cont \k a -> k (\(b, c) -> f (\g -> g c) (a, b)))
   linDistInv (Kleisli (Cont f)) = Kleisli (Cont \k (a, b) -> k (\c -> f (\g -> g (b, c)) a))
-  doubleNeg = Kleisli (Cont \k nn -> nn k)
   doubleNegInv = Kleisli (Cont \k a -> k (\g -> g a))
+
+instance StarAutonomous (KLEISLI (Cont (r :: Type))) where
+  dualInv (Kleisli (Cont f)) = Kleisli (Cont \k b -> f (\g -> g b) k)
+  doubleNeg = Kleisli (Cont \k nn -> nn k)
 instance Closed (KLEISLI (Cont (r :: Type))) where
   type a ~~> b = ExpSA a b
   withObExp r = r

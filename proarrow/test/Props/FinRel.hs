@@ -48,6 +48,7 @@ test =
     , testSymMonoidal_ @FINREL
     , testDistributive_ @FINREL
     , testClosed_ @FINREL
+    , testDialogue_ @FINREL
     , testStarAutonomous_ @FINREL
     , testIsoMix_ @FINREL
     , testCompactClosed_ @FINREL

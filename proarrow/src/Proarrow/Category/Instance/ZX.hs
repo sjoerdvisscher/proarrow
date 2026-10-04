@@ -29,6 +29,7 @@ import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
@@ -175,19 +176,21 @@ instance Closed Nat where
   apply @y @z = applySA @y @z
   (^^^) = expSA
 
-instance StarAutonomous Nat where
+instance Dialogue Nat where
   type Dual x = x
   withObDual r = r
   dual (ZX m) = ZX (transpose m)
-  dualInv = dual
   linDist @_ @b @c (ZX m) =
     withOb2 @_ @b @c $
       ZX (Map.mapKeys (\(c, ab) -> case split ab of (a, b) -> (combine b c, a)) m)
   linDistInv @a @b (ZX m) =
     withOb2 @_ @a @b $
       ZX (Map.mapKeys (\(bc, a) -> case split bc of (b, c) -> (c, combine a b)) m)
-  doubleNeg = id
   doubleNegInv = id
+
+instance StarAutonomous Nat where
+  dualInv = dual
+  doubleNeg = id
 
 instance IsoMix Nat where
   dualUnit = id

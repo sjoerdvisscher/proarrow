@@ -1,9 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | Isomix categories: *-autonomous categories whose two units agree, @'Dual' 'Unit'@, the unit of
+-- | Isomix categories: dialogue categories whose two units agree, @'Dual' 'Unit'@, the unit of
 -- par, being isomorphic to 'Unit' ('dualUnit'). Then a dual and its object can be joined into the
 -- unit of the tensor, not just into the unit of par. Every compact closed category is isomix, and
 -- so is 'Proarrow.Category.Instance.Linear.LINEAR', where tensor and par still differ.
+-- 'Proarrow.Category.Instance.Cps.CPS' @r@ is isomix exactly when the answer object @r@ is the
+-- unit: with effects as the answer object, as @CPS (IO ())@, joining a consumer and a value into
+-- the unit would discard the effect.
 module Proarrow.Category.Monoidal.IsoMix where
 
 import Data.Kind (Constraint)
@@ -13,12 +16,11 @@ import Proarrow.Category.Instance.Free (Elems, FREE (..), Free (..), HasStructur
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, UnitF, type (**))
-import Proarrow.Category.Monoidal.Closed (Closed)
-import Proarrow.Category.Monoidal.StarAutonomous (DualF, StarAutonomous (..), dualityCounitSA)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), DualF, dualityCounitSA)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Promonad (..))
 import Proarrow.Tools.Laws (Inverses (..), Law (..), Laws (..), inverses, (===))
 
-class (StarAutonomous k) => IsoMix k where
+class (Dialogue k) => IsoMix k where
   -- | The unit of par is isomorphic to the unit of the tensor.
   dualUnit :: Dual (Unit :: k) ~> Unit
 
@@ -26,11 +28,11 @@ class (StarAutonomous k) => IsoMix k where
   dualUnitInv :: (Unit :: k) ~> Dual Unit
 
   -- | Join a dual and its object into the unit. 'dualityCounitDefault' gives it from the
-  -- *-autonomous structure; a compact closed category has a counit of its own. (There is no
+  -- dialogue structure; a compact closed category has a counit of its own. (There is no
   -- default method: @a@ occurs only under type families, so GHC could not instantiate one.)
   dualityCounit :: (Ob (a :: k)) => Dual a ** a ~> Unit
 
--- | 'dualityCounit' from the *-autonomous structure: into the unit of par, then 'dualUnit'.
+-- | 'dualityCounit' from the dialogue structure: into the unit of par, then 'dualUnit'.
 dualityCounitDefault :: forall {k} (a :: k). (IsoMix k, Ob a) => Dual a ** a ~> Unit
 dualityCounitDefault = dualUnit . dualityCounitSA @a
 
@@ -46,7 +48,7 @@ instance (IsoMix j, IsoMix k) => IsoMix (j, k) where
 
 -- | The structures the free category needs for 'IsoMix', and those its laws are stated for.
 type IsoMixStructures :: [Kind -> Constraint]
-type IsoMixStructures = '[Monoidal, SymMonoidal, Closed, StarAutonomous, IsoMix]
+type IsoMixStructures = '[Monoidal, SymMonoidal, Dialogue, IsoMix]
 
 instance (IsoMixStructures `Elems` cs) => HasStructure cs (p :: CAT k) IsoMix where
   data Struct IsoMix a b where
@@ -64,7 +66,7 @@ instance (IsoMixStructures `Elems` cs) => IsoMix (FREE cs (p :: CAT k)) where
   dualityCounit @a = dualityCounitDefault @a
 
 -- | 'dualUnit' and 'dualUnitInv' are inverses, and 'dualityCounit' is the one from the
--- *-autonomous structure.
+-- dialogue structure.
 instance Laws IsoMixStructures where
   laws =
     inverses "dualUnit" (Inverses dualUnit dualUnitInv)

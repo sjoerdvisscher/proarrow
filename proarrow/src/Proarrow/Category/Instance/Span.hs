@@ -9,6 +9,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, cap, cup, curryHG)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
@@ -87,15 +88,17 @@ instance (HasPullbacks k, HasProducts k) => Closed (SPAN k) where
   curry @a @b = curryHG @a @b
   apply @b @c = applyHG @b @c
 
-instance (HasPullbacks k, HasProducts k) => StarAutonomous (SPAN k) where
+instance (HasPullbacks k, HasProducts k) => Dialogue (SPAN k) where
   type Dual a = a
   withObDual r = r
   dual (Span f g) = Span g f
-  dualInv (Span f g) = Span g f
   linDist @(SP a) @(SP b) (Span f g) = Span (fst @k @a @b . f) (snd @k @a @b . f &&& g)
   linDistInv @_ @(SP b) @(SP c) (Span f g) = Span (f &&& fst @k @b @c . g) (snd @k @b @c . g)
-  doubleNeg = id
   doubleNegInv = id
+
+instance (HasPullbacks k, HasProducts k) => StarAutonomous (SPAN k) where
+  dualInv (Span f g) = Span g f
+  doubleNeg = id
 instance (HasPullbacks k, HasProducts k) => IsoMix (SPAN k) where
   dualUnit = id
   dualUnitInv = id

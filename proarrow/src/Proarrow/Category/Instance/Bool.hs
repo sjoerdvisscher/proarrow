@@ -26,7 +26,7 @@ type family If c t e where
   If TRU t e = t
   If FLS t e = e
 
--- | Negation; the 'Proarrow.Category.Monoidal.StarAutonomous.Dual' of @BOOL@.
+-- | Negation; the 'Proarrow.Category.Monoidal.Dialogue.Dual' of @BOOL@.
 type family Not (b :: BOOL) :: BOOL where
   Not FLS = TRU
   Not TRU = FLS

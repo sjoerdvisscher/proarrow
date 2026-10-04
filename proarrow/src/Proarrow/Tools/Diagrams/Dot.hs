@@ -18,6 +18,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Stric
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph
   ( ExpHG
   , Frobenius
@@ -262,15 +263,17 @@ instance Closed DOT where
   curry @a @b = curryHG @a @b
   apply @b @c = applyHG @b @c
 
-instance StarAutonomous DOT where
+instance Dialogue DOT where
   type Dual a = a
   withObDual r = r
   dual = dualHG
-  dualInv = dualHG
   linDist @a @b @c = linDistHG @a @b @c
   linDistInv @a @b @c = linDistInvHG @a @b @c
-  doubleNeg = id
   doubleNegInv = id
+
+instance StarAutonomous DOT where
+  dualInv = dualHG
+  doubleNeg = id
 
 instance IsoMix DOT where
   dualUnit = id

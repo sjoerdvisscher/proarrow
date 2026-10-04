@@ -78,6 +78,7 @@ import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
+import Proarrow.Category.Monoidal.Dialogue qualified as SA
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.IsoMix qualified as IsoMix
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
@@ -236,7 +237,8 @@ data instance Witness Terminal.HasTerminalObject k = TerminalW
 data instance Witness Initial.HasInitialObject k = InitialW
 data instance Witness Distributive.Distributive k = DistributiveW
 newtype instance Witness Exponential.Closed k = ClosedW (WithTestObExp k)
-newtype instance Witness SA.StarAutonomous k = StarAutonomousW (WithTestObDual k)
+newtype instance Witness SA.Dialogue k = DialogueW (WithTestObDual k)
+data instance Witness SA.StarAutonomous k = StarAutonomousW
 data instance Witness IsoMix.IsoMix k = IsoMixW
 data instance Witness CC.CompactClosed k = CompactClosedW
 data instance Witness Strength.TracedMonoidal k = TracedW
@@ -336,10 +338,10 @@ instance
   untestTestOb ws r =
     untestTestOb2 @a @b ws (case witness @Exponential.Closed ws of ClosedW f -> f @(Untest a) @(Untest b) r)
 
-instance (HasWitness SA.StarAutonomous cs, SA.StarAutonomous k, Tested (a :: TESTED cs k)) => Tested (SA.DualF a) where
+instance (HasWitness SA.Dialogue cs, SA.Dialogue k, Tested (a :: TESTED cs k)) => Tested (SA.DualF a) where
   type Untest (SA.DualF a) = SA.Dual (Untest a)
   untestOb r = untestOb @a (SA.withObDual @k @(Untest a) r)
-  untestTestOb ws r = untestTestOb @a ws (case witness @SA.StarAutonomous ws of StarAutonomousW f -> f @(Untest a) r)
+  untestTestOb ws r = untestTestOb @a ws (case witness @SA.Dialogue ws of DialogueW f -> f @(Untest a) r)
 
 -- | 'untestOb' of two objects at once.
 untestOb2 :: forall {cs} {k} (a :: TESTED cs k) b r. (Tested a, Tested b) => ((Ob (Untest a), Ob (Untest b)) => r) -> r
@@ -486,29 +488,38 @@ instance
 
 instance
   ( HasWitness M.Monoidal cs
+  , HasWitness SA.Dialogue cs
+  , Testable k
+  , SA.Dialogue k
+  , TestOb (M.Unit :: k)
+  )
+  => SA.Dialogue (TESTED cs k)
+  where
+  type Dual a = SA.DualF a
+  withObDual r = r
+  dual (TestedArr df f) = TestedArr (app "dual" df) (SA.dual f)
+  linDist @a @b @c (TestedArr df f) =
+    untestOb3 @a @b @c (TestedArr (app "linDist" df) (SA.linDist @k @(Untest a) @(Untest b) @(Untest c) f))
+  linDistInv @a @b @c (TestedArr df f) =
+    untestOb3 @a @b @c (TestedArr (app "linDistInv" df) (SA.linDistInv @k @(Untest a) @(Untest b) @(Untest c) f))
+  doubleNegInv @a = untestOb @a (prim "doubleNegInv" (SA.doubleNegInv @k @(Untest a)))
+
+instance
+  ( HasWitness M.Monoidal cs
   , HasWitness Exponential.Closed cs
-  , HasWitness SA.StarAutonomous cs
+  , HasWitness SA.Dialogue cs
   , Testable k
   , SA.StarAutonomous k
   , TestOb (M.Unit :: k)
   )
   => SA.StarAutonomous (TESTED cs k)
   where
-  type Dual a = SA.DualF a
-  withObDual r = r
-  dual (TestedArr df f) = TestedArr (app "dual" df) (SA.dual f)
   dualInv @a @b (TestedArr df f) = untestOb2 @a @b (TestedArr (app "dualInv" df) (SA.dualInv @k @(Untest a) @(Untest b) f))
-  linDist @a @b @c (TestedArr df f) =
-    untestOb3 @a @b @c (TestedArr (app "linDist" df) (SA.linDist @k @(Untest a) @(Untest b) @(Untest c) f))
-  linDistInv @a @b @c (TestedArr df f) =
-    untestOb3 @a @b @c (TestedArr (app "linDistInv" df) (SA.linDistInv @k @(Untest a) @(Untest b) @(Untest c) f))
   doubleNeg @a = untestOb @a (prim "doubleNeg" (SA.doubleNeg @k @(Untest a)))
-  doubleNegInv @a = untestOb @a (prim "doubleNegInv" (SA.doubleNegInv @k @(Untest a)))
 
 instance
   ( HasWitness M.Monoidal cs
-  , HasWitness Exponential.Closed cs
-  , HasWitness SA.StarAutonomous cs
+  , HasWitness SA.Dialogue cs
   , Testable k
   , IsoMix.IsoMix k
   , TestOb (M.Unit :: k)
@@ -522,7 +533,7 @@ instance
 instance
   ( HasWitness M.Monoidal cs
   , HasWitness Exponential.Closed cs
-  , HasWitness SA.StarAutonomous cs
+  , HasWitness SA.Dialogue cs
   , Testable k
   , CC.CompactClosed k
   , TestOb (M.Unit :: k)

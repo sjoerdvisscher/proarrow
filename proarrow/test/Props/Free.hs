@@ -21,9 +21,10 @@ import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), SymMonoida
 import Proarrow.Category.Monoidal.Cartesian (Cartesian, prodToTensor, tensorToProd, termToUnit, unitToTerm)
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue, DualF)
 import Proarrow.Category.Monoidal.Distributive (Distributive)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix)
-import Proarrow.Category.Monoidal.StarAutonomous (DualF, StarAutonomous)
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous)
 import Proarrow.Category.Sheaf (Cover (..), Leg (..), Sheaf (..), Summands, Sums, legArrow)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
@@ -63,6 +64,7 @@ type FREECS =
    , SymMonoidal
    , Closed
    , Distributive
+   , Dialogue
    , StarAutonomous
    , IsoMix
    , CompactClosed
@@ -112,10 +114,7 @@ test =
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
-    , testIsoMix @FREEKIND
-        (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
-        (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
-        (\r -> r)
+    , testIsoMix @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r) (\r -> r)
     , testHypergraph @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , sheafTests
     , testProperty "cartesian coercions interpret to identities" P.$ do

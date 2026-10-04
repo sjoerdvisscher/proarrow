@@ -10,14 +10,17 @@
   `caseOf`). With optimisation its context bookkeeping inlines away, so a compiled term is the
   category's own structure maps, composed. `LINEAR`'s structure maps are inlinable as well, and
   `KLEISLI (Cont r)` defines `doubleNeg` and `doubleNegInv` directly instead of through `dualInv`.
-* New `Proarrow.Category.Monoidal.IsoMix`: *-autonomous categories whose unit of par is isomorphic to
-  the unit (`dualUnit`, `dualUnitInv`), so that a dual and its object join into the unit
-  (`dualityCounit`). It is a superclass of `CompactClosed`, which no longer has `dualUnit` or
-  `dualityCounit`: instances move them to an `IsoMix` instance, and `dualUnitInv` is now a method.
-  `dualityCounitDefault` moved to the new module. `LINEAR` is isomix without being compact closed.
-* `Proarrow.Category.Monoidal.StarAutonomous` has `Par a b = Dual (Dual a ** Dual b)`, with `withObPar`,
-  its action on arrows `par`, its symmetry `parSwap`, and linear distributivity `weakDistL` and
-  `weakDistR`.
+* New `Proarrow.Category.Instance.Cps`: a closed symmetric monoidal category with a chosen answer
+  object as a dialogue category, `Dual a = a ~~> r`. With `r = IO ()` this is call by push value;
+  see the `Examples.Cbpv` test module. It is isomix exactly when `r` is the unit (`answerUnit`).
+* New `Proarrow.Category.Monoidal.Dialogue`, now the superclass of `StarAutonomous`: `Dual`,
+  `dual`, `linDist`, `linDistInv`, `doubleNegInv`, `Par` and its functions, `DualF` and the
+  related helpers move there, with their laws (`DialogueStructures`, `testDialogue`, witness
+  `DialogueW`). `StarAutonomous` keeps `dualInv`, `doubleNeg` and `ExpSA`. Instances split
+  accordingly. New: `tripleNeg` and `bindDual`.
+* New `Proarrow.Category.Monoidal.IsoMix`: dialogue categories with `Dual Unit ≅ Unit`
+  (`dualUnit`, `dualUnitInv`, `dualityCounit`). It is a superclass of `CompactClosed`, which
+  loses `dualUnit` and `dualityCounit` and lists `StarAutonomous` itself. `LINEAR` is isomix.
 * `Proarrow.Testing` has `check`, which fails with a message unless a condition holds.
 * GHC 9.14 support
   * `Testable` no longer has the quantified superclass `forall a. (TestOb a) => Ob' a`.

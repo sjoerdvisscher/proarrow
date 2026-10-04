@@ -56,6 +56,7 @@ test =
     , testMonoidal_ @BOOL
     , testSymMonoidal_ @BOOL
     , testCopyDiscard_ @BOOL
+    , testDialogue_ @BOOL
     , testStarAutonomous_ @BOOL
     , testBinaryCoproducts_ @BOOL
     , testDistributive_ @BOOL

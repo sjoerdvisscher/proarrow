@@ -43,6 +43,7 @@ import Proarrow.Category.Monoidal.Cartesian qualified as Cartesian
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.CopyDiscard qualified as CopyDiscard
+import Proarrow.Category.Monoidal.Dialogue qualified as SA
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.Hypergraph qualified as Hypergraph
 import Proarrow.Category.Monoidal.IsoMix qualified as IsoMix
@@ -802,13 +803,33 @@ testClosed_ =
     (\ @a @b -> withTestOb2Def @a @b)
     (\ @a @b -> withTestObExpDef @a @b)
 
+-- | Laws of a dialogue category, from @'Proarrow.Tools.Laws.Laws' 'SA.DialogueStructures'@:
+-- 'SA.dual' is a contravariant functor, 'SA.linDist' is a natural bijection
+-- @Hom(a ** b, Dual c) ≅ Hom(a, Dual (b ** c))@ with inverse 'SA.linDistInv', and
+-- 'SA.doubleNegInv' is the one they give.
+testDialogue
+  :: forall k
+   . (Testable k, SA.Dialogue k, TestOb (M.Unit @k))
+  => WithTestOb2 k
+  -> WithTestObDual k
+  -> TestTree
+testDialogue withTestOb2 withTestObDual =
+  testLaws @SA.DialogueStructures
+    "Dialogue"
+    ( MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
+        :& SymMonoidalW
+        :& DialogueW (\ @a r -> withTestObDual @a r)
+        :& WNil
+    )
+
+testDialogue_ :: forall k. (Testable k, SA.Dialogue k, TestObIsOb k) => TestTree
+testDialogue_ = testDialogue @k (\ @a @b -> withTestOb2Def @a @b) (\ @a -> withTestObDualDef @a)
+
 -- | Laws of a *-autonomous category, from
--- @'Proarrow.Tools.Laws.Laws' 'SA.StarAutonomousStructures'@:
--- 'SA.dual' is a contravariant functor, bijective on hom-sets with inverse 'SA.dualInv';
--- 'SA.doubleNeg' is an isomorphism; and 'SA.linDist' is a natural bijection
--- @Hom(a ** b, Dual c) ≅ Hom(a, Dual (b ** c))@ with inverse 'SA.linDistInv'. The exponential
--- witness is needed because 'Exponential.Closed' is a superclass, although no law builds an
--- exponential.
+-- @'Proarrow.Tools.Laws.Laws' 'SA.StarAutonomousStructures'@: 'SA.dual' is bijective on hom-sets
+-- with inverse 'SA.dualInv', and 'SA.doubleNeg' is an isomorphism. The rest is 'testDialogue'.
+-- The exponential witness is needed because 'Exponential.Closed' is a superclass, although no
+-- law builds an exponential.
 testStarAutonomous
   :: forall k
    . (Testable k, SA.StarAutonomous k, TestOb (M.Unit @k))
@@ -822,7 +843,8 @@ testStarAutonomous withTestOb2 withTestObExp withTestObDual =
     ( MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
         :& SymMonoidalW
         :& ClosedW (\ @a @b r -> withTestObExp @a @b r)
-        :& StarAutonomousW (\ @a r -> withTestObDual @a r)
+        :& DialogueW (\ @a r -> withTestObDual @a r)
+        :& StarAutonomousW
         :& WNil
     )
 
@@ -834,32 +856,26 @@ testStarAutonomous_ =
     (\ @a -> withTestObDualDef @a)
 
 -- | Laws of an isomix category, from @'Proarrow.Tools.Laws.Laws' 'IsoMix.IsoMixStructures'@:
--- 'IsoMix.dualUnit' and 'IsoMix.dualUnitInv' are inverses. See 'testStarAutonomous' for the
--- exponential witness.
+-- 'IsoMix.dualUnit' and 'IsoMix.dualUnitInv' are inverses, and 'IsoMix.dualityCounit' is the
+-- one the dialogue structure gives.
 testIsoMix
   :: forall k
    . (Testable k, IsoMix.IsoMix k, TestOb (M.Unit @k))
   => WithTestOb2 k
-  -> WithTestObExp k
   -> WithTestObDual k
   -> TestTree
-testIsoMix withTestOb2 withTestObExp withTestObDual =
+testIsoMix withTestOb2 withTestObDual =
   testLaws @IsoMix.IsoMixStructures
     "Isomix"
     ( MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
         :& SymMonoidalW
-        :& ClosedW (\ @a @b r -> withTestObExp @a @b r)
-        :& StarAutonomousW (\ @a r -> withTestObDual @a r)
+        :& DialogueW (\ @a r -> withTestObDual @a r)
         :& IsoMixW
         :& WNil
     )
 
 testIsoMix_ :: forall k. (Testable k, IsoMix.IsoMix k, TestObIsOb k) => TestTree
-testIsoMix_ =
-  testIsoMix @k
-    (\ @a @b -> withTestOb2Def @a @b)
-    (\ @a @b -> withTestObExpDef @a @b)
-    (\ @a -> withTestObDualDef @a)
+testIsoMix_ = testIsoMix @k (\ @a @b -> withTestOb2Def @a @b) (\ @a -> withTestObDualDef @a)
 
 -- | Laws of a compact closed category, from
 -- @'Proarrow.Tools.Laws.Laws' 'CC.CompactClosedStructures'@:
@@ -879,7 +895,8 @@ testCompactClosed withTestOb2 withTestObExp withTestObDual =
     ( MonoidalW (\ @a @b r -> withTestOb2 @a @b r)
         :& SymMonoidalW
         :& ClosedW (\ @a @b r -> withTestObExp @a @b r)
-        :& StarAutonomousW (\ @a r -> withTestObDual @a r)
+        :& DialogueW (\ @a r -> withTestObDual @a r)
+        :& StarAutonomousW
         :& IsoMixW
         :& CompactClosedW
         :& WNil

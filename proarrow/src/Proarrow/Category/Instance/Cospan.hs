@@ -10,6 +10,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, cap, cup, curryHG)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
@@ -90,15 +91,17 @@ instance (HasPushouts k, HasCoproducts k) => Closed (COSPAN k) where
   curry @a @b = curryHG @a @b
   apply @b @c = applyHG @b @c
 
-instance (HasPushouts k, HasCoproducts k) => StarAutonomous (COSPAN k) where
+instance (HasPushouts k, HasCoproducts k) => Dialogue (COSPAN k) where
   type Dual a = a
   withObDual r = r
   dual = dagger
-  dualInv = dagger
   linDist @(CS a) @(CS b) (Cospan f g) = Cospan (f . lft @k @a @b) (f . rgt @k @a @b ||| g)
   linDistInv @_ @(CS b) @(CS c) (Cospan f g) = Cospan (f ||| g . lft @k @b @c) (g . rgt @k @b @c)
-  doubleNeg = id
   doubleNegInv = id
+
+instance (HasPushouts k, HasCoproducts k) => StarAutonomous (COSPAN k) where
+  dualInv = dagger
+  doubleNeg = id
 instance (HasPushouts k, HasCoproducts k) => IsoMix (COSPAN k) where
   dualUnit = id
   dualUnitInv = id

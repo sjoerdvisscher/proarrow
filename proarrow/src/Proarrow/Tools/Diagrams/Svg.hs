@@ -37,6 +37,7 @@ import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
@@ -355,7 +356,7 @@ instance Closed SVG where
 
 -- | The dual of a wire is its 'Co' wire. Duals come from 'dualCup' and 'dualCap', which mean a cup
 -- or cap and are drawn as a bend, so a dual wire is drawn hollow wherever it runs.
-instance StarAutonomous SVG where
+instance Dialogue SVG where
   type Dual a = S (DualList (UN S a))
   withObDual @a r = withIsListDual @(UN S a) r
   dual @a @b f =
@@ -367,13 +368,6 @@ instance StarAutonomous SVG where
               M.== dualCapS @b ** obj1
     )
       \\ f
-  dualInv @a @b g =
-    withObDual @SVG @a $
-      withObDual @SVG @b $
-        unStr @'[b] @'[a] $
-          dualCupS @a ** obj1
-            M.== obj1 ** singleton g ** obj1
-            M.== obj1 ** dualCapS @b
   linDist @a @b @c f =
     withObDual @SVG @b $
       withObDual @SVG @c $
@@ -398,8 +392,17 @@ instance StarAutonomous SVG where
                   Str @'[a] @[Dual b, Dual c] (relabel @(Dual (b ** c)) @(Dual b ** Dual c) . g) ** obj1
                     M.== obj1 ** swap2
                     M.== dualCapS @b ** obj1
-  doubleNeg @a = withObDual @SVG @a $ withObDual @SVG @(Dual a) $ withDualDual @(UN S a) $ relabel @(Dual (Dual a)) @a
   doubleNegInv @a = withObDual @SVG @a $ withObDual @SVG @(Dual a) $ withDualDual @(UN S a) $ relabel @a @(Dual (Dual a))
+
+instance StarAutonomous SVG where
+  dualInv @a @b g =
+    withObDual @SVG @a $
+      withObDual @SVG @b $
+        unStr @'[b] @'[a] $
+          dualCupS @a ** obj1
+            M.== obj1 ** singleton g ** obj1
+            M.== obj1 ** dualCapS @b
+  doubleNeg @a = withObDual @SVG @a $ withObDual @SVG @(Dual a) $ withDualDual @(UN S a) $ relabel @(Dual (Dual a)) @a
 
 -- | A wire bent upwards, @a@ on the left and its dual on the right. It means 'cup', and is drawn
 -- as one bend that turns into the dual at its apex.

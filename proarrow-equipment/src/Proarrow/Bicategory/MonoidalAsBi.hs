@@ -15,6 +15,7 @@ import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Coclosed (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Category.Monoidal.CompactClosed qualified as M
+import Proarrow.Category.Monoidal.Dialogue qualified as M
 import Proarrow.Category.Monoidal.IsoMix qualified as M
 import Proarrow.Category.Monoidal.StarAutonomous qualified as M
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, WrappedOb, obj, type (+->))

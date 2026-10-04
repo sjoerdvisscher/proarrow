@@ -15,6 +15,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
@@ -51,15 +52,17 @@ instance (CommutativeMonoid m) => Monoidal (MONOID m) where
 instance (CommutativeMonoid m) => SymMonoidal (MONOID m) where
   swap = Mon mempty
 
-instance (CommutativeMonoid m) => StarAutonomous (MONOID m) where
+instance (CommutativeMonoid m) => Dialogue (MONOID m) where
   type Dual (M :: MONOID m) = M
   withObDual r = r
   dual f@Mon{} = f
-  dualInv f = f
   linDist _ = id
   linDistInv _ = id
-  doubleNeg = id
   doubleNegInv = id
+
+instance (CommutativeMonoid m) => StarAutonomous (MONOID m) where
+  dualInv f = f
+  doubleNeg = id
 instance (CommutativeMonoid m) => IsoMix (MONOID m) where
   dualUnit = Mon mempty
   dualUnitInv = Mon mempty

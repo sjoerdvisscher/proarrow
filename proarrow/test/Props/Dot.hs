@@ -66,6 +66,7 @@ test =
     , testComonoid_ @(D '["A", "B"])
     , testHypergraph @DOT (\ @a @b r -> withOb2 @DOT @a @b r)
     , testClosed_ @DOT
+    , testDialogue_ @DOT
     , testStarAutonomous_ @DOT
     , testIsoMix_ @DOT
     , testCompactClosed_ @DOT

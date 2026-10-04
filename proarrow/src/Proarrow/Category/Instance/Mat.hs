@@ -24,6 +24,7 @@ import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, distRInv)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
@@ -311,18 +312,20 @@ instance (P.Num a) => Closed (MatK a) where
   apply @y @z = applySA @y @z
   (^^^) = expSA
 
-instance (P.Num a) => StarAutonomous (MatK a) where
+instance (P.Num a) => Dialogue (MatK a) where
   type Dual n = n
   withObDual r = r
 
   -- The dual of the compact-closed structure is the transpose, /not/ the conjugate-transpose:
   -- it is the bilinear pairing, so it must not conjugate. See 'transpose'.
   dual = transpose
-  dualInv = transpose
   linDist @(M x) @(M y) @(M z) (Mat m) = withMultNat @z @y $ Mat (concat (P.fmap (chunks @y @x) m))
   linDistInv @(M x) @(M y) @(M z) (Mat m) = withMultNat @y @x $ Mat (P.fmap concat (chunks @z @y m))
-  doubleNeg = id
   doubleNegInv = id
+
+instance (P.Num a) => StarAutonomous (MatK a) where
+  dualInv = transpose
+  doubleNeg = id
 
 instance (P.Num a) => IsoMix (MatK a) where
   dualUnit = id

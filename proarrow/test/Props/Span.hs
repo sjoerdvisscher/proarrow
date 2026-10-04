@@ -35,6 +35,7 @@ test =
     , testMonoidal_ @(SPAN FINSET)
     , testSymMonoidal_ @(SPAN FINSET)
     , testClosed_ @(SPAN FINSET)
+    , testDialogue_ @(SPAN FINSET)
     , testStarAutonomous_ @(SPAN FINSET)
     , testIsoMix_ @(SPAN FINSET)
     , testCompactClosed_ @(SPAN FINSET)

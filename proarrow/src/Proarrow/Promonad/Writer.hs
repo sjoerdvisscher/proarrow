@@ -21,6 +21,7 @@ import Proarrow.Category.Monoidal
   , unitObj
   )
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), expSA)

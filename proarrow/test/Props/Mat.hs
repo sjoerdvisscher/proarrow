@@ -50,6 +50,7 @@ test =
     , testSymMonoidal_ @(MatK Int)
     , testDistributive_ @(MatK Int)
     , testClosed_ @(MatK Int)
+    , testDialogue_ @(MatK Int)
     , testStarAutonomous_ @(MatK Int)
     , testIsoMix_ @(MatK Int)
     , testCompactClosed_ @(MatK Int)

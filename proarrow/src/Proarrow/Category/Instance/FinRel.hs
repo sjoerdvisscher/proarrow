@@ -21,6 +21,7 @@ import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
@@ -192,15 +193,17 @@ instance Closed FINREL where
   apply @y @z = applySA @y @z
   (^^^) = expSA
 
-instance StarAutonomous FINREL where
+instance Dialogue FINREL where
   type Dual n = n
   withObDual r = r
   dual = dagger
-  dualInv = dagger
   linDist @(FR a) @(FR b) @(FR c) (FinRel m) = withOb2 @_ @(FR b) @(FR c) $ FinRel (P.fmap combines (chunks @a @b m))
   linDistInv @(FR a) @(FR b) @(FR c) (FinRel m) = withOb2 @_ @(FR a) @(FR b) $ FinRel (concatMap @_ @b @_ @a (splits @b @c) m)
-  doubleNeg = id
   doubleNegInv = id
+
+instance StarAutonomous FINREL where
+  dualInv = dagger
+  doubleNeg = id
 
 instance IsoMix FINREL where
   dualUnit = id

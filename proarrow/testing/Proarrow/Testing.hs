@@ -116,7 +116,7 @@ import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
-import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
+import Proarrow.Category.Monoidal.Dialogue qualified as SA
 import Proarrow.Category.Sheaf (HasFiniteCovers)
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
@@ -467,7 +467,7 @@ withTestObExpDef @a @b r = obFromTestOb @_ @a $ obFromTestOb @_ @b $ Exponential
 -- | @'TestOb'@ is closed under dualization.
 type WithTestObDual k = forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r
 
-withTestObDualDef :: forall {k}. (TestObIsOb k, SA.StarAutonomous k) => WithTestObDual k
+withTestObDualDef :: forall {k}. (TestObIsOb k, SA.Dialogue k) => WithTestObDual k
 withTestObDualDef @a r = obFromTestOb @_ @a $ SA.withObDual @_ @a r
 
 -- | @'TestOb'@ is closed under a representable profunctor.

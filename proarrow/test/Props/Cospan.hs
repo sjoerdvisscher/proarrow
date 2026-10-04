@@ -35,6 +35,7 @@ test =
     , testMonoidal_ @(COSPAN FINSET)
     , testSymMonoidal_ @(COSPAN FINSET)
     , testClosed_ @(COSPAN FINSET)
+    , testDialogue_ @(COSPAN FINSET)
     , testStarAutonomous_ @(COSPAN FINSET)
     , testIsoMix_ @(COSPAN FINSET)
     , testCompactClosed_ @(COSPAN FINSET)

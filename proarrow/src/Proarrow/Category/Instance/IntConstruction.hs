@@ -13,6 +13,7 @@ import Prelude (($), type (~))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
@@ -130,17 +131,19 @@ instance (TracedMonoidal k) => Closed (INT k) where
   apply @b @c = applySA @b @c
   (^^^) = expSA
 
-instance (TracedMonoidal k) => StarAutonomous (INT k) where
+instance (TracedMonoidal k) => Dialogue (INT k) where
   type Dual (I p n) = I n p
   withObDual r = r
   dual (Int @ap @am @bp @bm f) = Int (swap @k @am @bp . f . swap @k @bm @ap)
-  dualInv (Int @ap @am @bp @bm f) = Int (swap @k @am @bp . f . swap @k @bm @ap)
   linDist @(I ap am) @(I bp bm) @(I cp cm) (Int f) =
     withOb2 @(INT k) @(I bp bm) @(I cp cm) (Int (associator @k @am @bm @cm . f . associatorInv @k @ap @bp @cp))
   linDistInv @(I ap am) @(I bp bm) @(I cp cm) (Int f) =
     withOb2 @(INT k) @(I ap am) @(I bp bm) (Int (associatorInv @k @am @bm @cm . f . associator @k @ap @bp @cp))
-  doubleNeg = id
   doubleNegInv = id
+
+instance (TracedMonoidal k) => StarAutonomous (INT k) where
+  dualInv (Int @ap @am @bp @bm f) = Int (swap @k @am @bp . f . swap @k @bm @ap)
+  doubleNeg = id
 
 instance (TracedMonoidal k) => IsoMix (INT k) where
   dualUnit = id
