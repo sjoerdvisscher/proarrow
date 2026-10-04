@@ -11,14 +11,14 @@ module Examples.Cbpv (test) where
 import Data.Kind (Type)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
-import Prelude hiding ((*))
+import Prelude hiding ((**))
 
 import Proarrow.Category.Instance.Cps (CPS (..), Cps (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Core (CategoryOf (..))
 import Proarrow.Testing (check)
-import Proarrow.Tools.SMC (SYN (F, I, (:**)), Up, dup, force, lam, lift, ret, thunk, toSMC, unit, (!), (*))
+import Proarrow.Tools.SMC (SYN (F, I, (:**)), Up, dup, force, lam, lift, ret, thunk, toSMC, unit, (!), (**))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- | The category: functions, with the actions @m ()@ as the answer object.
@@ -61,7 +61,7 @@ addT :: forall m. (Monad m) => m Int -> m Int -> (String -> m ()) -> Unit ~> Dua
 addT readX readY say = toSMC @I @(Comp m Int) \() -> SMC.do
   x <- act readX
   y <- act readY
-  (s, s') <- dup (plus (x * y))
+  (s, s') <- dup (plus (x ** y))
   () <- effect (say . ("sum " ++) . show) s
   ret s'
 
@@ -73,7 +73,7 @@ plus = lift @(V m Int :** V m Int) @(V m Int) (Cps (uncurry (+)))
 -- written.
 reversedT :: forall m. (Monad m) => m () -> m () -> Unit ~> Dual (Dual (C () :: K m))
 reversedT a b = toSMC @I @(Eff m) \() -> SMC.do
-  (first, second) <- act_ a * act_ b
+  (first, second) <- act_ a ** act_ b
   () <- second
   () <- first
   ret unit

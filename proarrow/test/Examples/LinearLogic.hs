@@ -88,14 +88,14 @@ duality =
     , testProperty "a triple pattern is the left-nested pairs (FinRel 2, 1, 3)" $
         check
           "differs"
-          ( toSMC @(F F2 :** F F1 :** F F3) (\(x, y, z) -> z SMC.* x SMC.* y)
-              == toSMC @(F F2 :** F F1 :** F F3) (\((x, y), z) -> z SMC.* x SMC.* y)
+          ( toSMC @(F F2 :** F F1 :** F F3) (\(x, y, z) -> z SMC.** x SMC.** y)
+              == toSMC @(F F2 :** F F1 :** F F3) (\((x, y), z) -> z SMC.** x SMC.** y)
           )
     , testProperty "a quadruple pattern is the left-nested pairs (FinRel 2, 1, 3, 2)" $
         check
           "differs"
-          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(w, x, y, z) -> z SMC.* x SMC.* w SMC.* y)
-              == toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(((w, x), y), z) -> z SMC.* x SMC.* w SMC.* y)
+          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(w, x, y, z) -> z SMC.** x SMC.** w SMC.** y)
+              == toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(((w, x), y), z) -> z SMC.** x SMC.** w SMC.** y)
           )
     , testProperty "combineDual (FinRel 2, 3)" $
         check "differs from combineDual" (combineDualT @F2 @F3 == combineDual @F2 @F3)

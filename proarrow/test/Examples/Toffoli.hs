@@ -33,13 +33,14 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Mat (Mat (..), MatK (..))
 import Proarrow.Category.Instance.ZX (Bitstring (..), ZX (..))
 import Proarrow.Category.Instance.ZX qualified as ZX
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Colimit.BinaryCoproduct (HasBiproducts (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, lift, toSMC, (*))
+import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, lift, toSMC, (**))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * The circuit
@@ -61,37 +62,37 @@ toffoliWith gates = toSMC @(F q :** F q :** F q) \(a0, b0, x0) -> SMC.do
   (b2, x4) <- cnot b1 (t' x3)
   (b3, a3) <- cnot b2 (t a2)
   (b4, a4) <- cnot (t b3) (t' a3)
-  a4 * b4 * h (t x4)
+  a4 ** b4 ** h (t x4)
   where
     h, t, t' :: Term d g (F q) %1 -> Term d g (F q)
     h = lift (hadamardG gates)
     t = lift (tG gates)
     t' = lift (tInvG gates)
     cnot :: (Merge g1 g2) => Term d g1 (F q) %1 -> Term d g2 (F q) %1 -> Term d (Union g1 g2) (F q :** F q)
-    cnot c x = lift (cnotG gates) (c * x)
+    cnot c x = lift (cnotG gates) (c ** x)
 
 -- | The same circuit written directly with the monoidal structure, for comparison. The wires are
 -- @a ** b ** x@, and each two-qubit gate needs its two wires moved next to each other by hand.
 toffoliManual :: forall {k} (q :: k). (SymMonoidal k, Ob q) => Gates q -> q ** q ** q ~> q ** q ** q
 toffoliManual (Gates h t t' cnot) =
   onX (h . t)
-    . onBA (cnot . (t ** t'))
-    . onBA (cnot . (i ** t))
-    . onBX (cnot . (i ** t'))
-    . onAX (cnot . (i ** t))
-    . onBX (cnot . (i ** t'))
-    . onAX (cnot . (i ** h))
+    . onBA (cnot . (t M.** t'))
+    . onBA (cnot . (i M.** t))
+    . onBX (cnot . (i M.** t'))
+    . onAX (cnot . (i M.** t))
+    . onBX (cnot . (i M.** t'))
+    . onAX (cnot . (i M.** h))
   where
     i = obj @q
     -- (a ** b) ** x to (a ** x) ** b, and back again, since all three wires are qubits
     shuffle :: q ** q ** q ~> q ** q ** q
-    shuffle = associatorInv @k @q @q @q . (i ** swap @k @q @q) . associator @k @q @q @q
+    shuffle = associatorInv @k @q @q @q . (i M.** swap @k @q @q) . associator @k @q @q @q
     onAX, onBX, onBA :: q ** q ~> q ** q -> q ** q ** q ~> q ** q ** q
-    onAX f = shuffle . (f ** i) . shuffle
-    onBX f = associatorInv @k @q @q @q . (i ** f) . associator @k @q @q @q
-    onBA f = (swap @k @q @q ** i) . (f ** i) . (swap @k @q @q ** i)
+    onAX f = shuffle . (f M.** i) . shuffle
+    onBX f = associatorInv @k @q @q @q . (i M.** f) . associator @k @q @q @q
+    onBA f = (swap @k @q @q M.** i) . (f M.** i) . (swap @k @q @q M.** i)
     onX :: q ~> q -> q ** q ** q ~> q ** q ** q
-    onX g = i ** i ** g
+    onX g = i M.** i M.** g
 
 bools :: [Bool]
 bools = [False, True]
@@ -105,7 +106,7 @@ mat2 a b c d = Mat ((a ::: b ::: VNil) ::: (c ::: d ::: VNil) ::: VNil)
 
 -- | The gate @u@ controlled by a qubit: the identity when the control is off, @u@ when it is on.
 ctrlMat :: forall (a :: MatK C). (Ob a) => Mat a a -> Mat (M Nat2 ** a) (M Nat2 ** a)
-ctrlMat u = sum (mat2 1 0 0 0 ** obj @a) (mat2 0 0 0 1 ** u)
+ctrlMat u = sum (mat2 1 0 0 0 M.** obj @a) (mat2 0 0 0 1 M.** u)
 
 matGates :: Gates (M Nat2 :: MatK C)
 matGates =
@@ -148,7 +149,7 @@ ketZ :: Bool -> ZX 0 1
 ketZ b = ZX (Map.singleton (BS (fromEnum b), BS 0) 1)
 
 ket3 :: Bool -> Bool -> Bool -> ZX 0 3
-ket3 c1 c2 x = ketZ c1 ** ketZ c2 ** ketZ x
+ket3 c1 c2 x = ketZ c1 M.** ketZ c2 M.** ketZ x
 
 -- | The Toffoli gate, from its action on the basis states.
 toffoliZXSpec :: ZX 3 3
@@ -183,7 +184,7 @@ svgGates =
     { hadamardG = node "H"
     , tG = node "T"
     , tInvG = node "T†"
-    , cnotG = (obj @SQ ** node @'[Wire "q", Wire "q"] @'[Wire "q"] "⊕") . (comult @SQ ** obj @SQ)
+    , cnotG = (obj @SQ M.** node @'[Wire "q", Wire "q"] @'[Wire "q"] "⊕") . (comult @SQ M.** obj @SQ)
     }
 
 -- | The circuit, drawn.
@@ -196,7 +197,7 @@ test =
     "Toffoli (Proarrow.Tools.SMC)"
     [ testProperty "controlled-not on the basis states (Mat)" $
         sequence_
-          [ check (show (c, x)) (close (cnotG matGates . (ket c ** ket x)) (ket c ** ket (x /= c)))
+          [ check (show (c, x)) (close (cnotG matGates . (ket c M.** ket x)) (ket c M.** ket (x /= c)))
           | c <- bools
           , x <- bools
           ]
@@ -204,7 +205,7 @@ test =
         sequence_
           [ check
               (show (c1, c2, x))
-              (close (toffoliMat . (ket c1 ** ket c2 ** ket x)) (ket c1 ** ket c2 ** ket (x /= (c1 && c2))))
+              (close (toffoliMat . (ket c1 M.** ket c2 M.** ket x)) (ket c1 M.** ket c2 M.** ket (x /= (c1 && c2))))
           | c1 <- bools
           , c2 <- bools
           , x <- bools

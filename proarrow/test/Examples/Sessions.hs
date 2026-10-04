@@ -22,7 +22,8 @@ import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (*), (**), (.))
 
 import Proarrow.Category.Instance.Linear (LINEAR (..), Linear (..), Ur (..), counitUr, unLinear)
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), dualityCounitSA)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
@@ -40,7 +41,7 @@ import Proarrow.Tools.SMC
   , ret
   , toSMC
   , unit
-  , (*)
+  , (**)
   , (|>)
   , type (:##)
   )
@@ -89,12 +90,12 @@ type Sell = Not Buy
 -- | @x[u].(put-name_u | x[v].(put-credit_v | x ↔ r))@: send the name on @u@ and the card on @v@,
 -- and forward the rest of @x@, where the receipt arrives, to @r@.
 buyer :: (KnownCtx g) => SMC.Term d g (Not (F Receipt)) %1 -> SMC.Term d g Buy
-buyer r = put "tea" * put 1234 * r
+buyer r = put "tea" ** put 1234 ** r
 
 -- | @x(u).x(v).compute_{u,v,x}@: receive the name and the card, and send the receipt where it
 -- should go.
 seller :: SMC.Term d '[] Sell
-seller = closed $ cont \(name, credit, toBuyer) -> compute (name * credit) |> toBuyer
+seller = closed $ cont \(name, credit, toBuyer) -> compute (name ** credit) |> toBuyer
 
 -- | @νx.(buy | sell)@, with the buyer's receipt as the result.
 deal :: Unit ~> Dual (Dual Receipt)
@@ -112,7 +113,7 @@ type Quote = Not Shop
 
 -- | @x[u].(put-name_u | x ↔ r)@.
 shopper :: (KnownCtx g) => SMC.Term d g (Not (F Price)) %1 -> SMC.Term d g Shop
-shopper r = put "tea" * r
+shopper r = put "tea" ** r
 
 -- | @x(u).lookup_{u,x}@.
 quoter :: SMC.Term d '[] Quote
@@ -148,11 +149,11 @@ selectShop = toSMC @I @(Up (F Price)) \() -> cont \r -> inr (shopper r) |> choic
 broker :: SMC.Term d '[] (Not Buy :## Buy)
 broker = closed $ cont \(fromBuyer, toSeller) -> SMC.do
   (name, credit, toBuyer) <- fromBuyer
-  name * credit * cont (\receipt -> annotate receipt |> toBuyer) |> toSeller
+  name ** credit ** cont (\receipt -> annotate receipt |> toBuyer) |> toSeller
 
 -- | @νx.νy.(buy | broker | sell)@. The buyer's side is handed to the broker as a computation.
 brokeredDeal :: Unit ~> Dual (Dual Receipt)
-brokeredDeal = toSMC @I @(Up (F Receipt)) \() -> cont \r -> ret (buyer r) * seller |> broker
+brokeredDeal = toSMC @I @(Up (F Receipt)) \() -> cont \r -> ret (buyer r) ** seller |> broker
 
 -- * By hand
 
@@ -161,7 +162,7 @@ brokeredDeal = toSMC @I @(Up (F Receipt)) \() -> cont \r -> ret (buyer r) * sell
 dealByHand :: Unit ~> Dual (Dual Receipt)
 dealByHand =
   dual (rightUnitorInv @_ @(Dual Receipt))
-    . linDist @_ @Unit @(Dual Receipt) @Unit (dualityCounitSA @BuyObj . (sellerByHand ** buyerByHand))
+    . linDist @_ @Unit @(Dual Receipt) @Unit (dualityCounitSA @BuyObj . (sellerByHand M.** buyerByHand))
 
 -- | 'Buy' as an object of 'LINEAR'.
 type BuyObj :: LINEAR
@@ -174,15 +175,15 @@ sellerByHand =
     . linDist @_ @Unit @BuyObj @Unit
       ( dualityCounitSA @Receipt
           . swap @_ @Receipt @(Dual Receipt)
-          . (computeByHand ** obj @(Dual Receipt))
+          . (computeByHand M.** obj @(Dual Receipt))
           . leftUnitor @_ @BuyObj
       )
 
 -- | The buyer: from where the receipt should go to the order.
 buyerByHand :: Dual Receipt ~> BuyObj
 buyerByHand =
-  ((tea ** card) ** obj @(Dual Receipt))
-    . (leftUnitorInv @_ @Unit ** obj @(Dual Receipt))
+  ((tea M.** card) M.** obj @(Dual Receipt))
+    . (leftUnitorInv @_ @Unit M.** obj @(Dual Receipt))
     . leftUnitorInv @_ @(Dual Receipt)
 
 tea :: Unit ~> Name

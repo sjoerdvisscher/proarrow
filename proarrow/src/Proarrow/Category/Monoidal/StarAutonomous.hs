@@ -114,7 +114,7 @@ instance
   dualInv @a @b f = St (DualInv @a @b f) Nil \\ f
 
 -- | 'dual' is bijective on hom-sets with inverse 'dualInv', and 'doubleNeg' is an isomorphism.
--- The rest is in the laws of 'DialogueStructures'.
+-- The rest is in the laws of 'Proarrow.Category.Monoidal.Dialogue.DialogueStructures'.
 instance Laws StarAutonomousStructures where
   laws =
     bijection
