@@ -11,9 +11,8 @@
 --   continuations. And 'annihilate' in 'LINEAR', which is isomix but not compact closed.
 -- * The additives over 'FinRel', which is distributive: case analysis agrees with the
 --   distributor, and 'with' with the pairing.
--- * Par, built with 'Proarrow.Tools.SMC.par' and consumed with 'Proarrow.Tools.SMC.both', run in
---   'LINEAR' on values and checked against its own par functions, and over 'FinRel', where par is
---   the tensor.
+-- * Par, written with 'cont' and consumed with 'ret' of a pair of consumers, run in 'LINEAR' on
+--   values and checked against its own par functions, and over 'FinRel', where par is the tensor.
 module Examples.LinearLogic (test, snakePicture) where
 
 import Data.List (isInfixOf)
@@ -29,18 +28,10 @@ import Proarrow.Category.Instance.Linear (LINEAR (..), unLinear)
 import Proarrow.Category.Instance.Linear qualified as Lin
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), type (**))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), Par, doubleNegInvDefault, par, parSwap, weakDistL, weakDistR)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix)
-import Proarrow.Category.Monoidal.StarAutonomous
-  ( Par
-  , StarAutonomous (..)
-  , doubleNegDefault
-  , doubleNegInvDefault
-  , parSwap
-  , weakDistL
-  , weakDistR
-  )
-import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..), doubleNegDefault)
 import Proarrow.Category.Monoidal.Strength (trace)
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
@@ -49,18 +40,18 @@ import Proarrow.Promonad.Cont (Cont (..))
 import Proarrow.Testing (check, genNamed)
 import Proarrow.Tools.Diagrams.Svg qualified as Svg
 import Proarrow.Tools.SMC
-  ( SYN (D, F, (:**))
+  ( SYN (F, Not, (:**))
   , annihilate
-  , both
   , bothWaysT
   , combineDualT
+  , cont
   , contraT
   , distT
   , dneT
   , dniT
-  , emit
   , loopCC
   , parSwapT
+  , ret
   , rotT
   , snakeDualT
   , snakeT
@@ -155,7 +146,7 @@ nks = [($ 2), \g -> g 0 + g 9]
 
 -- | Give an @a@ to its consumer and keep the @b@: needs only isomix.
 annihilateT :: forall {k} (a :: k) b. (IsoMix k, SymMonoidal k, Ob a, Ob b) => Dual a ** a ** b ~> b
-annihilateT = toSMC @(D (F a) :** F a :** F b) \(na, a, b) -> SMC.do
+annihilateT = toSMC @(Not (F a) :** F a :** F b) \(na, a, b) -> SMC.do
   () <- annihilate na a
   b
 
@@ -239,21 +230,23 @@ pars = [(q, (x, y)) | x <- [False, True], y <- [False, True], q <- both' x y]
     both' :: Bool -> Bool -> [P Bool Bool]
     both' x y = [\(na, nb) -> case na x of () -> nb y, \(na, nb) -> case nb y of () -> na x]
 
--- | A three way par rotated, with its three outputs bound by one pattern.
+-- | A three way par rotated, with its three outputs bound by one pattern and handed back as one
+-- tuple. The consumer of the inner par is a computation, which the nested pattern runs and the
+-- nested tuple builds.
 parRotT
   :: forall {k} (a :: k) b c
-   . (StarAutonomous k, Ob a, Ob b, Ob c)
-  => Dual (Dual (Par a b) ** Dual c) ~> Dual (Dual (Par b c) ** Dual a)
-parRotT = toSMC @(F a :## F b :## F c) @(F b :## F c :## F a) \p -> emit \(kb, kc, ka) -> both ka kb SMC.* kc |> p
+   . (Dialogue k, Ob a, Ob b, Ob c)
+  => (a `Par` b `Par` c) ~> (b `Par` c `Par` a)
+parRotT = toSMC @(F a :## F b :## F c) @(F b :## F c :## F a) \p -> cont \(kb, kc, ka) -> p |> ret (ka, kb, kc)
 
--- | A command passed on through 'emit' with the pattern @()@.
-emitUnitT :: forall k. (StarAutonomous k) => Dual (Unit :: k) ~> Dual Unit
-emitUnitT = toSMC @(D (SMC.I :: SYN k)) @(D SMC.I) \c -> emit \() -> c
+-- | A command passed on through 'cont' with the pattern @()@.
+unitContT :: forall k. (Dialogue k) => Dual (Unit :: k) ~> Dual Unit
+unitContT = toSMC @(Not (SMC.I :: SYN k)) @(Not SMC.I) \c -> cont \() -> c
 
--- | 'parSwapT' with the par consumed by 'both'.
-parSwapBothT
-  :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => Par a b ~> Par b a
-parSwapBothT = toSMC @(F a :## F b) @(F b :## F a) \p -> emit \(kb, ka) -> p |> both ka kb
+-- | 'parSwapT' with the par consumed by a consumer built with 'ret'.
+parSwapRetT
+  :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => Par a b ~> Par b a
+parSwapRetT = toSMC @(F a :## F b) @(F b :## F a) \p -> cont \(kb, ka) -> p |> ret (ka, kb)
 
 type B = L Bool
 
@@ -271,8 +264,8 @@ parTests =
           )
     , testProperty "par swap twice is the identity" $
         check "differs" (and [observe2 (unLinear (parSwapT @B @B . parSwapT) q) == xy | (q, xy) <- pars])
-    , testProperty "consuming the par with both is the same" $
-        check "differs" (and [observe2 (unLinear (parSwapBothT @B @B) q) == (y, x) | (q, (x, y)) <- pars])
+    , testProperty "consuming the par with a consumer built with ret is the same" $
+        check "differs" (and [observe2 (unLinear (parSwapRetT @B @B) q) == (y, x) | (q, (x, y)) <- pars])
     , testProperty "weak distributivity pairs the emitted b with a, as weakDistL and pairFst do" $
         check
           "differs"
@@ -298,12 +291,12 @@ parTests =
               , (q, (x, y)) <- pars
               ]
           )
-    , testProperty "emit with a triple pattern rotates a three way par (FinRel 2, 1, 3)" $
+    , testProperty "cont with a triple pattern rotates a three way par (FinRel 2, 1, 3)" $
         check "differs from rotT" (parRotT @F2 @F1 @F3 == rotT @F2 @F1 @F3)
-    , testProperty "emit with the pattern () passes a command on (continuations)" $
+    , testProperty "cont with the pattern () passes a command on (continuations)" $
         check
           "differs from id"
-          (and [run (emitUnitT @K) c k == k c | c <- [const 3, const 7], k <- [($ ()), \g -> g () * 2]])
+          (and [run (unitContT @K) c k == k c | c <- [const 3, const 7], k <- [($ ()), \g -> g () * 2]])
     , testProperty "par swap is parSwap and swap (FinRel 2, 3)" $ do
         check "differs from parSwap" (parSwapT @F2 @F3 == parSwap @F2 @F3)
         check "differs from swap" (parSwapT @F2 @F3 == swap @_ @F2 @F3)
@@ -315,5 +308,5 @@ parTests =
     , testProperty "par on arrows is the tensor (FinRel)" $ do
         f <- genNamed @(F2 ~> F3) "f"
         g <- genNamed @(F1 ~> F2) "g"
-        check "differs from f ** g" (SA.par f g == f ** g)
+        check "differs from f ** g" (par f g == f ** g)
     ]

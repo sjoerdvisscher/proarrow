@@ -34,11 +34,8 @@ test =
         , testClosed @(CPS Bool) (\r -> r) (\r -> r)
         , testDialogue @(CPS Bool) (\r -> r) (\r -> r)
         ]
-    , testGroup
-        "answer ()"
-        [ testDialogue @(CPS ()) (\r -> r) (\r -> r)
-        , testIsoMix @(CPS ()) (\r -> r) (\r -> r)
-        ]
+    , -- the dialogue laws are the same instance as at Bool; only the isomix structure is new
+      testGroup "answer ()" [testIsoMix @(CPS ()) (\r -> r) (\r -> r)]
     ]
 
 instance (TestOb a, TestOb b) => TestableType (Cps (C a :: CPS (r :: Type)) (C b)) where

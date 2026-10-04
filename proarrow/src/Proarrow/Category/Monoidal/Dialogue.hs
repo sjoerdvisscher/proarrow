@@ -3,8 +3,8 @@
 -- | Dialogue categories (Melliès): symmetric monoidal categories with a tensorial negation 'Dual',
 -- where morphisms @a ** b ~> Dual c@ correspond to @a ~> Dual (b ** c)@ ('linDist'). Unlike in a
 -- *-autonomous category, double negation @'Dual' ('Dual' a) ~> a@ need not exist: only its inverse
--- 'doubleNegInv' does, and @'Dual' ('Dual' ('Dual' a)) ≅ 'Dual' a@. Any closed category with a
--- chosen answer object is one, with @'Dual' a = a ~~> r@, which is why the continuation passing
+-- 'doubleNegInv' does, which 'tripleNeg' undoes on a dual. Any closed category with a chosen
+-- answer object is one, with @'Dual' a = a ~~> r@, which is why the continuation passing
 -- reading of System L in "Proarrow.Tools.SMC" needs no more than this.
 --
 -- The *-autonomous categories of "Proarrow.Category.Monoidal.StarAutonomous" are the dialogue
@@ -76,7 +76,11 @@ doubleNegInvDefault =
   linDistInv @k @Unit @a @(Dual a) (dual (swap @k @a @(Dual a)) . dualityUnitSA @a) . leftUnitorInv @k @a
     \\ dualObj @a
 
--- | Triple negation elimination: a dual is closed under double negation.
+-- | Triple negation elimination: a dual is a retract of its double negation, with 'doubleNegInv' as
+-- the section, @'tripleNeg' . 'doubleNegInv' = 'id'@. For the computations of "Proarrow.Tools.SMC"
+-- it runs a computation of a computation into one, like @join@. It is an isomorphism only in a
+-- *-autonomous category: in 'Data.Kind.Type' with answer object 'Prelude.Bool', @Dual ()@ has two
+-- elements and @Dual (Dual (Dual ()))@ sixteen.
 tripleNeg :: forall {k} (a :: k). (Dialogue k, Ob a) => Dual (Dual (Dual a)) ~> Dual a
 tripleNeg = dual (doubleNegInv @k @a)
 

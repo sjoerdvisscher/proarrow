@@ -81,18 +81,21 @@ module Proarrow.Tools.SMC
 
     -- * Inputs and outputs
     -- $inout
+  , Up
   , Consumer
   , Command
   , type (:##)
   , cut
   , (|>)
-  , accept
-  , emit
-  , CoPat
-  , CoTy
-  , both
-  , asConsumer
-  , asProducer
+  , cont
+  , ret
+  , thunk
+  , force
+  , recast
+  , Tuple (..)
+  , TupleCtx
+  , TupleDepth
+  , classical
 
     -- * Additives
     -- $additives
@@ -122,6 +125,7 @@ module Proarrow.Tools.SMC
   , mfix
   , fail
   , Bind
+  , BindPat
   , Binds
   , Pat
   , Ret
@@ -141,6 +145,7 @@ module Proarrow.Tools.SMC
   , combineDualT
   , dniT
   , dneT
+  , bindT
   , contraT
   , parSwapT
   , weakDistT
@@ -166,9 +171,10 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), Par, bindDual, dualityCounitSA)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
-import Proarrow.Category.Monoidal.StarAutonomous (Par, StarAutonomous (..), dualityCounitSA)
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal, trace)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -188,14 +194,20 @@ infixl 6 :||
 infixr 5 :->
 
 -- | Type expressions over the objects of @k@: an object of @k@, the unit, the tensor, the
--- internal hom and the dual, and the additives: the product and its unit 'Top', and the
+-- internal hom and the negation, and the additives: the product and its unit 'Top', and the
 -- coproduct and its unit 'Zero'.
+--
+-- The negation gives the types a polarity: a type is negative when it is a 'Not', and positive
+-- otherwise. A term of a positive type is a value, and a term of a negative type is a consumer
+-- of what it negates. 'Up' shifts a positive type to a negative one, and 'Dn' a negative type to
+-- a positive one, standing for the same object: a term of @'Dn' n@ is a stored term of @n@.
 type data SYN k
   = F k
   | I
   | SYN k :** SYN k
   | SYN k :-> SYN k
-  | D (SYN k)
+  | Not (SYN k)
+  | Dn (SYN k)
   | SYN k :&& SYN k
   | Top
   | SYN k :|| SYN k
@@ -208,7 +220,8 @@ type family Interp s where
   Interp I = Unit
   Interp (a :** b) = Interp a ** Interp b
   Interp (a :-> b) = Interp a ~~> Interp b
-  Interp (D a) = Dual (Interp a)
+  Interp (Not a) = Dual (Interp a)
+  Interp (Dn a) = Interp a
   Interp (a :&& b) = Interp a && Interp b
   Interp Top = TerminalObject
   Interp (a :|| b) = Interp a || Interp b
@@ -235,7 +248,11 @@ instance (Closed k, KnownObj a, KnownObj (b :: SYN k)) => KnownObj (a :-> b) whe
   {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withSynOb @b (withObExp @k @(Interp a) @(Interp b) r))
 
-instance (StarAutonomous k, KnownObj (a :: SYN k)) => KnownObj (D a) where
+instance (KnownObj (a :: SYN k)) => KnownObj (Dn a) where
+  {-# INLINE withSynOb #-}
+  withSynOb r = withSynOb @a r
+
+instance (Dialogue k, KnownObj (a :: SYN k)) => KnownObj (Not a) where
   {-# INLINE withSynOb #-}
   withSynOb r = withSynOb @a (withObDual @k @(Interp a) r)
 
@@ -466,7 +483,7 @@ lift f (MkTerm t) = MkTerm (f . t)
 -- has no inputs but binds variables of its own is defined with it.
 {-# INLINE closed #-}
 closed :: forall {k} (a :: SYN k) d. Term 0 '[] a -> Term d '[] a
-closed t = retag t
+closed t = recast t
 
 -- | Use a function on terms inside another term, compiled on its own with 'toSMC', so that its
 -- argument is a pattern too. This is how a reusable piece that binds variables of its own is used,
@@ -532,14 +549,14 @@ lam k = case bound @d @r @a @b k of
   MkTerm body -> withCtxOb @r (withSynOb @a (MkTerm (curry @k @(Interp (Mul r)) @(Interp a) (body . snoc @d @a @r))))
 
 -- | The body of a binder, with the pattern taking apart its new variable: what 'toSMC', 'lam',
--- 'loop' and 'accept' share.
+-- 'loop' and 'cont' share, and the binds of a computation through 'runUp'.
 {-# INLINE bound #-}
 bound
   :: forall {k} d r (a :: SYN k) b t cont
    . (Binds t d a cont r b)
   => (t %1 -> cont)
   %1 -> Term (d + 1) ('(d, a) ': r) b
-bound k = var @d @a @(d + 1) >>= k
+bound k = bindPat (var @d @a @(d + 1)) k
 
 -- | Trace: bind a pattern, as for 'toSMC', for the value fed back, whose variables the body must
 -- use exactly once, and return it again next to the result. This needs the category to be traced.
@@ -557,7 +574,7 @@ loop k = case bound @d @r @u @(b :** u) k of
 -- | A new pair of wires, a variable and its dual, from nothing: the unit of the duality. This
 -- needs the category to be compact closed.
 {-# INLINE produce #-}
-produce :: forall {k} (a :: SYN k) d. (CompactClosed k, KnownObj a) => Term d '[] (a :** D a)
+produce :: forall {k} (a :: SYN k) d. (CompactClosed k, KnownObj a) => Term d '[] (a :** Not a)
 produce = withSynOb @a (MkTerm (dualityUnit @k @(Interp a)))
 
 -- | Join a dual and its wire into nothing: the counit of the duality, which an isomix category
@@ -567,52 +584,78 @@ annihilate
   :: forall {k} (a :: SYN k) d g1 g2
    . (IsoMix k, KnownObj a, Merge g1 g2)
   => Consumer d g1 a %1 -> Term d g2 a %1 -> Term d (Union g1 g2) I
-annihilate x y = lift @(D a :** a) @I (withSynOb @a (dualityCounit @k @(Interp a))) (x * y)
+annihilate x y = lift @(Not a :** a) @I (withSynOb @a (dualityCounit @k @(Interp a))) (x * y)
 
 -- $inout
--- In a *-autonomous category a term of @'D' a@ consumes an @a@. Terms then read as in System L
--- (the μμ̃-calculus): a 'Term' produces, a 'Consumer' consumes, and a 'Command' is the two meeting
--- in a 'cut', a term of @'D' 'I'@. A command can have any number of inputs and outputs. None of
--- this needs compact closure: 'produce' does.
+-- In a dialogue category, one with a tensorial negation 'Dual', a term of @'Not' a@ consumes an
+-- @a@. Terms then read as in polarised System L (the μμ̃-calculus): a 'Term' of a positive type
+-- produces a value, a 'Consumer' consumes one, and a 'Command' is the two meeting in a 'cut', a
+-- term of @'Not' 'I'@. 'cont' binds what a term of @'Not' a@ is given, an @a@, which reads as
+-- accepting an input or as binding the consumer of an output. Either way it gives a term of a
+-- negative type, since the only way to use an output is to have a consumer for it, and so a
+-- producer of a positive type @a@ bound this way has the type @'Up' a@, a computation that will
+-- produce an @a@. The shift the other way, 'Dn', changes nothing but the polarity: 'thunk' and
+-- 'force' are identities on the morphism, and a @'Dn' ('Up' a)@ is a stored computation, which a
+-- bind names without running it. In @do@ notation, binding a term of @'Up' a@ runs it: the pattern binds the
+-- @a@ it produces, and the rest of the block, which must be of a negative type, is what happens
+-- next. This is where terms get an evaluation order, which a symmetric monoidal category does not
+-- have by itself. Inside a pattern, a pair or @()@ at a computation runs it as well, to take its
+-- value apart, while a variable only names it. A value is a computation through 'ret', whose
+-- argument may be a tuple: at a tensor it is the tensor of its parts, and at a computation it is
+-- the computation of the tuple at the value, so @'ret' (ka, kb)@ at @'Not' (a ':##' b)@ is a
+-- consumer of a par from a consumer of each side, the mirror image of the pattern.
+--
+-- None of this needs double negation elimination, which a *-autonomous category adds: there, a
+-- computation is just its value again ('classical'). Compact closure is needed for 'produce'.
 
--- | A consumer of @a@: a term of its dual.
+-- | The shift of a positive type to a negative one: a computation that produces an @a@. A term of
+-- it is a consumer of consumers of @a@, so in a category with @'Dual' a = a ~~> r@ it is the
+-- continuation passing type @(a -> r) -> r@.
+type Up :: forall {k}. SYN k -> SYN k
+type Up a = Not (Not a)
+
+-- | A consumer of @a@: a term of its negation.
 type Consumer :: forall {k}. Nat -> Ctx k -> SYN k -> Type
-type Consumer d g a = Term d g (D a)
+type Consumer d g a = Term d g (Not a)
 
 -- | A producer and a consumer meeting: a term of the unit of par.
 type Command :: forall {k}. Nat -> Ctx k -> Type
-type Command d g = Term d g (D I)
+type Command d g = Term d g (Not I)
 
--- | Par, the dual of the tensor of the duals, interpreted as 'Proarrow.Category.Monoidal.StarAutonomous.Par'.
+-- | Par, the negation of the tensor of the negations, interpreted as 'Proarrow.Category.Monoidal.Dialogue.Par'.
 type (:##) :: forall {k}. SYN k -> SYN k -> SYN k
-type a :## b = D (D a :** D b)
+type a :## b = Not (Not a :** Not b)
 
--- | A consumer meets a producer: @cut k t@ gives @t@ to @k@, like applying a continuation. This
--- needs the category to be *-autonomous.
+-- | A consumer meets a producer: @cut k t@ gives @t@ to @k@, like applying a continuation.
 {-# INLINE cut #-}
 cut
   :: forall {k} (a :: SYN k) d g1 g2
-   . (StarAutonomous k, KnownObj a, Merge g1 g2)
+   . (Dialogue k, KnownObj a, Merge g1 g2)
   => Consumer d g1 a %1 -> Term d g2 a %1 -> Command d (Union g1 g2)
-cut x y = lift @(D a :** a) @(D I) (withSynOb @a (dualityCounitSA @(Interp a))) (x * y)
+cut x y = lift @(Not a :** a) @(Not I) (withSynOb @a (dualityCounitSA @(Interp a))) (x * y)
 
 -- | 'cut' with the producer first, as System L writes @⟨t | k⟩@: @t |> k@ sends @t@ into @k@.
 {-# INLINE (|>) #-}
 (|>)
   :: forall {k} (a :: SYN k) d g1 g2
-   . (StarAutonomous k, KnownObj a, Merge g2 g1)
+   . (Dialogue k, KnownObj a, Merge g2 g1)
   => Term d g1 a %1 -> Consumer d g2 a %1 -> Command d (Union g2 g1)
 t |> k = cut k t
 
--- | Bind an input: a pattern for an @a@, as for 'toSMC', whose variables the command must use
--- exactly once, gives a consumer of @a@. As logic, this refutes @a@.
-{-# INLINE accept #-}
-accept
+-- | A term of @'Not' a@ from what a command does with an @a@: a pattern for the @a@, as for
+-- 'toSMC', whose variables the command must use exactly once. Read as a consumer of @a@ it accepts
+-- an input, which as logic refutes @a@ and in System L is μ̃. Read as a term of the negative type
+-- @'Not' a@ it binds the consumer of an output, which in System L is μ and in Haskell is @callCC@:
+-- at @'Up' b@ the pattern binds a consumer of @b@, at a par @b ':##' c@ it is a pair that binds a
+-- consumer of each side, and at a command, @'Not' 'I'@, it is @()@. A consumer of a par is itself
+-- a computation, which a nested pair pattern runs to get at the consumers of its sides.
+{-# INLINE cont #-}
+cont
   :: forall {k} d r (a :: SYN k) t cont
-   . (StarAutonomous k, Binds t d a cont r (D I))
+   . (Dialogue k, Binds t d a cont r (Not I))
   => (t %1 -> cont)
-  %1 -> Consumer d r a
-accept k = case bound @d @r @a @(D I) k of
+  %1 -> Term d r (Not a)
+cont k = case bound @d @r @a @(Not I) k of
   MkTerm body ->
     withCtxOb @r
       ( withSynOb @a
@@ -623,110 +666,123 @@ accept k = case bound @d @r @a @(D I) k of
           )
       )
 
--- | Bind an output: a consumer of @a@, which the command must use exactly once, gives a producer of
--- @a@. As logic, this is proof by contradiction, and in Haskell it is @callCC@. The consumer can be
--- taken apart with a pattern that describes @a@ from the other side: a pair for a par, giving a
--- consumer of each side, and @()@ for the unit of par, @'D' 'I'@.
-{-# INLINE emit #-}
-emit
-  :: forall {k} d r (a :: SYN k) t cont
-   . (StarAutonomous k, CoPat t a, Binds t d (CoTy t a) cont r (D I))
-  => (t %1 -> cont)
-  %1 -> Term d r a
-emit k = lift @(D (CoTy t a)) @a (coEmit @t @a) (accept @d @r @(CoTy t a) k)
+-- | Run a computation against the rest of a block. The body is what the rest does with the value,
+-- given the context @r@; it becomes a consumer of the computation, whose context @g@ joins. What
+-- the binds of a computation share, the counterpart of 'bound'.
+{-# INLINE runUp #-}
+runUp
+  :: forall {k} d g r (a :: SYN k) y
+   . (Dialogue k, KnownObj a, KnownObj y, Merge g r)
+  => Term d g (Up a)
+  %1 -> (Interp (Mul r) ** Interp a ~> Interp (Not y))
+  -> Term d (Union g r) (Not y)
+runUp (MkTerm m) body =
+  withCtxOb @r
+    ( withSynOb @a
+        ( withSynOb @y
+            ( MkTerm
+                ( bindDual @(Interp (Mul r)) @(Interp a) @(Interp y) body
+                    . (m ** obj @(Interp (Mul r)))
+                    . merge @g @r
+                )
+            )
+        )
+    )
 
--- | What a pattern for an output takes apart: the consumer of a par as the tensor of the consumers
--- of its sides, the consumer of the unit of par as the unit, and anything else as it is. A triple
--- or quadruple is pairs nested to the left.
-type CoTy :: forall {k}. Type -> SYN k -> SYN k
-type family CoTy t a where
-  CoTy (x, y) (D (D a :** D b)) = CoTy x a :** CoTy y b
-  CoTy (x, y, z) a = CoTy ((x, y), z) a
-  CoTy (w, x, y, z) a = CoTy (((w, x), y), z) a
-  CoTy () (D I) = I
-  CoTy t a = D a
+-- | A value as the computation that produces it: double negation introduction, and the return of
+-- a @do@ block in the continuation reading. It also reads as a producer of @a@ handed over as a
+-- consumer of @'Not' a@. The value can be given as a 'Tuple' of terms, built by the type expected.
+{-# INLINE ret #-}
+ret
+  :: forall {k} (a :: SYN k) t
+   . (Dialogue k, KnownObj a, Tuple k t a)
+  => t %1 -> Term (TupleDepth t) (TupleCtx k t) (Up a)
+ret t = withSynOb @a (lift @a @(Up a) (doubleNegInv @k @(Interp a))) (tuple @k @t @a t)
 
--- | A pattern for an output of type @a@: 'emit' binds what the pattern takes apart, @'CoTy' t a@,
--- and makes the output from a consumer of it with 'coEmit'.
-type CoPat :: forall {k}. Type -> SYN k -> Constraint
-class (KnownObj a, KnownObj (CoTy t a)) => CoPat t (a :: SYN k) where
-  -- | The output, from a consumer of what the pattern takes apart.
-  coEmit :: Interp (D (CoTy t a)) ~> Interp a
+-- | A term built from a tuple of terms, by the type it is expected to have: a term is itself, a
+-- pair at a tensor is the tensor of its parts, and a pair at a computation @'Up' a@ is the
+-- computation of the pair at @a@. A triple or quadruple stands for pairs nested to the left, as in
+-- patterns. The parts must be at the same depth, and their contexts are merged.
+type Tuple :: forall k -> Type -> SYN k -> Constraint
+class Tuple k t a where
+  tuple :: t %1 -> Term (TupleDepth t) (TupleCtx k t) a
 
-  -- | What the pattern takes apart, from a consumer of the output: nothing to do for a variable,
-  -- and otherwise a morphism.
-  coView :: ((CoTy t a ~ D a) => r) -> ((Interp (D a) ~> Interp (CoTy t a)) -> r) -> r
+-- | The context of a tuple of terms: the union of the contexts of its parts.
+type TupleCtx :: forall k -> Type -> Ctx k
+type family TupleCtx k t where
+  TupleCtx k (x, y) = Union (TupleCtx k x) (TupleCtx k y)
+  TupleCtx k (x, y, z) = TupleCtx k ((x, y), z)
+  TupleCtx k (w, x, y, z) = TupleCtx k (((w, x), y), z)
+  TupleCtx k t = CtxOf @k t
 
--- | What a pattern takes apart, from a consumer of the output, as a morphism.
-{-# INLINE coPat #-}
-coPat :: forall {k} t (a :: SYN k). (StarAutonomous k, CoPat t a) => Interp (D a) ~> Interp (CoTy t a)
-coPat = coView @t @a (synOb @(D a)) (\f -> f)
+-- | The depth of a tuple of terms: that of its first part.
+type TupleDepth :: Type -> Nat
+type family TupleDepth t where
+  TupleDepth (x, y) = TupleDepth x
+  TupleDepth (x, y, z) = TupleDepth x
+  TupleDepth (w, x, y, z) = TupleDepth w
+  TupleDepth t = DepthOf t
 
+-- The generic instances are incoherent, as for patterns: a term's type is often still unknown when
+-- the instance is chosen, and a pair defaults to a tensor until its type is known to be an 'Up'.
+
+-- | A term is itself.
+instance {-# INCOHERENT #-} (t ~ Term d g a) => Tuple k t a where
+  {-# INLINE tuple #-}
+  tuple t = t
+
+-- | A pair at a tensor is the tensor of its parts.
 instance
   {-# INCOHERENT #-}
-  (StarAutonomous k, a ~ D (D p :** D q), CoPat x p, CoPat y q)
-  => CoPat (x, y) (a :: SYN k)
+  ( Monoidal k
+  , a ~ (a1 :** a2)
+  , Tuple k x a1
+  , Tuple k y a2
+  , TupleDepth y ~ TupleDepth x
+  , Merge (TupleCtx k x) (TupleCtx k y)
+  )
+  => Tuple k (x, y) (a :: SYN k)
   where
-  {-# INLINE coEmit #-}
-  {-# INLINE coView #-}
+  {-# INLINE tuple #-}
+  tuple (x, y) = tuple @k @x @a1 x * tuple @k @y @a2 y
 
-  -- a par with variables on both sides is already the dual of the tensor of their consumers
-  coEmit =
-    coView @x @p
-      (coView @y @q (synOb @a) (\g -> dual (synOb @(D p) ** g)))
-      (\f -> dual (f ** coPat @y @q))
-  coView _ m = m (withSynOb @(D p :** D q) ((coPat @x @p ** coPat @y @q) . doubleNeg @k @(Interp (D p :** D q))))
+-- | A pair at a computation is the computation of the pair at the value.
+instance (Dialogue k, KnownObj a, Tuple k (x, y) a) => Tuple k (x, y) (Not (Not a) :: SYN k) where
+  {-# INLINE tuple #-}
+  tuple p = ret @a p
 
-instance
-  {-# INCOHERENT #-}
-  (CoPat ((x, y), z) a, KnownObj a, KnownObj (CoTy ((x, y), z) a))
-  => CoPat (x, y, z) a
-  where
-  {-# INLINE coEmit #-}
-  {-# INLINE coView #-}
-  coEmit = coEmit @((x, y), z) @a
-  coView = coView @((x, y), z) @a
+instance (Tuple k ((x, y), z) a) => Tuple k (x, y, z) a where
+  {-# INLINE tuple #-}
+  tuple (x, y, z) = tuple @k @((x, y), z) @a ((x, y), z)
 
-instance
-  {-# INCOHERENT #-}
-  (CoPat (((w, x), y), z) a, KnownObj a, KnownObj (CoTy (((w, x), y), z) a))
-  => CoPat (w, x, y, z) a
-  where
-  {-# INLINE coEmit #-}
-  {-# INLINE coView #-}
-  coEmit = coEmit @(((w, x), y), z) @a
-  coView = coView @(((w, x), y), z) @a
+instance (Tuple k (((w, x), y), z) a) => Tuple k (w, x, y, z) a where
+  {-# INLINE tuple #-}
+  tuple (w, x, y, z) = tuple @k @(((w, x), y), z) @a (((w, x), y), z)
 
-instance {-# INCOHERENT #-} (StarAutonomous k, a ~ D I) => CoPat () (a :: SYN k) where
-  {-# INLINE coEmit #-}
-  {-# INLINE coView #-}
-  coEmit = synOb @(D I :: SYN k)
-  coView _ m = m (doubleNeg @k @Unit)
+-- | The same morphism at another type expression for the same object, and at any depth: between
+-- @'F' (a '**' b)@ and @'F' a ':**' 'F' b@, say, so that a pattern can take it apart, or between a
+-- type and its 'Dn'. The polarity may change, the morphism does not.
+{-# INLINE recast #-}
+recast :: forall {k} (a :: SYN k) b d d' g. (Interp a ~ Interp b) => Term d g a %1 -> Term d' g b
+recast (MkTerm f) = MkTerm f
 
-instance {-# INCOHERENT #-} (StarAutonomous k, KnownObj a, CoTy t a ~ D a) => CoPat t (a :: SYN k) where
-  {-# INLINE coEmit #-}
-  {-# INLINE coView #-}
-  coEmit = withSynOb @a (doubleNeg @k @(Interp a))
-  coView v _ = v
+-- | Store a term of a negative type as a value: the same morphism at the positive type @'Dn' n@,
+-- which a bind names instead of running. This is call by push value's @thunk@, 'recast' to 'Dn'.
+{-# INLINE thunk #-}
+thunk :: forall {k} (n :: SYN k) d g. Term d g n %1 -> Term d g (Dn n)
+thunk = recast
 
--- | A producer of @a@ as a consumer of its dual: double negation introduction.
-{-# INLINE asConsumer #-}
-asConsumer :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Term d g a %1 -> Consumer d g (D a)
-asConsumer = withSynOb @a (lift @a @(D (D a)) (doubleNegInv @k @(Interp a)))
+-- | A stored term at its negative type again, where a bind runs it. This is call by push value's
+-- @force@, 'recast' from 'Dn'.
+{-# INLINE force #-}
+force :: forall {k} (n :: SYN k) d g. Term d g (Dn n) %1 -> Term d g n
+force = recast
 
--- | A consumer of the dual of @a@ as a producer of @a@: double negation elimination.
-{-# INLINE asProducer #-}
-asProducer :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Consumer d g (D a) %1 -> Term d g a
-asProducer = withSynOb @a (lift @(D (D a)) @a (doubleNeg @k @(Interp a)))
-
--- | A consumer of a par from a consumer of each side. Cutting the par against the tensor of the two
--- consumers does the same with less structure.
-{-# INLINE both #-}
-both
-  :: forall {k} d g1 g2 (a :: SYN k) b
-   . (StarAutonomous k, KnownObj a, KnownObj b, Merge g1 g2)
-  => Consumer d g1 a %1 -> Consumer d g2 b %1 -> Consumer d (Union g1 g2) (a :## b)
-both x y = lift @(D a :** D b) @(D (a :## b)) (withSynOb @(D a :** D b) (doubleNegInv @k @(Interp (D a :** D b)))) (x * y)
+-- | A computation as its value again: double negation elimination, which only a *-autonomous
+-- category has. There every type is equivalent to its shift, so the polarities collapse.
+{-# INLINE classical #-}
+classical :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Term d g (Up a) %1 -> Term d g a
+classical = withSynOb @a (lift @(Up a) @a (doubleNeg @k @(Interp a)))
 
 -- $additives
 -- The additives share their context between alternatives, of which only one is used. Terms that
@@ -836,7 +892,7 @@ MkTerm f ! MkTerm x =
 -- Both the variable's type and the rest of the context must be known.
 type Binds :: forall k. Type -> Nat -> SYN k -> Type -> Ctx k -> SYN k -> Constraint
 type Binds @k t n a cont g b =
-  (KnownObj a, KnownCtx g, Bind k (Term (n + 1) '[ '(n, a)] a) t One cont (Term (n + 1) ('(n, a) ': g) b))
+  (KnownObj a, KnownCtx g, BindPat k (Term (n + 1) '[ '(n, a)] a) t cont (Term (n + 1) ('(n, a) ': g) b))
 
 -- | A bind in a @do@ block: a term taken apart by a pattern, or the variables of a @rec@ block.
 -- The multiplicity @p@ of the continuation depends only on the right hand side @m@, since GHC
@@ -846,18 +902,43 @@ class Bind k m t p cont r | m -> k p where
   -- | Bind the right hand side to the pattern of the continuation.
   (>>=) :: m %1 -> (t %p -> cont) %1 -> r
 
--- The types of the continuation and the result are matched with equalities, so that the
--- instance is chosen as soon as the right hand side is known.
+-- | A term on the right hand side is taken apart by the pattern. Incoherent, so that it is chosen
+-- as soon as the right hand side is known, unless the right hand side is a computation.
+instance {-# INCOHERENT #-} (BindPat k (Term d g a) t cont r) => Bind k (Term d g (a :: SYN k)) t One cont r where
+  {-# INLINE (>>=) #-}
+  (>>=) = bindPat
+
+-- | A computation on the right hand side runs first, and the rest of the block is negative.
 instance
-  {-# INCOHERENT #-}
+  ( Dialogue k
+  , KnownObj y
+  , Merge g r
+  , TyOf @k cont ~ Not y
+  , Binds t d a cont r (Not y)
+  , r' ~ Term d (Union g r) (Not y)
+  )
+  => Bind k (Term d g (Not (Not a))) t One cont r'
+  where
+  {-# INLINE (>>=) #-}
+  m >>= k = case bound @d @r @a @(Not y) k of
+    MkTerm body -> runUp @d @g @r @a @y m (body . snoc @d @a @r)
+
+-- | A term on the right hand side taken apart by the pattern of the continuation. The types of the
+-- continuation and the result are matched with equalities, so that the instance is chosen as soon
+-- as the right hand side is known.
+type BindPat :: Type -> Type -> Type -> Type -> Type -> Constraint
+class BindPat k m t cont r | m -> k where
+  bindPat :: m %1 -> (t %1 -> cont) %1 -> r
+
+instance
   ( cont ~ Term (d + PSize t) (CtxOf @k cont) (TyOf @k cont)
   , r ~ Term d (PCtx t d g a (CtxOf @k cont)) (TyOf @k cont)
   , Pat k t d g a (CtxOf @k cont) (TyOf @k cont)
   )
-  => Bind k (Term d g (a :: SYN k)) t One cont r
+  => BindPat k (Term d g (a :: SYN k)) t cont r
   where
-  {-# INLINE (>>=) #-}
-  (>>=) = pat @k @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont)
+  {-# INLINE bindPat #-}
+  bindPat = pat @k @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont)
 
 -- | The statement of a @rec@ block, whose continuation is its 'return'.
 instance
@@ -878,6 +959,7 @@ unRet (Ret x) = x
 -- | A pattern: a variable, @()@, or a pair of patterns. A triple or quadruple stands for pairs
 -- nested to the left, as @a ':**' b ':**' c@ is: @(x, y, z)@ is @((x, y), z)@. Binding it at depth
 -- @d@ to a term with context @g@ and type @a@, with a continuation with context @g'@ and type @c@.
+-- A pair or @()@ at a computation, @'Up' a@, runs it and matches its value, so @c@ is then negative.
 type Pat :: forall k -> Type -> Nat -> Ctx k -> SYN k -> Ctx k -> SYN k -> Constraint
 class Pat k t d g a g' c where
   pat :: Term d g a %1 -> (t %1 -> Term (d + PSize t) g' c) %1 -> Term d (PCtx t d g a g') c
@@ -894,6 +976,7 @@ type family PSize t where
 -- continuation.
 type PCtx :: forall {k}. Type -> Nat -> Ctx k -> SYN k -> Ctx k -> Ctx k
 type family PCtx t d g a g' where
+  PCtx (x, y) d g (Not (Not a)) g' = Union g (Tail (PCtx (x, y) d '[ '(d, a)] a g'))
   PCtx (x, y) d g (a1 :** a2) g' = Union (Drop2 (PCtxPair x y d a1 a2 g')) g
   PCtx (x, y, z) d g a g' = PCtx ((x, y), z) d g a g'
   PCtx (w, x, y, z) d g a g' = PCtx (((w, x), y), z) d g a g'
@@ -905,8 +988,32 @@ type PCtxPair :: forall {k}. Type -> Type -> Nat -> SYN k -> SYN k -> Ctx k -> C
 type PCtxPair x y d a1 a2 g' =
   PCtx x (d + 2) '[ '(d, a1)] a1 (PCtx y (d + 2 + PSize x) '[ '(d + 1, a2)] a2 g')
 
--- Both instances are incoherent: a variable pattern's type is often still unknown when the
--- instance is chosen, and a pair pattern's type is always a pair by then.
+-- The generic instances are incoherent: a variable pattern's type is often still unknown when the
+-- instance is chosen, and a pair pattern's type is always a pair by then. The instances at a
+-- computation are more specific, so they win once the type is known to be an 'Up'.
+
+-- | The pattern @()@ at a computation of the unit runs it.
+instance (Dialogue k, KnownObj y, c ~ Not y, Merge g g') => Pat k () d g (Not (Not I) :: SYN k) g' c where
+  {-# INLINE pat #-}
+  pat u k = case k () of
+    MkTerm t -> runUp @d @g @g' @I @y u (withCtxOb @g' (t . rightUnitor @k @(Interp (Mul g'))))
+
+-- | A pair pattern at a computation runs it and takes its value apart. The value needs no variable
+-- of its own: the pattern's variables take the ids it would have taken.
+instance
+  ( Dialogue k
+  , KnownObj a
+  , KnownObj y
+  , c ~ Not y
+  , Pat k (x, y') d '[ '(d, a)] a g' c
+  , PCtx (x, y') d '[ '(d, a)] a g' ~ ('(d, a) ': r)
+  , Merge g r
+  )
+  => Pat k (x, y') d g (Not (Not a) :: SYN k) g' c
+  where
+  {-# INLINE pat #-}
+  pat m k = case pat @k @(x, y') @d @'[ '(d, a)] @a @g' @c (var @d @a @d) k of
+    MkTerm body -> runUp @d @g @r @a @y m (body . snoc @d @a @r)
 
 -- | The pattern @()@ uses up a term of the unit type.
 instance {-# INCOHERENT #-} (Monoidal k, a ~ I, KnownObj c, Merge g g') => Pat k () d g (a :: SYN k) g' c where
@@ -916,7 +1023,7 @@ instance {-# INCOHERENT #-} (Monoidal k, a ~ I, KnownObj c, Merge g g') => Pat k
 
 instance {-# INCOHERENT #-} (t ~ Term (DepthOf t) g a) => Pat k t d g a g' c where
   {-# INLINE pat #-}
-  pat x k = k (retag x)
+  pat x k = k (recast x)
 
 instance
   {-# INCOHERENT #-}
@@ -1078,10 +1185,6 @@ instance
 fail :: a
 fail = P.error "Proarrow.Tools.SMC.fail: a pattern did not match"
 
-{-# INLINE retag #-}
-retag :: Term d g a %1 -> Term d' g a
-retag (MkTerm f) = MkTerm f
-
 type DepthOf :: Type -> Nat
 type family DepthOf t where
   DepthOf (Term d g a) = d
@@ -1095,8 +1198,11 @@ type family TyOf t where
   TyOf (Term d g a) = a
 
 type Drop2 :: forall {k}. Ctx k -> Ctx k
-type family Drop2 g where
-  Drop2 (x ': y ': g) = g
+type Drop2 g = Tail (Tail g)
+
+type Tail :: forall {k}. Ctx k -> Ctx k
+type family Tail g where
+  Tail (x ': g) = g
 
 type HeadId :: forall {k}. Ctx k -> Nat
 type family HeadId g where
@@ -1207,7 +1313,7 @@ snakeT = toSMC @(F a) \x -> Proarrow.Tools.SMC.do
 -- | The inverse of 'distribDual': make a pair for @a ** b@, and annihilate the two halves of its
 -- plain end with the given duals.
 combineDualT :: forall {k} (a :: k) b. (CompactClosed k, Ob a, Ob b) => Dual a ** Dual b ~> Dual (a ** b)
-combineDualT = toSMC @(D (F a) :** D (F b)) @(D (F a :** F b)) \(da, db) -> Proarrow.Tools.SMC.do
+combineDualT = toSMC @(Not (F a) :** Not (F b)) @(Not (F a :** F b)) \(da, db) -> Proarrow.Tools.SMC.do
   (ab, ab') <- produce
   (a, b) <- ab
   () <- annihilate da a
@@ -1242,38 +1348,46 @@ bothWaysT
   :: forall {k} (a :: k) b. (SymMonoidal k, HasBinaryProducts k, Ob a, Ob b) => a ** b ~> (a ** b) && (b ** a)
 bothWaysT = toSMC @(F a :** F b) \p -> with (\q -> q) (\(x, y) -> y * x) p
 
--- | Double negation introduction: a consumer of a consumer of @a@ hands it the @a@.
-dniT :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual a)
-dniT = toSMC @(F a) @(D (D (F a))) \x -> accept (`cut` x)
+-- | Double negation introduction: a consumer of a consumer of @a@ hands it the @a@. This is
+-- 'ret', written out.
+dniT :: forall {k} (a :: k). (Dialogue k, Ob a) => a ~> Dual (Dual a)
+dniT = toSMC @(F a) @(Up (F a)) \x -> cont (x |>)
 
--- | Double negation elimination, the classical direction: emit an @a@ by giving its consumer to
--- the input.
+-- | Double negation elimination, the classical direction: a computation is its value. Binding its
+-- consumer with 'cont' and cutting would only give the computation back.
 dneT :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
-dneT = toSMC @(D (D (F a))) @(F a) \nn -> emit \k -> cut nn k
+dneT = toSMC @(Up (F a)) @(F a) \nn -> classical nn
+
+-- | Sequencing: run the input computation, and continue with @f@ on its value. In a category with
+-- @'Dual' a = a ~~> r@ this is the bind of the continuation monad.
+bindT :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => (a ~> Dual (Dual b)) -> Dual (Dual a) ~> Dual (Dual b)
+bindT f = toSMC @(Up (F a)) @(Up (F b)) \m -> Proarrow.Tools.SMC.do
+  x <- m
+  lift @(F a) @(Up (F b)) f x
 
 -- | Contraposition: a consumer of @b@ consumes @a@ through @f@.
-contraT :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => (a ~> b) -> Dual b ~> Dual a
-contraT f = toSMC @(D (F b)) @(D (F a)) \nb -> accept \x -> cut nb (lift @(F a) @(F b) f x)
+contraT :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => (a ~> b) -> Dual b ~> Dual a
+contraT f = toSMC @(Not (F b)) @(Not (F a)) \nb -> cont \x -> cut nb (lift @(F a) @(F b) f x)
 
--- | Par is symmetric: emit both outputs and hand them to the input the other way round. This is
--- 'Proarrow.Category.Monoidal.StarAutonomous.parSwap'.
-parSwapT :: forall {k} (a :: k) b. (StarAutonomous k, Ob a, Ob b) => Par a b ~> Par b a
-parSwapT = toSMC @(F a :## F b) @(F b :## F a) \p -> emit \(kb, ka) -> ka * kb |> p
+-- | Par is symmetric: bind both outputs and hand them to the input the other way round. This is
+-- 'Proarrow.Category.Monoidal.Dialogue.parSwap'.
+parSwapT :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => Par a b ~> Par b a
+parSwapT = toSMC @(F a :## F b) @(F b :## F a) \p -> cont \(kb, ka) -> ka * kb |> p
 
 -- | Linear (weak) distributivity, @a ⊗ (b ⅋ c) ⊸ (a ⊗ b) ⅋ c@: the @b@ the input emits is paired
 -- with @a@ and sent to the first output, and its @c@ goes to the second. This is
--- 'Proarrow.Category.Monoidal.StarAutonomous.weakDistL'.
+-- 'Proarrow.Category.Monoidal.Dialogue.weakDistL'.
 weakDistT
   :: forall {k} (a :: k) b c
-   . (StarAutonomous k, Ob a, Ob b, Ob c)
+   . (Dialogue k, Ob a, Ob b, Ob c)
   => a ** Par b c ~> Par (a ** b) c
 weakDistT = toSMC @(F a :** (F b :## F c)) @((F a :** F b) :## F c) \(a, bc) ->
-  emit \(kab, kc) -> accept (\b -> a * b |> kab) * kc |> bc
+  cont \(kab, kc) -> cont (\b -> a * b |> kab) * kc |> bc
 
 -- | The snake on the dual: join the input with the first end of a new pair, and continue with the
 -- second. Here the wires meet in the order they come, so no swap is needed.
 snakeDualT :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ~> Dual a
-snakeDualT = toSMC @(D (F a)) \x -> Proarrow.Tools.SMC.do
+snakeDualT = toSMC @(Not (F a)) \x -> Proarrow.Tools.SMC.do
   (a, a') <- produce
   () <- annihilate x a
   a'

@@ -13,7 +13,7 @@ module Proarrow.Category.Instance.Cps (CPS (..), Cps (..), answerUnit) where
 import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Closed (Closed (..), swapClosed, uncurry)
+import Proarrow.Category.Monoidal.Closed (Closed (..), swapClosed, toEl, uncurry)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault, obj)
@@ -82,7 +82,7 @@ instance (Closed k, SymMonoidal k, Ob r) => Dialogue (CPS (r :: k)) where
 -- instance.
 instance (Closed k, SymMonoidal k, r ~ Unit) => IsoMix (CPS (r :: k)) where
   dualUnit = withObExp @k @Unit @Unit (Cps (apply @k @Unit @Unit . rightUnitorInv @k @(Unit ~~> Unit)))
-  dualUnitInv = Cps (curry @k @Unit @Unit (leftUnitor @k @Unit))
+  dualUnitInv = Cps (toEl @Unit)
   dualityCounit @(C a) = Cps (apply @k @a @Unit)
 
 -- | The converse: an isomix structure on @CPS r@ makes @r@ the unit, through @Unit ~~> r ≅ r@.
@@ -90,7 +90,7 @@ answerUnit :: forall {k} (r :: k). (Closed k, Ob r, IsoMix (CPS r)) => PIso' r U
 answerUnit =
   withObExp @k @Unit @r
     ( iso
-        (unCps (dualUnit @(CPS r)) . curry @k @r @Unit (rightUnitor @k @r))
+        (unCps (dualUnit @(CPS r)) . toEl @r)
         (apply @k @Unit @r . rightUnitorInv @k @(Unit ~~> r) . unCps (dualUnitInv @(CPS r)))
     )
 

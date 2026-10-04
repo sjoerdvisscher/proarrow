@@ -5,6 +5,7 @@ module Main where
 import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
+import Examples.Cbpv qualified as Cbpv
 import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
 import Examples.Free qualified as FreeExample
@@ -19,6 +20,7 @@ import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
+import Props.Cps qualified as Cps
 import Props.DPO qualified as DPO
 import Props.Discrete qualified as Discrete
 import Props.Dot qualified as Dot
@@ -68,6 +70,7 @@ main =
           , Free.test
           , Hask.test
           , Kleisli.test
+          , Cps.test
           , Mat.test
           , Optic.test
           , OpticLinear.test
@@ -94,6 +97,7 @@ main =
           , IntComposition.test
           , LinearLogic.test
           , Sessions.test
+          , Cbpv.test
           , Toffoli.test
           , Vitrea.test
           ]

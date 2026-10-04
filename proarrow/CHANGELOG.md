@@ -3,13 +3,11 @@
 ## Unreleased
 
 * New `Proarrow.Tools.SMC`: linear HOAS for symmetric monoidal categories, with `do` notation,
-  traces (`rec`, `loop`), duals (`produce`, `annihilate`), System L style inputs and outputs
-  (`Consumer`, `Command`, `cut` and its flip `|>`, `accept`, and `emit`, whose patterns take apart
-  pars, `:##`, as `accept`'s take apart tensors; `both` consumes a par, and `asConsumer` and
-  `asProducer` are double negation introduction and elimination on terms) and additives (`with`,
-  `caseOf`). With optimisation its context bookkeeping inlines away, so a compiled term is the
-  category's own structure maps, composed. `LINEAR`'s structure maps are inlinable as well, and
-  `KLEISLI (Cont r)` defines `doubleNeg` and `doubleNegInv` directly instead of through `dualInv`.
+  traces, duals, additives, and polarised System L inputs and outputs (`Consumer`, `Command`,
+  `cut`, `cont`, `ret`, `classical`, the shifts `Up a = Not (Not a)` and `Dn` with `thunk` and
+  `force`, and `recast` between type expressions for one object; a `do` bind of an `Up` runs it)
+  over any dialogue category. With optimisation a compiled term is the category's own structure
+  maps, composed.
 * New `Proarrow.Category.Instance.Cps`: a closed symmetric monoidal category with a chosen answer
   object as a dialogue category, `Dual a = a ~~> r`. With `r = IO ()` this is call by push value;
   see the `Examples.Cbpv` test module. It is isomix exactly when `r` is the unit (`answerUnit`).

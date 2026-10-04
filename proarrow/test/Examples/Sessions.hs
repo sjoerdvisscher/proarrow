@@ -4,10 +4,13 @@
 -- | The internet commerce example of Wadler's /Propositions as Sessions/ (JFP version), with
 -- "Proarrow.Tools.SMC" as the process calculus, run in 'LINEAR', and extended with a broker.
 --
--- A session type of CP is a 'SYN' type, and its dual is 'D'. A process with channels
+-- A session type of CP is a 'SYN' type, and its dual is 'Not'. A process with channels
 -- @x : A, r : R@ is a term from @r@'s dual to @A@, so the buyer below takes the consumer of its
 -- receipt and produces its side of the session, and the seller, which only has the session, is a
 -- consumer of the buyer's side. Composing two processes on a channel, @νx.(P | Q)@, is a 'cut'.
+-- The processes stay in the dialogue fragment, so a closed process with one channel left, the
+-- receipt, is a computation, 'Up', that produces it; 'run' reaches the receipt through 'LINEAR'\'s
+-- double negation.
 --
 -- CP ends every session in a unit, @1@ or @⊥@, so that after the last message the channel is
 -- closed rather than left as the channel of the message. Here messages are values, so the units
@@ -20,21 +23,21 @@ import Prelude hiding (id, (*), (**), (.))
 
 import Proarrow.Category.Instance.Linear (LINEAR (..), Linear (..), Ur (..), counitUr, unLinear)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..), dualityCounitSA)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), dualityCounitSA)
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Testing (check)
 import Proarrow.Tools.SMC
   ( KnownCtx
-  , SYN (D, F, I, (:**), (:||))
-  , accept
-  , asConsumer
-  , asProducer
+  , SYN (F, I, Not, (:**), (:||))
+  , Up
   , caseOf
   , closed
-  , emit
+  , cont
   , inl
   , inr
   , lift
+  , ret
   , toSMC
   , unit
   , (*)
@@ -48,18 +51,22 @@ test =
   testGroup
     "Sessions (Propositions as Sessions)"
     [ testProperty "the buyer gets the receipt the seller computes" $
-        check "wrong receipt" (counitUr (unLinear deal ()) == "tea, paid with 1234")
+        check "wrong receipt" (run deal == "tea, paid with 1234")
     , testProperty "the shopper gets the price the quoter looks up" $
-        check "wrong price" (counitUr (unLinear ask ()) == 3)
+        check "wrong price" (run ask == 3)
     , testProperty "selecting buy from the choice is buying" $
-        check "differs" (counitUr (unLinear selectBuy ()) == counitUr (unLinear deal ()))
+        check "differs" (run selectBuy == run deal)
     , testProperty "selecting shop from the choice is asking the price" $
-        check "differs" (counitUr (unLinear selectShop ()) == counitUr (unLinear ask ()))
+        check "differs" (run selectShop == run ask)
     , testProperty "the deal written with the structure of the category is the same" $
-        check "differs" (counitUr (unLinear dealByHand ()) == counitUr (unLinear deal ()))
+        check "differs" (run dealByHand == run deal)
     , testProperty "buying through the broker annotates the receipt" $
-        check "wrong receipt" (counitUr (unLinear brokeredDeal ()) == "tea, paid with 1234 (via broker)")
+        check "wrong receipt" (run brokeredDeal == "tea, paid with 1234 (via broker)")
     ]
+
+-- | Run a closed process to its result.
+run :: forall a. (Unit ~> Dual (Dual (L (Ur a)))) -> a
+run p = counitUr (unLinear (doubleNeg @LINEAR @(L (Ur a)) . p) ())
 
 -- * Messages
 
@@ -73,47 +80,47 @@ type Price = L (Ur Int)
 -- | @Buy = Name ⊗ Credit ⊗ Receipt⊥@: send a name, a credit card number, and where the receipt
 -- should go.
 type Buy :: SYN LINEAR
-type Buy = F Name :** F Credit :** D (F Receipt)
+type Buy = F Name :** F Credit :** Not (F Receipt)
 
 -- | @Sell = Buy⊥@.
 type Sell :: SYN LINEAR
-type Sell = D Buy
+type Sell = Not Buy
 
 -- | @x[u].(put-name_u | x[v].(put-credit_v | x ↔ r))@: send the name on @u@ and the card on @v@,
 -- and forward the rest of @x@, where the receipt arrives, to @r@.
-buyer :: (KnownCtx g) => SMC.Term d g (D (F Receipt)) %1 -> SMC.Term d g Buy
+buyer :: (KnownCtx g) => SMC.Term d g (Not (F Receipt)) %1 -> SMC.Term d g Buy
 buyer r = put "tea" * put 1234 * r
 
 -- | @x(u).x(v).compute_{u,v,x}@: receive the name and the card, and send the receipt where it
 -- should go.
 seller :: SMC.Term d '[] Sell
-seller = closed $ accept \(name, credit, toBuyer) -> compute (name * credit) |> toBuyer
+seller = closed $ cont \(name, credit, toBuyer) -> compute (name * credit) |> toBuyer
 
 -- | @νx.(buy | sell)@, with the buyer's receipt as the result.
-deal :: Unit ~> Receipt
-deal = toSMC @I @(F Receipt) \() -> emit \r -> buyer r |> seller
+deal :: Unit ~> Dual (Dual Receipt)
+deal = toSMC @I @(Up (F Receipt)) \() -> cont \r -> buyer r |> seller
 
 -- * Asking the price
 
 -- | @Shop = Name ⊗ Price⊥@.
 type Shop :: SYN LINEAR
-type Shop = F Name :** D (F Price)
+type Shop = F Name :** Not (F Price)
 
 -- | @Quote = Shop⊥@.
 type Quote :: SYN LINEAR
-type Quote = D Shop
+type Quote = Not Shop
 
 -- | @x[u].(put-name_u | x ↔ r)@.
-shopper :: (KnownCtx g) => SMC.Term d g (D (F Price)) %1 -> SMC.Term d g Shop
+shopper :: (KnownCtx g) => SMC.Term d g (Not (F Price)) %1 -> SMC.Term d g Shop
 shopper r = put "tea" * r
 
 -- | @x(u).lookup_{u,x}@.
 quoter :: SMC.Term d '[] Quote
-quoter = closed $ accept \(name, toShopper) -> lookupPrice name |> toShopper
+quoter = closed $ cont \(name, toShopper) -> lookupPrice name |> toShopper
 
 -- | @νx.(shop | quote)@.
-ask :: Unit ~> Price
-ask = toSMC @I @(F Price) \() -> emit \r -> shopper r |> quoter
+ask :: Unit ~> Dual (Dual Price)
+ask = toSMC @I @(Up (F Price)) \() -> cont \r -> shopper r |> quoter
 
 -- * Choosing
 
@@ -122,39 +129,38 @@ ask = toSMC @I @(F Price) \() -> emit \r -> shopper r |> quoter
 type Select :: SYN LINEAR
 type Select = Buy :|| Shop
 
-choice :: SMC.Term d '[] (D Select)
-choice = closed $ accept \x -> caseOf unit x (\((), b) -> b |> seller) (\((), s) -> s |> quoter)
+choice :: SMC.Term d '[] (Not Select)
+choice = closed $ cont \x -> caseOf unit x (\((), b) -> b |> seller) (\((), s) -> s |> quoter)
 
 -- | @νx.(x[inl].buy | choice)@.
-selectBuy :: Unit ~> Receipt
-selectBuy = toSMC @I @(F Receipt) \() -> emit \r -> inl (buyer r) |> choice
+selectBuy :: Unit ~> Dual (Dual Receipt)
+selectBuy = toSMC @I @(Up (F Receipt)) \() -> cont \r -> inl (buyer r) |> choice
 
 -- | @νx.(x[inr].shop | choice)@, which tells the price instead.
-selectShop :: Unit ~> Price
-selectShop = toSMC @I @(F Price) \() -> emit \r -> inr (shopper r) |> choice
+selectShop :: Unit ~> Dual (Dual Price)
+selectShop = toSMC @I @(Up (F Price)) \() -> cont \r -> inr (shopper r) |> choice
 
 -- * A broker
 
 -- | A process with two channels, @⊢ x : Sell, y : Buy@, to the buyer and to the seller, and so a
--- par. It reads the buyer's order, places it with the seller, and passes the receipt back with a
--- note.
-broker :: SMC.Term d '[] (D Buy :## Buy)
-broker = closed $ emit \(fromBuyer, toSeller) -> SMC.do
-  (name, credit, toBuyer) <- asProducer fromBuyer
-  name * credit * accept (\receipt -> annotate receipt |> toBuyer) |> toSeller
+-- par. The consumer of the buyer's channel is a computation that produces the order: binding it
+-- reads the order, which is then placed with the seller, with the receipt passed back with a note.
+broker :: SMC.Term d '[] (Not Buy :## Buy)
+broker = closed $ cont \(fromBuyer, toSeller) -> SMC.do
+  (name, credit, toBuyer) <- fromBuyer
+  name * credit * cont (\receipt -> annotate receipt |> toBuyer) |> toSeller
 
--- | @νx.νy.(buy | broker | sell)@.
-brokeredDeal :: Unit ~> Receipt
-brokeredDeal = toSMC @I @(F Receipt) \() -> emit \r -> asConsumer (buyer r) * seller |> broker
+-- | @νx.νy.(buy | broker | sell)@. The buyer's side is handed to the broker as a computation.
+brokeredDeal :: Unit ~> Dual (Dual Receipt)
+brokeredDeal = toSMC @I @(Up (F Receipt)) \() -> cont \r -> ret (buyer r) * seller |> broker
 
 -- * By hand
 
 -- | 'deal' written with the structure of the category directly, which is what 'toSMC' generates
 -- from it, give or take some unitors.
-dealByHand :: Unit ~> Receipt
+dealByHand :: Unit ~> Dual (Dual Receipt)
 dealByHand =
-  doubleNeg @_ @Receipt
-    . dual (rightUnitorInv @_ @(Dual Receipt))
+  dual (rightUnitorInv @_ @(Dual Receipt))
     . linDist @_ @Unit @(Dual Receipt) @Unit (dualityCounitSA @BuyObj . (sellerByHand ** buyerByHand))
 
 -- | 'Buy' as an object of 'LINEAR'.
