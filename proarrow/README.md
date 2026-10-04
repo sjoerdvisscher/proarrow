@@ -1,4 +1,4 @@
-[![Haskell-CI](https://github.com/sjoerdvisscher/proarrow/actions/workflows/haskell-ci.yml/badge.svg)](https://github.com/sjoerdvisscher/proarrow/actions/workflows/haskell-ci.yml)
+[![Haskell-CI](https://github.com/sjoerdvisscher/proarrow/actions/workflows/haskell-ci.yml/badge.svg)](https://github.com/sjoerdvisscher/proarrow/actions/workflows/haskell-ci.yml) [![Hackage](https://img.shields.io/hackage/v/proarrow.svg)](https://hackage.haskell.org/package/proarrow)
 
 # proarrow
 
