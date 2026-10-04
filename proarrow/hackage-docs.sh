@@ -9,11 +9,11 @@ set -euo pipefail
 #
 # Other arguments go to `cabal upload`. Without `-t`, `--token` or `-u` the API token is read
 # from the macOS Keychain entry `hackage-token` (or HACKAGE_TOKEN_SERVICE), see below.
-# The docs are built with GHC_VERSION (default 9.12, a version in tested-with), using ghcup's
+# The docs are built with GHC_VERSION (default 9.14, a version in tested-with), using ghcup's
 # versioned ghc-X and haddock-X binaries, since haddock interfaces are tied to one GHC version.
 
 : "${CABAL:=cabal}"
-: "${GHC_VERSION:=9.12}"
+: "${GHC_VERSION:=9.14}"
 export ARG_COMPILER="-w ghc-${GHC_VERSION}"
 export HADDOCK="haddock-${GHC_VERSION}"
 # On Hackage the docs live in <package page>/docs/, so ../ is the package page, which is the

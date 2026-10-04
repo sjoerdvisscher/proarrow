@@ -1,6 +1,6 @@
 # Revision history for proarrow
 
-## Unreleased
+## 0.2.0.0 -- 2026-10-04
 
 * New `Proarrow.Tools.SMC`: linear HOAS for symmetric monoidal categories, with `do` notation,
   traces, duals, additives, and polarised System L inputs and outputs (`Consumer`, `Command`,

@@ -50,6 +50,18 @@ fi
 
 out=$(mktemp -d)
 ${CABAL} sdist -o "${out}"
-${CABAL} upload ${publish[@]+"${publish[@]}"} --token="$token" "${out}/proarrow-${version}.tar.gz"
+# cabal prints where the upload can be seen, on whichever stream; keep the output on the terminal
+# and pick that up.
+upload_log=$(${CABAL} upload ${publish[@]+"${publish[@]}"} --token="$token" "${out}/proarrow-${version}.tar.gz" 2>&1 | tee /dev/stderr)
 
 bash hackage-docs.sh ${publish[@]+"${publish[@]}"} --token="$token"
+
+# Open the page once the documentation is there too: the last Hackage URL in a line like
+#   You can now preview the result at 'https://hackage.haskell.org/package/proarrow-0.2.0.0/candidate'
+url=$(printf '%s\n' "$upload_log" | grep -o "https://hackage\.haskell\.org/[^' ]*" | tail -1 || true)
+if [[ -n "$url" ]]; then
+  echo "Opening $url"
+  if command -v open >/dev/null; then open "$url"; elif command -v xdg-open >/dev/null; then xdg-open "$url"; fi
+else
+  echo "no Hackage URL found in cabal's output, nothing to open" >&2
+fi

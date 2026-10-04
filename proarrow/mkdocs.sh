@@ -15,23 +15,10 @@ cp lattice.svg docs/
 # Both libraries render into one doc tree (Hackage has a single documentation set per package).
 # This is hand-rolled rather than `cabal haddock-project` because that documents the whole
 # project (proarrow-equipment included), nests pages per component (breaking published URLs and
-# the flat tree `cabal upload --documentation` expects), and has no per-component haddock options
-# (the --comments-module source template differs between src/ and testing/).
-# The testing sublibrary goes first: its dependency pass re-renders the main library with the
-# wrong source-link template, and the main run afterwards overwrites those pages correctly.
-${CABAL} haddock lib:testing ${ARG_COMPILER} \
-  --haddock-hyperlink-source \
-  --haddock-html-location='https://hackage.haskell.org/package/$pkg-$version/docs' \
-  --haddock-options="
-    --comments-base=https://github.com/sjoerdvisscher/proarrow/
-    --comments-module=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/testing/%{MODULE/.//}.hs
-    --comments-entity=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/testing/%{MODULE/.//}.hs#L%L
-    --pretty-html
-    ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}}
-    --odir=docs
-    --dump-interface=docs/testing.haddock"
-
-${CABAL} haddock lib:proarrow ${ARG_COMPILER} \
+# the flat tree `cabal upload --documentation` expects). One invocation renders each library
+# once; the source-link template names src/, and the testing modules are pointed at testing/
+# below, where the per-entity links are corrected anyway.
+${CABAL} haddock lib:proarrow lib:testing ${ARG_COMPILER} \
   --haddock-hyperlink-source \
   --haddock-html-location='https://hackage.haskell.org/package/$pkg-$version/docs' \
   --haddock-options="
@@ -40,13 +27,23 @@ ${CABAL} haddock lib:proarrow ${ARG_COMPILER} \
     --comments-entity=https://github.com/sjoerdvisscher/proarrow/blob/main/proarrow/src/%{MODULE/.//}.hs#L%L
     --pretty-html
     ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}}
-    --odir=docs
-    --dump-interface=docs/proarrow.haddock"
+    --odir=docs"
+
+# cabal writes the haddock interface of each library into its build directory; the newest ones
+# are from the run above
+version=$(awk '$1 == "version:" { print $2 }' proarrow.cabal)
+main_iface=$(ls -t $(find ../dist-newstyle/build -path "*/proarrow-${version}/doc/*" -name proarrow.haddock) | head -1)
+testing_iface=$(ls -t $(find ../dist-newstyle/build -path "*/proarrow-${version}/l/testing/*" -name testing.haddock) | head -1)
+cp "$main_iface" docs/proarrow.haddock
+cp "$testing_iface" docs/testing.haddock
 
 # regenerate the contents and index pages covering both libraries
 ${HADDOCK} --gen-contents --gen-index -o docs --title=proarrow ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}} \
   --read-interface=,docs/proarrow.haddock \
   --read-interface=,docs/testing.haddock
+
+# the testing modules live under testing/, not src/
+grep -rl 'proarrow/src/Proarrow/Testing' docs | xargs perl -pi -e 's|proarrow/src/(Proarrow/Testing[^"]*\.hs)|proarrow/testing/$1|g'
 
 # the testing pages link to the main library's modules via hackage; make those links local
 grep -rl 'hackage.haskell.org/package/proarrow-' docs | xargs perl -pi -e 's|https://hackage.haskell.org/package/proarrow-[0-9.]+/docs/||g'
