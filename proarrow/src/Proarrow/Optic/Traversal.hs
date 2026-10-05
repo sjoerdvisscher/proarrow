@@ -12,6 +12,8 @@
 -- eliminate with 'traverseOf'.
 module Proarrow.Optic.Traversal where
 
+import Prelude qualified as P
+
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), MultRep, Tensor)
@@ -38,6 +40,7 @@ import Proarrow.Colimit.BinaryCoproduct
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
+import Proarrow.Functor (Prelude (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Product)
 import Proarrow.Monoid (Comonoid, Monoid (..))
 import Proarrow.Monoid qualified as Mon
@@ -45,6 +48,7 @@ import Proarrow.Optic
   ( ExOptic
   , FLAVOR
   , Optic
+  , Optic_ (..)
   , Prostrong (..)
   , legs2prof
   , withLegs
@@ -54,6 +58,7 @@ import Proarrow.Optic.Setter (SetterFl (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), coindex)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
 
 type TravFl :: forall {k}. FLAVOR k k
@@ -269,3 +274,10 @@ instance (HasInitialObject k) => MonTravFl (ZeroW :: k +-> k) CoZeroW where
 instance (HasInitialObject k) => Proadjunction (ZeroW :: k +-> k) CoZeroW where
   unit = CoZeroW id :.: ZeroW id
   counit (ZeroW h :.: CoZeroW i) = i . h
+
+instance (P.Applicative f) => Prostrong TravFl (Star (Prelude f)) where
+  proact (p :.: f :.: q) = travP p q f
+
+type TravVL s t a b = forall f. (P.Applicative f) => (a -> f b) -> s -> f t
+toTravVL :: Traversal s t a b -> TravVL s t a b
+toTravVL (Optic l) = (unPrelude .) . unStar . l . Star . (Prelude .)
