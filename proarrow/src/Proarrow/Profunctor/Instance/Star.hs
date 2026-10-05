@@ -6,8 +6,10 @@
 module Proarrow.Profunctor.Instance.Star where
 
 import Control.Monad qualified as P
+import Data.Foldable qualified as P
 import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
+import Data.Traversable qualified as P
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
@@ -16,8 +18,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
 import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction, SubAction)
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
-import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), baseTraverse)
-import Proarrow.Category.Monoidal.Strength (Strong (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), Traversing, baseTraverse, repTraverse)
+import Proarrow.Category.Monoidal.Strength (MonStrong, Strong (..), strongId)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, (++))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
@@ -83,15 +85,34 @@ instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (Copr
   one = Co (Star empty)
   Co (Star @a f) ** Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f ** g))) \\ ab
 
-instance (P.Functor f) => Strong ProdAction (Star (Prelude f)) where
-  act (Star k) = Star (\(a, x) -> P.fmap (a,) (k x))
+instance (Functor f) => Strong ProdAction (Star (f :: Type -> Type)) where
+  act (Star k) = Star (\(a, x) -> map (a,) (k x))
 
 instance (Functor f) => Strong Tensor (Star (f :: Type -> Type)) where
   act (Star k) = Star (\(a, x) -> map (a,) (k x))
-instance (Applicative f) => Strong CoprodAction (Star (f :: Type -> Type)) where
-  act (Star k) = Star (f ||| map P.Right . k)
+
+instance (Applicative f, MonStrong (Star f), HasCoproducts k) => Traversing (Star (f :: k -> k))
+
+-- | A strong lax monoidal functor absorbs a coproduct action: the injected summand goes through
+-- the natural unit @'unStar' 'strongId'@.
+instance (Applicative f, MonStrong (Star f), HasCoproducts k) => Strong CoprodAction (Star (f :: k -> k)) where
+  act @(COPR a) (Star @y k) =
+    withObCoprod @k @a @y (Star (map (lft @k @a @y) . unStar (strongId @a) ||| map (rgt @k @a @y) . k))
+
+-- | A Prelude traversable functor is a traversable witness: its contents are a list, traversed by
+-- the list instance, and its shape is carried through as a residual that the new contents refill.
+instance (P.Traversable g) => Traversable (Star (Prelude g)) where
+  traverse (Star k :.: p) = lmap k (dimap split unsplit (act @Tensor (repTraverse @(Star []) p))) :.: Star id
     where
-      f a = pure (\() -> P.Left a) ()
+      split (Prelude z) = (Shape (refill z), P.toList z)
+      unsplit (Shape f, bs) = Prelude (f bs)
+      refill z bs = P.snd (P.mapAccumL step bs z)
+      step (b : bs) _ = (bs, b)
+      step [] _ = P.error "Traversable (Star (Prelude g)): too few contents"
+
+-- | The shape of a Prelude traversable functor, waiting for as many contents as it had.
+type Shape :: (Type -> Type) -> Type
+newtype Shape g = Shape (forall c. [c] -> g c)
 
 instance (P.Applicative f) => Strong (SubAction P.Traversable ApplyAction) (Star (Prelude f)) where
   act (Star f) = Star (P.traverse f)

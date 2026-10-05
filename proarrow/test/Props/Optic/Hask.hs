@@ -11,6 +11,7 @@
 module Props.Optic.Hask where
 
 import Data.Bifunctor (bimap, first, second)
+import Data.Bitraversable (bitraverse)
 import Data.Maybe (maybeToList)
 import Data.Tuple (swap)
 import Data.Type.Nat (Nat2, Nat3)
@@ -53,9 +54,10 @@ import Proarrow.Optic.MonoidalTraversal
   , par1Optic
   , plusOptic
   , toPTraversal
+  , toPTraversalFull
   , u1Optic
   )
-import Proarrow.Optic.Traversal (TravFl, Traversal, traverseOf)
+import Proarrow.Optic.Traversal (TravFl, Traversal, fromTravVL, traverseOf, traversed)
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Functor (Prelude (..))
@@ -117,6 +119,10 @@ lensToAffineTraversal = O.convert
 
 lensToGetter :: (CategoryOf k) => Lens (s :: k) t a b -> Getter s t a b
 lensToGetter = O.convert
+
+-- | Both components of a pair, in van Laarhoven form.
+both :: (Applicative f) => (a -> f b) -> (a, a) -> f (b, b)
+both k = bitraverse k k
 
 lensToTraversal :: (CategoryOf k) => Lens (s :: k) t a b -> Traversal s t a b
 lensToTraversal = O.convert
@@ -378,6 +384,26 @@ test =
         (\ss -> unPrelude (unStar (powerGrateOf triK (Star (Prelude . okIf))) ss))
         aggTriple
     , propFnEq @(Bool, Bool) "re lens as review" (review (O.re _1)) fst
+    , propFnEq @(Maybe Bool)
+        "van Laarhoven traversal as setter"
+        (over (fromTravVL traverse) not)
+        (fmap not)
+    , propFnEq @[Bool]
+        "van Laarhoven traversal as fold (through the list traversal)"
+        (foldMapOf (fromTravVL traverse) (: []))
+        id
+    , propFnEq @(Bool, Bool)
+        "van Laarhoven traversal of a pair, eliminated as a profunctor traversal"
+        (unPrelude . unStar (traverseOf (toPTraversalFull (fromTravVL both)) (Star (Prelude . Just . not))))
+        (\(a, b) -> Just (not a, not b))
+    , propFnEq @[Bool]
+        "list traversal through the generic carrier"
+        (foldMapOf (toPTraversalFull (traversed @(Star []))) (: []))
+        id
+    , propFnEq @[Bool]
+        "van Laarhoven list traversal through the generic carrier"
+        (unPrelude . unStar (traverseOf (toPTraversalFull (fromTravVL traverse)) (Star (Prelude . Just . not))))
+        (Just . map not)
     , propFnEq @Bool "re prism as getter" (view (O.re _Just)) Just
     , propFnEq @Bool "re iso as getter" (view (O.re notIso)) not
     , propFnEq @(Bool, Bool) "re re lens as getter" (view (reReLens _1)) fst

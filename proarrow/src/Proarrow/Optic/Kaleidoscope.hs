@@ -13,15 +13,15 @@
 -- over @p@; the optics here take @p@ as the witness and quantify over @t@.
 --
 -- * A 'Cotraversal' passes through every 'Cotraversable' carrier: the square for /arbitrary/ @p@.
---   This holds for finite shapes ('Proarrow.Category.Monoidal.Distributive.Cotraversable'
---   @('RepCostar' t)@ for a traversable representable @t@, 'Id', products, sums).
+--   This holds for shapes with a list of contents ('Proarrow.Category.Monoidal.Distributive.Cotraversable'
+--   @('RepCostar' t)@ for a traversable representable @t@, 'Id', products, sums, and in @Type@
+--   @'Costar' ('Prelude' t)@ for a Prelude @Traversable t@, the @Aggregating@ module of the
+--   literature).
 --
 -- * A 'Kaleidoscope' passes through every 'Kaleidoscopic' carrier: the square for /representable/
 --   @p@ only. This is the kaleidoscope of Clarke et al. (/Profunctor optics: a categorical update/),
---   @∫^{F applicative} C(S, F A) × C(F B, T)@. In @Type@ it admits unbounded shapes such as
---   @'Costar' t@ for a @Traversable t@ (the @Aggregating@ module of the literature). Those are not
---   'Cotraversable': a generic structural recursion over a list diverges on strict witnesses such
---   as 'Rep'.
+--   @∫^{F applicative} C(S, F A) × C(F B, T)@. It admits every applicative, including ones with no
+--   list of contents such as the reader @(->) r@, which are not 'Cotraversable'.
 --
 -- Every 'Cotraversable' carrier is 'Kaleidoscopic' ('cotravAct'), so @'KaleidoFl' <: 'CotravFl'@:
 -- the kaleidoscope is the stronger flavor. Both sit below 'Proarrow.Optic.Setter.SetterFl' only,
@@ -58,7 +58,12 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
-import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), StrongDistributiveProfunctor, Traversable)
+import Proarrow.Category.Monoidal.Distributive
+  ( Cotraversable (..)
+  , StrongDistributiveProfunctor
+  , Traversable
+  , Traversing
+  )
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -206,6 +211,8 @@ instance (Closed k, HasCoproducts k, Comonoid (m :: k)) => Strong CoprodAction (
 -- | The exponential pair for a comonoid exponent: @m ~~> -@ is the reader applicative. So every
 -- 'Proarrow.Optic.Grate.Grate' is a kaleidoscope.
 instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (m :: k)) => CotravFl (Rep (Exp m) :: k +-> k) (Corep (Exp m))
+
+instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (m :: k)) => Traversing (Rep (Exp m) :: k +-> k)
 
 instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (m :: k)) => KaleidoFl (Rep (Exp m) :: k +-> k) (Corep (Exp m)) where
   kaleidoP (Rep h) (Corep i) rab = dimap h i (kaleidoAct @_ @(Rep (Exp m)) rab)

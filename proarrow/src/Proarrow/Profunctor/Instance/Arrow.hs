@@ -21,7 +21,7 @@ import Prelude (Either (..), Functor (..), Monad (..))
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), Tensor)
 import Proarrow.Category.Monoidal.Action (CoprodAction)
-import Proarrow.Category.Monoidal.Distributive (DistributiveProfunctor)
+import Proarrow.Category.Monoidal.Distributive (DistributiveProfunctor, Traversing)
 import Proarrow.Category.Monoidal.Strength (Costrong (..), Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), (++))
 import Proarrow.Core (CAT, Profunctor (..), Promonad (..), rmap, type (+->))
@@ -72,6 +72,8 @@ instance (Monad m) => Promonad (Kleisli m) where
 
 instance (Monad m) => Strong Tensor (Kleisli m) where
   act = second
+
+instance (MonadPlus m) => Traversing (Kleisli m)
 
 instance (MonadPlus m) => Strong CoprodAction (Kleisli m) where
   act (Kleisli a) = Kleisli ((return . Left) ||| (a >>> fmap Right))

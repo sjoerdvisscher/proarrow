@@ -15,7 +15,7 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), withOb2)
 import Proarrow.Category.Monoidal.Cartesian (Cartesian)
-import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
+import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable, Traversing (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..), withObF)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
@@ -68,7 +68,7 @@ instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor
 
 instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
   cotraverse @_ @a (p :.: Costar f) =
-    p // withObF @t @a (Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p')
+    p // withObF @t @a (Costar id :.: case traverseP (Star id :.: p) of p' :.: Star g -> rmap (f . g) p')
 
 instance (Functor f, Thin j) => ThinProfunctor (Costar f :: j +-> k) where
   type HasArrow (Costar f :: j +-> k) a b = HasArrow (Hom j) (f a) b

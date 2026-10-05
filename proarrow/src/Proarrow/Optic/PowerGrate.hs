@@ -41,7 +41,7 @@ import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Cartesian (Cartesian)
 import Proarrow.Category.Monoidal.Closed (Closed (..), mkExponential)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..), fst, snd, (&&&))
-import Proarrow.Category.Monoidal.Distributive (Traversable (..))
+import Proarrow.Category.Monoidal.Distributive (Traversable (..), Traversing)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -213,6 +213,8 @@ instance (SymMonoidal k, HasCoproducts k, SNatI n) => MonoidalProfunctor (Coprod
     withObCoprod @k @a @c (Coprod (Pow (powDist @n (lft @k @a @c) . f ||| powDist @n (rgt @k @a @c) . g)))
 instance (CopyDiscard k, SNatI n) => Strong M.Tensor (Pow n :: k +-> k) where
   act @x (Pow @_ @_ @a f) = f // withOb2 @k @x @a (Pow (powZip @n @k @x @a . (fanOut @n @x ** f)))
+instance (CopyDiscard k, HasCoproducts k, SNatI n) => Traversing (Pow n :: k +-> k)
+
 instance (CopyDiscard k, HasCoproducts k, SNatI n) => Strong CoprodAction (Pow n :: k +-> k) where
   act @(COPR x) (Pow @_ @_ @a f) =
     f // withObCoprod @k @x @a (Pow (powDist @n (lft @k @x @a) . fanOut @n @x ||| powDist @n (rgt @k @x @a) . f))

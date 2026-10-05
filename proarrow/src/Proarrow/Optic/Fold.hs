@@ -9,9 +9,14 @@
 module Proarrow.Optic.Fold where
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp)
-import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
-import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..), corepTraverse, repTraverse)
+import Proarrow.Category.Monoidal.Distributive
+  ( Cotraversable (..)
+  , Distributive
+  , Traversable (..)
+  , corepTraverse
+  , repTraverse
+  )
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, rgt, (|||))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
@@ -46,12 +51,12 @@ instance (CategoryOf k, CategoryOf j) => FoldFl (Id :: k +-> k) (TerminalProfunc
   foldMapP (Id sa) am = am . sa
 instance (FoldFl f g, FoldFl f' g') => FoldFl (f :.: f') (g' :.: g) where
   foldMapP (f :.: f') = foldMapP @f @g f . foldMapP @f' @g' f'
-instance (Bicartesian k, Traversable t, Representable t) => FoldFl (t :: k +-> k) (RepCostar t) where
+instance (Distributive k, CopyDiscard k, Traversable t, Representable t) => FoldFl (t :: k +-> k) (RepCostar t) where
   foldMapP @m @_ @a l am = (case repTraverse @t @(Rep (Constant m)) (Rep @a am) of Rep sm -> sm . index l) \\ am
 
 -- | The corepresentable-cotraversable witness folds by cotraversing at the fold profunctor
 -- @'Rep' ('Constant' m)@ and discarding the residual shape.
-instance (Bicartesian k, Cotraversable t, Corepresentable t) => FoldFl (CorepStar t) (t :: k +-> k) where
+instance (Distributive k, CopyDiscard k, Cotraversable t, Corepresentable t) => FoldFl (CorepStar t) (t :: k +-> k) where
   foldMapP @m @_ @a (CorepStar l) am = (case corepTraverse @t @(Rep (Constant m)) (Rep @a am) of Rep sm -> sm . l) \\ am
 
 instance (HasCoproducts k, Ob t) => FoldFl (Corep (Coproduct t) :: k +-> k) (Rep (Coproduct t)) where

@@ -8,17 +8,21 @@
 -- the coproduct prism, 'Beside'\/'BesideSum' juxtaposition and the unit\/zero witnesses). The
 -- free-profunctor apparatus lives in "Proarrow.Optic.MonoidalTraversal". A traversal subtypes to
 -- 'Proarrow.Optic.Fold.Fold' and 'Proarrow.Optic.Setter.Setter'. Build with 'traversed' (from a
--- 'Traversable') or 'Proarrow.Optic.MonoidalTraversal.traversal' (from the van-Laarhoven form),
--- eliminate with 'traverseOf'.
+-- 'Traversable'), 'fromTravVL' (from a Prelude traversal) or
+-- 'Proarrow.Optic.MonoidalTraversal.traversal' (from the profunctor-class form), eliminate with
+-- 'traverseOf'.
 module Proarrow.Optic.Traversal where
 
+import Data.Functor.Compose (Compose (..))
+import Data.Functor.Const (Const (..))
+import Data.Functor.Identity (Identity (..))
+import Data.Kind (Type)
 import Prelude qualified as P
 
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), MultRep, Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction, ProdAction)
-import Proarrow.Category.Monoidal.Cartesian (Bicartesian)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive
   ( Cotraversable (..)
@@ -48,7 +52,6 @@ import Proarrow.Optic
   ( ExOptic
   , FLAVOR
   , Optic
-  , Optic_ (..)
   , Prostrong (..)
   , legs2prof
   , withLegs
@@ -58,7 +61,7 @@ import Proarrow.Optic.Setter (SetterFl (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), coindex)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
 
 type TravFl :: forall {k}. FLAVOR k k
@@ -77,8 +80,8 @@ type MonTravFl :: forall {k}. FLAVOR k k
 class (TravFl p q) => MonTravFl (p :: k +-> k) (q :: k +-> k) where
   monTravP :: (StrongDistributiveProfunctor r) => p s a -> q b t -> r a b -> r s t
 
-instance (Bicartesian k, Traversable t, Representable t) => TravFl (t :: k +-> k) (RepCostar t)
-instance (Bicartesian k, Traversable t, Representable t) => MonTravFl (t :: k +-> k) (RepCostar t) where
+instance (Distributive k, CopyDiscard k, Traversable t, Representable t) => TravFl (t :: k +-> k) (RepCostar t)
+instance (Distributive k, CopyDiscard k, Traversable t, Representable t) => MonTravFl (t :: k +-> k) (RepCostar t) where
   monTravP l (RepCostar r) = dimap (index l) r . repTraverse @t
 
 -- | A corepresentable 'Cotraversable' functor builds @s@ from a shape of @a@'s, and its 'travP'
@@ -87,9 +90,9 @@ instance (Bicartesian k, Traversable t, Representable t) => MonTravFl (t :: k +-
 -- ("Proarrow.Optic.Kaleidoscope" does define a @Cotraversal@, over 'Cotraversable' witnesses that
 -- are not representable. In the lattice it is a sibling of 'Traversal', not a descendant: both are
 -- children of @Setter@, and @Cotraversal@\'s own child is @Kaleidoscope@.)
-instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravFl (CorepStar t) (t :: k +-> k)
+instance (Distributive k, CopyDiscard k, Cotraversable t, Corepresentable t) => TravFl (CorepStar t) (t :: k +-> k)
 
-instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravFl (CorepStar t) (t :: k +-> k) where
+instance (Distributive k, CopyDiscard k, Cotraversable t, Corepresentable t) => MonTravFl (CorepStar t) (t :: k +-> k) where
   monTravP (CorepStar l) co = dimap l (coindex co) . corepTraverse @t
 
 instance (HasBinaryProducts k, Ob (s :: k)) => TravFl (Rep (Product s)) (Corep (Product s)) where
@@ -142,7 +145,7 @@ traverseOf o pab = withLegs @TravFl o \l r -> travP l r pab
 -- representable universal @'repUniv'@ and the identity 'RepCostar'.
 traversed
   :: forall {k} (t :: k +-> k) a b
-   . (Bicartesian k, Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
+   . (Distributive k, CopyDiscard k, Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
 traversed = legs2prof @TravFl (repUniv @t) (corepUniv @(RepCostar t))
 
 -- * The free traversal profunctor
@@ -275,9 +278,42 @@ instance (HasInitialObject k) => Proadjunction (ZeroW :: k +-> k) CoZeroW where
   unit = CoZeroW id :.: ZeroW id
   counit (ZeroW h :.: CoZeroW i) = i . h
 
-instance (P.Applicative f) => Prostrong TravFl (Star (Prelude f)) where
-  proact (p :.: f :.: q) = travP p q f
+-- * Van Laarhoven traversals
 
-type TravVL s t a b = forall f. (P.Applicative f) => (a -> f b) -> s -> f t
-toTravVL :: Traversal s t a b -> TravVL s t a b
-toTravVL (Optic l) = (unPrelude .) . unStar . l . Star . (Prelude .)
+-- | The van Laarhoven form of a traversal with target @t@ and new focus @b@, as a functor of the
+-- old focus @a@: run with any applicative handling of the foci.
+type Baz :: Type -> Type -> Type -> Type
+newtype Baz t b a = Baz {runBaz :: forall f. (P.Applicative f) => (a -> f b) -> f t}
+
+instance P.Functor (Baz t b) where
+  fmap f (Baz m) = Baz (\k -> m (k P.. f))
+
+instance P.Foldable (Baz t b) where
+  foldMap f (Baz m) = getConst (m (Const P.. f))
+
+-- | Handle the foci, keeping the rest of the traversal: run at @'Compose' f ('Bazaar' a' b)@.
+instance P.Traversable (Baz t b) where
+  traverse k (Baz m) = P.fmap (\(Bazaar m') -> Baz m') (getCompose (m (\a -> Compose (P.fmap (\a' -> Bazaar (\k' -> k' a')) (k a)))))
+
+-- 'Baz' with its arguments in the order that makes it applicative in the result, for 'P.traverse'.
+newtype Bazaar a b t = Bazaar (forall f. (P.Applicative f) => (a -> f b) -> f t)
+
+instance P.Functor (Bazaar a b) where
+  fmap f (Bazaar m) = Bazaar (\k -> P.fmap f (m k))
+
+instance P.Applicative (Bazaar a b) where
+  pure t = Bazaar (\_ -> P.pure t)
+  Bazaar mf <*> Bazaar mx = Bazaar (\k -> mf k P.<*> mx k)
+
+-- | Rebuild the target once every focus has its new type: run at 'Identity'.
+sold :: Baz t b b -> t
+sold (Baz m) = runIdentity (m Identity)
+
+-- | Build a 'Traversal' from a Prelude traversal such as 'P.traverse'. Its witness is
+-- @'Star' ('Prelude' ('Baz' t b))@ with the function as the left leg, so this does no work;
+-- eliminating the result distributes the carrier through 'traverse' at the witness.
+fromTravVL :: forall s t a b. (forall f. (P.Applicative f) => (a -> f b) -> s -> f t) -> Traversal s t a b
+fromTravVL f =
+  legs2prof @TravFl @(Star (Prelude (Baz t b))) @(RepCostar (Star (Prelude (Baz t b))))
+    (Star (\s -> Prelude (Baz (`f` s))))
+    (RepCostar (sold . unPrelude))

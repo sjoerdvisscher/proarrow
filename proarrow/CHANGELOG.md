@@ -1,5 +1,17 @@
 # Revision history for proarrow
 
+## Unreleased
+
+* `Proarrow.Optic.Traversal`: `fromTravVL` builds a `Traversal` from a Prelude traversal, with `Baz`
+  as the witness.
+* `Proarrow.Category.Monoidal.Distributive`: `Traversing`, a new component of
+  `StrongDistributiveProfunctor`, and `Traversable (CorepStar t)`. Eliminating a traversal with an
+  unbounded witness through the generic carrier no longer loops. The `Traversable` witness
+  instances need `Distributive k` and `CopyDiscard k` instead of `Bicartesian k`.
+* `Proarrow.Profunctor.Instance.Star`: `Traversable (Star (Prelude g))`;
+  `Strong CoprodAction (Star f)` for any strong lax monoidal `f` and `Strong ProdAction (Star f)`
+  for any functor on `Type`.
+
 ## 0.2.0.0 -- 2026-10-04
 
 * New `Proarrow.Tools.SMC`: linear HOAS for symmetric monoidal categories, with `do` notation,

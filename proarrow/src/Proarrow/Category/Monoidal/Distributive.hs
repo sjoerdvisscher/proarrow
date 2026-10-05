@@ -15,8 +15,16 @@ import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second, type (**!))
-import Proarrow.Category.Monoidal.Action (CoprodAction)
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , Tensor
+  , first
+  , second
+  , type (**!)
+  )
+import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Strength (MonStrong, Strong (..))
@@ -38,7 +46,7 @@ import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
-import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representable (..), repUniv)
+import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..), repUniv)
 import Proarrow.Tools.Laws (Inverses (..), Labelled (..), Laws (..), inverses)
 import Prelude (($))
 
@@ -165,34 +173,68 @@ distRClosed =
         uncurry @c (curry @k @a @c (lft @k @(a ** c) @(b ** c)) ||| curry @k @b @c (rgt @k @(a ** c) @(b ** c)))
 
 class
-  (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p) =>
+  (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p, Traversing p) =>
   StrongDistributiveProfunctor (p :: k +-> k)
 instance
-  (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p)
+  (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p, Traversing p)
   => StrongDistributiveProfunctor (p :: k +-> k)
+
+-- | Distribution over a whole 'Traversable' witness, the @traverse'@ of the @profunctors@ library's
+-- @Traversing@: a strong distributive profunctor built from 'one', '(**)', '(++)' and 'act' alone
+-- only reaches finite shapes. The default runs the witness's own 'traverse', which for an unbounded
+-- shape such as the list is a recursive value and needs a carrier whose values are functions, lazy
+-- in 'dimap'. A carrier whose values are shapes, such as the generic optic carrier, absorbs the
+-- witness instead. A 'Cotraversable' witness goes through @'CorepStar' t@ ('corepTraverse').
+type Traversing :: forall {k}. (k +-> k) -> Constraint
+class (Profunctor p) => Traversing (p :: k +-> k) where
+  traverseP :: (Traversable t, Representable t) => t :.: p :~> p :.: t
+  default traverseP :: (Traversable t, StrongDistributiveProfunctor p) => t :.: p :~> p :.: t
+  traverseP = traverse
+
+-- | With a representable traversable profunctor, you get a traversal a la one-liner.
+repTraverse
+  :: forall {k} (t :: k +-> k) p a b
+   . (Traversable t, Representable t, Traversing p)
+  => p a b -> p (t % a) (t % b)
+repTraverse p = p // case traverseP (repUniv :.: p) of x :.: y -> rmap (index @t y) x
+
+-- | With a corepresentable cotraversable profunctor, you get a co-traversal a la one-liner: a
+-- corepresentable @t@ is @'RepCostar' ('CorepStar' t)@, so this is 'repTraverse' at @'CorepStar' t@.
+corepTraverse
+  :: forall {k} (t :: k +-> k) p a b
+   . (Cotraversable t, Corepresentable t, Traversing p)
+  => p a b -> p (t %% a) (t %% b)
+corepTraverse = repTraverse @(CorepStar t)
+
+-- | If both profunctors are representable, you get traversals as in base.
+baseTraverse
+  :: forall {k} (t :: k +-> k) f a b
+   . (Traversable t, Representable t, Representable f, Traversing f, Ob b)
+  => a ~> f % b -> t % a ~> f % (t % b)
+baseTraverse = index . repTraverse @t @f @a @b . tabulate
+
+instance (CopyDiscard k, HasCoproducts k, Monoid r) => Traversing (Rep (Constant r) :: k +-> k)
+instance (SymMonoidal k, HasCoproducts k, Monoid m) => Traversing (Rep (ActionAt Tensor m) :: k +-> k)
+instance (SymMonoidal k, HasCoproducts k) => Traversing (Id :: k +-> k)
+
+-- | A composite carrier passes the witness through its halves in turn, so that each half can
+-- absorb it.
+instance (Traversing p, Traversing q) => Traversing (p :.: q) where
+  traverseP (t :.: (p :.: q)) = case traverseP (t :.: p) of
+    p' :.: t' -> case traverseP (t' :.: q) of
+      q' :.: t'' -> (p' :.: q') :.: t''
 
 -- | The constant functor absorbs a coproduct action: the injected summand is discarded onto
 -- the monoid's unit, so this needs only copying\/discarding on the tensor side and coproducts.
 instance (CopyDiscard k, HasCoproducts k, Monoid r) => Strong CoprodAction (Rep (Constant r) :: k +-> k) where
   act @(COPR a) (Rep @y p) = withObCoprod @k @a @y (Rep (mempty @r . discard @k @a ||| p))
 
+-- | A witness that distributes any strong distributive profunctor through itself. For a
+-- 'Representable' witness, callers go through 'traverseP' (or 'repTraverse'), which lets the carrier
+-- absorb the witness instead of running 'traverse'.
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where
   traverse :: (StrongDistributiveProfunctor p) => t :.: p :~> p :.: t
-
--- | With a representable traversable profunctor, you get a traversal a la one-liner.
-repTraverse
-  :: forall {k} (t :: k +-> k) p a b
-   . (Traversable t, Representable t, StrongDistributiveProfunctor p)
-  => p a b -> p (t % a) (t % b)
-repTraverse p = p // case traverse (repUniv :.: p) of x :.: y -> rmap (index @t y) x
-
--- | If both profunctors are representable, you get traversals as in base.
-baseTraverse
-  :: forall {k} (t :: k +-> k) f a b
-   . (Traversable t, Representable t, Representable f, StrongDistributiveProfunctor f, Ob b)
-  => a ~> f % b -> t % a ~> f % (t % b)
-baseTraverse = index . repTraverse @t @f @a @b . tabulate
 
 instance (CategoryOf k) => Traversable (Id :: k +-> k) where
   traverse (Id f :.: p) = lmap f p :.: Id id \\ p
@@ -209,16 +251,11 @@ instance (Traversable p, Traversable q) => Traversable (p :+: q) where
   traverse (InjL p :.: r) = case traverse (p :.: r) of r' :.: p' -> r' :.: InjL p'
   traverse (InjR q :.: r) = case traverse (q :.: r) of r' :.: q' -> r' :.: InjR q'
 
+-- | The dual of 'Traversable'. For a 'Corepresentable' witness, callers go through 'corepTraverse',
+-- which is 'traverseP' at @'CorepStar' t@.
 type Cotraversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Cotraversable (t :: k +-> k) where
   cotraverse :: (StrongDistributiveProfunctor (p :: k +-> k)) => p :.: t :~> t :.: p
-
--- | With a corepresentable cotraversable profunctor, you get a co-traversal a la one-liner.
-corepTraverse
-  :: forall {k} (t :: k +-> k) p a b
-   . (Cotraversable t, Corepresentable t, StrongDistributiveProfunctor p)
-  => p a b -> p (t %% a) (t %% b)
-corepTraverse p = p // case cotraverse (p :.: corepUniv) of x :.: y -> lmap (coindex @t x) y
 
 instance (CategoryOf k) => Cotraversable (Id :: k +-> k) where
   cotraverse (p :.: Id f) = Id id :.: rmap f p \\ p
@@ -239,9 +276,14 @@ instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
   cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'
   cotraverse (r :.: InjR q) = case cotraverse (r :.: q) of q' :.: r' -> InjR q' :.: r'
 
--- | This breaks for possibly infinite traversals like Star [].
+-- | A corepresentable cotraversable witness, read as a traversable one.
+instance (Cotraversable t, Corepresentable t) => Traversable (CorepStar t) where
+  traverse (CorepStar l :.: p) =
+    p // case cotraverse @t (p :.: corepUniv) of
+      t' :.: p' -> lmap (coindex t' . l) p' :.: repUniv
+
 instance (Traversable t, Representable t) => Cotraversable (RepCostar t) where
-  cotraverse (p :.: RepCostar t) = p // case traverse @t (repUniv :.: p) of p' :.: t' -> corepUniv :.: rmap (t . index t') p'
+  cotraverse (p :.: RepCostar t) = p // case traverseP @_ @t (repUniv :.: p) of p' :.: t' -> corepUniv :.: rmap (t . index t') p'
 
 -- | The tensor distributes over coproducts and is absorbed by the initial object:
 -- 'distL', 'distR', 'absorbL' and 'absorbR' are isomorphisms, with the inverses 'distLInv',
