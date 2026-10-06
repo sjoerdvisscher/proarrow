@@ -40,6 +40,7 @@ import Props.Optic.Linear qualified as OpticLinear
 import Props.Ordinal qualified as Ordinal
 import Props.Paths qualified as Paths
 import Props.PointedHask qualified as PointedHask
+import Props.SMC qualified as SMC
 import Props.Sheaf qualified as Sheaf
 import Props.Sheaf.Chain qualified as SheafChain
 import Props.Sheaf.Collage qualified as SheafCollage
@@ -82,6 +83,7 @@ main =
           , SheafChain.test
           , SheafCollage.test
           , Simplex.test
+          , SMC.test
           , Span.test
           , Svg.test
           , ZX.test

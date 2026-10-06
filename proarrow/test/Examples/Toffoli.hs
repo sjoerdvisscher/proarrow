@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE QualifiedDo #-}
 
 -- | The Toffoli gate example from the @linear-smc@ library (the examples of /Evaluating Linear
@@ -64,11 +63,11 @@ toffoliWith gates = toSMC @(F q :** F q :** F q) \(a0, b0, x0) -> SMC.do
   (b4, a4) <- cnot (t b3) (t' a3)
   a4 ** b4 ** h (t x4)
   where
-    h, t, t' :: Term d g (F q) %1 -> Term d g (F q)
+    h, t, t' :: Term d g (F q) -> Term d g (F q)
     h = lift (hadamardG gates)
     t = lift (tG gates)
     t' = lift (tInvG gates)
-    cnot :: (Merge g1 g2) => Term d g1 (F q) %1 -> Term d g2 (F q) %1 -> Term d (Union g1 g2) (F q :** F q)
+    cnot :: (Merge g1 g2) => Term d g1 (F q) -> Term d g2 (F q) -> Term d (Union g1 g2) (F q :** F q)
     cnot c x = lift (cnotG gates) (c ** x)
 
 -- | The same circuit written directly with the monoidal structure, for comparison. The wires are

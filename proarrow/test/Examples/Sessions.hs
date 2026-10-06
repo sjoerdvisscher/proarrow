@@ -1,4 +1,3 @@
-{-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE QualifiedDo #-}
 
 -- | The internet commerce example of Wadler's /Propositions as Sessions/ (JFP version), with
@@ -29,11 +28,11 @@ import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Testing (check)
 import Proarrow.Tools.SMC
-  ( KnownCtx
+  ( Interp
+  , KnownCtx
   , SYN (F, I, Not, (:**), (:||))
   , Up
   , caseOf
-  , closed
   , cont
   , inl
   , inr
@@ -69,6 +68,10 @@ test =
 run :: forall a. (Unit ~> Dual (Dual (L (Ur a)))) -> a
 run p = counitUr (unLinear (doubleNeg @LINEAR @(L (Ur a)) . p) ())
 
+-- | A process with no free channels, compiled on its own, for use in any other.
+piece :: forall (a :: SYN LINEAR) d. (Unit ~> Interp a) -> SMC.Term d '[] a
+piece p = lift p unit
+
 -- * Messages
 
 type Name = L (Ur String)
@@ -89,13 +92,13 @@ type Sell = Not Buy
 
 -- | @x[u].(put-name_u | x[v].(put-credit_v | x ↔ r))@: send the name on @u@ and the card on @v@,
 -- and forward the rest of @x@, where the receipt arrives, to @r@.
-buyer :: (KnownCtx g) => SMC.Term d g (Not (F Receipt)) %1 -> SMC.Term d g Buy
+buyer :: (KnownCtx g) => SMC.Term d g (Not (F Receipt)) -> SMC.Term d g Buy
 buyer r = put "tea" ** put 1234 ** r
 
 -- | @x(u).x(v).compute_{u,v,x}@: receive the name and the card, and send the receipt where it
 -- should go.
 seller :: SMC.Term d '[] Sell
-seller = closed $ cont \(name, credit, toBuyer) -> compute (name ** credit) |> toBuyer
+seller = piece $ toSMC \() -> cont \(name, credit, toBuyer) -> compute (name ** credit) |> toBuyer
 
 -- | @νx.(buy | sell)@, with the buyer's receipt as the result.
 deal :: Unit ~> Dual (Dual Receipt)
@@ -112,16 +115,16 @@ type Quote :: SYN LINEAR
 type Quote = Not Shop
 
 -- | @x[u].(put-name_u | x ↔ r)@.
-shopper :: (KnownCtx g) => SMC.Term d g (Not (F Price)) %1 -> SMC.Term d g Shop
+shopper :: (KnownCtx g) => SMC.Term d g (Not (F Price)) -> SMC.Term d g Shop
 shopper r = put "tea" ** r
 
 -- | @x(u).lookup_{u,x}@.
 quoter :: SMC.Term d '[] Quote
-quoter = closed $ cont \(name, toShopper) -> lookupPrice name |> toShopper
+quoter = piece $ toSMC \() -> cont \(name, toShopper) -> lookupPrice name |> toShopper
 
 -- | @νx.(shop | quote)@.
 ask :: Unit ~> Dual (Dual Price)
-ask = toSMC @I @(Up (F Price)) \() -> cont \r -> shopper r |> quoter
+ask = toSMC \() -> cont \r -> shopper r |> quoter
 
 -- * Choosing
 
@@ -131,15 +134,15 @@ type Select :: SYN LINEAR
 type Select = Buy :|| Shop
 
 choice :: SMC.Term d '[] (Not Select)
-choice = closed $ cont \x -> caseOf unit x (\((), b) -> b |> seller) (\((), s) -> s |> quoter)
+choice = piece $ toSMC \() -> cont \x -> caseOf x (|> seller) (|> quoter)
 
 -- | @νx.(x[inl].buy | choice)@.
 selectBuy :: Unit ~> Dual (Dual Receipt)
-selectBuy = toSMC @I @(Up (F Receipt)) \() -> cont \r -> inl (buyer r) |> choice
+selectBuy = toSMC \() -> cont \r -> inl (buyer r) |> choice
 
 -- | @νx.(x[inr].shop | choice)@, which tells the price instead.
 selectShop :: Unit ~> Dual (Dual Price)
-selectShop = toSMC @I @(Up (F Price)) \() -> cont \r -> inr (shopper r) |> choice
+selectShop = toSMC \() -> cont \r -> inr (shopper r) |> choice
 
 -- * A broker
 
@@ -147,13 +150,13 @@ selectShop = toSMC @I @(Up (F Price)) \() -> cont \r -> inr (shopper r) |> choic
 -- par. The consumer of the buyer's channel is a computation that produces the order: binding it
 -- reads the order, which is then placed with the seller, with the receipt passed back with a note.
 broker :: SMC.Term d '[] (Not Buy :## Buy)
-broker = closed $ cont \(fromBuyer, toSeller) -> SMC.do
+broker = piece $ toSMC @I @(Not Buy :## Buy) \() -> cont \(fromBuyer, toSeller) -> SMC.do
   (name, credit, toBuyer) <- fromBuyer
   name ** credit ** cont (\receipt -> annotate receipt |> toBuyer) |> toSeller
 
 -- | @νx.νy.(buy | broker | sell)@. The buyer's side is handed to the broker as a computation.
 brokeredDeal :: Unit ~> Dual (Dual Receipt)
-brokeredDeal = toSMC @I @(Up (F Receipt)) \() -> cont \r -> ret (buyer r) ** seller |> broker
+brokeredDeal = toSMC \() -> cont \r -> ret (buyer r) ** seller |> broker
 
 -- * By hand
 
@@ -201,11 +204,11 @@ computeByHand = Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)
 put :: forall a d. a -> SMC.Term d '[] (F (L (Ur a)))
 put x = lift @I @(F (L (Ur a))) (Linear \() -> Ur x) unit
 
-compute :: SMC.Term d g (F Name :** F Credit) %1 -> SMC.Term d g (F Receipt)
+compute :: SMC.Term d g (F Name :** F Credit) -> SMC.Term d g (F Receipt)
 compute = lift @(F Name :** F Credit) @(F Receipt) (Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c))
 
-lookupPrice :: SMC.Term d g (F Name) %1 -> SMC.Term d g (F Price)
+lookupPrice :: SMC.Term d g (F Name) -> SMC.Term d g (F Price)
 lookupPrice = lift @(F Name) @(F Price) (Linear \(Ur n) -> Ur (length n))
 
-annotate :: SMC.Term d g (F Receipt) %1 -> SMC.Term d g (F Receipt)
+annotate :: SMC.Term d g (F Receipt) -> SMC.Term d g (F Receipt)
 annotate = lift @(F Receipt) @(F Receipt) (Linear \(Ur s) -> Ur (s ++ " (via broker)"))

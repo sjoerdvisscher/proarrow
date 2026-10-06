@@ -1,17 +1,22 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE RecursiveDo #-}
 
--- | A HOAS front end for building morphisms in any symmetric monoidal category, the linear
--- counterpart of "Proarrow.Tools.CCC", which grows with the structure of the target: traces,
+-- | A HOAS front end for building morphisms in any symmetric monoidal category, the
+-- resource-aware counterpart of "Proarrow.Tools.CCC", which grows with the structure of the target: traces,
 -- duals, additives, and the polarised System L reading of inputs and outputs in a dialogue
--- category. Each variable is used exactly once: the functions on terms
--- are linear, so GHC's linear types check that every variable is used once, and a 'Term' is
--- indexed by its context, which is exactly the variables it uses. So a variable is the identity
--- on its own type, and no copying or discarding is ever generated. Terms with disjoint contexts
--- combine by merging the contexts, which only reorders wires. Functions on terms need
--- @LinearTypes@ and linear arrows, e.g. @'Term' d g a %1 -> 'Term' d g b@.
+-- category. A 'Term' is indexed by its context, the variables it uses, so a variable is the
+-- identity on its own type. Terms combine by merging their contexts, which reorders wires. A
+-- variable used exactly once needs nothing more. One that two terms both use is copied, which needs
+-- a 'CocommutativeComonoid' on its type, and one that its binder's body does not use is discarded,
+-- which needs a 'Comonoid'. So the types ask for copying and discarding only where a term does it.
+--
+-- Copying a variable copies the value it stands for. A Haskell function that uses its argument
+-- twice uses the term it is given twice, so in a category where copying is not natural, a term to
+-- be shared should be bound to a variable first, with a bind in @do@ notation.
+--
+-- A variable's type records the binding depth at which it is used, so a variable used both outside
+-- and inside a binder needs 'recast' at the inner use: @x ** lam (\\z -> recast x ** z)@.
 --
 -- Types are 'SYN' expressions, interpreted in the target category by 'Interp'. Their tensor is a
 -- constructor, so a pattern can take a term's type apart, which the target's own @**@, a type
@@ -19,9 +24,10 @@
 --
 -- Every variable has an id, the number of binders around it, and a context lists its variables
 -- by descending id. Merging compares ids, so it only reduces where the depths are known, which is
--- the case for terms built directly inside 'toSMC'. A reusable piece that binds variables of its
--- own is compiled on its own: with 'closed' when it has no inputs, and used through 'call'
--- otherwise.
+-- the case for terms built directly inside 'toSMC'. A reusable piece is compiled on its own with
+-- 'toSMC' and used with 'lift', with no inputs from @'I'@. 'toSMC' starts again at depth 0, so it
+-- must not be used inside another term: a variable of that term used in it could be taken for one
+-- of its own. Inside a term, bind with @do@ notation instead.
 --
 -- The module also provides @do@ notation, for use with @QualifiedDo@, and with @RecursiveDo@ a
 -- @rec@ block traces, which needs a traced monoidal category. Composition in the Int construction
@@ -40,8 +46,9 @@
 -- >     am ** cp
 --
 -- A bind takes its right hand side apart with a pattern, see /Patterns/ below. In a @rec@ block,
--- the variables that are used before they are bound, @bm@ and @bp@ above, are fed back, and the others are passed on to the rest of
--- the block. GHC's translation of @rec@ passes every variable of the block to its end again,
+-- the variables that the block itself uses, @bm@ and @bp@ above, are fed back, and the ones the
+-- rest of the @do@ block uses are passed on to it. A variable that both use is copied, and one that
+-- neither uses is discarded. GHC's translation of @rec@ passes every variable of the block to its end again,
 -- including the ones a later statement of the block already used, so only such blocks work where
 -- no statement uses a variable bound by an earlier one. A block of a single statement always
 -- qualifies, and a nested pattern lets one statement bind everything, as above. 'loop' traces
@@ -57,8 +64,7 @@ module Proarrow.Tools.SMC
   ( -- * Types
     SYN (..)
   , Interp
-  , KnownObj (..)
-  , synOb
+  , KnownObj
 
     -- * Patterns
     -- $patterns
@@ -66,15 +72,13 @@ module Proarrow.Tools.SMC
     -- * Terms
 
     -- ** Symmetric monoidal categories
-  , Term (..)
+  , Term
   , toSMC
   , lift
-  , call
-  , closed
   , unit
   , (**)
   , split
-  , Tuple (..)
+  , Tuple
   , TupleCtx
   , TupleDepth
   , recast
@@ -114,6 +118,13 @@ module Proarrow.Tools.SMC
     -- ** Compact closed categories
   , produce
 
+    -- ** Hypergraph categories: index notation
+    -- $index
+  , sumOver
+  , delta
+  , (*^)
+  , (^*)
+
     -- * Additives
     -- $additives
   , with
@@ -127,14 +138,11 @@ module Proarrow.Tools.SMC
 
     -- * Contexts
   , Ctx
-  , Mul
   , KnownCtx
-  , ctxOb
-  , withCtxOb
   , Union
-  , Merge (..)
-  , snoc
-  , push2
+  , Merge
+  , Thin
+  , BindVar
 
     -- * Do notation
   , (>>=)
@@ -142,12 +150,7 @@ module Proarrow.Tools.SMC
   , mfix
   , fail
   , Bind
-  , BindPat
   , Binds
-  , Pat
-  , Ret
-  , Rec
-  , RecVars
 
     -- * Examples
   , swapT
@@ -168,12 +171,13 @@ module Proarrow.Tools.SMC
   , weakDistT
   , bothWaysT
   , distT
+  , matMulT
+  , traceIdxT
+  , hadamardT
   , swapEitherT
   ) where
 
 import Data.Kind (Constraint, Type)
-import GHC.Exts (Multiplicity (..))
-import GHC.TypeLits (ErrorMessage (..), TypeError)
 import GHC.TypeNats (CmpNat, Nat, type (+))
 import Prelude (Ordering (..), type (~))
 import Prelude qualified as P
@@ -184,12 +188,16 @@ import Proarrow.Category.Monoidal
   , Tensor
   , associator'
   , associatorInv'
+  , rightUnitorInvWith
+  , rightUnitorWith
+  , swapInner
   )
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), Par, bindDual, dualityCounitSA)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, cap)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal, trace)
@@ -198,12 +206,14 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Object (Obj)
 
 infixl 7 **
 infixl 1 |>
 infixl 8 !
+infixl 7 *^
+infixl 7 ^*
 infixl 7 :**
 infixl 7 :##
 infixl 6 :&&
@@ -360,26 +370,29 @@ type UnionBy :: forall {k}. Ordering -> Ctx k -> Ctx k -> Ctx k
 type family UnionBy o g1 g2 where
   UnionBy GT (x ': g1) g2 = x ': Union g1 g2
   UnionBy LT g1 (y ': g2) = y ': Union g1 g2
-  UnionBy EQ _ _ = TypeError (Text "Proarrow.Tools.SMC: a variable is used more than once")
+  UnionBy EQ (x ': g1) (y ': g2) = x ': Union g1 g2
 
--- | Split the tensor of a merged context into the tensors of the two contexts it came from, and
--- back. This is where the wires are reordered, and the only place 'swap' is used.
+-- | The newest variable split off the tensor of a context, the inverse of 'snoc'.
+{-# INLINE unsnoc #-}
+unsnoc
+  :: forall {k} n (a :: SYN k) g
+   . (Monoidal k, KnownObj a, KnownCtx g) => Interp (Mul ('(n, a) ': g)) ~> Interp (Mul g) ** Interp a
+unsnoc = ctxCase @g (withSynOb @a leftUnitorInv) (ctxOb @('(n, a) ': g))
+
+-- | Split the tensor of the union of two contexts into the tensors of the two contexts. This is
+-- where the wires are reordered, the only place 'swap' is used, and where a variable that both
+-- contexts have is copied.
 type Merge :: forall {k}. Ctx k -> Ctx k -> Constraint
 class (KnownCtx g1, KnownCtx g2) => Merge (g1 :: Ctx k) g2 where
   merge :: Interp (Mul (Union g1 g2)) ~> Interp (Mul g1) ** Interp (Mul g2)
-  unmerge :: Interp (Mul g1) ** Interp (Mul g2) ~> Interp (Mul (Union g1 g2))
 
 instance (Monoidal k, KnownCtx g2) => Merge ('[] :: Ctx k) g2 where
   {-# INLINE merge #-}
-  {-# INLINE unmerge #-}
   merge = withCtxOb @g2 leftUnitorInv
-  unmerge = withCtxOb @g2 leftUnitor
 
 instance (Monoidal k, KnownCtx ('(n, a) ': g1)) => Merge ('(n, a) ': g1 :: Ctx k) '[] where
   {-# INLINE merge #-}
-  {-# INLINE unmerge #-}
   merge = withCtxOb @('(n, a) ': g1) rightUnitorInv
-  unmerge = withCtxOb @('(n, a) ': g1) rightUnitor
 
 instance
   ( Monoidal k
@@ -392,15 +405,12 @@ instance
   => Merge ('(n, a) ': g1 :: Ctx k) ('(m, b) ': g2)
   where
   {-# INLINE merge #-}
-  {-# INLINE unmerge #-}
   merge = mergeBy @(CmpNat n m) @('(n, a) ': g1) @('(m, b) ': g2)
-  unmerge = unmergeBy @(CmpNat n m) @('(n, a) ': g1) @('(m, b) ': g2)
 
--- | 'merge' and 'unmerge' for two non-empty contexts, by which of the two has the larger head id.
+-- | 'merge' for two non-empty contexts, by which of the two has the larger head id.
 type MergeBy :: forall {k}. Ordering -> Ctx k -> Ctx k -> Constraint
 class (KnownCtx g1, KnownCtx g2) => MergeBy o (g1 :: Ctx k) g2 where
   mergeBy :: Interp (Mul (UnionBy o g1 g2)) ~> Interp (Mul g1) ** Interp (Mul g2)
-  unmergeBy :: Interp (Mul g1) ** Interp (Mul g2) ~> Interp (Mul (UnionBy o g1 g2))
 
 -- The union of two non-empty contexts is not empty, so its tensor splits off the newest variable
 -- as is, which the equality says for GHC. If the newest variable is alone on its side, merging is
@@ -415,7 +425,6 @@ instance
   => MergeBy GT ('(n, a) ': g1) ('(m, b) ': g2)
   where
   {-# INLINE mergeBy #-}
-  {-# INLINE unmergeBy #-}
   mergeBy =
     withCtxOb @('(m, b) ': g2)
       ( withSynOb @a
@@ -428,6 +437,94 @@ instance
               )
           )
       )
+
+instance
+  ( Monoidal k
+  , Merge ('(n, a) ': g1) g2
+  , KnownObj a
+  , KnownObj (b :: SYN k)
+  , Mul ('(m, b) ': Union ('(n, a) ': g1) g2) ~ (Mul (Union ('(n, a) ': g1) g2) :** b)
+  )
+  => MergeBy LT ('(n, a) ': g1) ('(m, b) ': g2)
+  where
+  {-# INLINE mergeBy #-}
+  mergeBy =
+    ctxCase @g2
+      (ctxOb @('(m, b) ': '(n, a) ': g1))
+      ( associator' (ctxOb @('(n, a) ': g1)) (ctxOb @g2) (synOb @b)
+          . (merge @('(n, a) ': g1) @g2 M.** synOb @b)
+      )
+
+-- | A variable both contexts have is copied, one copy for each side.
+instance
+  ( SymMonoidal k
+  , CocommutativeComonoid (Interp a)
+  , KnownObj (a :: SYN k)
+  , a ~ b
+  , Merge g1 g2
+  , KnownCtx (Union g1 g2)
+  )
+  => MergeBy EQ ('(n, a) ': g1) ('(m, b) ': g2)
+  where
+  {-# INLINE mergeBy #-}
+  mergeBy = ctxCase @g1 (ctxCase @g2 (comult @(Interp a)) withRest) withRest
+    where
+      -- When the variable is all both sides have, this is just the copy.
+      withRest :: Interp (Mul ('(n, a) ': Union g1 g2)) ~> Interp (Mul ('(n, a) ': g1)) ** Interp (Mul ('(m, b) ': g2))
+      withRest =
+        withCtxOb @g1
+          ( withCtxOb @g2
+              ( withSynOb @a
+                  ( (snoc @n @a @g1 M.** snoc @m @a @g2)
+                      . swapInner @(Interp (Mul g1)) @(Interp (Mul g2)) @(Interp a) @(Interp a)
+                      . (merge @g1 @g2 M.** comult @(Interp a))
+                      . unsnoc @n @a @(Union g1 g2)
+                  )
+              )
+          )
+
+-- | The inverse of 'merge' for two contexts without a variable in common, which a @rec@ block
+-- uses to put the wires it feeds back together with the others.
+type Unmerge :: forall {k}. Ctx k -> Ctx k -> Constraint
+class (KnownCtx g1, KnownCtx g2) => Unmerge (g1 :: Ctx k) g2 where
+  unmerge :: Interp (Mul g1) ** Interp (Mul g2) ~> Interp (Mul (Union g1 g2))
+
+instance (Monoidal k, KnownCtx g2) => Unmerge ('[] :: Ctx k) g2 where
+  {-# INLINE unmerge #-}
+  unmerge = withCtxOb @g2 leftUnitor
+
+instance (Monoidal k, KnownCtx ('(n, a) ': g1)) => Unmerge ('(n, a) ': g1 :: Ctx k) '[] where
+  {-# INLINE unmerge #-}
+  unmerge = withCtxOb @('(n, a) ': g1) rightUnitor
+
+instance
+  ( Monoidal k
+  , KnownObj a
+  , KnownObj b
+  , KnownCtx g1
+  , KnownCtx g2
+  , UnmergeBy (CmpNat n m) ('(n, a) ': g1 :: Ctx k) ('(m, b) ': g2)
+  )
+  => Unmerge ('(n, a) ': g1 :: Ctx k) ('(m, b) ': g2)
+  where
+  {-# INLINE unmerge #-}
+  unmerge = unmergeBy @(CmpNat n m) @('(n, a) ': g1) @('(m, b) ': g2)
+
+-- | 'unmerge' for two non-empty contexts, by which of the two has the larger head id.
+type UnmergeBy :: forall {k}. Ordering -> Ctx k -> Ctx k -> Constraint
+class (KnownCtx g1, KnownCtx g2) => UnmergeBy o (g1 :: Ctx k) g2 where
+  unmergeBy :: Interp (Mul g1) ** Interp (Mul g2) ~> Interp (Mul (UnionBy o g1 g2))
+
+instance
+  ( SymMonoidal k
+  , Unmerge g1 ('(m, b) ': g2)
+  , KnownObj (a :: SYN k)
+  , KnownObj b
+  , Mul ('(n, a) ': Union g1 ('(m, b) ': g2)) ~ (Mul (Union g1 ('(m, b) ': g2)) :** a)
+  )
+  => UnmergeBy GT ('(n, a) ': g1) ('(m, b) ': g2)
+  where
+  {-# INLINE unmergeBy #-}
   unmergeBy =
     withCtxOb @('(m, b) ': g2)
       ( withSynOb @a
@@ -443,27 +540,94 @@ instance
 
 instance
   ( Monoidal k
-  , Merge ('(n, a) ': g1) g2
+  , Unmerge ('(n, a) ': g1) g2
   , KnownObj a
   , KnownObj (b :: SYN k)
   , Mul ('(m, b) ': Union ('(n, a) ': g1) g2) ~ (Mul (Union ('(n, a) ': g1) g2) :** b)
   )
-  => MergeBy LT ('(n, a) ': g1) ('(m, b) ': g2)
+  => UnmergeBy LT ('(n, a) ': g1) ('(m, b) ': g2)
   where
-  {-# INLINE mergeBy #-}
   {-# INLINE unmergeBy #-}
-  mergeBy =
-    ctxCase @g2
-      (ctxOb @('(m, b) ': '(n, a) ': g1))
-      ( associator' (ctxOb @('(n, a) ': g1)) (ctxOb @g2) (synOb @b)
-          . (merge @('(n, a) ': g1) @g2 M.** synOb @b)
-      )
   unmergeBy =
     ctxCase @g2
       (ctxOb @('(m, b) ': '(n, a) ': g1))
       ( (unmerge @('(n, a) ': g1) @g2 M.** synOb @b)
           . associatorInv' (ctxOb @('(n, a) ': g1)) (ctxOb @g2) (synOb @b)
       )
+
+-- | Keep the variables of @g@ that @h@ has and discard the others, for an alternative of the
+-- additives that does not use all the variables of the other. Every variable of @h@ must be in
+-- @g@.
+type Thin :: forall {k}. Ctx k -> Ctx k -> Constraint
+class (KnownCtx g, KnownCtx h) => Thin (g :: Ctx k) h where
+  thin :: Interp (Mul g) ~> Interp (Mul h)
+
+instance (Monoidal k) => Thin ('[] :: Ctx k) '[] where
+  {-# INLINE thin #-}
+  thin = obj @(Unit :: k)
+
+instance (Monoidal k, Comonoid (Interp a), KnownObj (a :: SYN k), Thin g '[]) => Thin ('(n, a) ': g) '[] where
+  {-# INLINE thin #-}
+  thin = leftUnitor @k @Unit . (thin @g @'[] M.** counit @(Interp a)) . unsnoc @n @a @g
+
+instance
+  (KnownObj a, KnownObj b, KnownCtx g, KnownCtx h, ThinBy (CmpNat n m) ('(n, a) ': g) ('(m, b) ': h))
+  => Thin ('(n, a) ': g :: Ctx k) ('(m, b) ': h)
+  where
+  {-# INLINE thin #-}
+  thin = thinBy @(CmpNat n m) @('(n, a) ': g) @('(m, b) ': h)
+
+-- | 'thin' for two non-empty contexts, by which of the two has the larger head id.
+type ThinBy :: forall {k}. Ordering -> Ctx k -> Ctx k -> Constraint
+class (KnownCtx g, KnownCtx h) => ThinBy o (g :: Ctx k) h where
+  thinBy :: Interp (Mul g) ~> Interp (Mul h)
+
+instance (Monoidal k, KnownObj (a :: SYN k), a ~ b, Thin g h) => ThinBy EQ ('(n, a) ': g) ('(m, b) ': h) where
+  {-# INLINE thinBy #-}
+  thinBy = withSynOb @a (snoc @m @a @h . (thin @g @h M.** synOb @a) . unsnoc @n @a @g)
+
+instance
+  (Monoidal k, Comonoid (Interp a), KnownObj (a :: SYN k), KnownObj b, Thin g ('(m, b) ': h))
+  => ThinBy GT ('(n, a) ': g) ('(m, b) ': h)
+  where
+  {-# INLINE thinBy #-}
+  thinBy =
+    withCtxOb @('(m, b) ': h)
+      (rightUnitor . (thin @g @('(m, b) ': h) M.** counit @(Interp a)) . unsnoc @n @a @g)
+
+-- | A binder's variable @n@ on the right of @r@, what the body uses besides it, given the body's
+-- context @g@: 'snoc' if the body uses the variable, and its counit otherwise. The binder's
+-- variable is the newest in scope, so it can only be at the head of @g@. The functional
+-- dependency, rather than a type family, gives @r@, so that a binder costs one comparison of ids.
+type BindVar :: forall {k}. Nat -> SYN k -> Ctx k -> Ctx k -> Constraint
+class (KnownCtx r) => BindVar n (a :: SYN k) g r | n g -> r where
+  bindVar :: Interp (Mul r) ** Interp a ~> Interp (Mul g)
+
+instance (Monoidal k, Comonoid (Interp a), KnownObj (a :: SYN k)) => BindVar n a '[] '[] where
+  {-# INLINE bindVar #-}
+  bindVar = rightUnitorWith @Unit (counit @(Interp a))
+
+instance (KnownCtx r, BindVarBy (CmpNat n m) n a ('(m, b) ': g) r) => BindVar n (a :: SYN k) ('(m, b) ': g) r where
+  {-# INLINE bindVar #-}
+  bindVar = bindVarBy @(CmpNat n m) @n @a @('(m, b) ': g) @r
+
+-- | 'bindVar' for a non-empty context, by whether its head is the new variable.
+type BindVarBy :: forall {k}. Ordering -> Nat -> SYN k -> Ctx k -> Ctx k -> Constraint
+class BindVarBy o n (a :: SYN k) g r | o n g -> r where
+  bindVarBy :: Interp (Mul r) ** Interp a ~> Interp (Mul g)
+
+instance (Monoidal k, KnownObj (a :: SYN k), a ~ b, KnownCtx g) => BindVarBy EQ n a ('(m, b) ': g) g where
+  {-# INLINE bindVarBy #-}
+  bindVarBy = snoc @m @a @g
+
+instance
+  (Monoidal k, Comonoid (Interp a), KnownObj (a :: SYN k), KnownObj b, KnownCtx g)
+  => BindVarBy GT n a ('(m, b) ': g) ('(m, b) ': g)
+  where
+  {-# INLINE bindVarBy #-}
+  bindVarBy =
+    withCtxOb @('(m, b) ': g)
+      (rightUnitorWith @(Interp (Mul ('(m, b) ': g))) (counit @(Interp a)))
 
 -- | The variable with id @n@: the identity on its type.
 {-# INLINE var #-}
@@ -474,94 +638,83 @@ var = withSynOb @a (MkTerm (obj @(Interp a)))
 -- Wherever a function on terms receives an input, that is the function given to 'toSMC', 'lam',
 -- 'loop' and 'cont', the alternatives of 'with' and 'caseOf', and the left of a bind in @do@
 -- notation, the input arrives through a pattern: a variable, @()@, or a tuple of patterns. A
--- variable stands for the whole input, whatever its type, and must be used exactly once. @()@
+-- variable stands for the whole input, whatever its type, and is discarded if it is not used. @()@
 -- matches the unit 'I'. A pair matches a tensor @a ':**' b@ and binds its two sides, and a triple
 -- or quadruple is pairs nested to the left, as @a ':**' b ':**' c@ is. At a computation,
 -- @'Up' (a ':**' b)@ or @'Up' 'I'@, a pair or @()@ pattern runs the computation and matches its
 -- value, so the rest of the block must be of a negative type; a variable at a computation only
 -- names it.
 --
--- Tuples build terms as well, the mirror image of taking them apart: 'tuple', and 'ret' of a
--- tuple, make a pair at a tensor into '(**)' of its parts and a pair at a computation into the
--- computation of the pair.
+-- Tuples build terms as well, the mirror image of taking them apart: 'ret' of a tuple makes a pair
+-- at a tensor into '(**)' of its parts and a pair at a computation into the computation of the
+-- pair.
 
 -- | Compile a function on terms to a morphism. The function receives the input through a pattern
 -- (see /Patterns/), so @()@ compiles a term without inputs and a tuple takes a tensor apart.
 {-# INLINE toSMC #-}
 toSMC
   :: forall {k} (a :: SYN k) b t cont
-   . (Monoidal k, Binds t 0 a cont '[] b)
-  => (t %1 -> cont)
+   . (Monoidal k, Binds 0 '[] a b t cont)
+  => (t -> cont)
   -> Interp a ~> Interp b
-toSMC k = case bound @0 @'[] @a @b k of MkTerm f -> f
+toSMC k = withSynOb @a (bound @0 @'[] @a @b k . leftUnitorInv @k @(Interp a))
 
--- | Copy a term whose type is a comonoid, in "Proarrow.Tools.SMC": @(x1, x2) <- dup x@.
+-- | Copy a term whose type is a comonoid: @(x1, x2) <- dup x@. Using a variable twice copies it too,
+-- but needs a 'CocommutativeComonoid'; 'dup' needs only a 'Comonoid', and its two copies come out
+-- in the order of 'comult'.
 {-# INLINE dup #-}
-dup :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s %1 -> Term d g (s :** s)
+dup :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s -> Term d g (s :** s)
 dup = lift @s @(s :** s) comult
 
--- | Discard a term whose type is a comonoid, in "Proarrow.Tools.SMC": @() <- drop x@.
+-- | Discard a term whose type is a comonoid: @() <- drop t@. A variable that is not used is
+-- discarded without it.
 {-# INLINE drop #-}
-drop :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s %1 -> Term d g I
+drop :: forall {k} (s :: SYN k) d g. (Comonoid (Interp s)) => Term d g s -> Term d g I
 drop = lift @s @I counit
 
 -- | Lift a morphism of the target category to a function on terms.
 {-# INLINE lift #-}
-lift :: forall {k} (a :: SYN k) b d g. (CategoryOf k) => (Interp a ~> Interp b) -> Term d g a %1 -> Term d g b
+lift :: forall {k} (a :: SYN k) b d g. (CategoryOf k) => (Interp a ~> Interp b) -> Term d g a -> Term d g b
 lift f (MkTerm t) = MkTerm (f . t)
 
--- | A term without variables, written at depth 0, for use at any depth. A reusable piece that
--- has no inputs but binds variables of its own is defined with it.
-{-# INLINE closed #-}
-closed :: forall {k} (a :: SYN k) d. Term 0 '[] a -> Term d '[] a
-closed t = recast t
-
--- | Use a function on terms inside another term, compiled on its own with 'toSMC', so that its
--- argument is a pattern too. This is how a reusable piece that binds variables of its own is used,
--- and unlike 'lift' of the compiled morphism it needs no type annotations.
-{-# INLINE call #-}
-call
-  :: forall {k} (a :: SYN k) b d g t cont
-   . (Monoidal k, Binds t 0 a cont '[] b)
-  => (t %1 -> cont)
-  -> Term d g a
-  %1 -> Term d g b
-call f = lift @a @b (toSMC @a @b f)
-
--- | Two terms side by side. Their contexts must be disjoint.
+-- | Two terms side by side. A variable both use is copied.
 {-# INLINE (**) #-}
 (**)
   :: forall {k} d g1 g2 (a :: SYN k) b
    . (Monoidal k, Merge g1 g2)
-  => Term d g1 a %1 -> Term d g2 b %1 -> Term d (Union g1 g2) (a :** b)
+  => Term d g1 a -> Term d g2 b -> Term d (Union g1 g2) (a :** b)
 MkTerm f ** MkTerm g = MkTerm ((f M.** g) . merge @g1 @g2)
 
--- | Two new variables @(n, a)@ and @(m, b)@ on the right of the context @r@, for 'split'. When @r@
--- is empty the pair is the whole context.
+-- | Two new variables @n@ and @n + 1@, of types @a@ and @b@, for the body of a 'split' whose
+-- context is @g'@: the tensor @a ':**' b@, given from the context @g@, next to @r@, what the body
+-- uses besides them.
 {-# INLINE push2 #-}
 push2
-  :: forall {k} r n (a :: SYN k) m b g
-   . (Monoidal k, KnownObj a, KnownObj b, Merge r g)
+  :: forall {k} n (a :: SYN k) b g' r1 r g
+   . (Monoidal k, KnownObj a, KnownObj b, BindVar (n + 1) b g' r1, BindVar n a r1 r, Merge r g)
   => (Interp (Mul g) ~> Interp a ** Interp b)
-  -> Interp (Mul (Union r g)) ~> Interp (Mul ('(m, b) ': '(n, a) ': r))
+  -> Interp (Mul (Union r g)) ~> Interp (Mul g')
 push2 p =
-  ctxCase @r
-    p
-    (associatorInv' (ctxOb @r) (synOb @a) (synOb @b) . (ctxOb @r M.** p) . merge @r @g)
+  withCtxOb @r
+    ( withSynOb @b
+        ( bindVar @(n + 1) @b @g' @r1
+            . (bindVar @n @a @r1 @r M.** obj @(Interp b))
+            . associatorInv' (ctxOb @r) (synOb @a) (synOb @b)
+            . (ctxOb @r M.** p)
+            . merge @r @g
+        )
+    )
 
--- | Take a tensor apart: the continuation gets a variable for each side and must use both.
+-- | Take a tensor apart: the continuation gets a variable for each side.
 {-# INLINE split #-}
 split
-  :: forall {k} d g r (a :: SYN k) b c da db
-   . (Monoidal k, KnownObj a, KnownObj b, Merge r g)
+  :: forall {k} d g g' r1 r (a :: SYN k) b c da db
+   . (Monoidal k, KnownObj a, KnownObj b, BindVar (d + 1) b g' r1, BindVar d a r1 r, Merge r g)
   => Term d g (a :** b)
-  %1 -> ( Term da '[ '(d, a)] a
-          %1 -> Term db '[ '(d + 1, b)] b
-          %1 -> Term (d + 2) ('(d + 1, b) ': '(d, a) ': r) c
-        )
-  %1 -> Term d (Union r g) c
+  -> (Term da '[ '(d, a)] a -> Term db '[ '(d + 1, b)] b -> Term (d + 2) g' c)
+  -> Term d (Union r g) c
 split (MkTerm p) k = case k (var @d @a) (var @(d + 1) @b) of
-  MkTerm body -> MkTerm (body . push2 @r @d @a @(d + 1) @b @g p)
+  MkTerm body -> MkTerm (body . push2 @d @a @b @g' @r1 @r @g p)
 
 -- | The unit, which uses no variables.
 {-# INLINE unit #-}
@@ -573,34 +726,82 @@ unit = MkTerm id
 {-# INLINE lam #-}
 lam
   :: forall {k} d r (a :: SYN k) b t cont
-   . (Closed k, Binds t d a cont r b)
-  => (t %1 -> cont)
-  %1 -> Term d r (a :-> b)
-lam k = case bound @d @r @a @b k of
-  MkTerm body -> withCtxOb @r (withSynOb @a (MkTerm (curry @k @(Interp (Mul r)) @(Interp a) (body . snoc @d @a @r))))
-
--- | The body of a binder, with the pattern taking apart its new variable: what 'toSMC', 'lam',
--- 'loop' and 'cont' share, and the binds of a computation through 'runUp'.
-{-# INLINE bound #-}
-bound
-  :: forall {k} d r (a :: SYN k) b t cont
-   . (Binds t d a cont r b)
-  => (t %1 -> cont)
-  %1 -> Term (d + 1) ('(d, a) ': r) b
-bound k = bindPat (var @d @a @(d + 1)) k
+   . (Closed k, Binds d r a b t cont)
+  => (t -> cont)
+  -> Term d r (a :-> b)
+lam k = withCtxOb @r (withSynOb @a (MkTerm (curry @k @(Interp (Mul r)) @(Interp a) (bound @d @r @a @b k))))
 
 -- | Trace: the body receives the value fed back through a pattern (see /Patterns/), and returns
 -- it again next to the result. This needs the category to be traced.
 {-# INLINE loop #-}
 loop
   :: forall {k} (u :: SYN k) b d r t cont
-   . (TracedMonoidal k, KnownObj b, Binds t d u cont r (b :** u))
-  => (t %1 -> cont)
-  %1 -> Term d r b
-loop k = case bound @d @r @u @(b :** u) k of
-  MkTerm body ->
-    withCtxOb @r
-      (withSynOb @u (withSynOb @b (MkTerm (trace @(~>) @(Interp u) @(Interp (Mul r)) @(Interp b) (body . snoc @d @u @r)))))
+   . (TracedMonoidal k, KnownObj b, Binds d r u (b :** u) t cont)
+  => (t -> cont)
+  -> Term d r b
+loop k =
+  withCtxOb @r
+    ( withSynOb @u
+        (withSynOb @b (MkTerm (trace @(~>) @(Interp u) @(Interp (Mul r)) @(Interp b) (bound @d @r @u @(b :** u) k))))
+    )
+
+-- $index
+-- Index notation, as in Einstein summation, for a category whose index types are special
+-- commutative Frobenius algebras, such as a hypergraph category. An index is a variable whose type
+-- is such an object. Using an index more than once copies it, so every use sees the same value,
+-- and 'sumOver' binds an index that is summed over. 'delta' says that two wires carry the same
+-- value, which is how a morphism lifted onto an index is tied to another index: in "Proarrow.Category.Instance.Mat",
+-- @'delta' ('lift' f i) j@ is the entry of @f@ at @i@ and @j@. A term of type 'I' is a scalar, and
+-- @(*^)@ and @(^*)@ multiply a term by one. An output index is a summed index that the term also
+-- returns, so matrix multiplication is 'matMulT':
+--
+-- > \i -> sumOver \k -> sumOver \j -> delta (lift f i) j *^ delta (lift g j) k *^ k
+--
+-- What the sum is depends on the category: in 'Proarrow.Category.Instance.Mat.Mat' it is the sum
+-- of numbers, in 'Proarrow.Category.Instance.FinRel.FinRel' it is "there is", and in the diagram
+-- categories it is a wire with no end on the boundary.
+
+-- | An index summed over: the binder's variable is fed by the unit of its type's monoid, which,
+-- copied to every use, is the sum over all the values the index can take. The body receives the
+-- index through a pattern (see /Patterns/).
+{-# INLINE sumOver #-}
+sumOver
+  :: forall {k} (a :: SYN k) d r b t cont
+   . (Monoidal k, Frobenius (Interp a), Binds d r a b t cont)
+  => (t -> cont)
+  -> Term d r b
+sumOver k =
+  withCtxOb @r
+    ( withSynOb @a
+        ( MkTerm
+            (bound @d @r @a @b k . rightUnitorInvWith @(Interp (Mul r)) (mempty @(Interp a)))
+        )
+    )
+
+-- | The Kronecker delta: the scalar that says two wires of an index type carry the same value. It
+-- is the cap of the Frobenius algebra, @'counit' . 'mappend'@.
+{-# INLINE delta #-}
+delta
+  :: forall {k} (a :: SYN k) d g1 g2
+   . (Frobenius (Interp a), KnownObj a, Merge g1 g2)
+  => Term d g1 a -> Term d g2 a -> Term d (Union g1 g2) I
+delta x y = lift @(a :** a) @I (cap @(Interp a)) (x ** y)
+
+-- | A term multiplied by a scalar on its left. At 'I' it is the product of two scalars.
+{-# INLINE (*^) #-}
+(*^)
+  :: forall {k} d g1 g2 (a :: SYN k)
+   . (Monoidal k, KnownObj a, Merge g1 g2)
+  => Term d g1 I -> Term d g2 a -> Term d (Union g1 g2) a
+s *^ x = lift @(I :** a) @a (withSynOb @a (leftUnitor @k @(Interp a))) (s ** x)
+
+-- | A term multiplied by a scalar on its right.
+{-# INLINE (^*) #-}
+(^*)
+  :: forall {k} d g1 g2 (a :: SYN k)
+   . (Monoidal k, KnownObj a, Merge g1 g2)
+  => Term d g1 a -> Term d g2 I -> Term d (Union g1 g2) a
+x ^* s = lift @(a :** I) @a (withSynOb @a (rightUnitor @k @(Interp a))) (x ** s)
 
 -- | A new pair of wires, a variable and its dual, from nothing: the unit of the duality. This
 -- needs the category to be compact closed.
@@ -614,7 +815,7 @@ produce = withSynOb @a (MkTerm (dualityUnit @k @(Interp a)))
 annihilate
   :: forall {k} (a :: SYN k) d g1 g2
    . (IsoMix k, KnownObj a, Merge g1 g2)
-  => Consumer d g1 a %1 -> Term d g2 a %1 -> Term d (Union g1 g2) I
+  => Consumer d g1 a -> Term d g2 a -> Term d (Union g1 g2) I
 annihilate x y = lift @(Not a :** a) @I (withSynOb @a (dualityCounit @k @(Interp a))) (x ** y)
 
 -- $inout
@@ -664,7 +865,7 @@ type a :## b = Not (Not a :** Not b)
 cut
   :: forall {k} (a :: SYN k) d g1 g2
    . (Dialogue k, KnownObj a, Merge g1 g2)
-  => Consumer d g1 a %1 -> Term d g2 a %1 -> Command d (Union g1 g2)
+  => Consumer d g1 a -> Term d g2 a -> Command d (Union g1 g2)
 cut x y = lift @(Not a :** a) @(Not I) (withSynOb @a (dualityCounitSA @(Interp a))) (x ** y)
 
 -- | 'cut' with the producer first, as System L writes @⟨t | k⟩@: @t |> k@ sends @t@ into @k@.
@@ -672,7 +873,7 @@ cut x y = lift @(Not a :** a) @(Not I) (withSynOb @a (dualityCounitSA @(Interp a
 (|>)
   :: forall {k} (a :: SYN k) d g1 g2
    . (Dialogue k, KnownObj a, Merge g2 g1)
-  => Term d g1 a %1 -> Consumer d g2 a %1 -> Command d (Union g2 g1)
+  => Term d g1 a -> Consumer d g2 a -> Command d (Union g2 g1)
 t |> k = cut k t
 
 -- | The binder of System L. @cont \\x -> c@ is a term of @'Not' a@: it receives an @a@ through the
@@ -688,19 +889,18 @@ t |> k = cut k t
 {-# INLINE cont #-}
 cont
   :: forall {k} d r (a :: SYN k) t cont
-   . (Dialogue k, Binds t d a cont r (Not I))
-  => (t %1 -> cont)
-  %1 -> Term d r (Not a)
-cont k = case bound @d @r @a @(Not I) k of
-  MkTerm body ->
-    withCtxOb @r
-      ( withSynOb @a
-          ( MkTerm
-              ( dual (rightUnitorInv @k @(Interp a))
-                  . linDist @k @(Interp (Mul r)) @(Interp a) @Unit (body . snoc @d @a @r)
-              )
-          )
-      )
+   . (Dialogue k, Binds d r a (Not I) t cont)
+  => (t -> cont)
+  -> Term d r (Not a)
+cont k =
+  withCtxOb @r
+    ( withSynOb @a
+        ( MkTerm
+            ( dual (rightUnitorInv @k @(Interp a))
+                . linDist @k @(Interp (Mul r)) @(Interp a) @Unit (bound @d @r @a @(Not I) k)
+            )
+        )
+    )
 
 -- | Run a computation against the rest of a block. The body is what the rest does with the value,
 -- given the context @r@; it becomes a consumer of the computation, whose context @g@ joins. What
@@ -710,7 +910,7 @@ runUp
   :: forall {k} d g r (a :: SYN k) y
    . (Dialogue k, KnownObj a, KnownObj y, Merge g r)
   => Term d g (Up a)
-  %1 -> (Interp (Mul r) ** Interp a ~> Interp (Not y))
+  -> (Interp (Mul r) ** Interp a ~> Interp (Not y))
   -> Term d (Union g r) (Not y)
 runUp (MkTerm m) body =
   withCtxOb @r
@@ -732,7 +932,7 @@ runUp (MkTerm m) body =
 ret
   :: forall {k} (a :: SYN k) t
    . (Dialogue k, KnownObj a, Tuple k t a)
-  => t %1 -> Term (TupleDepth t) (TupleCtx k t) (Up a)
+  => t -> Term (TupleDepth t) (TupleCtx k t) (Up a)
 ret t = withSynOb @a (lift @a @(Up a) (doubleNegInv @k @(Interp a))) (tuple @k @t @a t)
 
 -- | A term built from a tuple of terms, by the type it is expected to have: a term is itself, a
@@ -741,7 +941,7 @@ ret t = withSynOb @a (lift @a @(Up a) (doubleNegInv @k @(Interp a))) (tuple @k @
 -- patterns. The parts must be at the same depth, and their contexts are merged.
 type Tuple :: forall k -> Type -> SYN k -> Constraint
 class Tuple k t a where
-  tuple :: t %1 -> Term (TupleDepth t) (TupleCtx k t) a
+  tuple :: t -> Term (TupleDepth t) (TupleCtx k t) a
 
 -- | The context of a tuple of terms: the union of the contexts of its parts.
 type TupleCtx :: forall k -> Type -> Ctx k
@@ -799,60 +999,57 @@ instance (Tuple k (((w, x), y), z) a) => Tuple k (w, x, y, z) a where
 -- @'F' (a '**' b)@ and @'F' a ':**' 'F' b@, say, so that a pattern can take it apart, or between a
 -- type and its 'Dn'. The polarity may change, the morphism does not.
 {-# INLINE recast #-}
-recast :: forall {k} (a :: SYN k) b d d' g. (Interp a ~ Interp b) => Term d g a %1 -> Term d' g b
+recast :: forall {k} (a :: SYN k) b d d' g. (Interp a ~ Interp b) => Term d g a -> Term d' g b
 recast (MkTerm f) = MkTerm f
 
 -- | Store a term of a negative type as a value: the same morphism at the positive type @'Dn' n@,
 -- which a bind names instead of running. This is call by push value's @thunk@, 'recast' to 'Dn'.
 {-# INLINE thunk #-}
-thunk :: forall {k} (n :: SYN k) d g. Term d g n %1 -> Term d g (Dn n)
+thunk :: forall {k} (n :: SYN k) d g. Term d g n -> Term d g (Dn n)
 thunk = recast
 
 -- | A stored term at its negative type again, where a bind runs it. This is call by push value's
 -- @force@, 'recast' from 'Dn'.
 {-# INLINE force #-}
-force :: forall {k} (n :: SYN k) d g. Term d g (Dn n) %1 -> Term d g n
+force :: forall {k} (n :: SYN k) d g. Term d g (Dn n) -> Term d g n
 force = recast
 
 -- | A computation as its value again: double negation elimination, which only a *-autonomous
 -- category has. There every type is equivalent to its shift, so the polarities collapse.
 {-# INLINE classical #-}
-classical :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Term d g (Up a) %1 -> Term d g a
+classical :: forall {k} (a :: SYN k) d g. (StarAutonomous k, KnownObj a) => Term d g (Up a) -> Term d g a
 classical = withSynOb @a (lift @(Up a) @a (doubleNeg @k @(Interp a)))
 
 -- $additives
--- The additives share their context between alternatives, of which only one is used. Terms that
--- share variables can't both be written in a linear function, so the alternatives are functions of
--- their own, compiled with 'toSMC' like the argument of 'call', and what they share is passed in as
--- one term.
+-- The additives share their context between alternatives, of which only one is used, so a
+-- variable that several alternatives use is not copied. One that an alternative does not use is
+-- discarded there.
 
--- | Both of two alternatives on the same input: the product. Each alternative receives the input
--- through a pattern (see /Patterns/). This needs products.
+-- | Both of two alternatives over the same variables: the product. This needs products.
 {-# INLINE with #-}
 with
-  :: forall {k} (s :: SYN k) a b d g t1 cont1 t2 cont2
-   . (Monoidal k, HasBinaryProducts k, Binds t1 0 s cont1 '[] a, Binds t2 0 s cont2 '[] b)
-  => (t1 %1 -> cont1)
-  -> (t2 %1 -> cont2)
-  -> Term d g s
-  %1 -> Term d g (a :&& b)
-with f h = lift @s @(a :&& b) (toSMC @s @a f &&& toSMC @s @b h)
+  :: forall {k} (a :: SYN k) b d g1 g2
+   . (HasBinaryProducts k, Thin (Union g1 g2) g1, Thin (Union g1 g2) g2)
+  => Term d g1 a
+  -> Term d g2 b
+  -> Term d (Union g1 g2) (a :&& b)
+with (MkTerm f) (MkTerm h) = MkTerm ((f . thin @(Union g1 g2) @g1) &&& (h . thin @(Union g1 g2) @g2))
 
 -- | The first alternative of a product.
 {-# INLINE exl #-}
 exl
-  :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) %1 -> Term d g a
+  :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) -> Term d g a
 exl = lift @(a :&& b) @a (withSynOb @a (withSynOb @b (fst @k @(Interp a) @(Interp b))))
 
 -- | The second alternative of a product.
 {-# INLINE exr #-}
 exr
-  :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) %1 -> Term d g b
+  :: forall {k} (a :: SYN k) b d g. (HasBinaryProducts k, KnownObj a, KnownObj b) => Term d g (a :&& b) -> Term d g b
 exr = lift @(a :&& b) @b (withSynOb @a (withSynOb @b (snd @k @(Interp a) @(Interp b))))
 
 -- | Use up a term into the unit of the product.
 {-# INLINE absorb #-}
-absorb :: forall {k} (s :: SYN k) d g. (HasTerminalObject k, KnownObj s) => Term d g s %1 -> Term d g Top
+absorb :: forall {k} (s :: SYN k) d g. (HasTerminalObject k, KnownObj s) => Term d g s -> Term d g Top
 absorb = lift @s @Top (withSynOb @s (terminate @k @(Interp s)))
 
 -- | The left injection into a coproduct.
@@ -860,7 +1057,7 @@ absorb = lift @s @Top (withSynOb @s (terminate @k @(Interp s)))
 inl
   :: forall {k} (a :: SYN k) b d g
    . (HasBinaryCoproducts k, KnownObj a, KnownObj b)
-  => Term d g a %1 -> Term d g (a :|| b)
+  => Term d g a -> Term d g (a :|| b)
 inl = lift @a @(a :|| b) (withSynOb @a (withSynOb @b (lft @k @(Interp a) @(Interp b))))
 
 -- | The right injection into a coproduct.
@@ -868,40 +1065,43 @@ inl = lift @a @(a :|| b) (withSynOb @a (withSynOb @b (lft @k @(Interp a) @(Inter
 inr
   :: forall {k} (a :: SYN k) b d g
    . (HasBinaryCoproducts k, KnownObj a, KnownObj b)
-  => Term d g b %1 -> Term d g (a :|| b)
+  => Term d g b -> Term d g (a :|| b)
 inr = lift @b @(a :|| b) (withSynOb @a (withSynOb @b (rgt @k @(Interp a) @(Interp b))))
 
--- | Case analysis on a coproduct, given first a term to share between the branches. Both branches
--- receive the pair of the shared term and the contents of their alternative through a pattern
--- (see /Patterns/). This needs the tensor to distribute over the coproduct.
+-- | Case analysis on a coproduct. Each branch receives the contents of its alternative through a
+-- pattern (see /Patterns/), and the variables of the term around it are shared between the
+-- branches. This needs the tensor to distribute over the coproduct.
 {-# INLINE caseOf #-}
 caseOf
-  :: forall {k} (s :: SYN k) a b c d g1 g2 t1 cont1 t2 cont2
+  :: forall {k} (a :: SYN k) b c d g r1 r2 t1 cont1 t2 cont2
    . ( Distributive k
-     , KnownObj s
      , KnownObj a
      , KnownObj b
-     , Merge g1 g2
-     , Binds t1 0 (s :** a) cont1 '[] c
-     , Binds t2 0 (s :** b) cont2 '[] c
+     , Binds d r1 a c t1 cont1
+     , Binds d r2 b c t2 cont2
+     , Thin (Union r1 r2) r1
+     , Thin (Union r1 r2) r2
+     , Merge (Union r1 r2) g
      )
-  => Term d g1 s
-  %1 -> Term d g2 (a :|| b)
-  %1 -> (t1 %1 -> cont1)
-  -> (t2 %1 -> cont2)
-  -> Term d (Union g1 g2) c
-caseOf e x f h =
-  lift @(s :** (a :|| b)) @c
-    ( withSynOb @s
-        ( withSynOb @a
-            ( withSynOb @b
-                ( (toSMC @(s :** a) @c f ||| toSMC @(s :** b) @c h)
-                    . distL @k @(Interp s) @(Interp a) @(Interp b)
+  => Term d g (a :|| b)
+  -> (t1 -> cont1)
+  -> (t2 -> cont2)
+  -> Term d (Union (Union r1 r2) g) c
+caseOf (MkTerm x) f h =
+  withCtxOb @(Union r1 r2)
+    ( withSynOb @a
+        ( withSynOb @b
+            ( MkTerm
+                ( ( (bound @d @r1 @a @c f . (thin @(Union r1 r2) @r1 M.** obj @(Interp a)))
+                      ||| (bound @d @r2 @b @c h . (thin @(Union r1 r2) @r2 M.** obj @(Interp b)))
+                  )
+                    . distL @k @(Interp (Mul (Union r1 r2))) @(Interp a) @(Interp b)
+                    . (ctxOb @(Union r1 r2) M.** x)
+                    . merge @(Union r1 r2) @g
                 )
             )
         )
     )
-    (e ** x)
 
 -- | There is no term of 'Zero', so from one, together with the rest of the context, anything
 -- follows.
@@ -909,40 +1109,96 @@ caseOf e x f h =
 absurd
   :: forall {k} (s :: SYN k) c d g1 g2
    . (Distributive k, KnownObj s, KnownObj c, Merge g1 g2)
-  => Term d g1 s %1 -> Term d g2 Zero %1 -> Term d (Union g1 g2) c
+  => Term d g1 s -> Term d g2 Zero -> Term d (Union g1 g2) c
 absurd e z = lift @(s :** Zero) @c (withSynOb @s (withSynOb @c (initiate @k @(Interp c) . absorbL @k @(Interp s)))) (e ** z)
 
--- | Function application. The function and its argument must have disjoint contexts.
+-- | Function application. A variable both the function and its argument use is copied.
 {-# INLINE (!) #-}
 (!)
   :: forall {k} d g1 g2 (a :: SYN k) b
    . (Closed k, KnownObj a, KnownObj b, Merge g1 g2)
-  => Term d g1 (a :-> b) %1 -> Term d g2 a %1 -> Term d (Union g1 g2) b
+  => Term d g1 (a :-> b) -> Term d g2 a -> Term d (Union g1 g2) b
 MkTerm f ! MkTerm x =
   withSynOb @a (withSynOb @b (MkTerm (apply @k @(Interp a) @(Interp b) . (f M.** x) . merge @g1 @g2)))
 
 -- Do notation
 
 -- | The pattern @t@ of a binder: it takes apart the variable @(n, a)@, and the binder's body
--- @cont@ then gives a term at depth @n + 1@ with type @b@, whose context is that variable and @g@.
--- Both the variable's type and the rest of the context must be known.
-type Binds :: forall k. Type -> Nat -> SYN k -> Type -> Ctx k -> SYN k -> Constraint
-type Binds @k t n a cont g b =
-  (KnownObj a, KnownCtx g, BindPat k (Term (n + 1) '[ '(n, a)] a) t cont (Term (n + 1) ('(n, a) ': g) b))
+-- @cont@ then gives a term at depth @n + 1@ with type @b@, whose context is @g@ and possibly that
+-- variable. Both the variable's type and the rest of the context must be known.
+type Binds :: forall {k}. Nat -> Ctx k -> SYN k -> SYN k -> Type -> Type -> Constraint
+class (KnownObj a, KnownCtx g) => Binds n g (a :: SYN k) b t cont where
+  -- | The body of a binder, with the pattern taking apart its new variable, as a morphism from the
+  -- context around it and the variable. This is what 'toSMC', 'lam', 'loop', 'cont', 'caseOf',
+  -- 'sumOver' and the binds of @do@ notation share.
+  bound :: (t -> cont) -> Interp (Mul g) ** Interp a ~> Interp b
+
+-- The context of the body is @g'@, which only the instance needs to name.
+instance
+  ( KnownObj a
+  , KnownCtx g
+  , BindPat k (Term (n + 1) '[ '(n, a)] a) t cont (Term (n + 1) g' b)
+  , BindVar n a g' g
+  )
+  => Binds n g (a :: SYN k) b t cont
+  where
+  {-# INLINE bound #-}
+  bound k = case bindPat @k @(Term (n + 1) '[ '(n, a)] a) @t @cont @(Term (n + 1) g' b) (var @n @a @(n + 1)) k of
+    MkTerm body -> body . bindVar @n @a @g' @g
 
 -- | A bind in a @do@ block: a term taken apart by a pattern, or the variables of a @rec@ block.
--- The multiplicity @p@ of the continuation depends only on the right hand side @m@, since GHC
--- needs it before it knows the rest.
-type Bind :: Type -> Type -> Type -> Multiplicity -> Type -> Type -> Constraint
-class Bind k m t p cont r | m -> k p where
+type Bind :: Type -> Type -> Type -> Type -> Type -> Constraint
+class Bind k m t cont r | m -> k where
   -- | Bind the right hand side to the pattern of the continuation.
-  (>>=) :: m %1 -> (t %p -> cont) %1 -> r
+  (>>=) :: m -> (t -> cont) -> r
 
 -- | A term on the right hand side is taken apart by the pattern. Incoherent, so that it is chosen
 -- as soon as the right hand side is known, unless the right hand side is a computation.
-instance {-# INCOHERENT #-} (BindPat k (Term d g a) t cont r) => Bind k (Term d g (a :: SYN k)) t One cont r where
+instance {-# INCOHERENT #-} (BindTerm k t (Term d g a) cont r) => Bind k (Term d g (a :: SYN k)) t cont r where
   {-# INLINE (>>=) #-}
-  (>>=) = bindPat
+  (>>=) = bindTerm @k @t
+
+-- | A bind of a term, by its pattern. A variable pattern binds a new variable, so that the right
+-- hand side is computed once however often the variable is used. The other patterns take the
+-- right hand side apart into new variables already.
+type BindTerm :: Type -> Type -> Type -> Type -> Type -> Constraint
+class BindTerm k t m cont r where
+  bindTerm :: m -> (t -> cont) -> r
+
+-- The instances are incoherent, as for patterns: a variable pattern's type is often still unknown
+-- when the instance is chosen.
+
+instance
+  {-# INCOHERENT #-}
+  (Monoidal k, Binds d r a b t cont, Merge r g, r' ~ Term d (Union r g) b)
+  => BindTerm k t (Term d g (a :: SYN k)) cont r'
+  where
+  {-# INLINE bindTerm #-}
+  bindTerm (MkTerm m) k = withCtxOb @r (MkTerm (bound @d @r @a @b k . (ctxOb @r M.** m) . merge @r @g))
+
+instance {-# INCOHERENT #-} (BindPat k (Term d g a) (x, y) cont r) => BindTerm k (x, y) (Term d g (a :: SYN k)) cont r where
+  {-# INLINE bindTerm #-}
+  bindTerm = bindPat
+
+instance
+  {-# INCOHERENT #-}
+  (BindPat k (Term d g a) (x, y, z) cont r)
+  => BindTerm k (x, y, z) (Term d g (a :: SYN k)) cont r
+  where
+  {-# INLINE bindTerm #-}
+  bindTerm = bindPat
+
+instance
+  {-# INCOHERENT #-}
+  (BindPat k (Term d g a) (w, x, y, z) cont r)
+  => BindTerm k (w, x, y, z) (Term d g (a :: SYN k)) cont r
+  where
+  {-# INLINE bindTerm #-}
+  bindTerm = bindPat
+
+instance {-# INCOHERENT #-} (BindPat k (Term d g a) () cont r) => BindTerm k () (Term d g (a :: SYN k)) cont r where
+  {-# INLINE bindTerm #-}
+  bindTerm = bindPat
 
 -- | A computation on the right hand side runs first, and the rest of the block is negative.
 instance
@@ -950,36 +1206,35 @@ instance
   , KnownObj y
   , Merge g r
   , TyOf @k cont ~ Not y
-  , Binds t d a cont r (Not y)
+  , Binds d r a (Not y) t cont
   , r' ~ Term d (Union g r) (Not y)
   )
-  => Bind k (Term d g (Not (Not a))) t One cont r'
+  => Bind k (Term d g (Not (Not a))) t cont r'
   where
   {-# INLINE (>>=) #-}
-  m >>= k = case bound @d @r @a @(Not y) k of
-    MkTerm body -> runUp @d @g @r @a @y m (body . snoc @d @a @r)
+  m >>= k = runUp @d @g @r @a @y m (bound @d @r @a @(Not y) k)
 
 -- | A term on the right hand side taken apart by the pattern of the continuation. The types of the
 -- continuation and the result are matched with equalities, so that the instance is chosen as soon
 -- as the right hand side is known.
 type BindPat :: Type -> Type -> Type -> Type -> Type -> Constraint
 class BindPat k m t cont r | m -> k where
-  bindPat :: m %1 -> (t %1 -> cont) %1 -> r
+  bindPat :: m -> (t -> cont) -> r
 
 instance
   ( cont ~ Term (d + PSize t) (CtxOf @k cont) (TyOf @k cont)
-  , r ~ Term d (PCtx t d g a (CtxOf @k cont)) (TyOf @k cont)
-  , Pat k t d g a (CtxOf @k cont) (TyOf @k cont)
+  , r ~ Term d gr (TyOf @k cont)
+  , Pat k t d g a (CtxOf @k cont) (TyOf @k cont) gr
   )
   => BindPat k (Term d g (a :: SYN k)) t cont r
   where
   {-# INLINE bindPat #-}
-  bindPat = pat @k @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont)
+  bindPat = pat @k @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont) @gr
 
 -- | The statement of a @rec@ block, whose continuation is its 'return'.
 instance
-  (Bind k (Term d g a) t One cont r', r ~ Ret tt r')
-  => Bind k (Term d g (a :: SYN k)) t One (Ret tt cont) r
+  (Bind k (Term d g a) t cont r', r ~ Ret tt r')
+  => Bind k (Term d g (a :: SYN k)) t (Ret tt cont) r
   where
   {-# INLINE (>>=) #-}
   x >>= k = Ret (x >>= \p -> unRet (k p))
@@ -989,16 +1244,17 @@ instance
 type Ret :: Type -> Type -> Type
 newtype Ret t x = Ret x
 
-unRet :: Ret t x %1 -> x
+unRet :: Ret t x -> x
 unRet (Ret x) = x
 
 -- | A pattern: a variable, @()@, or a pair of patterns. A triple or quadruple stands for pairs
 -- nested to the left, as @a ':**' b ':**' c@ is: @(x, y, z)@ is @((x, y), z)@. Binding it at depth
--- @d@ to a term with context @g@ and type @a@, with a continuation with context @g'@ and type @c@.
--- A pair or @()@ at a computation, @'Up' a@, runs it and matches its value, so @c@ is then negative.
-type Pat :: forall k -> Type -> Nat -> Ctx k -> SYN k -> Ctx k -> SYN k -> Constraint
-class Pat k t d g a g' c where
-  pat :: Term d g a %1 -> (t %1 -> Term (d + PSize t) g' c) %1 -> Term d (PCtx t d g a g') c
+-- @d@ to a term with context @g@ and type @a@, with a continuation with context @g'@ and type @c@,
+-- gives a term with context @gr@, which each instance fixes. A pair or @()@ at a computation,
+-- @'Up' a@, runs it and matches its value, so @c@ is then negative.
+type Pat :: forall k -> Type -> Nat -> Ctx k -> SYN k -> Ctx k -> SYN k -> Ctx k -> Constraint
+class Pat k t d g a g' c gr where
+  pat :: Term d g a -> (t -> Term (d + PSize t) g' c) -> Term d gr c
 
 -- | The number of variables a pattern binds on the way, and so the depth it adds.
 type PSize :: Type -> Nat
@@ -1008,28 +1264,15 @@ type family PSize t where
   PSize (w, x, y, z) = PSize (((w, x), y), z)
   PSize t = 0
 
--- | The context of a pattern match, from the context of the right hand side and of the
--- continuation.
-type PCtx :: forall {k}. Type -> Nat -> Ctx k -> SYN k -> Ctx k -> Ctx k
-type family PCtx t d g a g' where
-  PCtx (x, y) d g (Not (Not a)) g' = Union g (Tail (PCtx (x, y) d '[ '(d, a)] a g'))
-  PCtx (x, y) d g (a1 :** a2) g' = Union (Drop2 (PCtxPair x y d a1 a2 g')) g
-  PCtx (x, y, z) d g a g' = PCtx ((x, y), z) d g a g'
-  PCtx (w, x, y, z) d g a g' = PCtx (((w, x), y), z) d g a g'
-  PCtx () d g a g' = Union g g'
-  PCtx t d g a g' = g'
-
--- | The context of the body of the 'split' that a pair pattern starts with.
-type PCtxPair :: forall {k}. Type -> Type -> Nat -> SYN k -> SYN k -> Ctx k -> Ctx k
-type PCtxPair x y d a1 a2 g' =
-  PCtx x (d + 2) '[ '(d, a1)] a1 (PCtx y (d + 2 + PSize x) '[ '(d + 1, a2)] a2 g')
-
 -- The generic instances are incoherent: a variable pattern's type is often still unknown when the
 -- instance is chosen, and a pair pattern's type is always a pair by then. The instances at a
 -- computation are more specific, so they win once the type is known to be an 'Up'.
 
 -- | The pattern @()@ at a computation of the unit runs it.
-instance (Dialogue k, KnownObj y, c ~ Not y, Merge g g') => Pat k () d g (Not (Not I) :: SYN k) g' c where
+instance
+  (Dialogue k, KnownObj y, c ~ Not y, Merge g g', gr ~ Union g g')
+  => Pat k () d g (Not (Not I) :: SYN k) g' c gr
+  where
   {-# INLINE pat #-}
   pat u k = case k () of
     MkTerm t -> runUp @d @g @g' @I @y u (withCtxOb @g' (t . rightUnitor @k @(Interp (Mul g'))))
@@ -1041,23 +1284,30 @@ instance
   , KnownObj a
   , KnownObj y
   , c ~ Not y
-  , Pat k (x, y') d '[ '(d, a)] a g' c
-  , PCtx (x, y') d '[ '(d, a)] a g' ~ ('(d, a) ': r)
+  , Pat k (x, y') d '[ '(d, a)] a g' c gp
+  , BindVar d a gp r
   , Merge g r
+  , gr ~ Union g r
   )
-  => Pat k (x, y') d g (Not (Not a) :: SYN k) g' c
+  => Pat k (x, y') d g (Not (Not a) :: SYN k) g' c gr
   where
   {-# INLINE pat #-}
-  pat m k = case pat @k @(x, y') @d @'[ '(d, a)] @a @g' @c (var @d @a @d) k of
-    MkTerm body -> runUp @d @g @r @a @y m (body . snoc @d @a @r)
+  pat m k = case pat @k @(x, y') @d @'[ '(d, a)] @a @g' @c @gp (var @d @a @d) k of
+    MkTerm body -> runUp @d @g @r @a @y m (body . bindVar @d @a @gp @r)
 
 -- | The pattern @()@ uses up a term of the unit type.
-instance {-# INCOHERENT #-} (Monoidal k, a ~ I, KnownObj c, Merge g g') => Pat k () d g (a :: SYN k) g' c where
+instance
+  {-# INCOHERENT #-}
+  (Monoidal k, a ~ I, KnownObj c, Merge g g', gr ~ Union g g')
+  => Pat k () d g (a :: SYN k) g' c gr
+  where
   {-# INLINE pat #-}
   pat (MkTerm u) k = case k () of
     MkTerm t -> withSynOb @c (MkTerm (leftUnitor @k @(Interp c) . (u M.** t) . merge @g @g'))
 
-instance {-# INCOHERENT #-} (t ~ Term (DepthOf t) g a) => Pat k t d g a g' c where
+-- | A variable pattern names the right hand side, which is always a variable. If the body does not
+-- use it, the binder discards it.
+instance {-# INCOHERENT #-} (t ~ Term (DepthOf t) g a, gr ~ g') => Pat k t d g a g' c gr where
   {-# INLINE pat #-}
   pat x k = k (recast x)
 
@@ -1067,154 +1317,170 @@ instance
   , a ~ (a1 :** a2)
   , KnownObj a1
   , KnownObj a2
-  , Pat k x (d + 2) '[ '(d, a1)] a1 (PCtx y (d + 2 + PSize x) '[ '(d + 1, a2)] a2 g') c
-  , Pat k y (d + 2 + PSize x) '[ '(d + 1, a2)] a2 g' c
+  , Pat k y (d + 2 + PSize x) '[ '(d + 1, a2)] a2 g' c gy
+  , Pat k x (d + 2) '[ '(d, a1)] a1 gy c gxy
   , d + 2 + PSize x + PSize y ~ d + PSize (x, y)
-  , PCtxPair x y d a1 a2 g' ~ ('(d + 1, a2) ': '(d, a1) ': Drop2 (PCtxPair x y d a1 a2 g'))
-  , Merge (Drop2 (PCtxPair x y d a1 a2 g')) g
+  , BindVar (d + 1) a2 gxy r1
+  , BindVar d a1 r1 r
+  , Merge r g
+  , gr ~ Union r g
   )
-  => Pat k (x, y) d g (a :: SYN k) g' c
+  => Pat k (x, y) d g (a :: SYN k) g' c gr
   where
   {-# INLINE pat #-}
   pat s k =
-    split
+    split @d @g @gxy @r1 @r
       s
       ( \a b ->
-          pat @k @x @(d + 2) @'[ '(d, a1)] @a1 @(PCtx y (d + 2 + PSize x) '[ '(d + 1, a2)] a2 g') @c
+          pat @k @x @(d + 2) @'[ '(d, a1)] @a1 @gy @c @gxy
             a
-            (\px -> pat @k @y @(d + 2 + PSize x) @'[ '(d + 1, a2)] @a2 @g' @c b (\py -> k (px, py)))
+            (\px -> pat @k @y @(d + 2 + PSize x) @'[ '(d + 1, a2)] @a2 @g' @c @gy b (\py -> k (px, py)))
       )
 
-instance {-# INCOHERENT #-} (Pat k ((x, y), z) d g a g' c) => Pat k (x, y, z) d g a g' c where
+instance {-# INCOHERENT #-} (Pat k ((x, y), z) d g a g' c gr) => Pat k (x, y, z) d g a g' c gr where
   {-# INLINE pat #-}
-  pat s k = pat @k @((x, y), z) @d @g @a @g' @c s (\((px, py), pz) -> k (px, py, pz))
+  pat s k = pat @k @((x, y), z) @d @g @a @g' @c @gr s (\((px, py), pz) -> k (px, py, pz))
 
-instance {-# INCOHERENT #-} (Pat k (((w, x), y), z) d g a g' c) => Pat k (w, x, y, z) d g a g' c where
+instance {-# INCOHERENT #-} (Pat k (((w, x), y), z) d g a g' c gr) => Pat k (w, x, y, z) d g a g' c gr where
   {-# INLINE pat #-}
-  pat s k = pat @k @(((w, x), y), z) @d @g @a @g' @c s (\(((pw, px), py), pz) -> k (pw, px, py, pz))
+  pat s k = pat @k @(((w, x), y), z) @d @g @a @g' @c @gr s (\(((pw, px), py), pz) -> k (pw, px, py, pz))
 
 -- | The variables of a @rec@ block, as GHC tuples them up.
 type RecVars :: Type -> Type -> Constraint
 class RecVars k t | t -> k where
   type Vars k t :: Ctx k
   recVars :: t
-  consume :: t %1 -> r %1 -> r
 
 instance (Monoidal k, KnownObj (a :: SYN k)) => RecVars k (Term d '[ '(n, a)] a) where
   {-# INLINE recVars #-}
-  {-# INLINE consume #-}
   type Vars k (Term d '[ '(n, a)] a) = '[ '(n, a)]
   recVars = var @n @a
-  consume (MkTerm _) r = r
 
 instance (RecVars k x, RecVars k y) => RecVars k (x, y) where
   {-# INLINE recVars #-}
-  {-# INLINE consume #-}
   type Vars k (x, y) = Union (Vars k x) (Vars k y)
   recVars = (recVars, recVars)
-  consume (x, y) r = consume x (consume y r)
 
 instance (RecVars k x, RecVars k y, RecVars k z) => RecVars k (x, y, z) where
   {-# INLINE recVars #-}
-  {-# INLINE consume #-}
   type Vars k (x, y, z) = Union (Vars k x) (Vars k (y, z))
   recVars = (recVars, recVars, recVars)
-  consume (x, y, z) r = consume x (consume (y, z) r)
 
 instance (RecVars k x, RecVars k y, RecVars k z, RecVars k w) => RecVars k (x, y, z, w) where
   {-# INLINE recVars #-}
-  {-# INLINE consume #-}
   type Vars k (x, y, z, w) = Union (Vars k x) (Vars k (y, z, w))
   recVars = (recVars, recVars, recVars, recVars)
-  consume (x, y, z, w) r = consume x (consume (y, z, w) r)
 
 instance (RecVars k x, RecVars k y, RecVars k z, RecVars k w, RecVars k v) => RecVars k (x, y, z, w, v) where
   {-# INLINE recVars #-}
-  {-# INLINE consume #-}
   type Vars k (x, y, z, w, v) = Union (Vars k x) (Vars k (y, z, w, v))
   recVars = (recVars, recVars, recVars, recVars, recVars)
-  consume (x, y, z, w, v) r = consume x (consume (y, z, w, v) r)
 
 instance
   (RecVars k x, RecVars k y, RecVars k z, RecVars k w, RecVars k v, RecVars k u)
   => RecVars k (x, y, z, w, v, u)
   where
   {-# INLINE recVars #-}
-  {-# INLINE consume #-}
   type Vars k (x, y, z, w, v, u) = Union (Vars k x) (Vars k (y, z, w, v, u))
   recVars = (recVars, recVars, recVars, recVars, recVars, recVars)
-  consume (x, y, z, w, v, u) r = consume x (consume (y, z, w, v, u) r)
+
+-- | The variables of a @rec@ block again, at a depth of their own: the rest of the block uses them
+-- deeper than the block did. It is asked for both ways, so that what is known about the variables
+-- on either side of the block determines the other.
+type AnyDepth :: Type -> Type -> Constraint
+class AnyDepth t t'
+
+instance (t' ~ Term d' g a) => AnyDepth (Term d g a) t'
+
+instance (AnyDepth x x', AnyDepth y y', t' ~ (x', y')) => AnyDepth (x, y) t'
+
+instance (AnyDepth x x', AnyDepth y y', AnyDepth z z', t' ~ (x', y', z')) => AnyDepth (x, y, z) t'
+
+instance (AnyDepth x x', AnyDepth y y', AnyDepth z z', AnyDepth w w', t' ~ (x', y', z', w')) => AnyDepth (x, y, z, w) t'
+
+instance
+  (AnyDepth x x', AnyDepth y y', AnyDepth z z', AnyDepth w w', AnyDepth v v', t' ~ (x', y', z', w', v'))
+  => AnyDepth (x, y, z, w, v) t'
+
+instance
+  ( AnyDepth x x'
+  , AnyDepth y y'
+  , AnyDepth z z'
+  , AnyDepth w w'
+  , AnyDepth v v'
+  , AnyDepth u u'
+  , t' ~ (x', y', z', w', v', u')
+  )
+  => AnyDepth (x, y, z, w, v, u) t'
 
 -- | The end of a @rec@ block: all its variables, as the tensor of their context.
 {-# INLINE return #-}
 return
-  :: forall k t d. (Monoidal k, RecVars k t, KnownCtx (Vars k t)) => t %1 -> Ret t (Term d (Vars k t) (Mul (Vars k t)))
-return t = Ret (consume t (MkTerm (ctxOb @(Vars k t))))
+  :: forall k t d. (Monoidal k, RecVars k t, KnownCtx (Vars k t)) => t -> Ret t (Term d (Vars k t) (Mul (Vars k t)))
+return _ = Ret (MkTerm (ctxOb @(Vars k t)))
 
--- | A @rec@ block after tracing, from its context without the fed back variables to the variables
--- it passes on.
-type Rec :: forall {k}. Nat -> Type -> Ctx k -> Ctx k -> Type
-data Rec d t g0 outs where
-  Rec :: (Interp (Mul g0) ~> Interp (Mul outs)) -> Rec d t g0 outs
+-- | A @rec@ block before tracing: its body, from its context @g@ to all its variables. Which of them
+-- are fed back and which are passed on is only known with the rest of the block, see the 'Bind'
+-- instance.
+type Rec :: forall {k}. Nat -> Type -> Ctx k -> Type
+data Rec d t g where
+  Rec :: forall {k} d t (g :: Ctx k). (Interp (Mul g) ~> Interp (Mul (Vars k t))) -> Rec d t g
 
--- | Trace a @rec@ block: the variables it uses before binding them are fed back.
+-- | The body of a @rec@ block, to be traced by the bind after it.
 {-# INLINE mfix #-}
-mfix
-  :: forall {k} t d (g :: Ctx k)
-   . ( TracedMonoidal k
-     , RecVars k t
-     , Merge (Inter g (Vars k t)) (Minus g (Vars k t))
-     , Merge (Inter g (Vars k t)) (Minus (Vars k t) g)
-     , Union (Inter g (Vars k t)) (Minus g (Vars k t)) ~ g
-     , Union (Inter g (Vars k t)) (Minus (Vars k t) g) ~ Vars k t
-     )
-  => (t -> Ret t (Term d g (Mul (Vars k t)))) %1 -> Rec d t (Minus g (Vars k t)) (Minus (Vars k t) g)
-mfix f = case unRet (f recVars) of
-  MkTerm body ->
-    withCtxOb @(Inter g (Vars k t))
-      ( withCtxOb @(Minus g (Vars k t))
-          ( withCtxOb @(Minus (Vars k t) g)
-              ( Rec
-                  ( coact
-                      @Tensor
-                      @(~>)
-                      @(Interp (Mul (Inter g (Vars k t))))
-                      @(Interp (Mul (Minus g (Vars k t))))
-                      @(Interp (Mul (Minus (Vars k t) g)))
-                      ( merge @(Inter g (Vars k t)) @(Minus (Vars k t) g)
-                          . body
-                          . unmerge @(Inter g (Vars k t)) @(Minus g (Vars k t))
-                      )
-                  )
-              )
-          )
-      )
+mfix :: forall {k} t d (g :: Ctx k). (RecVars k t) => (t -> Ret t (Term d g (Mul (Vars k t)))) -> Rec d t g
+mfix f = case unRet (f recVars) of MkTerm body -> Rec body
 
--- | The rest of the @do@ block after a @rec@ block. GHC binds the variables of the block here
--- without linearity, so the context checks see to it that the ones passed on are used once and
--- the fed back ones not at all.
+-- | The rest of the @do@ block after a @rec@ block, which traces it. The variables of the block
+-- that the block itself uses are fed back, the ones the rest uses are passed on, a variable that
+-- both use is copied, and one that neither uses is discarded. The rest gets the variables anew,
+-- with the same ids, so that it can use them at its own depth.
 instance
-  ( SymMonoidal k
+  ( TracedMonoidal k
   , RecVars k t
-  , t' ~ t
+  , AnyDepth t t'
+  , AnyDepth t' t
+  , RecVars k t'
   , cont ~ Term (HeadId (Vars k t) + 1) (CtxOf @k cont) (TyOf @k cont)
-  , r ~ Term d (Union (Minus (CtxOf @k cont) outs) g0) (TyOf @k cont)
-  , AllIn outs (CtxOf @k cont)
-  , NoneIn (Minus (CtxOf @k cont) outs) (Vars k t)
-  , Merge (Minus (CtxOf @k cont) outs) g0
-  , Merge (Minus (CtxOf @k cont) outs) outs
-  , CtxOf @k cont ~ Union (Minus (CtxOf @k cont) outs) outs
+  , r ~ Term d (Union (Minus (CtxOf @k cont) (Vars k t)) (Minus g (Vars k t))) (TyOf @k cont)
+  , Unmerge (Inter g (Vars k t)) (Minus g (Vars k t))
+  , Union (Inter g (Vars k t)) (Minus g (Vars k t)) ~ g
+  , Thin (Vars k t) (Union (Inter g (Vars k t)) (Inter (CtxOf @k cont) (Vars k t)))
+  , Merge (Inter g (Vars k t)) (Inter (CtxOf @k cont) (Vars k t))
+  , Merge (Minus (CtxOf @k cont) (Vars k t)) (Minus g (Vars k t))
+  , Unmerge (Minus (CtxOf @k cont) (Vars k t)) (Inter (CtxOf @k cont) (Vars k t))
+  , Union (Minus (CtxOf @k cont) (Vars k t)) (Inter (CtxOf @k cont) (Vars k t)) ~ CtxOf @k cont
   )
-  => Bind k (Rec d t (g0 :: Ctx k) outs) t' Many cont r
+  => Bind k (Rec d t (g :: Ctx k)) t' cont r
   where
   {-# INLINE (>>=) #-}
-  Rec h >>= k = case k recVars of
-    MkTerm body ->
-      MkTerm
-        ( body
-            . unmerge @(Minus (CtxOf @k cont) outs) @outs
-            . (ctxOb @(Minus (CtxOf @k cont) outs) M.** h)
-            . merge @(Minus (CtxOf @k cont) outs) @g0
+  Rec body >>= k = case k (recVars @k @t') of
+    MkTerm rest ->
+      withCtxOb @(Minus (CtxOf @k cont) (Vars k t))
+        ( withCtxOb @(Inter g (Vars k t))
+            ( withCtxOb @(Minus g (Vars k t))
+                ( withCtxOb @(Inter (CtxOf @k cont) (Vars k t))
+                    ( MkTerm
+                        ( rest
+                            . unmerge @(Minus (CtxOf @k cont) (Vars k t)) @(Inter (CtxOf @k cont) (Vars k t))
+                            . ( ctxOb @(Minus (CtxOf @k cont) (Vars k t))
+                                  M.** coact
+                                    @Tensor
+                                    @(~>)
+                                    @(Interp (Mul (Inter g (Vars k t))))
+                                    @(Interp (Mul (Minus g (Vars k t))))
+                                    @(Interp (Mul (Inter (CtxOf @k cont) (Vars k t))))
+                                    ( merge @(Inter g (Vars k t)) @(Inter (CtxOf @k cont) (Vars k t))
+                                        . thin @(Vars k t) @(Union (Inter g (Vars k t)) (Inter (CtxOf @k cont) (Vars k t)))
+                                        . body
+                                        . unmerge @(Inter g (Vars k t)) @(Minus g (Vars k t))
+                                    )
+                              )
+                            . merge @(Minus (CtxOf @k cont) (Vars k t)) @(Minus g (Vars k t))
+                        )
+                    )
+                )
+            )
         )
 
 -- | GHC's translation of @rec@ refers to @fail@, but pairs of variables always match.
@@ -1233,30 +1499,9 @@ type TyOf :: forall k. Type -> SYN k
 type family TyOf t where
   TyOf (Term d g a) = a
 
-type Drop2 :: forall {k}. Ctx k -> Ctx k
-type Drop2 g = Tail (Tail g)
-
-type Tail :: forall {k}. Ctx k -> Ctx k
-type family Tail g where
-  Tail (x ': g) = g
-
 type HeadId :: forall {k}. Ctx k -> Nat
 type family HeadId g where
   HeadId ('(n, a) ': g) = n
-
--- | Every variable of the first context is in the second.
-type AllIn :: forall {k}. Ctx k -> Ctx k -> Constraint
-type AllIn g h = IsEmpty (Text "Proarrow.Tools.SMC: a variable bound in a rec block is not used") (Minus g h)
-
--- | No variable of the first context is in the second.
-type NoneIn :: forall {k}. Ctx k -> Ctx k -> Constraint
-type NoneIn g h =
-  IsEmpty (Text "Proarrow.Tools.SMC: a variable fed back in a rec block is also used after it") (Inter g h)
-
-type IsEmpty :: forall {k}. ErrorMessage -> Ctx k -> Constraint
-type family IsEmpty msg g where
-  IsEmpty msg '[] = ()
-  IsEmpty msg g = TypeError msg
 
 -- | The variables of @g@ whose ids are not in @h@.
 type Minus :: forall {k}. Ctx k -> Ctx k -> Ctx k
@@ -1364,7 +1609,7 @@ combineDualT = toSMC @(Not (F a) :** Not (F b)) @(Not (F a :** F b)) \(da, db) -
 distT
   :: forall {k} (a :: k) b c. (Distributive k, SymMonoidal k, Ob a, Ob b, Ob c) => a ** (b || c) ~> (a ** b) || (a ** c)
 distT = toSMC @(F a :** (F b :|| F c)) \(a, bc) ->
-  caseOf a bc (\(a', b) -> inl (a' ** b)) (\(a', c) -> inr (a' ** c))
+  caseOf bc (\b -> inl (a ** b)) (\c -> inr (a ** c))
 
 -- | Swap a coproduct, with nothing to share.
 --
@@ -1372,17 +1617,16 @@ distT = toSMC @(F a :** (F b :|| F c)) \(a, bc) ->
 -- >>> swapEitherT @Int @Bool (Left 1)
 -- Right 1
 swapEitherT :: forall {k} (a :: k) b. (Distributive k, SymMonoidal k, Ob a, Ob b) => a || b ~> b || a
-swapEitherT = toSMC @(F a :|| F b) \x ->
-  caseOf unit x (\((), a) -> inr a) (\((), b) -> inl b)
+swapEitherT = toSMC @(F a :|| F b) \x -> caseOf x (\a -> inr a) (\b -> inl b)
 
--- | A pair both as it is and swapped: each alternative takes the same pair apart in its own way.
+-- | A pair both as it is and swapped: the second alternative takes the pair apart.
 --
 -- >>> import Prelude (Bool (..), Int)
 -- >>> bothWaysT @Int @Bool (1, True)
 -- ((1,True),(True,1))
 bothWaysT
   :: forall {k} (a :: k) b. (SymMonoidal k, HasBinaryProducts k, Ob a, Ob b) => a ** b ~> (a ** b) && (b ** a)
-bothWaysT = toSMC @(F a :** F b) \p -> with (\q -> q) (\(x, y) -> y ** x) p
+bothWaysT = toSMC @(F a :** F b) \p -> with p (split p \x y -> y ** x)
 
 -- | Double negation introduction: a consumer of a consumer of @a@ hands it the @a@. This is
 -- 'ret', written out.
@@ -1419,6 +1663,21 @@ weakDistT
   => a ** Par b c ~> Par (a ** b) c
 weakDistT = toSMC @(F a :** (F b :## F c)) @((F a :** F b) :## F c) \(a, bc) ->
   cont \(kab, kc) -> cont (\b -> a ** b |> kab) ** kc |> bc
+
+-- | Composition in index notation, as matrix multiplication: the entry at @i@ and @k@ is the sum over
+-- @j@ of the entries of @f@ and @g@. It is @g . f@.
+matMulT :: forall {k} (a :: k) b c. (SymMonoidal k, Frobenius b, Frobenius c, Ob a) => (a ~> b) -> (b ~> c) -> a ~> c
+matMulT f g = toSMC @(F a) \i -> sumOver @(F c) \k -> sumOver @(F b) \j ->
+  delta (lift f i) j *^ delta (lift g j) k *^ k
+
+-- | The trace in index notation: the sum of the diagonal entries.
+traceIdxT :: forall {k} (a :: k). (SymMonoidal k, Frobenius a) => (a ~> a) -> Unit ~> (Unit :: k)
+traceIdxT f = toSMC @I \() -> sumOver @(F a) \i -> delta (lift f i) i
+
+-- | The entrywise product of two morphisms: two boxes that produce the same index.
+hadamardT :: forall {k} (a :: k) b. (SymMonoidal k, Frobenius a, Frobenius b) => (a ~> b) -> (a ~> b) -> a ~> b
+hadamardT f g = toSMC @(F a) \i -> sumOver @(F b) \j ->
+  delta (lift f i) j *^ delta (lift g i) j *^ j
 
 -- | The snake on the dual: join the input with the first end of a new pair, and continue with the
 -- second. Here the wires meet in the order they come, so no swap is needed.

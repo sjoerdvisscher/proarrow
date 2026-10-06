@@ -1,4 +1,3 @@
-{-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE QualifiedDo #-}
 
 -- | Call by push value in "Proarrow.Tools.SMC": values are pure, and effects live in computations,
@@ -42,7 +41,7 @@ act_ :: forall m d. (Monad m) => m () -> SMC.Term d '[] (Eff m)
 act_ m = lift @I @(Eff m) (Cps \() k -> m >>= k) unit
 
 -- | A function from a value to an action, as a function from the value to its effect.
-effect :: forall m a d g. (Monad m) => (a -> m ()) -> SMC.Term d g (V m a) %1 -> SMC.Term d g (Eff m)
+effect :: forall m a d g. (Monad m) => (a -> m ()) -> SMC.Term d g (V m a) -> SMC.Term d g (Eff m)
 effect f = lift @(V m a) @(Eff m) (Cps \a k -> f a >>= k)
 
 -- | A constant.
@@ -65,7 +64,7 @@ addT readX readY say = toSMC @I @(Comp m Int) \() -> SMC.do
   () <- effect (say . ("sum " ++) . show) s
   ret s'
 
-plus :: forall m d g. SMC.Term d g (V m Int :** V m Int) %1 -> SMC.Term d g (V m Int)
+plus :: forall m d g. SMC.Term d g (V m Int :** V m Int) -> SMC.Term d g (V m Int)
 plus = lift @(V m Int :** V m Int) @(V m Int) (Cps (uncurry (+)))
 
 -- | Two computations made in one order and run in the other. A computation is a value until it is

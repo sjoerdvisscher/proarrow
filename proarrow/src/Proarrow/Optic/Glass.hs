@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE LinearTypes #-}
 
 -- | The __glass__ (Clarke et al., /Profunctor optics: a categorical update/): the optic for the
 -- combined action of the product and the exponential,

@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE LinearTypes #-}
 
 -- | The __grate__: the closed-category optic whose residual sits under an exponential,
 --

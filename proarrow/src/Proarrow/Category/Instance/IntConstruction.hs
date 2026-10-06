@@ -1,4 +1,3 @@
-{-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE RecursiveDo #-}
 

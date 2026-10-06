@@ -37,7 +37,7 @@ import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -144,12 +144,16 @@ instance Comonoid (L (Ur a)) where
   counit = Linear \(Ur _) -> ()
   comult = Linear \(Ur a) -> (Ur a, Ur a)
 
+instance CocommutativeComonoid (L (Ur a))
+
 -- | @L Bool@ is a comonoid: a @Bool@ is duplicated and discarded by case analysis, which is
 -- linear (it consumes the input exactly once). The same holds for any finite, pattern-matchable
 -- classical type. Only the @Bool@ instance is spelled out here.
 instance Comonoid (L Bool) where
   counit = Linear \case True -> (); False -> ()
   comult = Linear \case True -> (True, True); False -> (False, False)
+
+instance CocommutativeComonoid (L Bool)
 
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)

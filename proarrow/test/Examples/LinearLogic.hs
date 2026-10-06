@@ -1,6 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE QualifiedDo #-}
+{-# LANGUAGE RecursiveDo #-}
 
 -- | The linear logic connectives of "Proarrow.Tools.SMC", each tested where it lives.
 --
@@ -26,7 +27,7 @@ import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Linear (LINEAR (..), unLinear)
 import Proarrow.Category.Instance.Linear qualified as Lin
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), type (**))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), rightUnitorWith, type (**))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..), Par, doubleNegInvDefault, par, parSwap, weakDistL, weakDistR)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
@@ -40,7 +41,7 @@ import Proarrow.Promonad.Cont (Cont (..))
 import Proarrow.Testing (check, genNamed)
 import Proarrow.Tools.Diagrams.Svg qualified as Svg
 import Proarrow.Tools.SMC
-  ( SYN (F, Not, (:**))
+  ( SYN (F, Not, (:&&), (:**))
   , annihilate
   , bothWaysT
   , combineDualT
@@ -65,11 +66,69 @@ import Proarrow.Tools.SMC qualified as SMC
 import Props.FinRel ()
 
 test :: TestTree
-test = testGroup "Linear logic (Proarrow.Tools.SMC)" [duality, classical, additives, parTests]
+test = testGroup "Linear logic (Proarrow.Tools.SMC)" [resources, duality, classical, additives, parTests]
 
 type F1 = FR (S Z)
 type F2 = FR (S (S Z))
 type F3 = FR (S (S (S Z)))
+
+-- * Copying and discarding
+
+-- In 'FinRel' copying is the diagonal, which a relation that is not a function does not commute
+-- with, so binding a term to a variable and using the term twice give different relations. The
+-- pattern @(x, _)@ takes a term apart, which Prelude's @fst@ would not.
+
+{- HLINT ignore resources "Use fst" -}
+resources :: TestTree
+resources =
+  testGroup
+    "Copying and discarding"
+    [ testProperty "a variable used twice is copied (FinRel 2)" $
+        check "differs from comult" (toSMC @(F F2) @(F F2 :** F F2) (\x -> x SMC.** x) == comult)
+    , testProperty "an unused variable is discarded (FinRel 2, 3)" $
+        check
+          "differs from the counit"
+          (toSMC @(F F2 :** F F3) @(F F2) (\(x, _) -> x) == rightUnitorWith @F2 (counit @F3))
+    , testProperty "a bound term is computed once and its value copied (FinRel 2, 3)" $ do
+        h <- genNamed @(F2 ~> F3) "h"
+        check
+          "differs from comult . h"
+          ( toSMC @(F F2) @(F F3 :** F F3)
+              ( \x -> SMC.do
+                  y <- SMC.lift h x
+                  y SMC.** y
+              )
+              == comult . h
+          )
+    , testProperty "a term used twice is computed twice (FinRel 2, 3)" $ do
+        h <- genNamed @(F2 ~> F3) "h"
+        check
+          "differs from (h ** h) . comult"
+          ( toSMC @(F F2) @(F F3 :** F F3) (\x -> SMC.lift h x SMC.** SMC.lift h x)
+              == (h ** h) . comult
+          )
+    , testProperty "a fed back variable of a rec block that is also used after it is copied" $
+        check "differs" (case recCopyT 1 of (b, u) -> b == [1, 1, 1] && take 4 u == [1, 1, 1, 1])
+    , testProperty "a variable of a rec block that nothing uses is discarded" $
+        check "differs" (take 4 (recDropT 1) == [1, 1, 1, 1])
+    , testProperty "an alternative that does not use a variable discards it (FinRel 2, 3)" $ do
+        let t = toSMC @(F F2 :** F F3) @(F F2 :&& (F F2 :** F F3)) \(x, y) -> SMC.with x (x SMC.** y)
+        check "fst differs from the counit" (fst @_ @F2 @(F2 ** F3) . t == rightUnitorWith @F2 (counit @F3))
+        check "snd differs from id" (snd @_ @F2 @(F2 ** F3) . t == id)
+    ]
+
+-- | A @rec@ block whose fed back list is also passed on, so it is copied: the list is @1 : u@ and
+-- the result its first three elements next to the list itself.
+recCopyT :: Int -> ([Int], [Int])
+recCopyT = toSMC @(F Int) @(F [Int] :** F [Int]) \a -> SMC.do
+  rec (b, u) <- SMC.lift @(F Int :** F [Int]) @(F [Int] :** F [Int]) (\(x, us) -> (take 3 us, x : us)) (a SMC.** u)
+  b SMC.** u
+
+-- | A @rec@ block with a variable that nothing uses, which is discarded.
+recDropT :: Int -> [Int]
+recDropT = toSMC @(F Int) @(F [Int]) \a -> SMC.do
+  rec (_b, u) <- SMC.lift @(F Int :** F [Int]) @(F [Int] :** F [Int]) (\(x, us) -> (take 3 us, x : us)) (a SMC.** u)
+  u
 
 -- * Duals
 
