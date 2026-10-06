@@ -20,6 +20,7 @@
 -- and the duals forgotten ('Erase').
 module Proarrow.Tools.Diagrams.Svg where
 
+import Control.Applicative ((<|>))
 import Data.Functor.Identity (Identity (..))
 import Data.Kind (Constraint)
 import Data.List qualified as List
@@ -256,12 +257,26 @@ data Options = Options
   , fixedSpiders :: Bool
   -- ^ keep the two legs of a copy or merge point in the order they are listed; otherwise they
   -- may trade places to avoid a crossing, which the points being commutative allows
+  , bendSpiders :: Bool
+  -- ^ draw a merge point followed by a discard point as a cap, and a unit point followed by a copy
+  -- point as a cup, which the points being a special commutative Frobenius algebra allows
+  , slidePoints :: Bool
+  -- ^ move each unit point down to just before what uses its wire, and each discard point up to
+  -- just after what makes its wire, so that their wires are as short as possible
   }
   deriving (Show)
 
 -- | Nothing drawn that the meaning does not need, legs in order.
 defaultOptions :: Options
-defaultOptions = Options{explicitIdentities = False, explicitCoherence = False, explicitSwaps = False, fixedSpiders = True}
+defaultOptions =
+  Options
+    { explicitIdentities = False
+    , explicitCoherence = False
+    , explicitSwaps = False
+    , fixedSpiders = True
+    , bendSpiders = False
+    , slidePoints = False
+    }
 
 -- | The meaning of a diagram, forgetting how it is drawn.
 meaningOf :: Svg (S as) (S bs) -> Dot (Dot.D (Erase as)) (Dot.D (Erase bs))
@@ -333,11 +348,11 @@ instance SymMonoidal SVG where
 
 -- | The unit point takes the unit wire in, and the discard point gives it out.
 instance (Ob as) => Monoid (S as) where
-  mempty = svg (mempty @(Dot.D (Erase as))) (Seq UnitEnd (Points UnitPoint (wireKinds @as)))
+  mempty = svg (mempty @(Dot.D (Erase as))) (Seq UnitEnd (besides [Points UnitPoint [k] | k <- wireKinds @as]))
   mappend = withIsList2 @as @as $ withEraseAppend @as @as $ svg (mappend @(Dot.D (Erase as))) (Points MergePoint (wireKinds @as))
 
 instance (Ob as) => Comonoid (S as) where
-  counit = svg (counit @(Dot.D (Erase as))) (Seq (Points DiscardPoint (wireKinds @as)) UnitStart)
+  counit = svg (counit @(Dot.D (Erase as))) (Seq (besides [Points DiscardPoint [k] | k <- wireKinds @as]) UnitStart)
   comult = withIsList2 @as @as $ withEraseAppend @as @as $ svg (comult @(Dot.D (Erase as))) (Points CopyPoint (wireKinds @as))
 instance (Ob as) => CocommutativeComonoid (S as)
 instance (Ob as) => CommutativeMonoid (S as)
@@ -536,7 +551,7 @@ data BoxKind = ArrowBox | ElementBox
 
 -- | The points a (co)monoid is drawn with.
 data PointKind = UnitPoint | DiscardPoint | CopyPoint | MergePoint
-  deriving (Show)
+  deriving (Eq, Show)
 
 -- | Whether a bend opens downwards, a cup, or upwards, a cap.
 data BendKind = Cup | Cap
@@ -555,14 +570,11 @@ data Direction = Absorb | Create
   deriving (Show)
 
 -- | The diagram with its unit wires left out, and its unitors and associators turned into wires
--- carrying straight on.
+-- carrying straight on. What is left of a unit wire is an empty wiring, which is dropped.
 hideUnits :: Diagram -> Diagram
 hideUnits = \case
   Ident ks -> Ident (noUnits ks)
-  Permute c ks p ->
-    let kept = [i | (i, k) <- zip [0 :: Int ..] ks, k /= UnitWire]
-        renumber i = fromMaybe 0 (List.elemIndex i kept)
-    in Permute c (map (ks !!) kept) [renumber i | i <- p, ks !! i /= UnitWire]
+  Permute c ks p -> let (ks', p') = restrict (\i -> ks !! i /= UnitWire) ks p in Permute c ks' p'
   Straight ks ls -> Straight (noUnits ks) (noUnits ls)
   Node bk s ks os -> Node bk s (noUnits ks) [w | w@(_, k) <- os, k /= UnitWire]
   Points pk ks -> Points pk (noUnits ks)
@@ -571,8 +583,8 @@ hideUnits = \case
   Unitor _ _ ks -> straight (noUnits ks)
   UnitEnd -> straight []
   UnitStart -> straight []
-  Seq a b -> Seq (hideUnits a) (hideUnits b)
-  Beside a b -> Beside (hideUnits a) (hideUnits b)
+  Seq a b -> rebuild [hideUnits a, hideUnits b]
+  Beside a b -> besides [hideUnits a, hideUnits b]
   Trace ks d -> Trace (noUnits ks) (hideUnits d)
   where
     straight ks = Straight ks ks
@@ -580,9 +592,230 @@ hideUnits = \case
 noUnits :: [WireKind] -> [WireKind]
 noUnits = filter (/= UnitWire)
 
+-- | Wires with a unit wire joining them on the given side.
+withUnit :: Side -> [WireKind] -> [WireKind]
+withUnit side ks = case side of
+  OnLeft -> UnitWire : ks
+  OnRight -> ks ++ [UnitWire]
+
+-- | The kinds of the wires going into a diagram.
+kindsIn :: Diagram -> [WireKind]
+kindsIn = \case
+  Ident ks -> ks
+  Permute _ ks _ -> ks
+  Straight ks _ -> ks
+  Node _ _ ks _ -> ks
+  Points pk ks -> case pk of
+    UnitPoint -> []
+    MergePoint -> ks ++ ks
+    _ -> ks
+  Bend b ka kd -> case b of
+    Cup -> []
+    Cap -> kd ++ ka
+  Rebracket _ ka kb kc -> ka ++ kb ++ kc
+  Unitor side d ks -> case d of
+    Absorb -> withUnit side ks
+    Create -> ks
+  UnitEnd -> [UnitWire]
+  UnitStart -> []
+  Seq a _ -> kindsIn a
+  Beside a b -> kindsIn a ++ kindsIn b
+  Trace ks d -> drop (length ks) (kindsIn d)
+
+-- | The kinds of the wires coming out of a diagram.
+kindsOut :: Diagram -> [WireKind]
+kindsOut = \case
+  Ident ks -> ks
+  Permute _ ks p -> map (ks !!) p
+  Straight _ ls -> ls
+  Node _ _ _ os -> map snd os
+  Points pk ks -> case pk of
+    DiscardPoint -> []
+    CopyPoint -> ks ++ ks
+    _ -> ks
+  Bend b ka kd -> case b of
+    Cup -> ka ++ kd
+    Cap -> []
+  Rebracket _ ka kb kc -> ka ++ kb ++ kc
+  Unitor side d ks -> case d of
+    Absorb -> ks
+    Create -> withUnit side ks
+  UnitEnd -> []
+  UnitStart -> [UnitWire]
+  Seq _ b -> kindsOut b
+  Beside a b -> kindsOut a ++ kindsOut b
+  Trace ks d -> drop (length ks) (kindsOut d)
+
+-- | The steps of a stack, top to bottom.
+steps :: Diagram -> [Diagram]
+steps = \case
+  Seq a b -> steps a ++ steps b
+  d -> [d]
+
+-- | A stack of the given steps, leaving out the empty wirings.
+rebuild :: [Diagram] -> Diagram
+rebuild = nonEmpty Seq
+
+-- | The given diagrams side by side, leaving out the empty wirings.
+besides :: [Diagram] -> Diagram
+besides = nonEmpty Beside
+
+nonEmpty :: (Diagram -> Diagram -> Diagram) -> [Diagram] -> Diagram
+nonEmpty f ds = case filter (not . emptyWiring) ds of
+  [] -> Ident []
+  ds' -> foldr1 f ds'
+
+-- | A wiring with no wires, which takes up no room.
+emptyWiring :: Diagram -> Bool
+emptyWiring = \case
+  Ident [] -> True
+  Straight [] [] -> True
+  _ -> False
+
+-- | Wires carrying straight on, as many as come in.
+passThrough :: Diagram -> Bool
+passThrough = \case
+  Ident _ -> True
+  Straight ks ls -> ks == ls
+  _ -> False
+
+-- | The wires of a permutation that @keep@ holds of, with the permutation among them.
+restrict :: (Int -> Bool) -> [WireKind] -> [Int] -> ([WireKind], [Int])
+restrict keep ks p =
+  let kept = filter keep [0 .. length ks - 1]
+      renumber i = fromMaybe 0 (List.elemIndex i kept)
+  in (map (ks !!) kept, [renumber i | i <- p, keep i])
+
+-- | The diagram with each unit point moved down to just before the first thing that uses its wire,
+-- and each discard point moved up to just after the thing that makes its wire. A point moves past
+-- wires carrying straight on and permutations, and into the stacks beside other wires, which the
+-- interchange law allows; it stops at a box, a point, a bend or a trace, and stays where it is if
+-- its wire leaves the stack.
+slide :: Diagram -> Diagram
+slide = along False . along True
+  where
+    -- when @down@ is false, discard points move up, and the steps are taken bottom to top
+    along down d = fromSteps down (shorten down (toSteps down d))
+    toSteps down = (if down then id else reverse) . steps
+    fromSteps down = rebuild . (if down then id else reverse)
+    parts = \case
+      Beside a b -> parts a ++ parts b
+      d -> [d]
+    entering down = if down then kindsIn else kindsOut
+    leaving down = if down then kindsOut else kindsIn
+    origin down = \case
+      Points UnitPoint [_] -> down
+      Points DiscardPoint [_] -> not down
+      _ -> False
+    -- the parts of every step shortened first, then the points of each step moved along
+    shorten down = go . map (besides . map (inner down) . parts)
+      where
+        go = \case
+          [] -> []
+          [s] -> [s]
+          s : ss -> case break (origin down) (parts s) of
+            (ls, _ : rs)
+              | q <- length (concatMap (leaving down) ls)
+              , not (usedNext down q ss)
+              , (ss', Nothing) <- through down q ss ->
+                  go (besides (ls ++ rs) : ss')
+            _ -> s : go ss
+    -- whether the next step uses the wire at position @q@ directly, so that the point is already
+    -- next to it
+    usedNext down q = \case
+      s : _ | (_, p, _, _, _) <- partAt down q s -> not (passThrough p || isPermute p || isStack p)
+      _ -> False
+    isPermute = \case
+      Permute{} -> True
+      _ -> False
+    isStack = \case
+      Seq _ _ -> True
+      _ -> False
+    inner down = \case
+      d@(Seq _ _) -> along down d
+      Trace ks d -> Trace ks (along down d)
+      d -> d
+    -- the wire at position @q@ followed through the steps: @Nothing@ once the point is put just
+    -- before what uses it, and the position it leaves at if it passes all of them
+    through down q = \case
+      [] -> ([], Just q)
+      s : ss -> case step down q s of
+        (s', Nothing) -> (s' : ss, Nothing)
+        (s', Just q') -> let (ss', r) = through down q' ss in (s' : ss', r)
+    -- the part of a step that the wire at position @q@ goes into: the parts before and after it,
+    -- the wire's position in it, and where the wires leaving it start
+    partAt down q s =
+      let ps = parts s
+          i = length (takeWhile (<= q) (scanl1 (+) (map (length . entering down) ps)))
+          ls = take i ps
+      in (ls, ps !! i, drop (i + 1) ps, q - length (concatMap (entering down) ls), length (concatMap (leaving down) ls))
+    step down q s =
+      let (ls, p, rs, o, b) = partAt down q s
+          (p', r) = case p of
+            Ident ks -> (Ident (without o ks), Just (b + o))
+            Straight ks ls' -> (Straight (without o ks) (without o ls'), Just (b + o))
+            Permute c ks perm ->
+              -- the wire comes in at @i'@ and goes out at @j@
+              let (i', j) = if down then (o, inverse perm !! o) else (perm !! o, o)
+                  (ks', perm') = restrict (/= i') ks perm
+              in (Permute c ks' perm', Just (b + if down then j else i'))
+            Seq _ _ -> let (cs, r') = through down o (toSteps down p) in (fromSteps down cs, fmap (b +) r')
+            _ -> (put down o p, Nothing)
+      in (besides (ls ++ parts p' ++ rs), r)
+    without o ks = take o ks ++ drop (o + 1) ks
+    -- the point put just before @p@ on its wire at position @o@, or just after it when moving up
+    put down o p =
+      let ks = entering down p
+          (l, k, r) = (take o ks, ks !! o, drop (o + 1) ks)
+      in if down
+           then Seq (besides [Ident l, Points UnitPoint [k], Ident r]) p
+           else Seq p (besides [Ident l, Points DiscardPoint [k], Ident r])
+
+-- | The diagram with each merge point followed by discard points on the same wires turned into a
+-- cap, and unit points followed by a copy point on the same wires into a cup. Wires carrying straight on between
+-- the two are skipped.
+bends :: Diagram -> Diagram
+bends = rebuild . fuse . concatMap inner . steps
+  where
+    inner = \case
+      Beside a b -> [Beside (bends a) (bends b)]
+      Trace ks d -> [Trace ks (bends d)]
+      d -> [d]
+    fuse = \case
+      Points MergePoint ks : rest
+        | (_, s : rest') <- span passThrough rest, pointsOn DiscardPoint s == Just ks -> Bend Cap ks ks : fuse rest'
+      s : rest
+        | Just ks <- pointsOn UnitPoint s
+        , (_, Points CopyPoint ls : rest') <- span passThrough rest
+        , ks == ls ->
+            Bend Cup ks ks : fuse rest'
+      -- two steps that split their wires at the same place, with wires carrying straight on on one
+      -- side: by the interchange law the other sides form one stack, taken when its points fuse
+      Beside a b : rest
+        | (_, Beside c d : rest') <- span passThrough rest
+        , Just f <- across a b c d Beside <|> across b a d c (flip Beside) ->
+            fuse (f : rest')
+      d : rest -> d : fuse rest
+      [] -> []
+    -- the wires of a step made only of points of the given kind, side by side
+    pointsOn pk = \case
+      Beside a b -> (++) <$> pointsOn pk a <*> pointsOn pk b
+      Points pk' ks | pk' == pk -> Just ks
+      _ -> Nothing
+    across p x q y k = if passThrough p && passThrough q && kindsIn p == kindsIn q then k p <$> fused x y else Nothing
+    -- the two sides, already bent, as one stack, when that fuses something
+    fused x y =
+      let ds = steps x ++ steps y
+          fs = fuse ds
+      in if length fs < length ds then Just (rebuild fs) else Nothing
+
 -- | The diagram laid out with the given options.
 layout :: Options -> Diagram -> Layout
-layout o = go . if explicitCoherence o then id else hideUnits
+layout o =
+  go
+    . (if bendSpiders o then bends else id)
+    . (if slidePoints o then slide else id)
+    . (if explicitCoherence o then id else hideUnits)
   where
     go = \case
       Ident ks -> identity (explicitIdentities o) ks

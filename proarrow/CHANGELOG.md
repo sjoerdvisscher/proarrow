@@ -25,6 +25,9 @@
 * `Proarrow.Tools.SMC`: index notation for categories whose index types are `Frobenius`: `sumOver`
   binds a summed index, `delta` is the Kronecker delta, and `*^`/`^*` multiply by a scalar term.
   Examples `matMulT`, `traceIdxT`, `hadamardT`.
+* `Proarrow.Tools.Diagrams.Svg`: the option `bendSpiders` draws a merge point followed by a discard
+  point as a cap, and a unit point followed by a copy point as a cup; `slidePoints` moves unit and
+  discard points next to what uses or makes their wire.
 * `Proarrow.Category.Instance.Linear`: `CocommutativeComonoid (L (Ur a))` and
   `CocommutativeComonoid (L Bool)`.
 

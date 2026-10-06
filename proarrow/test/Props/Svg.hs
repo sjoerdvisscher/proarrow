@@ -11,7 +11,7 @@ import Data.List qualified as List
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
-import Prelude hiding (Monoid, elem, id, (.))
+import Prelude hiding (Monoid, elem, id, mappend, mempty, (.))
 
 import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, SymMonoidalStructures, withOb2)
 import Proarrow.Category.Monoidal.Closed (ClosedStructures)
@@ -23,19 +23,28 @@ import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomousStructures)
 import Proarrow.Category.Monoidal.Strength (TracedStructures)
 import Proarrow.Category.Monoidal.Strictified (IsList (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
-import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid, Monoid, Supplies)
+import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..), Supplies)
 import Proarrow.Tools.Diagrams.Svg
-  ( KnownWire
+  ( Diagram (..)
+  , KnownWire
   , Options (..)
   , SVG (..)
   , Svg (..)
   , W (..)
+  , bends
   , defaultOptions
+  , hideUnits
+  , kindsIn
+  , kindsOut
   , lawSvgsWith
   , node
+  , render
+  , renderWith
+  , slide
   , wires
   , withIsListErase
   )
+import Proarrow.Tools.SMC.Examples (combineDualT, hadamardT, loopCC, matMulT, rotT, snakeT, swapT, traceIdxT)
 
 import Proarrow.Testing
   ( Some (..)
@@ -68,11 +77,19 @@ test =
     , testCompactClosed_ @SVG
     , testTraced_ @SVG
     , testProperty "every law draws as an equation" $ do
-        let everything = Options{explicitIdentities = True, explicitCoherence = True, explicitSwaps = True, fixedSpiders = False}
+        let everything =
+              Options
+                { explicitIdentities = True
+                , explicitCoherence = True
+                , explicitSwaps = True
+                , fixedSpiders = False
+                , bendSpiders = True
+                , slidePoints = True
+                }
             structures :: [[(String, String)]]
             structures =
               [ drawn
-              | o <- [defaultOptions, everything]
+              | o <- [defaultOptions, everything, defaultOptions{bendSpiders = True, slidePoints = True}]
               , drawn <-
                   [ lawSvgsWith @'[CategoryOf] o
                   , lawSvgsWith @'[Monoidal] o
@@ -95,7 +112,53 @@ test =
           -- reads every character of the drawing, so its layout is computed in full
           forM_ drawn \(name, d) ->
             check (name ++ " drew malformed markup") (count '<' d > 0 && count '<' d == count '>' d)
+    , testProperty "with bent spiders, the trace in index notation draws no points" $ do
+        let t = traceIdxT @(S '[Wire "A"]) (node "f")
+        check "the default draws no points" (points (render t) == 4)
+        check "points are left" (points (renderWith defaultOptions{bendSpiders = True} t) == 0)
+    , testProperty "slid and bent, matrix multiplication in index notation draws no points" $ do
+        let m = matMulT @(S '[Wire "A"]) @(S '[Wire "B"]) @(S '[Wire "A"]) (node "f") (node "g")
+        check "the default draws no points" (points (render m) == 8)
+        check "points are left" (points (renderWith defaultOptions{bendSpiders = True, slidePoints = True} m) == 0)
+    , testProperty "sliding points and bending spiders keep every stack's wires matching, with or without unit wires" $
+        forM_
+          @[]
+          [ tree (traceIdxT @(S '[Wire "A"]) (node "f"))
+          , tree (hadamardT @(S '[Wire "A"]) @(S '[Wire "B"]) (node "f") (node "g"))
+          , tree (matMulT @(S '[Wire "A"]) @(S '[Wire "B"]) @(S '[Wire "A"]) (node "f") (node "g"))
+          , tree (loopCC @(S '[Wire "A"]) @(S '[Wire "B"]) @(S '[Wire "A"]) (node "h"))
+          , tree (snakeT @(S '[Wire "A"]))
+          , tree (combineDualT @(S '[Wire "A"]) @(S '[Wire "B"]))
+          , tree (swapT @(S '[Wire "A"]) @(S '[Wire "B"]))
+          , tree (rotT @(S '[Wire "A"]) @(S '[Wire "B"]) @(S '[Wire "A"]))
+          ]
+          \d -> do
+            -- with the unit wires shown, as with explicit coherence, and with them hidden
+            forM_ @[] [d, hideUnits d] \h -> do
+              check "a stack's wires do not match before" (matching h)
+              forM_ @[] [slide h, bends h, bends (slide h)] \d' -> do
+                check "a stack's wires do not match" (matching d')
+                check "the boundary changed" (kindsIn d' == kindsIn h && kindsOut d' == kindsOut h)
+    , testProperty "with bent spiders, a merge and a discard on two wires draw a cap, and a unit and a copy a cup" $
+        forM_ @[] [defaultOptions{bendSpiders = True}, defaultOptions{bendSpiders = True, slidePoints = True}] \o -> do
+          check "the cap has points" (points (renderWith o (counit @(S '[Wire "A", Wire "B"]) . mappend)) == 0)
+          check "the cup has points" (points (renderWith o (comult . mempty @(S '[Wire "A", Wire "B"]))) == 0)
+    , testProperty "with bent spiders, the entrywise product keeps only its copy points" $ do
+        let h = hadamardT @(S '[Wire "A"]) @(S '[Wire "B"]) (node "f") (node "g")
+        check "the default draws other points" (points (render h) == 8)
+        check "other points are left" (points (renderWith defaultOptions{bendSpiders = True} h) == 2)
     ]
+  where
+    -- every point is drawn as one circle
+    points = length . filter ("<circle" `List.isPrefixOf`) . List.tails
+    tree :: Svg a b -> Diagram
+    tree (Svg _ d) = d
+    -- the wires coming out of every step of a stack are the ones going into the next
+    matching = \case
+      Seq a b -> kindsOut a == kindsIn b && matching a && matching b
+      Beside a b -> matching a && matching b
+      Trace _ d -> matching d
+      _ -> True
 
 -- | A wire of the palette objects are drawn from.
 data SomeWire where
