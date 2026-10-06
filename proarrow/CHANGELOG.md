@@ -11,19 +11,17 @@
 * `Proarrow.Profunctor.Instance.Star`: `Traversable (Star (Prelude g))`;
   `Strong CoprodAction (Star f)` for any strong lax monoidal `f` and `Strong ProdAction (Star f)`
   for any functor on `Type`.
-* `Proarrow.Tools.SMC` no longer uses linear types. A variable used more than once is copied,
-  which needs `CocommutativeComonoid`, and an unused one is discarded, which needs `Comonoid`. A
-  `do` bind with a variable pattern binds a variable, so its right hand side is computed once.
-  A `rec` block's variables may now also be used after the block, which copies them, or not at
-  all.
-  `with` takes two terms and `caseOf` takes the scrutinee and two branches, both sharing the
-  variables around them. `split` allows unused variables. `call` and `closed` are gone:
-  a reusable piece is compiled with `toSMC` and used with `lift`. New constraint classes
-  `Thin` and `BindVar` appear in the types of `with`, `caseOf` and `split`. `Binds` is a class with
-  its parameters reordered to depth, context, variable type, result type, pattern and continuation,
-  and `Bind` loses its multiplicity parameter. The module exports only what its users need: the
-  constructor of `Term`, the methods of `KnownObj`, `Tuple` and `Merge`, `Mul`, `synOb`, `ctxOb`,
-  `withCtxOb`, `snoc`, `push2`, `Pat`, `BindPat`, `Ret`, `Rec` and `RecVars` are internal now.
+* `Proarrow.Tools.SMC` no longer uses linear types: a variable used more than once is copied
+  (`CocommutativeComonoid`) and an unused one is discarded (`Comonoid`), also in `rec` blocks. A
+  `do` bind with a variable pattern computes its right hand side once. `with` takes two terms and
+  `caseOf` the scrutinee and two branches, sharing the variables around them. `call` and `closed`
+  are removed: compile a reusable piece with `toSMC` and use it with `lift`. New constraint classes
+  `Thin` and `BindVar`; `Binds` is a class with reordered parameters, and `Bind` loses its
+  multiplicity parameter. The module exports only what its users need.
+* `Proarrow.Tools.SMC` is split into `Proarrow.Tools.SMC.Internal.Syntax`, `.Context`, `.Term`,
+  `.Pattern`, `.Do`, `.Closed`, `.Dialogue`, `.Frobenius` and `.Additive`, which export everything. The
+  examples moved to `Proarrow.Tools.SMC.Examples` and are no longer exported from
+  `Proarrow.Tools.SMC`.
 * `Proarrow.Tools.SMC`: index notation for categories whose index types are `Frobenius`: `sumOver`
   binds a summed index, `delta` is the Kronecker delta, and `*^`/`^*` multiply by a scalar term.
   Examples `matMulT`, `traceIdxT`, `hadamardT`.

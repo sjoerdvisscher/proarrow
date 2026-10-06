@@ -40,29 +40,23 @@ import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Promonad.Cont (Cont (..))
 import Proarrow.Testing (check, genNamed)
 import Proarrow.Tools.Diagrams.Svg qualified as Svg
-import Proarrow.Tools.SMC
-  ( SYN (F, Not, (:&&), (:**))
-  , annihilate
-  , bothWaysT
+import Proarrow.Tools.SMC (SYN (F, Not, (:&&), (:**)), annihilate, cont, ret, toSMC, (|>), type (:##))
+import Proarrow.Tools.SMC qualified as SMC
+import Proarrow.Tools.SMC.Examples
+  ( bothWaysT
   , combineDualT
-  , cont
   , contraT
   , distT
   , dneT
   , dniT
   , loopCC
   , parSwapT
-  , ret
   , rotT
   , snakeDualT
   , snakeT
   , swapEitherT
-  , toSMC
   , weakDistT
-  , (|>)
-  , type (:##)
   )
-import Proarrow.Tools.SMC qualified as SMC
 import Props.FinRel ()
 
 test :: TestTree

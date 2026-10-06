@@ -19,8 +19,9 @@ import Proarrow.Category.Monoidal.Hypergraph (cap, cup)
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Testing (check, genNamed)
-import Proarrow.Tools.SMC (SYN (..), delta, hadamardT, lift, matMulT, sumOver, toSMC, traceIdxT, unit, (*^))
+import Proarrow.Tools.SMC (SYN (..), delta, lift, sumOver, toSMC, unit, (*^))
 import Proarrow.Tools.SMC qualified as SMC
+import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.FinRel ()
 import Props.Mat ()
 
