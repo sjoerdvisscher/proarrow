@@ -25,6 +25,9 @@
 * `Proarrow.Tools.SMC`: index notation for categories whose index types are `Frobenius`: `sumOver`
   binds a summed index, `delta` is the Kronecker delta, and `*^`/`^*` multiply by a scalar term.
   Examples `matMulT`, `traceIdxT`, `hadamardT`.
+* `Proarrow.Tools.SMC.Einsum`: `einsum @"ij,jk->ik" a b` on tensors `Tensor xs = Strictified '[] xs`
+  in any hypergraph category, with the result type inferred from the inputs. Without `->` the output
+  is numpy's implicit one. `EinsumType` computes the type of an application.
 * `Proarrow.Tools.Diagrams.Svg`: the option `bendSpiders` draws a merge point followed by a discard
   point as a cap, and a unit point followed by a copy point as a cup; `slidePoints` moves unit and
   discard points next to what uses or makes their wire.

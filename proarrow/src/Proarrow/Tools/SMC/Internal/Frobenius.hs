@@ -4,6 +4,8 @@
 -- Frobenius algebras. It exports everything, also what the public module keeps hidden.
 module Proarrow.Tools.SMC.Internal.Frobenius where
 
+import GHC.TypeNats (type (+))
+
 import Proarrow.Category.Monoidal (Monoidal (..), rightUnitorInvWith)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, cap)
 import Proarrow.Core (Promonad (..))
@@ -32,6 +34,20 @@ sumOver k =
         ( MkTerm
             (bound @d @r @a @b k . rightUnitorInvWith @(Interp (Mul r)) (mempty @(Interp a)))
         )
+    )
+
+-- | An index summed over, as 'sumOver', for a body that refers to the index as the variable of id
+-- @d@ instead of through a pattern.
+{-# INLINE sumVar #-}
+sumVar
+  :: forall {k} (a :: SYN k) d g' g b
+   . (Monoidal k, Frobenius (Interp a), KnownObj a, BindVar d a g' g)
+  => Term (d + 1) g' b
+  -> Term d g b
+sumVar (MkTerm body) =
+  withCtxOb @g
+    ( withSynOb @a
+        (MkTerm (body . bindVar @d @a @g' @g . rightUnitorInvWith @(Interp (Mul g)) (mempty @(Interp a))))
     )
 
 -- | The Kronecker delta: the scalar that says two wires of an index type carry the same value. It

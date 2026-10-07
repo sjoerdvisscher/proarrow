@@ -9,13 +9,13 @@
 module Proarrow.Category.Instance.Mat where
 
 import Data.Complex (Complex, conjugate)
+import Data.Fin (Fin)
 import Data.Kind (Type)
 import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat, snatToNat, type Mult, type Plus)
 import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, reifyList, tabulate, toList, zipWith, (++))
 import Prelude (($), type (~))
 import Prelude qualified as P
 
-import Data.Fin (Fin)
 import Proarrow.Adjunction (Involution)
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
