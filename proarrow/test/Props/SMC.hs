@@ -3,12 +3,15 @@
 -- | Index notation in "Proarrow.Tools.SMC", checked against the structure of the category: in
 -- 'FinRel', where a sum over an index is "there is", and in 'Mat' over 'Int', where it is a sum of
 -- numbers.
-module Props.SMC (test) where
+module Props.SMC (test, name) where
 
+import Data.Containers.ListUtils (nubOrd)
+import Data.Foldable (toList)
+import Data.Map.Strict qualified as M
 import Data.Type.Nat (Nat (..), Nat2, Nat3)
 import Data.Vec.Lazy (Vec (..))
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testProperty)
+import Test.Tasty.Falsify (TestOptions (..), testProperty, testPropertyWith)
 import Prelude hiding (id, mappend, mempty, (**), (.))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
@@ -16,13 +19,14 @@ import Proarrow.Category.Instance.FinRel (FINREL (..))
 import Proarrow.Category.Instance.Mat (Mat (..), MatK (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, cap, cup)
-import Proarrow.Category.Monoidal.Strictified (Strictified (..))
+import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, (\\))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Testing (check, genNamed)
+import Proarrow.Testing.Laws (defaultTestOptions)
+import Proarrow.Tools.Einsum (EinsumType, Tensor, einsum)
 import Proarrow.Tools.SMC (SYN (..), delta, lift, sumOver, toSMC, unit, (*^))
 import Proarrow.Tools.SMC qualified as SMC
-import Proarrow.Tools.SMC.Einsum (EinsumType, Tensor, einsum)
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.FinRel ()
 import Props.Mat ()
@@ -131,5 +135,56 @@ test =
             check
               "differs"
               (unMat (unStr (einsum @"i,j->ij" (Str u :: Tensor '[M2]) (Str v :: Tensor '[M3]))) == unMat ((u ** v) . leftUnitorInv))
+        , testPropertyWith fewer "ijk->kij moves the last index to the front (2, 3)" $ do
+            t <- genNamed @(Unit ~> Fold '[M2, M3, M2]) "t"
+            check "differs from the reference" $
+              entries (unStr (einsum @"ijk->kij" (Str t :: Tensor '[M2, M3, M2])))
+                == reference [("ijk", [2, 3, 2], entries t)] "kij"
+        , testPropertyWith fewer "ijk,jl->ljk contracts and reorders (2, 3)" $ do
+            t <- genNamed @(Unit ~> Fold '[M2, M3, M2]) "t"
+            u <- genNamed @(Unit ~> Fold '[M3, M2]) "u"
+            check "differs from the reference" $
+              entries (unStr (einsum @"ijk,jl->ljk" (Str t :: Tensor '[M2, M3, M2]) (Str u :: Tensor '[M3, M2])))
+                == reference [("ijk", [2, 3, 2], entries t), ("jl", [3, 2], entries u)] "ljk"
+        , testPropertyWith fewer "ij,jk,ki-> is the trace of the product of three (2)" $ do
+            t <- genNamed @(Unit ~> Fold '[M2, M2]) "t"
+            u <- genNamed @(Unit ~> Fold '[M2, M2]) "u"
+            v <- genNamed @(Unit ~> Fold '[M2, M2]) "v"
+            check "differs from the reference" $
+              entries
+                (unStr (einsum @"ij,jk,ki->" (Str t :: Tensor '[M2, M2]) (Str u :: Tensor '[M2, M2]) (Str v :: Tensor '[M2, M2])))
+                == reference [("ij", [2, 2], entries t), ("jk", [2, 2], entries u), ("ki", [2, 2], entries v)] ""
+        , testPropertyWith fewer "ijk->ijki copies an index to a later position (2, 3)" $ do
+            t <- genNamed @(Unit ~> Fold '[M2, M3, M2]) "t"
+            check "differs from the reference" $
+              entries (unStr (einsum @"ijk->ijki" (Str t :: Tensor '[M2, M3, M2])))
+                == reference [("ijk", [2, 3, 2], entries t)] "ijki"
         ]
     ]
+  where
+    -- these einsums form dense products of dimension 64 to 144 before contracting
+    fewer = defaultTestOptions{overrideNumTests = Just 20}
+
+-- | The entries of a state of Mat, the first index varying fastest.
+entries :: Mat (a :: MatK Int) b -> [Int]
+entries (Mat m) = concatMap toList m
+
+-- | Einstein summation on tensors given by their letters, the sizes of their indices and their
+-- entries, the first index varying fastest, written out as sums of products.
+reference :: [(String, [Int], [Int])] -> String -> [Int]
+reference ins out =
+  [ if consistent
+      then sum [product [at dims vs (pick ls) | (ls, dims, vs) <- ins] | rest <- tuples restDims, let pick = assign rest]
+      else 0
+  | o <- tuples (fmap size out)
+  , let fixed = M.fromListWith (\a b -> if a == b then a else -1) (zip out o)
+        consistent = (-1) `notElem` M.elems fixed
+        assign rest ls = [M.findWithDefault (M.fromList (zip summed rest) M.! l) l fixed | l <- ls]
+  ]
+  where
+    size l = sum (take 1 [d | (ls, dims, _) <- ins, (l', d) <- zip ls dims, l' == l])
+    summed = nubOrd [l | (ls, _, _) <- ins, l <- ls, l `notElem` out]
+    restDims = fmap size summed
+    -- every index tuple, the first index varying fastest
+    tuples ds = fmap reverse (traverse (\d -> [0 .. d - 1]) (reverse ds))
+    at dims vs is = vs !! foldr (\(d, i) acc -> i + d * acc) 0 (zip dims is)

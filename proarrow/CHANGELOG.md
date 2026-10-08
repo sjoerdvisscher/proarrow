@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+* `Proarrow.Tools.Einsum`: `einsum @"ij,jk->ik" a b` on tensors in hypergraph categories.
+* `Proarrow.Tools.SMC`: index notation for categories whose index types are `Frobenius`: `sumOver`
+  binds a summed index, `delta` is the Kronecker delta, and `*^`/`^*` multiply by a scalar term.
+* `Proarrow.Tools.SMC` no longer uses linear types: a variable used more than once is copied
+  (`CocommutativeComonoid`) and an unused one is discarded (`Comonoid`). `with` takes two terms and
+  `caseOf` the scrutinee and two branches, sharing the variables around them. `call` and `closed`
+  are removed.
+* `Proarrow.Tools.SMC` is split into multiple internal modules.
+* `Proarrow.Category.Instance.DecoratedCospan`: `DECCOSPAN f`, cospans whose apex carries an
+  `Alternative` decoration, a hypergraph category.
+* `Proarrow.Category.Instance.Cospan`: `COSPAN k` is `DECCOSPAN` with the `Undecorated` decoration.
+* `Proarrow.Category.Instance.OpenHypergraph`: open hypergraphs with typed wires.
+* `Proarrow.Optic.Kaleidoscope`, `Proarrow.Optic.Grate`: kaleidoscopes and grates now need
+  `CocommutativeComonoid m` instead of `Comonoid m`.
+* `Proarrow.Category.Monoidal.Applicative`: `Alternative`'s superclass is `HasBinaryCoproducts j` and
+  `Monoidal k` instead of `Distributive j`.
 * `Proarrow.Optic.Traversal`: `fromTravVL` builds a `Traversal` from a Prelude traversal, with `Baz`
   as the witness.
 * `Proarrow.Category.Monoidal.Distributive`: `Traversing`, a new component of
@@ -11,23 +27,6 @@
 * `Proarrow.Profunctor.Instance.Star`: `Traversable (Star (Prelude g))`;
   `Strong CoprodAction (Star f)` for any strong lax monoidal `f` and `Strong ProdAction (Star f)`
   for any functor on `Type`.
-* `Proarrow.Tools.SMC` no longer uses linear types: a variable used more than once is copied
-  (`CocommutativeComonoid`) and an unused one is discarded (`Comonoid`), also in `rec` blocks. A
-  `do` bind with a variable pattern computes its right hand side once. `with` takes two terms and
-  `caseOf` the scrutinee and two branches, sharing the variables around them. `call` and `closed`
-  are removed: compile a reusable piece with `toSMC` and use it with `lift`. New constraint classes
-  `Thin` and `BindVar`; `Binds` is a class with reordered parameters, and `Bind` loses its
-  multiplicity parameter. The module exports only what its users need.
-* `Proarrow.Tools.SMC` is split into `Proarrow.Tools.SMC.Internal.Syntax`, `.Context`, `.Term`,
-  `.Pattern`, `.Do`, `.Closed`, `.Dialogue`, `.Frobenius` and `.Additive`, which export everything. The
-  examples moved to `Proarrow.Tools.SMC.Examples` and are no longer exported from
-  `Proarrow.Tools.SMC`.
-* `Proarrow.Tools.SMC`: index notation for categories whose index types are `Frobenius`: `sumOver`
-  binds a summed index, `delta` is the Kronecker delta, and `*^`/`^*` multiply by a scalar term.
-  Examples `matMulT`, `traceIdxT`, `hadamardT`.
-* `Proarrow.Tools.SMC.Einsum`: `einsum @"ij,jk->ik" a b` on tensors `Tensor xs = Strictified '[] xs`
-  in any hypergraph category, with the result type inferred from the inputs. Without `->` the output
-  is numpy's implicit one. `EinsumType` computes the type of an application.
 * `Proarrow.Tools.Diagrams.Svg`: the option `bendSpiders` draws a merge point followed by a discard
   point as a cap, and a unit point followed by a copy point as a cup; `slidePoints` moves unit and
   discard points next to what uses or makes their wire.

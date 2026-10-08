@@ -9,7 +9,7 @@ import Data.Typeable ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
 import Prelude (Bool (..), Maybe (..), pure, zip, ($), (&&), (++), (<$>), (<*>), (||))
 
-import Proarrow.Category.Instance.Cospan (COSPAN (..), Cospan (..))
+import Proarrow.Category.Instance.Cospan (COSPAN, CS, Cospan, pattern Cospan)
 import Proarrow.Category.Instance.FinSet (FINSET (..), findIso, unFinSet)
 import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 

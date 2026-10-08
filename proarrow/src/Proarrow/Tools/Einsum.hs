@@ -5,10 +5,15 @@
 -- indices. Each letter of the specification is an index; the letters of the inputs are matched with
 -- the objects of the tensors given, so a letter used with two different objects does not compile,
 -- and the result's objects are those of the output letters. Without @->@ the output is, as in
--- numpy, the letters used once, in alphabetical order. Every index is summed over, and an index the
--- output has is also returned, so the result is computed by the index notation of
--- "Proarrow.Tools.SMC". A letter may also occur more than once in the output, which copies it.
-module Proarrow.Tools.SMC.Einsum
+-- numpy, the letters used once, in alphabetical order. A letter may also occur more than once in the
+-- output, which copies it.
+--
+-- The specification is an open hypergraph ("Proarrow.Category.Instance.OpenHypergraph"): a node for
+-- each letter, the tensors as boxes, and the output letters as its boundary. It is already in normal
+-- form, and the result is its 'Proarrow.Category.Instance.OpenHypergraph.readBack': the tensors side
+-- by side, then one spider for each letter, from its uses in the inputs to its uses in the output. The objects of the
+-- indices have to be 'Data.Typeable.Typeable' for that.
+module Proarrow.Tools.Einsum
   ( Tensor
   , einsum
   , Einsum
@@ -17,33 +22,39 @@ module Proarrow.Tools.SMC.Einsum
   , Output
   ) where
 
+import Data.Containers.ListUtils (nubOrd)
 import Data.Kind (Constraint, Type)
+import Data.Map.Strict qualified as M
+import Data.Proxy (Proxy (..))
 import Data.Type.Bool (type (&&), type (||))
 import Data.Type.Equality (type (==))
-import GHC.TypeLits (CmpChar, ErrorMessage (..), Symbol, TypeError, UnconsSymbol)
+import GHC.TypeLits (CmpChar, ErrorMessage (..), KnownChar, Symbol, TypeError, UnconsSymbol, charVal)
 import GHC.TypeNats (Nat, type (+))
 import Prelude (Bool (..), Char, Maybe (..), Ordering (..), type (~))
+import Prelude qualified as P
 
+import Proarrow.Category.Instance.OpenHypergraph
+  ( Box (..)
+  , SIMPLIFY
+  , SomeArrow (..)
+  , SortList
+  , Wires
+  , openHypergraph
+  , readBack
+  , someArrow
+  , sortsToList
+  )
 import Proarrow.Category.Instance.Product (Fst, Snd)
-import Proarrow.Category.Monoidal (Monoidal (..), State)
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
-import Proarrow.Category.Monoidal.Strictified (Fold, IsList, Strictified (..), withObFold, type (++))
+import Proarrow.Category.Monoidal (State)
+import Proarrow.Category.Monoidal.Hypergraph (Hypergraph)
+import Proarrow.Category.Monoidal.Strictified (Fold, type (++))
 import Proarrow.Core (CategoryOf (..))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Tools.SMC.Internal.Context
-import Proarrow.Tools.SMC.Internal.Frobenius
-import Proarrow.Tools.SMC.Internal.Pattern
-import Proarrow.Tools.SMC.Internal.Syntax
-import Proarrow.Tools.SMC.Internal.Term
 
 -- | A tensor with indices of the given objects: a state of their tensor, as a morphism of
 -- 'Strictified' from @'[]@.
 type Tensor :: forall k. [k] -> Type
 type Tensor xs = State xs
-
--- Unlike the rest of Proarrow.Tools.SMC, nothing here is INLINE: inlining the generated term made
--- optimised compilation grow much faster with the number of inputs, and the result ran slower, as
--- the parts that do not depend on the tensors were no longer shared between calls.
 
 -- The specification
 
@@ -75,7 +86,7 @@ type Finish cur acc = Reverse (Reverse cur ': acc)
 type ParseArrow :: Maybe (Char, Symbol) -> [[Char]] -> ([[Char]], [Char])
 type family ParseArrow m ins where
   ParseArrow ('Just '( '>', s)) ins = '(ins, ParseOutput (UnconsSymbol s) '[])
-  ParseArrow _ _ = TypeError (Text "Proarrow.Tools.SMC.Einsum: expected > after - in the specification")
+  ParseArrow _ _ = TypeError (Text "Proarrow.Tools.Einsum: expected > after - in the specification")
 
 -- | The inputs with numpy's implicit output: the letters used once, in alphabetical order.
 type Implicit :: [[Char]] -> ([[Char]], [Char])
@@ -179,7 +190,7 @@ type LetterIf :: Bool -> Char -> Constraint -> Constraint
 type family LetterIf ok l c where
   LetterIf 'True l c = c
   LetterIf 'False l c =
-    TypeError (Text "Proarrow.Tools.SMC.Einsum: " :<>: ShowType l :<>: Text " is not a letter, so it cannot be an index")
+    TypeError (Text "Proarrow.Tools.Einsum: " :<>: ShowType l :<>: Text " is not a letter, so it cannot be an index")
 
 type IsLetter :: Char -> Bool
 type IsLetter c = Within 'a' c 'z' || Within 'A' c 'Z'
@@ -204,7 +215,7 @@ type family ArityError ok ls xs c where
   ArityError 'True ls xs c = c
   ArityError 'False ls xs c =
     TypeError
-      ( Text "Proarrow.Tools.SMC.Einsum: the tensor with indices "
+      ( Text "Proarrow.Tools.Einsum: the tensor with indices "
           :<>: ShowType xs
           :<>: Text " has letters "
           :<>: ShowType ls
@@ -221,7 +232,7 @@ type family Agrees c x env where
   Agrees c x ('(c, x) ': env) = ()
   Agrees c x ('(c, y) ': env) =
     TypeError
-      ( Text "Proarrow.Tools.SMC.Einsum: the index "
+      ( Text "Proarrow.Tools.Einsum: the index "
           :<>: ShowType c
           :<>: Text " is used with both "
           :<>: ShowType y
@@ -241,7 +252,7 @@ type family Bound c env where
   Bound c (p ': env) = Bound c env
   Bound c '[] =
     TypeError
-      (Text "Proarrow.Tools.SMC.Einsum: the output letter " :<>: ShowType c :<>: Text " is not an index of any input")
+      (Text "Proarrow.Tools.Einsum: the output letter " :<>: ShowType c :<>: Text " is not an index of any input")
 
 -- | The objects of the given letters.
 type Objs :: forall k. [Char] -> Env k -> [k]
@@ -249,140 +260,78 @@ type family Objs ls env where
   Objs '[] env = '[]
   Objs (c ': ls) env = Lookup c env ': Objs ls env
 
--- | The id of the variable of a letter, the letters being bound from depth @d@ on.
-type IdOf :: forall k. Char -> Env k -> Nat -> Nat
-type family IdOf c env d where
-  IdOf c ('(c, x) ': env) d = d
-  IdOf c (p ': env) d = IdOf c env (d + 1)
-
 type Len :: [a] -> Nat
 type family Len xs where
   Len '[] = 0
   Len (x ': xs) = 1 + Len xs
 
--- | The type expression of a tensor of the given objects, nested as 'Fold' nests them.
-type ProdS :: forall k. [k] -> SYN k
-type family ProdS xs where
-  ProdS '[] = I
-  ProdS '[x] = F x
-  ProdS (x ': xs) = F x :** ProdS xs
+-- The network
 
--- Terms
+-- | The letters as a value.
+type KnownChars :: [Char] -> Constraint
+class KnownChars ls where
+  chars :: [Char]
 
--- | The variables of the given letters, side by side.
-type VarsCtx :: forall k. [Char] -> Env k -> Nat -> Ctx k
-type family VarsCtx ls env d where
-  VarsCtx '[] env d = '[]
-  VarsCtx (c ': ls) env d = Union '[ '(IdOf c env d, F (Lookup c env))] (VarsCtx ls env d)
+instance KnownChars '[] where
+  chars = []
+instance (KnownChar c, KnownChars ls) => KnownChars (c ': ls) where
+  chars = charVal (Proxy @c) : chars @ls
 
-type VarsOf :: forall {k}. [Char] -> Env k -> Nat -> Constraint
-class VarsOf ls (env :: Env k) d where
-  varsOf :: Term e (VarsCtx ls env d) (ProdS (Objs ls env))
-
-instance (Monoidal k) => VarsOf '[] (env :: Env k) d where
-  varsOf = unit
-
-instance (CategoryOf k, KnownObj (F (Lookup c env))) => VarsOf '[c] (env :: Env k) d where
-  varsOf = var @(IdOf c env d) @(F (Lookup c env))
-
-instance
-  ( Monoidal k
-  , KnownObj (F (Lookup c env))
-  , VarsOf (c2 ': ls) env d
-  , Merge '[ '(IdOf c env d, F (Lookup c env))] (VarsCtx (c2 ': ls) env d)
-  )
-  => VarsOf (c ': c2 ': ls) (env :: Env k) d
+-- | The open hypergraph of a specification: a node for each letter, of the sort of its object, a box
+-- for each tensor with an output for each of its letters, and the output letters as the boundary.
+network
+  :: forall {k} (os :: [k])
+   . (SortList os)
+  => [([Char], SomeArrow k)]
+  -> [Char]
+  -> P.Either P.String (Wires '[] ~> (Wires os :: SIMPLIFY k))
+network tensors out =
+  openHypergraph
+    (P.fmap (sortOfLetter M.!) letters)
+    []
+    (P.fmap (index M.!) out)
+    [Box t [] (P.fmap (index M.!) ls) | (ls, t) <- tensors]
   where
-  varsOf = var @(IdOf c env d) @(F (Lookup c env)) ** varsOf @(c2 ': ls) @env @d
-
--- | The tensors given, with the letters of each.
-type Tensors :: forall k. [([Char], [k])] -> Type
-data Tensors ts where
-  TNil :: Tensors '[]
-  TCons :: Tensor xs -> Tensors ts -> Tensors ('(ls, xs) ': ts)
-
--- | The context of the tensors' factors times a term with context @g@.
-type FactorsCtx :: forall k. [([Char], [k])] -> Env k -> Nat -> Ctx k -> Ctx k
-type family FactorsCtx ts env d g where
-  FactorsCtx '[] env d g = g
-  FactorsCtx ('(ls, xs) ': ts) env d g = Union (VarsCtx ls env d) (FactorsCtx ts env d g)
-
--- | A term multiplied by the delta between each tensor and the tuple of its indices, which is the cap
--- of the Frobenius structure on the tensor of their objects.
-type Factors :: forall {k}. [([Char], [k])] -> Env k -> Nat -> Ctx k -> SYN k -> Constraint
-class Factors ts (env :: Env k) d g a where
-  factors :: Tensors ts -> Term e g a -> Term e (FactorsCtx ts env d g) a
-
-instance Factors '[] (env :: Env k) d g a where
-  factors TNil t = t
-
-instance
-  ( Hypergraph k
-  , Objs ls env ~ xs
-  , Interp (ProdS xs) ~ Fold xs
-  , KnownObj (ProdS xs)
-  , VarsOf ls env d
-  , KnownObj a
-  , Factors ts env d g a
-  , Merge '[] (VarsCtx ls env d)
-  , Merge (VarsCtx ls env d) (FactorsCtx ts env d g)
-  )
-  => Factors ('(ls, xs) ': ts) (env :: Env k) d g a
-  where
-  factors (TCons (Str t) rest) x =
-    withObFold @xs (delta (lift @I @(ProdS xs) t unit) (varsOf @ls @env @d) *^ factors @ts @env @d rest x)
-
--- | The body with every letter summed over, from depth @d@ on, the body being at depth @b@.
-type Sums :: forall {k}. Env k -> Nat -> Nat -> Ctx k -> SYN k -> Ctx k -> Constraint
-class Sums (env :: Env k) d b g a r | env d -> b, env d b g a -> r where
-  sums :: Term b g a -> Term d r a
-
-instance Sums ('[] :: Env k) d d g a g where
-  sums t = t
-
-instance
-  ( Monoidal k
-  , Frobenius x
-  , KnownObj (F x)
-  , Sums env (d + 1) b g a r'
-  , BindVar d (F x) r' r
-  )
-  => Sums ('(c, x) ': env :: Env k) d b g a r
-  where
-  sums body = sumVar @(F x) @d (sums @env @(d + 1) body)
+    -- the letters in the order they first appear, with their sorts
+    letters = nubOrd (P.concatMap P.fst tensors)
+    sortOfLetter = M.fromList [(l, x) | (ls, SomeArrow _ ys _) <- tensors, (l, x) <- P.zip ls (sortsToList ys)]
+    index = M.fromList (P.zip letters [0 ..])
 
 -- Einsum
 
 -- | Collect the tensors of the inputs, then sum.
 type Einsum :: forall {k}. [[Char]] -> [Char] -> [([Char], [k])] -> Type -> Constraint
 class Einsum ins out (ts :: [([Char], [k])]) r where
-  collect :: Tensors ts -> r
+  collect :: [([Char], SomeArrow k)] -> r
 
-instance (r ~ (Tensor xs -> r'), Einsum ins out ('(ls, xs) ': ts) r') => Einsum (ls ': ins) out (ts :: [([Char], [k])]) r where
-  collect ts t = collect @ins @out @('(ls, xs) ': ts) (TCons t ts)
+instance
+  (r ~ (Tensor xs -> r'), KnownChars ls, SortList xs, Einsum ins out ('(ls, xs) ': ts) r')
+  => Einsum (ls ': ins) out (ts :: [([Char], [k])]) r
+  where
+  collect acc t = collect @ins @out @('(ls, xs) ': ts) ((chars @ls, someArrow t) : acc)
 
+-- The tensors are the boxes of an open hypergraph, which is read back with each box its tensor.
 instance
   ( env ~ BindAll (Reverse ts) '[]
   , Check ts out env
   , Hypergraph k
   , os ~ Objs out env
   , r ~ Tensor os
-  , IsList os
-  , Interp (ProdS os) ~ Fold os
-  , KnownObj (ProdS os)
-  , VarsOf out env 1
-  , Factors ts env 1 (VarsCtx out env 1) (ProdS os)
-  , Sums env 1 b (FactorsCtx ts env 1 (VarsCtx out env 1)) (ProdS os) '[]
+  , SortList os
+  , KnownChars out
   )
   => Einsum '[] out (ts :: [([Char], [k])]) r
   where
-  collect ts = Str (toSMC @I @(ProdS os) \() -> sums @env @1 (factors @ts @env @1 ts (varsOf @out @env @1)))
+  collect acc = case network @os (P.reverse acc) (chars @out) P.>>= readBack P.id of
+    P.Right r -> r
+    -- the network is built from the tensors' own sorts, so this does not happen
+    P.Left e -> P.error e
 
 -- | Einstein summation: @einsum \@"ij,jk->ik" a b@ is the tensor with entries the sums over @j@ of
 -- the products of the entries of @a@ and @b@. The tensors are given after the specification, one for
 -- each input, and the result's type follows from theirs.
 einsum :: forall {k} (s :: Symbol) r. (Einsum (Inputs s) (Output s) ('[] :: [([Char], [k])]) r) => r
-einsum = collect @(Inputs s) @(Output s) @('[] :: [([Char], [k])]) TNil
+einsum = collect @(Inputs s) @(Output s) @('[] :: [([Char], [k])]) []
 
 -- | The type of @'einsum' \@s@ applied to tensors with indices of the given objects. Each letter
 -- takes the object it is first given, so a letter given two objects is one type variable in every

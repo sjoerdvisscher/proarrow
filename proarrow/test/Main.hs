@@ -34,6 +34,7 @@ import Props.Hask qualified as Hask
 import Props.IntConstruction qualified as IntConstruction
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
+import Props.OpenHypergraph qualified as OpenHypergraph
 import Props.Optic.FinRel qualified as OpticFinRel
 import Props.Optic.Hask qualified as Optic
 import Props.Optic.Linear qualified as OpticLinear
@@ -59,6 +60,7 @@ main =
           [ Bool.test
           , Discrete.test
           , Cospan.test
+          , OpenHypergraph.test
           , Cost.test
           , DPO.test
           , Dot.test

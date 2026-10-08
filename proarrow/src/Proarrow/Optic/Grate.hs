@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal (SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, type (+->))
-import Proarrow.Monoid (Comonoid)
+import Proarrow.Monoid (CocommutativeComonoid)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
@@ -56,7 +56,10 @@ flipExp
   => (x ~~> (m ~~> a)) ~> (m ~~> (x ~~> a))
 flipExp = toSMC @(F x :-> F m :-> F a) @(F m :-> F x :-> F a) \f -> lam \m -> lam \x -> f ! x ! m
 
-instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid m) => GrateFl (Rep (Exp m) :: k +-> k) (Corep (Exp m) :: k +-> k) where
+instance
+  (Closed k, SymMonoidal k, HasCoproducts k, CocommutativeComonoid m)
+  => GrateFl (Rep (Exp m) :: k +-> k) (Corep (Exp m) :: k +-> k)
+  where
   zipWithP @_ @a (Rep sm) (Corep mbt) @x kk = mbt . (kk ^^^ obj @m) . flipExp @x @m @a . (sm ^^^ obj @x)
 instance (CategoryOf k) => GrateFl (Id :: k +-> k) (Id :: k +-> k) where
   zipWithP (Id l) (Id r) @x kk = r . kk . (l ^^^ obj @x)
@@ -80,7 +83,7 @@ withGrate o k = withLegs @GrateFl o \ @p @q p q -> k (\ @x kk -> zipWithP @p @q 
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category every object is.
 grate
   :: forall {k} (s :: k) (t :: k) a b
-   . (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (s ~~> a), Ob s, Ob a, Ob b)
+   . (Closed k, SymMonoidal k, HasCoproducts k, CocommutativeComonoid (s ~~> a), Ob s, Ob a, Ob b)
   => (Mod s a b ~> t) -> Grate s t a b
 grate f@Objs =
   withObExp @k @s @a $

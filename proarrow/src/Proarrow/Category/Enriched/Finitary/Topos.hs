@@ -90,10 +90,11 @@ type FINITARY j k = SUBCAT (Finitary :: (j +-> k) -> Constraint)
 
 type FIN (p :: j +-> k) = SUB p :: FINITARY j k
 
--- The finite products and coproducts of 'FINITARY' (and of the sheaves) are the generic ones
--- for a full subcategory in "Proarrow.Category.Instance.Sub", pointwise under 'Sub'. The predicate
--- only has to hold of the ambient (co)products, which the instances for
--- ':*:', ':+:', 'TerminalProfunctor' and 'InitialProfunctor' supply.
+-- The finite products of 'FINITARY' (and of the sheaves) are the generic ones for a full
+-- subcategory in "Proarrow.Category.Instance.Sub", pointwise under 'Sub'; the predicate only has to
+-- hold of ':*:' and 'TerminalProfunctor'. The coproducts are defined here, from ':+:' and
+-- 'InitialProfunctor': a full subcategory has no generic coproducts, since the sheaves, a full
+-- subcategory too, have sheafified ones.
 
 instance (CategoryOf j, CategoryOf k) => HasInitialObject (FINITARY j k) where
   type InitialObject = FIN InitialProfunctor

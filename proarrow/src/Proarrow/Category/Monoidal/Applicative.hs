@@ -2,8 +2,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Lax monoidal functors between monoidal categories: 'Applicative' generalizes the Prelude class
--- with 'pure' and 'liftA2' stated via the tensor, and 'Alternative' adds coproduct structure over a
--- 'Proarrow.Category.Monoidal.Distributive.Distributive' base.
+-- with 'pure' and 'liftA2' stated via the tensor, and 'Alternative' is lax monoidal from the
+-- coproduct of its source to the tensor of its target.
 module Proarrow.Category.Monoidal.Applicative where
 
 import Control.Applicative qualified as P
@@ -59,7 +59,7 @@ deriving via Prelude P.Maybe instance Applicative P.Maybe
 deriving via Prelude P.NonEmpty instance Applicative P.NonEmpty
 
 type Alternative :: forall {j} {k}. (j -> k) -> Constraint
-class (Distributive j, Functor f) => Alternative (f :: j -> k) where
+class (HasBinaryCoproducts j, Monoidal k, Functor f) => Alternative (f :: j -> k) where
   empty :: (Ob a) => Unit ~> f a
   alt :: (Ob a, Ob b) => (a || b ~> c) -> f a ** f b ~> f c
 
