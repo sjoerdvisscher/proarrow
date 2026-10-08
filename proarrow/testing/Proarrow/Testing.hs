@@ -33,7 +33,8 @@ module Proarrow.Testing
   , withTestObDualDef
 
     -- * Objects
-  , Some (..)
+  , Some
+  , SomeOf (..)
   , mapSome
   , genOb
   , genObSmall
@@ -42,7 +43,7 @@ module Proarrow.Testing
   , genSomeDef
   , genSomeFinite
   , genSomeList
-  , MkSomeList (..)
+  , mkSomeList
 
     -- * Profunctor elements
   , SomeProfunctorElt (..)
@@ -124,6 +125,7 @@ import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
+import Proarrow.Object (KnownListOf (..), SomeOf (..), someOfList)
 import Proarrow.Profunctor.Corepresentable (type (%%))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
@@ -476,18 +478,17 @@ type WithTestObRep k p = forall (a :: k) r. (TestOb a) => ((TestOb (p % a)) => r
 -- | @'TestOb'@ is closed under a corepresentable profunctor.
 type WithTestObCorep k p = forall (a :: k) r. (TestOb a) => ((TestOb (p %% a)) => r) -> r
 
-data Some k where
-  Some :: forall {k} a. (TestOb (a :: k)) => Some k
+-- | A testable object of @k@.
+type Some :: Type -> Type
+type Some k = SomeOf (TestOb' :: OB k)
 
 mapSome :: forall {j} {k}. forall (f :: j -> k) -> (forall a. (TestOb a) => TestOb' (f a)) => Some j -> Some k
 mapSome f (Some @a) = Some @(f a)
 
-class MkSomeList (as :: [k]) where
-  mkSomeList :: [Some k]
-instance MkSomeList '[] where
-  mkSomeList = []
-instance (TestOb (a :: k), MkSomeList as) => MkSomeList (a ': as) where
-  mkSomeList = Some @a : mkSomeList @k @as
+-- | The objects of a type-level list.
+mkSomeList :: forall {k} (as :: [k]). (KnownListOf TestOb' as) => [Some k]
+mkSomeList = someOfList (listOf @TestOb' @as)
+
 instance (Testable k) => Show (Some k) where
   show (Some @a) = showOb @k @a
 
@@ -501,8 +502,8 @@ someElemWith :: (a -> String) -> [a] -> Property a
 someElemWith _ [] = discard
 someElemWith f (x : xs) = genWith (Just . f) (elem (x :| xs))
 
-genSomeDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Gen (Some k)
-genSomeDef = genSomeList "the palette is empty" (mkSomeList @k @obs)
+genSomeDef :: forall {k} (obs :: [k]). (Testable k, KnownListOf TestOb' obs) => Gen (Some k)
+genSomeDef = genSomeList "the palette is empty" (mkSomeList @obs)
 
 -- | The palette of a category that already knows its own objects: @'Proarrow.Category.Enriched.Thin.Objects' k@
 -- is the list 'genSomeDef' would otherwise be given by hand, and writing it twice lets the two

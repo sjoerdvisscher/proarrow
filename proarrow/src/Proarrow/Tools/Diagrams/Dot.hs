@@ -8,7 +8,6 @@ module Proarrow.Tools.Diagrams.Dot where
 
 import Data.Bifunctor (first)
 import Data.Char (digitToInt, isDigit)
-import Data.Coerce (coerce)
 import Data.List qualified as List
 import Data.Proxy (Proxy (..))
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
@@ -34,9 +33,10 @@ import Proarrow.Category.Monoidal.Hypergraph
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
-import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
+import Proarrow.Category.Monoidal.Strictified (IsList (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Object (lengthListOf, mapListOf)
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
 
@@ -56,16 +56,10 @@ split :: (IsList as) => Vec (as ++ bs) x -> (Vec as x, Vec bs x)
 split @as (Vec xs) = case splitAt (len @as) xs of (as, bs) -> (Vec as, Vec bs)
 
 len :: (IsList as) => Int
-len @as = case sList @as of
-  SNil -> 0
-  SSing -> 1
-  SCons @_ @bs -> 1 + len @bs
+len @as = lengthListOf (sList @as)
 
 ixs :: (IsList as) => Vec as (Fin as)
-ixs @as = case sList @as of
-  SNil -> Vec []
-  SSing -> Vec [0]
-  SCons @_ @bs -> coerce (0 : fmap (+ 1) (unVec (ixs @bs)))
+ixs @as = Vec (map Fin [0 .. len @as - 1])
 
 ixed :: (IsList as) => Vec as x -> Vec as (Fin as, x)
 ixed (Vec []) = Vec []
@@ -86,10 +80,7 @@ eitherF f g (Fin i)
   | otherwise = g (Fin (i - len @as))
 
 names :: (IsList (as :: [Symbol])) => Vec as String
-names @as = case sList @as of
-  SNil -> Vec []
-  SSing @s -> Vec [symbolVal (Proxy @s)]
-  SCons @s @ss -> Vec (symbolVal (Proxy @s) : unVec (names @ss))
+names @as = Vec (mapListOf (\ @s -> symbolVal (Proxy @s)) (sList @as))
 
 type SymRefl :: CAT Symbol
 data SymRefl a b where

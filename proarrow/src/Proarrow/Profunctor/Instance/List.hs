@@ -46,10 +46,7 @@ instance (CategoryOf k) => CategoryOf (LIST k) where
   type Ob as = (Is L as, Str.IsList (UN L as))
 
 instance (Promonad p) => Promonad (List p) where
-  id @(L bs) = case Str.sList @bs of
-    Str.SNil -> Nil
-    Str.SSing -> Cons id Nil
-    Str.SCons -> Cons id id
+  id @(L bs) = Str.listCase @bs Nil (Cons id Nil) (Cons id id)
   Nil . Nil = Nil
   Cons f fs . Cons g gs = Cons (f . g) (fs . gs)
 
@@ -85,9 +82,11 @@ instance (Representable p) => Representable (List p) where
   index Nil = Nil
   index (Cons p Nil) = Cons (index @p p) Nil
   index (Cons p ps@Cons{}) = mkCons (index @p p) (index @(List p) ps)
-  tabulate @(L b) Nil = case Str.sList @b of Str.SNil -> Nil
-  tabulate @(L b) (Cons f Nil) = case Str.sList @b of Str.SSing -> Cons (tabulate @p f) Nil
-  tabulate @(L b) (Cons f fs@Cons{}) = case Str.sList @b of Str.SCons -> Cons (tabulate @p f) (tabulate @(List p) fs)
+  tabulate @(L b) fs =
+    Str.listCase @b
+      (case fs of Nil -> Nil)
+      (case fs of Cons f Nil -> Cons (tabulate @p f) Nil)
+      (case fs of Cons f fs'@Cons{} -> Cons (tabulate @p f) (tabulate @(List p) fs'))
   repMap Nil = Nil
   repMap (Cons f Nil) = Cons (repMap @p f) Nil
   repMap (Cons f fs@Cons{}) = mkCons (repMap @p f) (repMap @(List p) fs)

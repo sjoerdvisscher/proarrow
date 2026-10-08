@@ -14,6 +14,15 @@
   `Alternative` decoration, a hypergraph category.
 * `Proarrow.Category.Instance.Cospan`: `COSPAN k` is `DECCOSPAN` with the `Undecorated` decoration.
 * `Proarrow.Category.Instance.OpenHypergraph`: open hypergraphs with typed wires.
+* `Proarrow.Object`: `ListOf c xs`, a type-level list with the evidence `c` for each element as a
+  value, with `KnownListOf`. It replaces the library's own list singletons:
+  * `Strictified`: `SList` is removed; `sList` is a `ListOf Ob'`.
+  * `Thin`: `FNil`/`FCons` are now `Nil`/`Cons`, and `HasFiniteDefault` is removed (`finite`
+    defaults to `listOf`).
+  * `Edges`: `ENil`/`ECons` are removed.
+* `Proarrow.Object`: `SomeOf c`, a type with the evidence `c` known only at runtime, built with
+  `Some @a`. In `Proarrow.Testing`, `Some k` is `SomeOf TestOb'`, and `MkSomeList` is replaced by
+  `mkSomeList`.
 * `Proarrow.Optic.Kaleidoscope`, `Proarrow.Optic.Grate`: kaleidoscopes and grates now need
   `CocommutativeComonoid m` instead of `Comonoid m`.
 * `Proarrow.Category.Monoidal.Applicative`: `Alternative`'s superclass is `HasBinaryCoproducts j` and

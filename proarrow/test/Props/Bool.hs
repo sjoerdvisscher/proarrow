@@ -28,7 +28,7 @@ import Proarrow.Profunctor.Representable (CorepStar, Rep)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Testing
   ( GenTotal (..)
-  , Some (..)
+  , SomeOf (..)
   , SomeProfunctorElt (..)
   , Testable (..)
   , TestableProfunctor (..)

@@ -39,8 +39,8 @@ import Proarrow.Profunctor.Representable (Rep (..))
 
 import Proarrow.Testing
   ( GenTotal (..)
-  , MkSomeList (..)
-  , Some (..)
+  , Some
+  , SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
@@ -49,6 +49,7 @@ import Proarrow.Testing
   , expect
   , genNamed
   , genSomeDef
+  , mkSomeList
   , oneOfTotal
   , testEq
   )
@@ -234,7 +235,7 @@ type Palette = '[UnitF, UnitF *! UnitF, UnitF + UnitF, UnitF **! UnitF, UnitF --
 type Intermediates = TermF ': InitF ': Palette
 
 intermediates :: [Some FREEKIND]
-intermediates = mkSomeList @FREEKIND @Intermediates
+intermediates = mkSomeList @Intermediates
 
 -- | Generate a random term between two (given) object shapes. Most branches recurse
 -- structurally on a strictly smaller sub-shape of the source or target, so they always

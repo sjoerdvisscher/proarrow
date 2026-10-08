@@ -29,6 +29,7 @@ import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), obj, type (+->))
 import Proarrow.Limit.BinaryProduct (type (&&))
+import Proarrow.Object (KnownListOf (..), ListOf (..))
 
 -- | A weighted graph on the bare set of points of an 'Indexed' kind, given as a list of edges with
 -- their weights in @v@: an enriched profunctor on the discrete category, since over a discrete base
@@ -47,38 +48,61 @@ instance (Indexed k) => Profunctor (Edges (es :: [(k, k, v)])) where
   dimap Refl Refl e = e
   r \\ Edge = r
 
+-- | The source of an edge.
+type EdgeSrc :: forall {k} {v}. (k, k, v) -> k
+type family EdgeSrc e where
+  EdgeSrc '(x, y, w) = x
+
+-- | The target of an edge.
+type EdgeTgt :: forall {k} {v}. (k, k, v) -> k
+type family EdgeTgt e where
+  EdgeTgt '(x, y, w) = y
+
+-- | The weight of an edge.
+type EdgeWeight :: forall {k} {v}. (k, k, v) -> v
+type family EdgeWeight e where
+  EdgeWeight '(x, y, w) = w
+
+-- | An edge whose endpoints are known and whose weight is an object.
+type KnownEdge :: forall {k} {v}. (k, k, v) -> Constraint
+class
+  (e ~ '(EdgeSrc e, EdgeTgt e, EdgeWeight e), KnownIndex (EdgeSrc e), KnownIndex (EdgeTgt e), Ob (EdgeWeight e)) =>
+  KnownEdge e
+
+instance
+  (e ~ '(EdgeSrc e, EdgeTgt e, EdgeWeight e), KnownIndex (EdgeSrc e), KnownIndex (EdgeTgt e), Ob (EdgeWeight e))
+  => KnownEdge e
+
 -- | The edge list, reflected to the value level.
-type EdgeList :: forall {k} {v}. [(k, k, v)] -> Kind
-data EdgeList es where
-  ENil :: EdgeList '[]
-  ECons :: forall x y w es. (KnownIndex x, KnownIndex y, Ob w) => EdgeList es -> EdgeList ('(x, y, w) ': es)
+type EdgeList :: forall k v. [(k, k, v)] -> Kind
+type EdgeList @k @v = ListOf (KnownEdge :: (k, k, v) -> Constraint)
 
 type KnownEdges :: forall {k} {v}. [(k, k, v)] -> Constraint
-class KnownEdges es where
-  edges :: EdgeList es
-instance KnownEdges '[] where
-  edges = ENil
-instance (KnownIndex x, KnownIndex y, Ob w, KnownEdges es) => KnownEdges ('(x, y, w) ': es) where
-  edges = ECons edges
+type KnownEdges es = KnownListOf KnownEdge es
+
+-- | The weight of a pair, found by walking the edge list: the first continuation when the pair is
+-- not listed, the second with the weight when it is.
+lookupEdge
+  :: forall {k} {v} (es :: [(k, k, v)]) a b r
+   . (Indexed k, KnownIndex a, KnownIndex b)
+  => EdgeList es
+  -> ((WeightOf es a b ~ InitialObject) => r)
+  -> (forall w. (WeightOf es a b ~ w, Ob w) => r)
+  -> r
+lookupEdge Nil none _ = none
+lookupEdge (Cons @'(x, y, w) es) none found = case (decideEq @a @(D x), decideEq @b @(D y)) of
+  (Yes Eq.Refl, Yes Eq.Refl) -> found @w
+  (No, _) -> lookupEdge @_ @a @b es none found
+  (Yes _, No) -> lookupEdge @_ @a @b es none found
 
 -- | A graph with 'BOOL' weights is a relation on the points: decided by walking the edge list.
 instance (Indexed k, KnownEdges es) => ThinProfunctor (Edges (es :: [(k, k, BOOL)]))
 
 instance (Indexed k, KnownEdges es) => DecidableProfunctor (Edges (es :: [(k, k, BOOL)])) where
   type Holds (Edges es) a b = WeightOf es a b
-  decide @a @b = go (edges @es)
-    where
-      go
-        :: forall (es' :: [(k, k, BOOL)])
-         . (WeightOf es' a b ~ WeightOf es a b)
-        => EdgeList es' -> Decision (Edges es) a b (WeightOf es' a b)
-      go ENil = No
-      go (ECons @x @y @w es') = case (decideEq @a @(D x), decideEq @b @(D y)) of
-        (Yes Eq.Refl, Yes Eq.Refl) -> case obj @w of
-          Tru -> Yes Edge
-          Fls -> No
-        (No, _) -> go es'
-        (Yes _, No) -> go es'
+  decide @a @b = lookupEdge @es @a @b listOf No \ @w -> case obj @w of
+    Tru -> Yes Edge
+    Fls -> No
   toHolds Edge r = r
 
 -- | The weight of a pair, reflected to the value level by walking the edge list.
@@ -86,31 +110,14 @@ withObWeight
   :: forall {k} {v} (es :: [(k, k, v)]) a b r
    . (Quantale v, Indexed k, KnownEdges es, KnownIndex a, KnownIndex b)
   => ((Ob (WeightOf es a b)) => r) -> r
-withObWeight r = go (edges @es) r
-  where
-    go :: forall (es' :: [(k, k, v)]). EdgeList es' -> ((Ob (WeightOf es' a b)) => r) -> r
-    go ENil r' = r'
-    go (ECons @x @y es') r' = case (decideEq @a @(D x), decideEq @b @(D y)) of
-      (Yes Eq.Refl, Yes Eq.Refl) -> r'
-      (No, _) -> go es' r'
-      (Yes _, No) -> go es' r'
+withObWeight r = lookupEdge @es @a @b listOf r r
 
 -- | A unit into a weight is an edge at the unit, since an object above the unit is the unit.
 enrichedEdge
   :: forall {k} {v} (es :: [(k, k, v)]) a b
    . (Quantale v, Indexed k, KnownEdges es, KnownIndex a, KnownIndex b)
   => Unit ~> WeightOf es a b -> Edges es a b
-enrichedEdge f = go (edges @es) f
-  where
-    go
-      :: forall (es' :: [(k, k, v)])
-       . (WeightOf es' a b ~ WeightOf es a b)
-      => EdgeList es' -> Unit ~> WeightOf es' a b -> Edges es a b
-    go ENil g = unitIsNotBottom @v g
-    go (ECons @x @y @w es') g = case (decideEq @a @(D x), decideEq @b @(D y)) of
-      (Yes Eq.Refl, Yes Eq.Refl) -> unitIsTop @v @w g Edge
-      (No, _) -> go es' g
-      (Yes _, No) -> go es' g
+enrichedEdge f = lookupEdge @es @a @b listOf (unitIsNotBottom @v f) \ @w -> unitIsTop @v @w f Edge
 
 -- | A graph with 'COST' weights: a weighted graph, whose closure is shortest paths.
 instance (Indexed k, KnownEdges es) => EnrichedProfunctor COST (Edges (es :: [(k, k, COST)])) where

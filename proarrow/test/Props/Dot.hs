@@ -20,8 +20,9 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, fst, id, snd, (.))
 
 import Proarrow.Category.Monoidal (withOb2)
-import Proarrow.Category.Monoidal.Strictified (IsList (..))
+import Proarrow.Category.Monoidal.Strictified (IsList (..), withIsListOf)
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
+import Proarrow.Object (withListOf)
 import Proarrow.Tools.Diagrams.Dot
   ( DOT (..)
   , Dot (..)
@@ -40,7 +41,8 @@ import Proarrow.Tools.Diagrams.Dot
 
 import Proarrow.Testing
   ( GenTotal (..)
-  , Some (..)
+  , Some
+  , SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
@@ -74,10 +76,7 @@ test =
     ]
 
 foldSome :: [Some Symbol] -> Some DOT
-foldSome [] = Some @(D '[])
-foldSome [Some @n] = Some @(D '[n])
-foldSome (Some @n : Some @m : rest) = case foldSome (Some @m : rest) of
-  Some @(D ns) -> withIsList2 @'[n] @ns (Some @(D (n ': ns)))
+foldSome ss = withListOf ss \ @ns l -> withIsListOf l (Some @(D ns))
 
 instance Testable Symbol where
   genSome = genSomeDef @'["A", "B", "C", "D", "E"]

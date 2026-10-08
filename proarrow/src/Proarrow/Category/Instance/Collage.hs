@@ -24,7 +24,7 @@ import Proarrow.Category.Enriched.Thin
   , Finite (..)
   , FmapWrap
   , Indexed (..)
-  , IndexedList (..)
+  , IndexedList
   , KnownIndex
   , Length
   , Lookup
@@ -56,6 +56,7 @@ import Proarrow.Core
   )
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate')
+import Proarrow.Object (ListOf (..))
 import Proarrow.Optic (iso)
 import Proarrow.Optic.Iso (Iso')
 import Proarrow.Profunctor.Instance.Direp (Direp (..))
@@ -196,8 +197,8 @@ withCollageL r = withAtLookup @j (snat @(Index x)) (go (finite @j) (snat @(Index
       :: forall xs i
        . (Lookup xs i ~ 'Just x)
       => IndexedList xs -> SNat i -> ((Lookup (CollageObjects p xs) i ~ 'Just (L x)) => r) -> r
-    go (FCons _) SZ k = k
-    go (FCons xs) (SS @i') k = go xs (snat @i') k
+    go (Cons _) SZ k = k
+    go (Cons xs) (SS @i') k = go xs (snat @i') k
 
 withCollageR
   :: forall {j} {k} (p :: k +-> j) (y :: k) r
@@ -214,19 +215,19 @@ withCollageR r = go (finite @j) r
            => r
          )
       -> r
-    go FNil k = withWrapAtLookup @(R :: k -> COLLAGE p) (snat @(Index y)) k
-    go (FCons xs) k = go xs k
+    go Nil k = withWrapAtLookup @(R :: k -> COLLAGE p) (snat @(Index y)) k
+    go (Cons xs) k = go xs k
 
 instance (Finite j, Finite k) => Finite (COLLAGE (p :: k +-> j)) where
   type Objects (COLLAGE (p :: k +-> j)) = CollageObjects p (Objects j)
   finite = goL (finite @j)
     where
       goL :: forall xs. IndexedList xs -> IndexedList (CollageObjects p xs)
-      goL FNil = goR (finite @k)
-      goL (FCons @x xs) = withCollageL @p @x (FCons @(L x) (goL xs))
+      goL Nil = goR (finite @k)
+      goL (Cons @x xs) = withCollageL @p @x (Cons @(L x) (goL xs))
       goR :: forall ys. IndexedList ys -> IndexedList (MapWrap (R :: k -> COLLAGE p) ys)
-      goR FNil = FNil
-      goR (FCons @y ys) = withCollageR @p @y (FCons @(R y) (goR ys))
+      goR Nil = Nil
+      goR (Cons @y ys) = withCollageR @p @y (Cons @(R y) (goR ys))
 
 -- | The collage of a finitary profunctor between finite categories is a finite category: a
 -- hom-set is a base hom-set, an element set of @p@ for a cross-arrow, or empty going back.
@@ -260,8 +261,8 @@ instance (Enumerable j, Enumerable k, Profunctor p) => Enumerable (COLLAGE (p ::
   atOb = go (finite @j)
     where
       go :: forall xs i. IndexedList xs -> SNat i -> AtOb (COLLAGE p) (Lookup (CollageObjects p xs) i)
-      go FNil i = withWrapAtLookup @(R :: k -> COLLAGE p) i case atOb @k i of
+      go Nil i = withWrapAtLookup @(R :: k -> COLLAGE p) i case atOb @k i of
         AtJust @_ @y -> withCollageR @p @y AtJust
         AtNothing -> AtNothing
-      go (FCons @x _) SZ = withOb @j @x (withCollageL @p @x AtJust)
-      go (FCons xs) (SS @i') = go xs (snat @i')
+      go (Cons @x _) SZ = withOb @j @x (withCollageL @p @x AtJust)
+      go (Cons xs) (SS @i') = go xs (snat @i')

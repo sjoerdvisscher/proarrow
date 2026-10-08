@@ -36,8 +36,8 @@ import Proarrow.Limit.BinaryProduct
   )
 import Proarrow.Testing
   ( GenTotal (..)
-  , MkSomeList (..)
-  , Some (..)
+  , Some
+  , SomeOf (..)
   , SomeProfunctorElt (..)
   , Testable (..)
   , TestableProfunctor (..)
@@ -48,6 +48,7 @@ import Proarrow.Testing
   , genObSuchThat
   , genSomeDef
   , isGenNonEmpty
+  , mkSomeList
   , oneElem
   , oneOfTotal
   )
@@ -387,12 +388,12 @@ withTestObExpCON r = case sing @g of
 type TyPalette = '[K, K :=> K, K :=> (K :=> K)]
 
 tyPalette :: [Some TY]
-tyPalette = mkSomeList @TY @TyPalette
+tyPalette = mkSomeList @TyPalette
 
 type ConPalette = '[E, E :> K, (E :> K) :> K]
 
 conPalette :: [Some CON]
-conPalette = mkSomeList @CON @ConPalette
+conPalette = mkSomeList @ConPalette
 
 -- ** Total type-directed generators
 

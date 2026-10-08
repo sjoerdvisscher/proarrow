@@ -17,6 +17,7 @@ import Prelude (Maybe (..), type (~))
 import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..), NonTrivialHolds, NonTrivialProfunctor (..))
 import Proarrow.Category.Instance.Zero (Bottom (..), VOID, Zero)
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), VacuousOb, obj, type (+->))
+import Proarrow.Object (KnownListOf (..), ListOf (..))
 
 -- | The defaults take everything from a 'DecidableProfunctor' instance: the arrow exists when
 -- @'Holds' p a b@ computes to 'TRU'.
@@ -248,27 +249,16 @@ type family IndexOf a xs where
 
 -- | A type-level list of inhabitants, reflected to the value level with their indices.
 type IndexedList :: forall k. [k] -> Type
-data IndexedList as where
-  FNil :: IndexedList '[]
-  FCons :: forall a as. (KnownIndex a) => IndexedList as -> IndexedList (a ': as)
-
--- | Every element of the list is numbered, so the list can be reflected to an 'IndexedList'. So a
--- kind that simply writes its objects out gets 'finite' for free.
-class HasFiniteDefault (xs :: [k]) where
-  finiteDefault :: IndexedList xs
-
-instance HasFiniteDefault '[] where
-  finiteDefault = FNil
-instance (KnownIndex a, HasFiniteDefault as) => HasFiniteDefault (a ': as) where
-  finiteDefault = FCons finiteDefault
+type IndexedList @k = ListOf (KnownIndex :: k -> Constraint)
 
 -- | An 'Indexed' kind with finitely many inhabitants, listed in 'Objects' in the order of their
--- indices: 'withAtLookup' says that the list tabulates 'At'.
+-- indices: 'withAtLookup' says that the list tabulates 'At'. A kind that writes its objects out
+-- gets 'finite' from 'listOf', since each of them is numbered.
 class (Indexed k) => Finite k where
   type Objects k :: [k]
   finite :: IndexedList (Objects k)
-  default finite :: (HasFiniteDefault (Objects k)) => IndexedList (Objects k)
-  finite = finiteDefault
+  default finite :: (KnownListOf KnownIndex (Objects k)) => IndexedList (Objects k)
+  finite = listOf
   withAtLookup :: forall (i :: Nat) r. SNat i -> ((Lookup (Objects k) i ~ At k i) => r) -> r
   default withAtLookup
     :: forall (i :: Nat) r. (At k i ~ Lookup (Objects k) i) => SNat i -> ((Lookup (Objects k) i ~ At k i) => r) -> r
@@ -285,8 +275,8 @@ memberIndex :: forall {k} (a :: k). (Finite k, KnownIndex a) => Member a (Object
 memberIndex = withAtLookup @k (snat @(Index a)) (go (snat @(Index a)) (finite @k))
   where
     go :: forall i xs. (Lookup xs i ~ 'Just a) => SNat i -> IndexedList xs -> Member a xs
-    go SZ (FCons _) = Here
-    go (SS @i') (FCons xs) = There (go (snat @i') xs)
+    go SZ (Cons _) = Here
+    go (SS @i') (Cons xs) = There (go (snat @i') xs)
 
 -- | A category on a 'Finite' kind whose objects are exactly its numbered inhabitants: 'withIndex'
 -- and 'withOb' convert between the two notions, and 'atOb' looks an object up by its index.
@@ -339,15 +329,15 @@ mapWrap
   :: forall {j} {k} (w :: j -> k) xs
    . (forall (a :: j). (KnownIndex a) => KnownIndex (w a))
   => IndexedList xs -> IndexedList (MapWrap w xs)
-mapWrap FNil = FNil
-mapWrap (FCons @a xs) = FCons @(w a) (mapWrap @w xs)
+mapWrap Nil = Nil
+mapWrap (Cons @a xs) = Cons @(w a) (mapWrap @w xs)
 
 withLookupMapWrap
   :: forall {j} {k} (w :: j -> k) xs i r
    . SNat i -> IndexedList xs -> ((Lookup (MapWrap w xs) i ~ FmapWrap w (Lookup xs i)) => r) -> r
-withLookupMapWrap _ FNil r = r
-withLookupMapWrap SZ (FCons _) r = r
-withLookupMapWrap (SS @i') (FCons xs) r = withLookupMapWrap @w (snat @i') xs r
+withLookupMapWrap _ Nil r = r
+withLookupMapWrap SZ (Cons _) r = r
+withLookupMapWrap (SS @i') (Cons xs) r = withLookupMapWrap @w (snat @i') xs r
 
 -- | The two 'Finite' methods of a wrapper kind, which are the same for every wrapper.
 wrapFinite
@@ -364,9 +354,9 @@ withWrapAtLookup i r = withAtLookup @j i (withLookupMapWrap @w i (finite @j) r)
 
 -- | The default 'atOb': walk the object list to the index.
 lookupOb :: forall k (j :: Nat) xs. (Enumerable k) => SNat j -> IndexedList (xs :: [k]) -> AtOb k (Lookup xs j)
-lookupOb _ FNil = AtNothing
-lookupOb SZ (FCons @a _) = withOb @k @a AtJust
-lookupOb (SS @j') (FCons xs) = lookupOb @k (snat @j') xs
+lookupOb _ Nil = AtNothing
+lookupOb SZ (Cons @a _) = withOb @k @a AtJust
+lookupOb (SS @j') (Cons xs) = lookupOb @k (snat @j') xs
 
 instance Indexed BOOL
 

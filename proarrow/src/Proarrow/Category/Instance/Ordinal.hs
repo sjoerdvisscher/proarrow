@@ -16,7 +16,7 @@ import Proarrow.Category.Enriched.Thin
   , Finite (..)
   , FmapWrap
   , Indexed (..)
-  , IndexedList (..)
+  , IndexedList
   , Lookup
   , MapWrap
   , ThinProfunctor (..)
@@ -50,6 +50,7 @@ import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
+import Proarrow.Object (ListOf (..))
 import Prelude qualified as P
 
 type data ORDINAL n where
@@ -138,12 +139,12 @@ withOrdObjects
   => SNat i -> ((Lookup (OrdObjects n) i ~ OrdAt n i) => IndexedList (OrdObjects n) -> r) -> r
 withOrdObjects i k =
   ordSize @n
-    (k FNil)
-    (case i of SZ -> k (FCons FNil); SS -> k (FCons FNil))
+    (k Nil)
+    (case i of SZ -> k (Cons Nil); SS -> k (Cons Nil))
     ( \ @m -> case i of
-        SZ -> withOrdObjects @(S m) SZ \xs -> k (FCons (mapWrap @OS xs))
+        SZ -> withOrdObjects @(S m) SZ \xs -> k (Cons (mapWrap @OS xs))
         SS @i' -> withOrdObjects @(S m) (snat @i') \xs ->
-          withLookupMapWrap @OS (snat @i') xs (k (FCons (mapWrap @OS xs)))
+          withLookupMapWrap @OS (snat @i') xs (k (Cons (mapWrap @OS xs)))
     )
 
 -- | The ordinal at an index, if there is one. 'Enumerable' cannot go through the generic 'atOb',

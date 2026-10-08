@@ -45,7 +45,6 @@ import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), ap
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified
   ( IsList (..)
-  , SList (..)
   , Strictified (..)
   , obj1
   , singleton
@@ -54,6 +53,7 @@ import Proarrow.Category.Monoidal.Strictified
   )
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Object (mapListOf)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Tools.Diagrams.Dot (DOT, Dot)
 import Proarrow.Tools.Diagrams.Dot qualified as Dot
@@ -203,10 +203,7 @@ withEraseDual r =
 
 -- | The labels of the wires of @ws@ as they are shown, and their kinds.
 wires :: forall (ws :: [W]). (IsList ws) => [(String, WireKind)]
-wires = case sList @ws of
-  SNil -> []
-  SSing @w -> [wireInfo @w]
-  SCons @w @ws' -> wireInfo @w : wires @ws'
+wires = mapListOf (\ @w -> wireInfo @w) (sList @ws)
 
 wireKinds :: forall (ws :: [W]). (IsList ws) => [WireKind]
 wireKinds = map snd (wires @ws)

@@ -18,7 +18,8 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Testing
   ( GenTotal (..)
-  , Some (..)
+  , Some
+  , SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
@@ -229,8 +230,11 @@ genDepthSub d =
     , [liftA2 cons s t | SS <- [sing @b], Just s <- [genDepthSub (d - 1)], Just t <- [genDepthTm (d - 1)]]
     ]
       ++ [ [liftA2 (.) l r | Just l <- [genDepthSub @m @b (d - 1)], Just r <- [genDepthSub (d - 1)]]
-         | Some @m <- [Some @Z, Some @(S Z), Some @(S (S Z)), Some @(S (S (S Z)))]
+         | Some @m <- smallContexts
          ]
+
+smallContexts :: [Some CON]
+smallContexts = [Some @Z, Some @(S Z), Some @(S (S Z)), Some @(S (S (S Z)))]
 
 genDepthTm :: forall a. (Ob a) => Int -> Maybe (Gen (Tm a))
 genDepthTm 0 = Nothing
@@ -241,7 +245,7 @@ genDepthTm d =
     , [liftA2 ($$) l r | Just l <- [genDepthTm (d - 1)], Just r <- [genDepthTm (d - 1)]]
     ]
       ++ [ [liftA2 lmap s t | Just t <- [genDepthTm @b (d - 1)], Just s <- [genDepthSub (d - 1)]]
-         | Some @b <- [Some @Z, Some @(S Z), Some @(S (S Z)), Some @(S (S (S Z)))]
+         | Some @b <- smallContexts
          ]
 
 oneof' :: [[Gen a]] -> Maybe (Gen a)

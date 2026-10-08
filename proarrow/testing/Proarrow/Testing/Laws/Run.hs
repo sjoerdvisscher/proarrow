@@ -94,7 +94,8 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 import Proarrow.Promonad qualified as Promonad
 import Proarrow.Testing
-  ( Some (..)
+  ( Some
+  , SomeOf (..)
   , SomeProfunctorElt (..)
   , TestObIsOb
   , Testable (..)

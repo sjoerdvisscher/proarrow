@@ -15,7 +15,7 @@ import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
 import Proarrow.Testing
   ( GenTotal (..)
-  , Some (..)
+  , SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)

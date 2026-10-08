@@ -34,7 +34,6 @@ import Proarrow.Category.Enriched.Thin
   , FmapWrap
   , Index
   , Indexed (..)
-  , IndexedList (..)
   , MapWrap
   , Objects
   , finite
@@ -46,6 +45,7 @@ import Proarrow.Category.Instance.FinHask (FINHASK (..), arr)
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Instance.Ordinal (IsOrdinal, ORDINAL)
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, (\\))
+import Proarrow.Object (lengthListOf)
 import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 -- | An internal category in a category @k@.
@@ -103,11 +103,7 @@ data CompIx k = CompIx (ArrIx k) (ArrIx k)
 
 -- | How many objects @k@ has, by walking its object list.
 obCount :: forall k. (Enumerable k) => Natural
-obCount = go (finite @k)
-  where
-    go :: IndexedList (xs :: [k]) -> Natural
-    go FNil = 0
-    go (FCons xs) = 1 P.+ go xs
+obCount = P.fromIntegral (lengthListOf (finite @k))
 
 -- | Recover the object sitting at an index, together with the 'Ob' evidence that lets the
 -- 'Finitary' methods be called at it. The index must be below 'obCount'; every index the

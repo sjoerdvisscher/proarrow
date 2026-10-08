@@ -5,7 +5,33 @@
 -- list concatenation, and a morphism @as ~> bs@ is a @'Fold' as ~> 'Fold' bs@ in @k@ (the
 -- 'Strictified' arrow). Unitors and associators become identities, which makes composing long
 -- tensor expressions, string diagrams in particular, much more convenient.
-module Proarrow.Category.Monoidal.Strictified where
+module Proarrow.Category.Monoidal.Strictified
+  ( -- * Lists of objects
+    type (++)
+  , IsList (..)
+  , Obs
+  , withObs
+  , withIsListOf
+  , Fold
+  , fold
+  , withObFold
+
+    -- * The strictified category
+  , Strictified (..)
+  , (==)
+  , singleton
+  , obj1
+  , concatMany
+  , splitMany
+  , swap2
+
+    -- * Folding and splitting
+  , concatFold
+  , splitFold
+  , foldAppendCase
+  , splitThen
+  , thenConcat
+  ) where
 
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
@@ -17,21 +43,13 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , associatorDefault
   )
-import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Ob', Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Object (ListOf (..), type (++))
 
 infixl 7 ==
 
 (==) :: (CategoryOf k) => ((a :: k) ~> b) -> (b ~> c) -> a ~> c
 f == g = g . f
-
-type family (as :: [k]) ++ (bs :: [k]) :: [k] where
-  '[] ++ bs = bs
-  (a ': as) ++ bs = a ': (as ++ bs)
-
-data SList as where
-  SNil :: SList '[]
-  SSing :: (Ob a) => SList '[a]
-  SCons :: (Ob a, Ob as, Ob bs, as ~ b ': bs) => SList (a ': as)
 
 type IsList :: forall {k}. [k] -> Constraint
 class (CategoryOf k, Obs as, Strictly as) => IsList (as :: [k]) where
@@ -40,28 +58,28 @@ class (CategoryOf k, Obs as, Strictly as) => IsList (as :: [k]) where
     -> (forall a. (Ob a, as ~ '[a]) => r)
     -> (forall b bs c cs. (Ob b, Ob bs, Ob cs, as ~ (b ': bs), bs ~ (c ': cs)) => r)
     -> r
-  sList :: SList as
+  sList :: ListOf Ob' as
   withIsList2 :: (IsList bs) => ((IsList (as ++ bs)) => r) -> r
   swap1 :: (Ob b, SymMonoidal k) => as ++ '[b] ~> b ': as
   swap1Inv :: (Ob b, SymMonoidal k) => b ': as ~> as ++ '[b]
   swap' :: (IsList (bs :: [k]), SymMonoidal k) => as ++ bs ~> bs ++ as
 instance (CategoryOf k) => IsList ('[] :: [k]) where
   listCase n _ _ = n
-  sList = SNil
+  sList = Nil
   withIsList2 r = r
   swap1 = id
   swap1Inv = id
   swap' = id
 instance (Ob (a :: k), CategoryOf k) => IsList '[a] where
   listCase _ s _ = s
-  sList = SSing
+  sList = Cons Nil
   withIsList2 @bs r = listCase @bs r r r
   swap1 @b = Str (swap @k @a @b)
   swap1Inv @b = Str (swap @k @b @a)
   swap' @bs = swap1Inv @bs @a
 instance (Ob (a1 :: k), IsList (a2 ': as), IsList as) => IsList (a1 ': a2 ': as) where
   listCase _ _ c = c
-  sList = SCons
+  sList = Cons (sList @(a2 ': as))
   withIsList2 @bs r = withIsList2 @(a2 ': as) @bs $ withIsList2 @as @bs r
   swap1 @b = case swap1 @(a2 ': as) @b of f -> (Str @[a1, b] @[b, a1] (swap @_ @a1 @b) ** obj @(a2 ': as)) . (obj @'[a1] ** f)
   swap1Inv @b = case swap1Inv @(a2 ': as) @b of f -> (obj @'[a1] ** f) . (Str @[b, a1] @[a1, b] (swap @_ @b @a1) ** obj @(a2 ': as))
@@ -137,6 +155,13 @@ thenConcat
    . (Ob as, Ob bs, Monoidal k)
   => (x ~> Fold as ** Fold bs) -> x ~> Fold (as ++ bs)
 thenConcat h = foldAppendCase @as @bs h (concatFold @as @bs . h)
+
+-- | The class from the list of its elements.
+withIsListOf
+  :: forall {k} (c :: k -> Constraint) (as :: [k]) r
+   . (CategoryOf k, forall x. (c x) => Ob' x) => ListOf c as -> ((IsList as) => r) -> r
+withIsListOf Nil r = r
+withIsListOf (Cons @x @rest rest) r = withIsListOf rest (withIsList2 @'[x] @rest r)
 
 type Strictified :: CAT [k]
 data Strictified as bs where

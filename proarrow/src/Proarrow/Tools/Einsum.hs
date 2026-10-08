@@ -42,7 +42,6 @@ import Proarrow.Category.Instance.OpenHypergraph
   , openHypergraph
   , readBack
   , someArrow
-  , sortsToList
   )
 import Proarrow.Category.Instance.Product (Fst, Snd)
 import Proarrow.Category.Monoidal (State)
@@ -50,6 +49,7 @@ import Proarrow.Category.Monoidal.Hypergraph (Hypergraph)
 import Proarrow.Category.Monoidal.Strictified (Fold, type (++))
 import Proarrow.Core (CategoryOf (..))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Object (KnownListOf (..), mapListOf, someOfList)
 
 -- | A tensor with indices of the given objects: a state of their tensor, as a morphism of
 -- 'Strictified' from @'[]@.
@@ -269,13 +269,10 @@ type family Len xs where
 
 -- | The letters as a value.
 type KnownChars :: [Char] -> Constraint
-class KnownChars ls where
-  chars :: [Char]
+type KnownChars ls = KnownListOf KnownChar ls
 
-instance KnownChars '[] where
-  chars = []
-instance (KnownChar c, KnownChars ls) => KnownChars (c ': ls) where
-  chars = charVal (Proxy @c) : chars @ls
+chars :: forall ls. (KnownChars ls) => [Char]
+chars = mapListOf @KnownChar (\ @c -> charVal (Proxy @c)) (listOf @KnownChar @ls)
 
 -- | The open hypergraph of a specification: a node for each letter, of the sort of its object, a box
 -- for each tensor with an output for each of its letters, and the output letters as the boundary.
@@ -294,7 +291,7 @@ network tensors out =
   where
     -- the letters in the order they first appear, with their sorts
     letters = nubOrd (P.concatMap P.fst tensors)
-    sortOfLetter = M.fromList [(l, x) | (ls, SomeArrow _ ys _) <- tensors, (l, x) <- P.zip ls (sortsToList ys)]
+    sortOfLetter = M.fromList [(l, x) | (ls, SomeArrow _ ys _) <- tensors, (l, x) <- P.zip ls (someOfList ys)]
     index = M.fromList (P.zip letters [0 ..])
 
 -- Einsum

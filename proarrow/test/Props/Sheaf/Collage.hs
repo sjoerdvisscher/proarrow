@@ -45,7 +45,7 @@ import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor)
 import Proarrow.Profunctor.Instance.Yoneda (Yo)
 import Proarrow.Testing
-  ( Some (..)
+  ( SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
@@ -187,7 +187,10 @@ instance Testable (Copresheaf Patches) where
   genSome =
     genSomeList
       "Copresheaf Patches"
-      [Some @(Yo '() (OP (L '(FLS, FLS)))), Some @(Yo '() (OP (R '()))), Some @(TerminalProfunctor :: Copresheaf Patches)]
+      [ Some @(Yo '() (OP (L '(FLS, FLS))))
+      , Some @(Yo '() (OP (R '())))
+      , Some @(TerminalProfunctor :: Copresheaf Patches)
+      ]
 
 -- | Restriction of copresheaves along 'Inc', written as a right Kan extension.
 type RanInc :: Copresheaf Patches -> Copresheaf (BOOL, BOOL)

@@ -39,7 +39,7 @@ import Proarrow.Category.Enriched.Thin
   , Enumerable (..)
   , Finite (..)
   , Indexed (..)
-  , IndexedList (..)
+  , IndexedList
   , KnownList (..)
   )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -73,6 +73,7 @@ import Proarrow.Core
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks)
+import Proarrow.Object (KnownListOf (..), ListOf (..), mapListOf)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
@@ -110,25 +111,19 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (FINITARY j k) wher
 -- * Tables of fibres
 
 -- | A type-level list of naturals, reflected.
-class KnownNats (ns :: [Nat]) where
-  natsVal :: [Natural]
+type KnownNats :: [Nat] -> Constraint
+type KnownNats = KnownListOf SNatI
 
-instance KnownNats '[] where
-  natsVal = []
-
-instance (SNatI n, KnownNats ns) => KnownNats (n ': ns) where
-  natsVal = N.snatToNatural (snat @n) : natsVal @ns
+natsVal :: forall ns. (KnownNats ns) => [Natural]
+natsVal = mapListOf @SNatI (\ @n -> N.snatToNatural (snat @n)) (listOf @SNatI @ns)
 
 -- | A type-level list of lists of naturals, reflected: the fibres of a partial surjection out of
 -- one hom-set.
-class KnownFibres (fs :: [[Nat]]) where
-  fibresVal :: [[Natural]]
+type KnownFibres :: [[Nat]] -> Constraint
+type KnownFibres = KnownListOf KnownNats
 
-instance KnownFibres '[] where
-  fibresVal = []
-
-instance (KnownNats f, KnownFibres fs) => KnownFibres (f ': fs) where
-  fibresVal = natsVal @f : fibresVal @fs
+fibresVal :: forall fs. (KnownFibres fs) => [[Natural]]
+fibresVal = mapListOf @KnownNats (\ @f -> natsVal @f) (listOf @KnownNats @fs)
 
 -- | Reify a list of lists of naturals.
 fibres :: forall r. [[Natural]] -> (forall fs. (KnownFibres fs) => r) -> r
@@ -152,12 +147,12 @@ buildTable
 buildTable cell = rows (finite @k)
   where
     rows :: forall (as :: [k]) r'. IndexedList as -> (forall t. (KnownTable (Objects j) as t) => r') -> r'
-    rows FNil k' = k' @'[]
-    rows (FCons @a as) k' = withOb @k @a (row @a (finite @j) \ @r0 -> rows as \ @t -> k' @(r0 ': t))
+    rows Nil k' = k' @'[]
+    rows (Cons @a as) k' = withOb @k @a (row @a (finite @j) \ @r0 -> rows as \ @t -> k' @(r0 ': t))
     row
       :: forall (a :: k) (bs :: [j]) r'. (Ob a) => IndexedList bs -> (forall r0. (KnownList KnownFibres bs r0) => r') -> r'
-    row FNil k' = k' @'[]
-    row (FCons @b bs) k' = withOb @j @b (fibres (cell @a @b) \ @fs -> row @a bs \ @r0 -> k' @(fs ': r0))
+    row Nil k' = k' @'[]
+    row (Cons @b bs) k' = withOb @j @b (fibres (cell @a @b) \ @fs -> row @a bs \ @r0 -> k' @(fs ': r0))
 
 -- * Reindexing along a table of fibres
 

@@ -46,7 +46,7 @@ import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), singleton
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Testing
-  ( Some (..)
+  ( SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)

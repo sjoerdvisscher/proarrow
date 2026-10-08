@@ -21,7 +21,7 @@ import Proarrow.Category.Enriched.Thin
   , Decision (..)
   , Enumerable (..)
   , Finite (..)
-  , IndexedList (..)
+  , IndexedList
   , Length
   , Member (..)
   , Thin
@@ -37,7 +37,7 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Core qualified as P
 import Proarrow.Functor (FunctorForRep (..), withMappedOb)
-import Proarrow.Object (pattern Objs)
+import Proarrow.Object (ListOf (..), pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..), withObRep)
@@ -140,8 +140,8 @@ search
   :: forall {i} {j} {k} (p :: j +-> k) (q :: i +-> j) (a :: k) (c :: i) (bs :: [j])
    . (DecidableProfunctor p, DecidableProfunctor q, Enumerable j, Ob a, Ob c)
   => IndexedList bs -> Decision (p :.: q) a c (Search bs p q a c)
-search FNil = No
-search (FCons @b bs) = withOb @j @b case (decide @p @a @b, decide @q @b @c) of
+search Nil = No
+search (Cons @b bs) = withOb @j @b case (decide @p @a @b, decide @q @b @c) of
   (Yes x, Yes y) -> Yes (x :.: y)
   (No, _) -> search @p @q @a @c bs
   (Yes _, No) -> search @p @q @a @c bs
@@ -302,14 +302,14 @@ row :: forall {k} v n (p :: k +-> k) b. (Closing v n p, Ob b) => Row v n p b (Ob
 row = case snat @n of
   SZ ->
     let homRow :: forall as. IndexedList as -> Row v 'Z p b as (MatCol v as (Hom k) b)
-        homRow FNil = RNil
-        homRow (FCons @a as) = withOb @k @a (withProObj @v @(Hom k) @a @b (RCons (homRow as)))
+        homRow Nil = RNil
+        homRow (Cons @a as) = withOb @k @a (withProObj @v @(Hom k) @a @b (RCons (homRow as)))
     in homRow (finite @k)
   SS @n' ->
     let prev = row @v @n' @p @b
         nextRow :: forall as. IndexedList as -> Row v ('S n') p b as (NextRow v as (WalkRow v n' p b) p b)
-        nextRow FNil = RNil
-        nextRow (FCons @a as) =
+        nextRow Nil = RNil
+        nextRow (Cons @a as) =
           withOb @k @a
             ( withProObj @v @(Hom k) @a @b
                 ( withObMatVec @a

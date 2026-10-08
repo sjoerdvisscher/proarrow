@@ -18,7 +18,7 @@ import Proarrow.Promonad.Reader (Reader)
 import Proarrow.Promonad.Writer (Writer)
 
 import Proarrow.Testing
-  ( Some (..)
+  ( SomeOf (..)
   , SomeProfunctorElt (..)
   , Testable (..)
   , TestableProfunctor (..)

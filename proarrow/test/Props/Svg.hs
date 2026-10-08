@@ -21,9 +21,10 @@ import Proarrow.Category.Monoidal.Dialogue (DialogueStructures)
 import Proarrow.Category.Monoidal.Hypergraph (FrobeniusStructures)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomousStructures)
 import Proarrow.Category.Monoidal.Strength (TracedStructures)
-import Proarrow.Category.Monoidal.Strictified (IsList (..))
+import Proarrow.Category.Monoidal.Strictified (withIsListOf)
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..), Supplies)
+import Proarrow.Object (withListOf)
 import Proarrow.Tools.Diagrams.Svg
   ( Diagram (..)
   , KnownWire
@@ -47,7 +48,7 @@ import Proarrow.Tools.Diagrams.Svg
 import Proarrow.Tools.SMC.Examples (combineDualT, hadamardT, loopCC, matMulT, rotT, snakeT, swapT, traceIdxT)
 
 import Proarrow.Testing
-  ( Some (..)
+  ( SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
@@ -160,24 +161,14 @@ test =
       Trace _ d -> matching d
       _ -> True
 
--- | A wire of the palette objects are drawn from.
-data SomeWire where
-  SomeWire :: forall (w :: W). (KnownWire w) => SomeWire
-
 -- | Up to two wires, each a plain wire, a dual wire or the unit wire, so that the laws are checked
 -- where the meaning leaves wires out or forgets that they are dual.
 instance Testable SVG where
   genSome = do
     num <- elem [0 .. 2]
-    ws <- replicateM num (elem [SomeWire @(Wire "A"), SomeWire @(Wire "B"), SomeWire @(Co "A"), SomeWire @I])
-    pure (foldWires ws)
+    ws <- replicateM num (elem [Some @(Wire "A"), Some @(Wire "B"), Some @(Co "A"), Some @I])
+    pure (withListOf @KnownWire ws \ @ws l -> withIsListOf l (Some @(S ws)))
   showOb @ws = List.intercalate "," $ map fst $ wires @(UN S ws)
-
-foldWires :: [SomeWire] -> Some SVG
-foldWires [] = Some @(S '[])
-foldWires [SomeWire @w] = Some @(S '[w])
-foldWires (SomeWire @w : rest) = case foldWires rest of
-  Some @(S ws) -> withIsList2 @'[w] @ws (Some @(S (w ': ws)))
 
 instance (Ob a, Ob b) => TestingEqShow (Svg a b) where
   eqP (Svg @as @bs l _) (Svg r _) = withIsListErase @as $ withIsListErase @bs $ eqP l r

@@ -93,7 +93,7 @@ import Proarrow.Profunctor.Instance.Sieve (Sieve)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo)
 import Proarrow.Testing
-  ( Some (..)
+  ( SomeOf (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)

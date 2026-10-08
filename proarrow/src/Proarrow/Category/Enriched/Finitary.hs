@@ -34,7 +34,6 @@ import Proarrow.Category.Enriched.Thin
   , Enumerable (..)
   , Finite (..)
   , Indexed (..)
-  , IndexedList (..)
   )
 import Proarrow.Category.Instance.Bool (Booleans)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -43,6 +42,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..), withMappedOb)
+import Proarrow.Object (mapListOf)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
@@ -94,11 +94,7 @@ objIndex = withIndex @k @a (N.snatToNatural (snat @(Index a)))
 
 -- | Everything an enumeration of a kind's objects can do at each of them, concatenated.
 foreachOb :: forall k r. (Enumerable k) => (forall (a :: k). (Ob a) => [r]) -> [r]
-foreachOb f = go (finite @k)
-  where
-    go :: forall (as :: [k]). IndexedList as -> [r]
-    go FNil = []
-    go (FCons @a as) = withOb @k @a (f @a) P.++ go as
+foreachOb f = P.concat (mapListOf (\ @a -> withOb @k @a (f @a)) (finite @k))
 
 -- * Thin profunctors
 
