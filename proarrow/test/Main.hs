@@ -8,6 +8,7 @@ import Prelude
 import Examples.Cbpv qualified as Cbpv
 import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
+import Examples.Einsum qualified as Einsum
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
@@ -94,6 +95,7 @@ main =
           "Examples"
           [ CustomLaws.test
           , Database.test
+          , Einsum.test
           , FreeExample.test
           , Graph.test
           , STLC.test

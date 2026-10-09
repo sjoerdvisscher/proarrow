@@ -27,7 +27,7 @@ import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, distRInv)
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, Sized (..), cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
@@ -357,6 +357,10 @@ instance (P.Num a) => Hypergraph (MatK a)
 -- | @M n@ and @M m@ are isomorphic when @n@ and @m@ are equal.
 instance (P.Num a) => DecidableIso (MatK a) where
   isoOf @_ @(M n) @(M m) = isoFromEquality (P.fmap (\Refl -> Refl) (eqNat @n @m))
+
+-- | The size of @M n@ is its dimension, @n@.
+instance (P.Num a) => Sized (MatK a) where
+  sizeOf @(M n) = P.fromIntegral (snatToNat (snat @n))
 
 instance (P.Num a) => CopyDiscard (MatK a)
 

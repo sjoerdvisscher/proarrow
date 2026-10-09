@@ -6,8 +6,9 @@
 -- free hypergraph category on its boxes, and two such morphisms are equal by the Frobenius laws
 -- exactly when they are 'isomorphic'.
 --
--- The sorts are types of a kind @s@, known at runtime through 'Typeable', so that a computed
--- apex knows the sorts of its nodes. A list of sorts @xs@ gives the boundary @'Wires' xs@.
+-- The sorts are objects of a category @s@, known at runtime, so that a computed apex knows the sorts
+-- of its nodes. A list of sorts @xs@ gives the boundary @'Wires' xs@. Comparing two open hypergraphs,
+-- or checking sorts given from outside, asks whether two sorts are isomorphic ('DecidableIso').
 module Proarrow.Category.Instance.OpenHypergraph
   ( -- * Sorts
     SomeSort
@@ -31,17 +32,23 @@ module Proarrow.Category.Instance.OpenHypergraph
   , WireSorts
   , box
   , openHypergraph
+  , unsafeOpenHypergraph
   , isomorphic
+  , sameSort
 
     -- * Read-back
   , SomeArrow (..)
   , someArrow
   , readBack
+  , readBackWith
 
     -- * Simplifying
   , SIMPLIFY
+  , Prim
+  , unsafePrim
   , prim
   , simplify
+  , simplifyWith
   ) where
 
 import Control.Monad (foldM, msum)
@@ -50,10 +57,11 @@ import Data.Kind (Constraint, Type)
 import Data.List qualified as List
 import Data.Map.Strict qualified as M
 import Data.Maybe (isJust)
+import Data.Ord (comparing)
 import Data.Set qualified as Set
-import Data.Type.Equality ((:~:) (..), (:~~:) (..), type (~))
+import Data.Type.Equality (type (~))
 import Data.Universe.Class (Finite (..), Universe (..))
-import Type.Reflection (Typeable, eqTypeRep, typeRep)
+import Unsafe.Coerce (unsafeCoerce)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.DecoratedCospan (DECCOSPAN (..), DecCospan (..))
@@ -61,12 +69,13 @@ import Proarrow.Category.Instance.FinHask (FINHASK (..), FinHask (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..))
-import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, traceHG)
+import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized (..), traceHG)
 import Proarrow.Category.Monoidal.Strictified
   ( Fold
   , Strictified (..)
   , concatMany
   , obj1
+  , singleton
   , splitMany
   , swap2
   , withIsListOf
@@ -76,7 +85,7 @@ import Proarrow.Category.Monoidal.Strictified
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
-import Proarrow.Core (CategoryOf (..), OB, Ob', Promonad (..), UN, (//), type (:&&:))
+import Proarrow.Core (CategoryOf (..), Kind, OB, Ob', Profunctor, Promonad (..), UN, (//))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (comultS, counitS, mappendS, memptyS)
 import Proarrow.Object
@@ -89,17 +98,21 @@ import Proarrow.Object
   , withKnownListOf
   , withListOf
   )
+import Proarrow.Optic.Iso (DecidableIso (..), withIso)
 
 -- * Sorts
 
--- | A sort of kind @s@, an object of the category of @s@, known at runtime. Sorts compare by their
--- type representation.
-type SomeSort :: Type -> Type
+-- | A sort of kind @s@, an object of the category of @s@, known at runtime.
+type SomeSort :: Kind -> Type
 type SomeSort s = SomeOf (SortOb @s)
 
--- | The evidence a sort carries: a runtime representation and objecthood.
+-- | The evidence a sort carries: objecthood.
 type SortOb :: forall s. s -> Constraint
-type SortOb @s = Typeable :&&: (Ob' :: s -> Constraint)
+type SortOb @s = (Ob' :: s -> Constraint)
+
+-- | Whether two sorts are isomorphic.
+sameSort :: forall s. (DecidableIso s) => SomeSort s -> SomeSort s -> P.Bool
+sameSort = lineUp (byIso @s)
 
 -- | The sorts of the ports of a sorted finite set.
 type PortSorts :: forall s. FINHASK -> [s]
@@ -107,7 +120,7 @@ type family PortSorts a where
   PortSorts (FH (Port xs)) = xs
 
 -- | The finite sets of ports with sorts of kind @s@, @'FH' ('Port' xs)@.
-type Sorted :: Type -> OB FINHASK
+type Sorted :: Kind -> OB FINHASK
 class (Ob a, a ~ FH (Port (PortSorts @s a)), SortList (PortSorts @s a)) => Sorted s a
 
 instance (Ob a, a ~ FH (Port (PortSorts @s a)), SortList (PortSorts @s a)) => Sorted s a
@@ -148,7 +161,7 @@ reifySorts :: forall s r. [SomeSort s] -> (forall (xs :: [s]). (SortList xs) => 
 reifySorts ss k = withListOf ss \ @xs l -> withKnownListOf l (k @xs)
 
 -- | The finite sets whose elements have sorts of kind @s@: a full subcategory of 'FINHASK'.
-type SORTED :: Type -> Type
+type SORTED :: Kind -> Kind
 type SORTED s = SUBCAT (Sorted s)
 
 -- | No ports.
@@ -221,7 +234,7 @@ instance Alternative (Boxes l :: SORTED s -> Type) where
       offset = lengthListOf (sorts @s @(PortSorts @s (UN SUB a)))
 
 -- | Open hypergraphs with boxes labelled by @l@ and wires of sorts of kind @s@.
-type OPENHG :: Type -> Type -> Type
+type OPENHG :: Kind -> Type -> Kind
 type OPENHG s l = DECCOSPAN (Boxes l :: SORTED s -> Type)
 
 -- | The boundary with a wire for each sort in the list.
@@ -248,10 +261,10 @@ box x =
 
 -- | The open hypergraph with nodes of the given sorts, the wires of @as@ and of @bs@ attached to
 -- the given nodes, and boxes on the given nodes, numbered from 0. Fails with a message unless every
--- wire has the sort of its node and every node exists.
+-- wire has a sort isomorphic to that of its node and every node exists.
 openHypergraph
   :: forall {s} l (as :: [s]) (bs :: [s])
-   . (SortList as, SortList bs)
+   . (SortList as, SortList bs, DecidableIso s)
   => [SomeSort s]
   -> [P.Int]
   -> [P.Int]
@@ -261,29 +274,46 @@ openHypergraph nodeSorts ins outs boxList
   | P.length ins P./= lengthListOf (sorts @s @as) P.|| P.length outs P./= lengthListOf (sorts @s @bs) =
       P.Left "openHypergraph: a boundary has a different number of wires than its sorts"
   | P.any
-      (\n -> n P.< 0 P.|| n P.>= P.length nodeSorts)
+      (`M.notMember` sortAt)
       (ins P.++ outs P.++ P.concat [inputs bx P.++ outputs bx | bx <- boxList]) =
       P.Left "openHypergraph: a wire or box is attached to a node that does not exist"
-  | P.fmap (nodeSorts P.!!) ins P./= sortList @s @as P.|| P.fmap (nodeSorts P.!!) outs P./= sortList @s @bs =
+  | P.not
+      ( lineUpAll byIso (P.fmap (sortAt M.!) ins) (sortList @s @as)
+          P.&& lineUpAll byIso (P.fmap (sortAt M.!) outs) (sortList @s @bs)
+      ) =
       P.Left "openHypergraph: a wire does not have the sort of its node"
-  | P.otherwise = reifySorts nodeSorts \ @ns ->
-      P.Right
-        ( DecCospan
-            (Sub (FinHask (M.fromList (P.zip universeF (P.fmap (Port @_ @ns) ins)))))
-            (Sub (FinHask (M.fromList (P.zip universeF (P.fmap (Port @_ @ns) outs)))))
-            (Boxes (P.fmap (P.fmap Port) boxList))
-        )
+  | P.otherwise = P.Right (unsafeOpenHypergraph nodeSorts ins outs boxList)
+  where
+    sortAt = M.fromList (P.zip [0 ..] nodeSorts)
 
--- | Whether two open hypergraphs differ only in the names of their nodes and the order of their
--- boxes: a bijection between the nodes that keeps their sorts, agrees with both boundaries and takes
--- the boxes of one to those of the other.
-isomorphic :: forall {s} l a b. (P.Eq l) => (a :: OPENHG s l) ~> b -> a ~> b -> P.Bool
+-- | 'openHypergraph' without its checks: the boundaries must have as many wires as their sorts,
+-- every wire and box must be attached to nodes that exist, and every wire must have the sort of its
+-- node. Only for hypergraphs that satisfy this by construction, such as those that 'simplify' is
+-- given, which trusts the sorts to be equal.
+unsafeOpenHypergraph
+  :: forall {s} l (as :: [s]) (bs :: [s])
+   . (SortList as, SortList bs)
+  => [SomeSort s]
+  -> [P.Int]
+  -> [P.Int]
+  -> [Box l P.Int]
+  -> Wires as ~> (Wires bs :: OPENHG s l)
+unsafeOpenHypergraph nodeSorts ins outs boxList = reifySorts nodeSorts \ @ns ->
+  DecCospan
+    (Sub (FinHask (M.fromList (P.zip universeF (P.fmap (Port @_ @ns) ins)))))
+    (Sub (FinHask (M.fromList (P.zip universeF (P.fmap (Port @_ @ns) outs)))))
+    (Boxes (P.fmap (P.fmap Port) boxList))
+
+-- | Whether two open hypergraphs differ only in the names of their nodes, the order of their boxes
+-- and their sorts up to isomorphism: a bijection between the nodes that keeps their sorts, agrees
+-- with both boundaries and takes the boxes of one to those of the other.
+isomorphic :: forall {s} l a b. (P.Eq l, DecidableIso s) => (a :: OPENHG s l) ~> b -> a ~> b -> P.Bool
 isomorphic
   (DecCospan @c1 (Sub (FinHask l1)) (Sub (FinHask r1)) (Boxes bs1))
   (DecCospan @c2 (Sub (FinHask l2)) (Sub (FinHask r2)) (Boxes bs2)) =
     -- the nodes that nothing is attached to can be matched up exactly when this holds
-    List.sort (P.fmap sort1 nodes1) P.== List.sort (P.fmap sort2 nodes2)
-      P.&& sameShapes (P.fmap shape bs1) (P.fmap shape bs2)
+    sameBag sameSort (P.fmap sort1 nodes1) (P.fmap sort2 nodes2)
+      P.&& sameBag (P.==) (P.fmap shape bs1) (P.fmap shape bs2)
       P.&& isJust
         (extendAll (M.empty, M.empty) (P.zip (M.elems l1) (M.elems l2) P.++ P.zip (M.elems r1) (M.elems r2)) P.>>= boxes bs1 bs2)
     where
@@ -292,11 +322,11 @@ isomorphic
       sort1 = sortOf @s @(UN SUB c1)
       sort2 = sortOf @s @(UN SUB c2)
       shape (Box x i o) = (x, P.length i, P.length o)
-      -- the boxes have the same labels and arities, counted with multiplicity
-      sameShapes [] ys = P.null ys
-      sameShapes (x : xs) ys = case List.break (P.== x) ys of
+      -- the same elements, counted with multiplicity
+      sameBag _ [] ys = P.null ys
+      sameBag eq (x : xs) ys = case List.break (eq x) ys of
         (_, []) -> P.False
-        (before, _ : after) -> sameShapes xs (before P.++ after)
+        (before, _ : after) -> sameBag eq xs (before P.++ after)
       boxes [] _ m = P.Just m
       boxes (x : xs) ys m = msum [match x y m P.>>= boxes xs rest | (y, rest) <- picks ys]
       match (Box lx ix ox) (Box ly iy oy) m
@@ -305,7 +335,7 @@ isomorphic
         | P.otherwise = P.Nothing
       extendAll = foldM (P.flip extend)
       extend (x, y) (fwd, bwd)
-        | sort1 x P./= sort2 y = P.Nothing
+        | P.not (sameSort (sort1 x) (sort2 y)) = P.Nothing
         | P.otherwise = case (M.lookup x fwd, M.lookup y bwd) of
             (P.Nothing, P.Nothing) -> P.Just (M.insert x y fwd, M.insert y x bwd)
             (P.Just y', P.Just x') | y' P.== y P.&& x' P.== x -> P.Just (fwd, bwd)
@@ -317,36 +347,64 @@ isomorphic
 
 -- | An arrow of the strictified category of @s@ whose lists of sorts are known at runtime, such as
 -- the interpretation of a box.
-type SomeArrow :: Type -> Type
+type SomeArrow :: Kind -> Type
 data SomeArrow s where
-  SomeArrow :: forall {s} (as :: [s]) bs. Sorts as -> Sorts bs -> Strictified as bs -> SomeArrow s
+  SomeArrow :: forall {s} (as :: [s]) bs. Sorts as -> Sorts bs -> as ~> bs -> SomeArrow s
 
 -- | An arrow as one whose sorts are known at runtime.
-someArrow :: forall {s} (as :: [s]) bs. (SortList as, SortList bs) => Strictified as bs -> SomeArrow s
+someArrow :: forall {s} (as :: [s]) bs. (SortList as, SortList bs) => as ~> bs -> SomeArrow s
 someArrow = SomeArrow (sorts @s @as) (sorts @s @bs)
 
 -- | The term of a hypergraph category that an open hypergraph stands for, given an arrow for each
--- label: its boxes in layers along the flow of their wires, with between two layers one spider per
--- node. A node that a box uses no later than a box makes it is fed back with a trace, which only a
--- cyclic hypergraph needs. Fails with a message when an arrow does not fit its box.
+-- label: 'readBackWith' with the sizes from 'Sized'.
 readBack
   :: forall {s} l a b
-   . (Hypergraph s)
+   . (Hypergraph s, Sized s, DecidableIso s)
   => (l -> SomeArrow s)
   -> (a :: OPENHG s l) ~> b
-  -> P.Either P.String (Strictified (WireSorts a) (WireSorts b))
-readBack interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (FinHask legOut)) (Boxes boxList)) =
+  -> P.Either P.String (WireSorts a ~> WireSorts b)
+readBack = readBackWith (sizeFromSized @s)
+
+-- | The term of a hypergraph category that an open hypergraph stands for, given the size of each
+-- sort and an arrow for each label: its boxes one at a time along the flow of their wires, with
+-- between two boxes one spider per node. A box first merges its own wires of one node and discards
+-- those that nothing else needs, and a node is merged as soon as no later box needs it, so a
+-- network of tensors is contracted pairwise. The order is numpy's greedy one: the next box is the
+-- one whose contraction with what is built so far makes the result grow least, its size less the
+-- sizes of the two parts, starting with the best pair. A node that a box uses no later than a box
+-- makes it is fed back with a trace, which only a cyclic hypergraph needs. Fails with a message
+-- when an arrow does not fit its box. An arrow whose sorts are isomorphic to those of its box is
+-- moved along the isomorphisms.
+readBackWith
+  :: forall {s} l a b
+   . (Hypergraph s, DecidableIso s)
+  => (SomeSort s -> P.Int)
+  -> (l -> SomeArrow s)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (WireSorts a ~> WireSorts b)
+readBackWith = readBackAligned (byIso @s)
+
+-- | The read-back, with the sorts lined up by the given alignment.
+readBackAligned
+  :: forall {s} l a b
+   . (Hypergraph s)
+  => Align s
+  -> (SomeSort s -> P.Int)
+  -> (l -> SomeArrow s)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (WireSorts a ~> WireSorts b)
+readBackAligned al sizeFn interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (FinHask legOut)) (Boxes boxList)) =
   hg // do
     arrows <- M.fromList P.<$> P.traverse interpBox boxesIx
     P.pure P.$ withListOf (P.fmap (nodeSort P.. KN) feedback) \fb ->
       let insS = sorts @s @(WireSorts a)
           outsS = sorts @s @(WireSorts b)
           start = appendListOf fb insS
-          (bundle, body) = P.foldl (step arrows) (P.fmap KN (feedback P.++ ins), Built start Same) (P.zip [1 ..] layers)
+          (bundle, body) = P.foldl (step arrows) (P.fmap KN (feedback P.++ ins), Built start Same) (P.zip [1 ..] order)
           final = transition isolated bundle (P.fmap KL feedback P.++ P.fmap outKey outs) `afterBuilt` body
       in case final of
-           Built ys whole -> case eqSorts ys (appendListOf fb outsS) of
-             P.Just Refl -> traceSorts fb insS outsS (arrowOf start whole)
+           Built ys whole -> case alignSteps al ys (appendListOf fb outsS) of
+             P.Just to -> traceSorts fb insS outsS (arrowOf ys to . arrowOf start whole)
              P.Nothing -> P.error "readBack: the boundaries were planned with other sorts"
   where
     nodes = universeF @(UN FH (UN SUB c))
@@ -359,13 +417,38 @@ readBack interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (FinHask legOut)) (B
     boxesIx = P.zip [0 :: P.Int ..] [P.fmap (index M.!) bx | bx <- boxList]
     -- a box depends on another when it uses a node the other makes
     dependsOn (i, bi) (j, bj) = i P./= j P.&& P.any (`P.elem` outputs bj) (inputs bi)
-    layers = layer boxesIx
-    layer [] = []
-    layer remaining = case [bx | bx <- remaining, P.not (P.any (dependsOn bx) remaining)] of
-      [] -> P.take 1 remaining : layer (P.drop 1 remaining)
-      ready -> ready : layer [bx | bx <- remaining, P.fst bx `P.notElem` P.fmap P.fst ready]
-    end = P.length layers P.+ 1
-    layerOf = M.fromList [(i, t) | (t, ly) <- P.zip [1 :: P.Int ..] layers, (i, _) <- ly]
+    -- the boxes one at a time, in numpy's greedy order: of the boxes whose inputs are made, the one
+    -- whose contraction with the open nodes costs least, or the first of the cheapest pair while no
+    -- node is open; a box on a cycle when no box is ready
+    order = schedule Set.empty boxesIx
+    schedule _ [] = []
+    schedule placed remaining =
+      let open = openAfter placed remaining
+          after bx = openAfter (Set.union placed (touches bx)) (without bx remaining)
+          cost bx = size (after bx) P.- size open P.- size (alone bx)
+          pairCost (x, y) =
+            size (openAfter (Set.union placed (Set.union (touches x) (touches y))) (without y (without x remaining)))
+              P.- size (alone x)
+              P.- size (alone y)
+          next
+            | Set.null open
+            , _ : _ : _ <- remaining =
+                P.fst (List.minimumBy (comparing pairCost) [(x, y) | x <- candidates remaining, y <- candidates (without x remaining)])
+            | P.otherwise = List.minimumBy (comparing cost) (candidates remaining)
+      in next : schedule (Set.union placed (touches next)) (without next remaining)
+    candidates remaining = case [bx | bx <- remaining, P.not (P.any (dependsOn bx) remaining)] of
+      [] -> P.take 1 remaining
+      ready -> ready
+    without bx = P.filter (\b -> P.fst b P./= P.fst bx)
+    touches (_, bx) = Set.fromList (inputs bx P.++ outputs bx)
+    -- the nodes something still to come or the boundary needs
+    neededBy rest = Set.unions (Set.fromList outs : [touches b | b <- rest])
+    -- the nodes that are open once the placed nodes are in, with the rest to come
+    openAfter placed rest = Set.intersection (Set.union (Set.fromList ins) placed) (neededBy rest)
+    -- what is left of a box on its own: its nodes that the boundary or another box needs
+    alone bx = Set.intersection (touches bx) (Set.union (Set.fromList ins) (neededBy (without bx boxesIx)))
+    size ns = P.product [P.fromIntegral (sizeFn (sortAt M.! n)) :: P.Double | n <- Set.toList ns]
+    layerOf = M.fromList (P.zip (P.fmap P.fst order) [1 :: P.Int ..])
     madeAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- boxesIx, n <- outputs bx]
     usedAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- boxesIx, n <- inputs bx]
     layersOf n m = M.findWithDefault [] n m
@@ -375,62 +458,121 @@ readBack interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (FinHask legOut)) (B
     -- a node attached to nothing is a closed loop, a spider without legs
     isolated = [KN n | n <- M.elems index, n `Set.notMember` attached]
     outKey n = if isFeedback n then KL n else KN n
-    -- the layers after which a wire is still needed
-    neededAt (KN n) = layersOf n usedAt P.++ [end | n `P.elem` outs, P.not (isFeedback n)]
-    neededAt (KL _) = [end]
+    -- whether a wire is needed after the given box: a later box uses it or makes another part of it,
+    -- or it is an output; what boxes make of a node fed back goes on its other wire, to the end
+    live t (KN n)
+      | isFeedback n = P.any (P.> t) (layersOf n usedAt)
+      | P.otherwise = P.any (P.> t) (layersOf n usedAt P.++ layersOf n madeAt) P.|| n `P.elem` outs
+    live _ (KL _) = P.True
     step
       :: forall (xs :: [s])
        . M.Map P.Int (SomeArrow s)
       -> ([Key], Built xs)
-      -> (P.Int, [(P.Int, Box l P.Int)])
+      -> (P.Int, (P.Int, Box l P.Int))
       -> ([Key], Built xs)
-    step arrows (bundle, body) (t, ly) =
-      let need = P.concat [P.fmap KN (inputs bx) | (_, bx) <- ly]
-          carry = [k | k <- nubOrd (bundle P.++ need), P.any (P.> t) (neededAt k)]
+    step arrows (bundle, body) (t, (i, bx)) =
+      let need = P.fmap KN (inputs bx)
+          made = P.fmap outKey (outputs bx)
+          -- a wire goes past the box when it is needed after it or is merged with a wire across it:
+          -- the carried wires, and what is left of the box, its wires of one node merged
+          carry = [k | k <- nubOrd (bundle P.++ need), live t k P.|| k `P.elem` made]
+          kept = [k | k <- nubOrd made, live t k P.|| k `P.elem` carry]
+          -- the box goes after the carried wires, next to the wires it is merged with later
           run :: forall (ws :: [s]). Sorts ws -> Built ws
-          run = boxesThen [arrows M.! i | (i, _) <- ly]
-      in ( P.concat [P.fmap outKey (outputs bx) | (_, bx) <- ly] P.++ carry
-         , run `afterBuilt` (transition [] bundle (need P.++ carry) `afterBuilt` body)
+          run ws = splitSorts (P.length carry) ws \pre post ->
+            beside pre (Built pre Same) post (transition [] made kept `afterBuilt` boxThen al (arrows M.! i) post)
+      in ( carry P.++ kept
+         , run `afterBuilt` (transition [] bundle (carry P.++ need) `afterBuilt` body)
          )
     interpBox (i, Box x is os) = case interp x of
       arr@(SomeArrow xs ys _)
-        | someOfList xs P.== P.fmap (nodeSort P.. KN) is P.&& someOfList ys P.== P.fmap (nodeSort P.. KN) os ->
-            P.Right (i, arr)
+        | lineUpAll al (someOfList xs) (nodeSorts is) P.&& lineUpAll al (someOfList ys) (nodeSorts os) -> P.Right (i, arr)
         | P.otherwise -> P.Left "readBack: the arrow of a label does not have the sorts of its box"
+    nodeSorts = P.fmap (nodeSort P.. KN)
     -- one spider per wire kind, also for the given kinds without wires, between permutations that
-    -- group the wires; the permutation goes on the side with fewer wires where it can
+    -- group the wires
     transition :: [Key] -> [Key] -> [Key] -> (forall (xs :: [s]). Sorts xs -> Built xs)
     transition extra from to xs =
-      let order = if P.length from P.>= P.length to then nubOrd (from P.++ to) else nubOrd (to P.++ from)
-          kinds = order P.++ [k | k <- extra, k `P.notElem` order]
+      let present = nubOrd (from P.++ to)
+          kinds = groupOrder from to present P.++ [k | k <- extra, k `P.notElem` present]
           count k ks = P.length (P.filter (P.== k) ks)
-          positions ks = [i | k <- kinds, i <- [j | (j, k') <- P.zip [0 ..] ks, k' P.== k]]
+          positions ks = positionsIn kinds ks
           identity = P.all (\k -> count k from P.== 1 P.&& count k to P.== 1) kinds
           spiders :: forall (ws :: [s]). Sorts ws -> Built ws
           spiders ws
             | identity = Built ws Same
-            | P.otherwise = spidersThen [(nodeSort k, count k from, count k to) | k <- kinds] ws
+            | P.otherwise = spidersThen al [(nodeSort k, count k from, count k to) | k <- kinds] ws
       in (permuteThen (inverse (positions to)) `afterBuilt` (spiders `afterBuilt` permuteThen (positions from) xs))
     inverse p = P.fmap P.snd (List.sort (P.zip p [0 ..]))
+    -- the positions of the wires in the order that groups them by kind
+    positionsIn kinds ks = [i | k <- kinds, i <- [j | (j, k') <- P.zip [0 :: P.Int ..] ks, k' P.== k]]
+    -- the order of the kinds that needs the fewest swaps, each weighed by the number of wires it
+    -- crosses: every order for a few kinds, else by the average position of their wires; the swaps
+    -- between two kinds depend only on which of them goes first
+    groupOrder from to present
+      | P.length present P.<= 6 = List.minimumBy (comparing cost) (List.permutations present)
+      | P.otherwise = List.sortOn average present
+      where
+        crossings ks = M.fromListWith (P.+) [((a, b), 1 :: P.Int) | (j, a) <- P.zip [0 :: P.Int ..] ks, b <- P.take j ks, a P./= b]
+        weighed = M.unionWith (P.+) (P.fmap (P.* P.length from) (crossings from)) (P.fmap (P.* P.length to) (crossings to))
+        -- each pair of kinds in the wrong order costs its wires that cross
+        cost kinds = P.sum [M.findWithDefault 0 (a, b) weighed | (j, b) <- P.zip [0 :: P.Int ..] kinds, a <- P.take j kinds]
+        average k =
+          let is = [i | (i, k') <- P.zip [0 :: P.Int ..] (from P.++ to), k' P.== k]
+          in P.fromIntegral (P.sum is) P./ (P.fromIntegral (P.length is) :: P.Double)
 
 -- * Simplifying
 
 -- | Open hypergraphs whose boxes are arrows of @k@: the category to run a term of a hypergraph
 -- category in, with the arrows it uses made boxes by 'prim', to 'simplify' it.
-type SIMPLIFY :: Type -> Type
-type SIMPLIFY k = OPENHG k (SomeArrow k)
+type SIMPLIFY :: Kind -> Kind
+type SIMPLIFY k = OPENHG k (Prim k)
+
+-- | The label of a box of 'SIMPLIFY': the arrow the box was made from, whose sorts are those of the
+-- box. Made only by 'prim', so 'simplify' can trust the sorts. Taking a label out of one hypergraph
+-- and attaching it to other nodes with 'openHypergraph' breaks that trust.
+type Prim :: Kind -> Type
+newtype Prim k = Prim (SomeArrow k)
 
 -- | An arrow of @k@ between lists of objects as one box.
 prim
-  :: forall {k} (as :: [k]) bs. (SortList as, SortList bs) => Strictified as bs -> Wires as ~> (Wires bs :: SIMPLIFY k)
-prim f = box (someArrow f)
+  :: forall {k} (as :: [k]) bs. (SortList as, SortList bs) => as ~> bs -> Wires as ~> (Wires bs :: SIMPLIFY k)
+prim f = box (Prim (someArrow f))
 
--- | The term of @k@ that a term run in 'SIMPLIFY' stands for: its 'readBack', with each box the
--- arrow it was made from.
-simplify :: forall {k} a b. (Hypergraph k) => (a :: SIMPLIFY k) ~> b -> Strictified (WireSorts a) (WireSorts b)
-simplify t = case readBack P.id t of
+-- | An arrow as the label of a box with any sorts. Only for boxes whose sorts are equal to the
+-- arrow's by construction, as for 'unsafeOpenHypergraph'.
+unsafePrim :: SomeArrow k -> Prim k
+unsafePrim = Prim
+
+-- | The term of @k@ that a term run in 'SIMPLIFY' stands for: its read-back, with each box the
+-- arrow it was made from, and the sizes from 'Sized'.
+simplify :: forall {k} a b. (Hypergraph k, Sized k) => (a :: SIMPLIFY k) ~> b -> WireSorts a ~> WireSorts b
+simplify = simplifyWith (sizeFromSized @k)
+
+-- | 'simplify' with the given sizes. The sorts of a box are those of its arrow, so they need not be
+-- compared.
+simplifyWith
+  :: forall {k} a b. (Hypergraph k) => (SomeSort k -> P.Int) -> (a :: SIMPLIFY k) ~> b -> WireSorts a ~> WireSorts b
+simplifyWith sizeFn t = case readBackAligned trusted sizeFn (\(Prim a) -> a) t of
   P.Right r -> r
   P.Left e -> P.error e
+
+-- | The size of a sort, from 'Sized'.
+sizeFromSized :: forall s. (Sized s) => SomeSort s -> P.Int
+sizeFromSized (Some @x) = sizeOf @s @x
+
+-- | A way to line up a wire of one sort with one of another: nothing to do when they are equal, an
+-- arrow along their isomorphism otherwise, or nothing when they cannot be.
+type Align :: Kind -> Type
+type Align s = forall (x :: s) (y :: s). (Ob x, Ob y) => P.Maybe (Step '[x] '[y])
+
+-- | Sorts lined up along an isomorphism found by 'DecidableIso'.
+byIso :: forall s. (DecidableIso s) => Align s
+byIso @_ @x @y = P.fmap (\o -> withIso @Profunctor o \f _ -> Arrow (singleton f)) (isoOf @s @Profunctor @x @y)
+
+-- | Sorts taken to be equal, as they are when they come from the same arrow.
+trusted :: forall s. Align s
+trusted @_ @x @y = P.Just (unsafeCoerce (Same :: Step '[x] '[x]) :: Step '[x] '[y])
 
 -- | The wires of the read-back: a node, and the part of a node that cyclic boxes make, which is fed
 -- back to the node.
@@ -445,7 +587,7 @@ keyNode (KL n) = n
 type Step :: forall s. [s] -> [s] -> Type
 data Step xs ys where
   Same :: Step xs xs
-  Arrow :: Strictified xs ys -> Step xs ys
+  Arrow :: xs ~> ys -> Step xs ys
 
 -- | What is built so far from @xs@: the sorts it ends in and how it gets there.
 type Built :: forall s. [s] -> Type
@@ -461,19 +603,19 @@ afterBuilt k (Built ys f) = case k ys of
     compose h Same = h
     compose (Arrow q) (Arrow p) = Arrow (q . p)
 
-arrowOf :: (Monoidal s) => Sorts (xs :: [s]) -> Step xs ys -> Strictified xs ys
-arrowOf xs Same = idSorts xs
+arrowOf :: (Monoidal s) => Sorts (xs :: [s]) -> Step xs ys -> xs ~> ys
+arrowOf xs Same = withIsListOf xs id
 arrowOf _ (Arrow f) = f
 
 -- | Two built pieces side by side.
 beside :: (Monoidal s) => Sorts (xs :: [s]) -> Built xs -> Sorts xs' -> Built xs' -> Built (xs ++ xs')
-beside _ (Built ys Same) _ (Built ys' Same) = Built (appendListOf ys ys') Same
-beside xs (Built ys f) xs' (Built ys' g) = Built (appendListOf ys ys') (Arrow (arrowOf xs f ** arrowOf xs' g))
+beside xs (Built ys f) xs' (Built ys' g) = Built (appendListOf ys ys') (besideStep xs f xs' g)
 
--- | The identity, one wire at a time, so that tensoring onto it costs nothing in 'Strictified'.
-idSorts :: (Monoidal s) => Sorts (xs :: [s]) -> Strictified xs xs
-idSorts Nil = id
-idSorts (Cons @x rest) = obj1 @x ** idSorts rest
+-- | Two steps side by side.
+besideStep
+  :: (Monoidal s) => Sorts (xs :: [s]) -> Step xs ys -> Sorts xs' -> Step xs' ys' -> Step (xs ++ xs') (ys ++ ys')
+besideStep _ Same _ Same = Same
+besideStep xs f xs' g = Arrow (arrowOf xs f ** arrowOf xs' g)
 
 -- | The list split after its first @n@ sorts.
 splitSorts :: P.Int -> Sorts xs -> (forall pre post. (xs ~ (pre ++ post)) => Sorts pre -> Sorts post -> r) -> r
@@ -481,22 +623,30 @@ splitSorts 0 xs k = k Nil xs
 splitSorts n (Cons @x rest) k = splitSorts (n P.- 1) rest \pre post -> k (Cons @x pre) post
 splitSorts _ Nil _ = P.error "readBack: a split beyond the wires was planned"
 
-eqSorts :: Sorts xs -> Sorts ys -> P.Maybe (xs :~: ys)
-eqSorts Nil Nil = P.Just Refl
-eqSorts (Cons @x xs) (Cons @y ys) = do
-  HRefl <- eqTypeRep (typeRep @x) (typeRep @y)
-  Refl <- eqSorts xs ys
-  P.pure Refl
-eqSorts _ _ = P.Nothing
+-- | Whether two sorts can be lined up.
+lineUp :: forall s. Align s -> SomeSort s -> SomeSort s -> P.Bool
+lineUp al (Some @x) (Some @y) = isJust (al @x @y)
 
-single :: forall {s} (x :: s). (Typeable x, Ob' x) => Sorts '[x]
+-- | Whether two lists of sorts can be lined up, one by one.
+lineUpAll :: forall s. Align s -> [SomeSort s] -> [SomeSort s] -> P.Bool
+lineUpAll al xs ys = P.length xs P.== P.length ys P.&& P.and (P.zipWith (lineUp al) xs ys)
+
+-- | Wires of the first sorts lined up with the second, one at a time.
+alignSteps :: (Monoidal s) => Align s -> Sorts (xs :: [s]) -> Sorts ys -> P.Maybe (Step xs ys)
+alignSteps _ Nil Nil = P.Just Same
+alignSteps al (Cons @x xs) (Cons @y ys) = do
+  a <- al @x @y
+  rest <- alignSteps al xs ys
+  P.pure (besideStep (single @x) a xs rest)
+alignSteps _ _ _ = P.Nothing
+
+single :: forall {s} (x :: s). (Ob' x) => Sorts '[x]
 single = Cons @x Nil
 
--- | The boxes on the first wires, side by side, and the rest of the wires unchanged.
-boxesThen :: (Monoidal s) => [SomeArrow s] -> Sorts (xs :: [s]) -> Built xs
-boxesThen [] xs = Built xs Same
-boxesThen (SomeArrow as bs f : rest) xs = splitSorts (lengthListOf as) xs \pre post -> case eqSorts pre as of
-  P.Just Refl -> beside pre (Built bs (Arrow f)) post (boxesThen rest post)
+-- | The box on the first wires, and the rest of the wires unchanged.
+boxThen :: (Monoidal s) => Align s -> SomeArrow s -> Sorts (xs :: [s]) -> Built xs
+boxThen al (SomeArrow as bs f) xs = splitSorts (lengthListOf as) xs \pre post -> case alignSteps al pre as of
+  P.Just into -> beside pre (Built bs (Arrow (f . arrowOf pre into))) post (Built post Same)
   P.Nothing -> P.error "readBack: a box was planned on wires of other sorts"
 
 -- | The wires in the order that @p@ lists them, as adjacent swaps: the wire at position @j@ of the
@@ -511,35 +661,37 @@ permuteThen p xs0 = P.foldl (\built i -> swapThen i `afterBuilt` built) (Built x
 
 -- | The swap of the wires at positions @i@ and @i + 1@.
 swapThen :: (Hypergraph s) => P.Int -> Sorts (xs :: [s]) -> Built xs
-swapThen 0 (Cons @x (Cons @y rest)) = Built (Cons @y (Cons @x rest)) (Arrow (swap2 @x @y ** idSorts rest))
+swapThen 0 (Cons @x (Cons @y rest)) = Built (Cons @y (Cons @x rest)) (Arrow (swap2 @x @y ** withIsListOf rest id))
 swapThen i (Cons @x rest) = case swapThen (i P.- 1) rest of
   Built ys f -> Built (Cons @x ys) (Arrow (obj1 @x ** arrowOf rest f))
 swapThen _ Nil = P.error "readBack: a swap beyond the wires was planned"
 
 -- | For each sort, a spider from the given number of wires to the given number.
-spidersThen :: (Hypergraph s) => [(SomeSort s, P.Int, P.Int)] -> Sorts (xs :: [s]) -> Built xs
-spidersThen [] Nil = Built Nil Same
-spidersThen [] _ = P.error "readBack: wires without a spider were planned"
-spidersThen ((x, c, m) : rest) xs = splitSorts c xs \pre post -> beside pre (spider x c m pre) post (spidersThen rest post)
+spidersThen :: (Hypergraph s) => Align s -> [(SomeSort s, P.Int, P.Int)] -> Sorts (xs :: [s]) -> Built xs
+spidersThen _ [] Nil = Built Nil Same
+spidersThen _ [] _ = P.error "readBack: wires without a spider were planned"
+spidersThen al ((x, c, m) : rest) xs = splitSorts c xs \pre post -> beside pre (spider al x c m pre) post (spidersThen al rest post)
 
 -- | The spider of a sort from @c@ wires to @m@: merging all of them, then copying the result.
-spider :: (Hypergraph s) => SomeSort s -> P.Int -> P.Int -> Sorts (pre :: [s]) -> Built pre
-spider (Some @x) c m pre
+spider :: (Hypergraph s) => Align s -> SomeSort s -> P.Int -> P.Int -> Sorts (pre :: [s]) -> Built pre
+spider al (Some @x) c m pre
   | c P.== 1 P.&& m P.== 1 = Built pre Same
-  | P.otherwise = case copies @x m of Built ys f -> Built ys (Arrow (arrowOf (single @x) f . merges @x pre))
+  | P.otherwise = case copies @x m of Built ys f -> Built ys (Arrow (arrowOf (single @x) f . merges @x al pre))
 
--- | All the wires merged into one of sort @x@, or the unit of @x@ when there are none.
-merges :: forall {s} (x :: s) pre. (Hypergraph s, Typeable x, Ob x) => Sorts pre -> Strictified pre '[x]
-merges Nil = memptyS @x
-merges (Cons @y Nil) = case eqTypeRep (typeRep @x) (typeRep @y) of
-  P.Just HRefl -> obj1 @x
-  P.Nothing -> P.error "readBack: a spider was planned on wires of other sorts"
-merges (Cons @y rest@Cons{}) = case eqTypeRep (typeRep @x) (typeRep @y) of
-  P.Just HRefl -> mappendS @x . (obj1 @x ** merges @x rest)
+-- | All the wires merged into one of sort @x@, each lined up with it first, or the unit of @x@ when
+-- there are none.
+merges :: forall {s} (x :: s) pre. (Hypergraph s, Ob x) => Align s -> Sorts pre -> pre ~> '[x]
+merges _ Nil = memptyS @x
+merges al (Cons @y Nil) = toX @y al
+merges al (Cons @y rest@Cons{}) = mappendS @x . (toX @y al ** merges @x al rest)
+
+toX :: forall {s} y (x :: s). (Monoidal s, Ob x, Ob y) => Align s -> '[y] ~> '[x]
+toX al = case al @y @x of
+  P.Just a -> arrowOf (single @y) a
   P.Nothing -> P.error "readBack: a spider was planned on wires of other sorts"
 
 -- | One wire of sort @x@ copied to @m@, or discarded when @m@ is 0.
-copies :: forall {s} (x :: s). (Hypergraph s, Typeable x, Ob x) => P.Int -> Built '[x]
+copies :: forall {s} (x :: s). (Hypergraph s, Ob x) => P.Int -> Built '[x]
 copies 0 = Built Nil (Arrow (counitS @x))
 copies 1 = Built (single @x) Same
 copies 2 = Built (Cons @x (single @x)) (Arrow (comultS @x))
@@ -553,8 +705,8 @@ traceSorts
   => Sorts us
   -> Sorts xs
   -> Sorts ys
-  -> Strictified (us ++ xs) (us ++ ys)
-  -> Strictified xs ys
+  -> (us ++ xs) ~> (us ++ ys)
+  -> xs ~> ys
 traceSorts Nil _ _ f = f
 traceSorts us xs ys f =
   withIsListOf us P.$

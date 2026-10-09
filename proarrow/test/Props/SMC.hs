@@ -135,18 +135,18 @@ test =
             check
               "differs"
               (unMat (unStr (einsum @"i,j->ij" (Str u :: Tensor '[M2]) (Str v :: Tensor '[M3]))) == unMat ((u ** v) . leftUnitorInv))
-        , testPropertyWith fewer "ijk->kij moves the last index to the front (2, 3)" $ do
+        , testProperty "ijk->kij moves the last index to the front (2, 3)" $ do
             t <- genNamed @(Unit ~> Fold '[M2, M3, M2]) "t"
             check "differs from the reference" $
               entries (unStr (einsum @"ijk->kij" (Str t :: Tensor '[M2, M3, M2])))
                 == reference [("ijk", [2, 3, 2], entries t)] "kij"
-        , testPropertyWith fewer "ijk,jl->ljk contracts and reorders (2, 3)" $ do
+        , testProperty "ijk,jl->ljk contracts and reorders (2, 3)" $ do
             t <- genNamed @(Unit ~> Fold '[M2, M3, M2]) "t"
             u <- genNamed @(Unit ~> Fold '[M3, M2]) "u"
             check "differs from the reference" $
               entries (unStr (einsum @"ijk,jl->ljk" (Str t :: Tensor '[M2, M3, M2]) (Str u :: Tensor '[M3, M2])))
                 == reference [("ijk", [2, 3, 2], entries t), ("jl", [3, 2], entries u)] "ljk"
-        , testPropertyWith fewer "ij,jk,ki-> is the trace of the product of three (2)" $ do
+        , testProperty "ij,jk,ki-> is the trace of the product of three (2)" $ do
             t <- genNamed @(Unit ~> Fold '[M2, M2]) "t"
             u <- genNamed @(Unit ~> Fold '[M2, M2]) "u"
             v <- genNamed @(Unit ~> Fold '[M2, M2]) "v"
@@ -154,7 +154,47 @@ test =
               entries
                 (unStr (einsum @"ij,jk,ki->" (Str t :: Tensor '[M2, M2]) (Str u :: Tensor '[M2, M2]) (Str v :: Tensor '[M2, M2])))
                 == reference [("ij", [2, 2], entries t), ("jk", [2, 2], entries u), ("ki", [2, 2], entries v)] ""
-        , testPropertyWith fewer "ijk->ijki copies an index to a later position (2, 3)" $ do
+        , testProperty "kl,jkk,ijx,li->li: a ring, a diagonal, an index of one tensor, three-legged spiders (2, 3)" $ do
+            t <- genNamed @(Unit ~> Fold '[M2, M3]) "t"
+            u <- genNamed @(Unit ~> Fold '[M3, M2, M2]) "u"
+            v <- genNamed @(Unit ~> Fold '[M2, M3, M3]) "v"
+            w <- genNamed @(Unit ~> Fold '[M3, M2]) "w"
+            check "differs from the reference" $
+              entries
+                ( unStr
+                    ( einsum @"kl,jkk,ijx,li->li"
+                        (Str t :: Tensor '[M2, M3])
+                        (Str u :: Tensor '[M3, M2, M2])
+                        (Str v :: Tensor '[M2, M3, M3])
+                        (Str w :: Tensor '[M3, M2])
+                    )
+                )
+                == reference
+                  [ ("kl", [2, 3], entries t)
+                  , ("jkk", [3, 2, 2], entries u)
+                  , ("ijx", [2, 3, 3], entries v)
+                  , ("li", [3, 2], entries w)
+                  ]
+                  "li"
+        , testPropertyWith fewer "ij,jk,kl,lm->im is the product of four (3)" $ do
+            t <- genNamed @(Unit ~> Fold '[M3, M3]) "t"
+            u <- genNamed @(Unit ~> Fold '[M3, M3]) "u"
+            v <- genNamed @(Unit ~> Fold '[M3, M3]) "v"
+            w <- genNamed @(Unit ~> Fold '[M3, M3]) "w"
+            check "differs from the reference" $
+              entries
+                ( unStr
+                    ( einsum @"ij,jk,kl,lm->im"
+                        (Str t :: Tensor '[M3, M3])
+                        (Str u :: Tensor '[M3, M3])
+                        (Str v :: Tensor '[M3, M3])
+                        (Str w :: Tensor '[M3, M3])
+                    )
+                )
+                == reference
+                  [("ij", [3, 3], entries t), ("jk", [3, 3], entries u), ("kl", [3, 3], entries v), ("lm", [3, 3], entries w)]
+                  "im"
+        , testProperty "ijk->ijki copies an index to a later position (2, 3)" $ do
             t <- genNamed @(Unit ~> Fold '[M2, M3, M2]) "t"
             check "differs from the reference" $
               entries (unStr (einsum @"ijk->ijki" (Str t :: Tensor '[M2, M3, M2])))
@@ -162,8 +202,8 @@ test =
         ]
     ]
   where
-    -- these einsums form dense products of dimension 64 to 144 before contracting
-    fewer = defaultTestOptions{overrideNumTests = Just 20}
+    -- the product of all four would have 6561 entries; contracting pairwise keeps it at 81
+    fewer = defaultTestOptions{overrideNumTests = Just 5}
 
 -- | The entries of a state of Mat, the first index varying fastest.
 entries :: Mat (a :: MatK Int) b -> [Int]

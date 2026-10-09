@@ -10,9 +10,8 @@
 --
 -- The specification is an open hypergraph ("Proarrow.Category.Instance.OpenHypergraph"): a node for
 -- each letter, the tensors as boxes, and the output letters as its boundary. It is already in normal
--- form, and the result is its 'Proarrow.Category.Instance.OpenHypergraph.readBack': the tensors side
--- by side, then one spider for each letter, from its uses in the inputs to its uses in the output. The objects of the
--- indices have to be 'Data.Typeable.Typeable' for that.
+-- form, and the result is its 'Proarrow.Category.Instance.OpenHypergraph.simplify': the tensors
+-- one at a time, each letter summed out by a spider as soon as no later tensor has it.
 module Proarrow.Tools.Einsum
   ( Tensor
   , einsum
@@ -39,15 +38,16 @@ import Proarrow.Category.Instance.OpenHypergraph
   , SomeArrow (..)
   , SortList
   , Wires
-  , openHypergraph
-  , readBack
+  , simplify
   , someArrow
+  , unsafeOpenHypergraph
+  , unsafePrim
   )
 import Proarrow.Category.Instance.Product (Fst, Snd)
 import Proarrow.Category.Monoidal (State)
-import Proarrow.Category.Monoidal.Hypergraph (Hypergraph)
+import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized)
 import Proarrow.Category.Monoidal.Strictified (Fold, type (++))
-import Proarrow.Core (CategoryOf (..))
+import Proarrow.Core (CategoryOf (..), Kind)
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (KnownListOf (..), mapListOf, someOfList)
 
@@ -141,7 +141,7 @@ type family ReverseOnto xs acc where
 -- The indices
 
 -- | The objects of the indices, by letter, in the order the letters first appear.
-type Env :: Type -> Type
+type Env :: Kind -> Kind
 type Env k = [(Char, k)]
 
 -- | The letters of the inputs matched with the objects of their tensors.
@@ -276,18 +276,20 @@ chars = mapListOf @KnownChar (\ @c -> charVal (Proxy @c)) (listOf @KnownChar @ls
 
 -- | The open hypergraph of a specification: a node for each letter, of the sort of its object, a box
 -- for each tensor with an output for each of its letters, and the output letters as the boundary.
+-- The type checker has matched the letters with the objects of the tensors and of the output, so
+-- the hypergraph needs no checks.
 network
   :: forall {k} (os :: [k])
    . (SortList os)
   => [([Char], SomeArrow k)]
   -> [Char]
-  -> P.Either P.String (Wires '[] ~> (Wires os :: SIMPLIFY k))
+  -> Wires '[] ~> (Wires os :: SIMPLIFY k)
 network tensors out =
-  openHypergraph
+  unsafeOpenHypergraph
     (P.fmap (sortOfLetter M.!) letters)
     []
     (P.fmap (index M.!) out)
-    [Box t [] (P.fmap (index M.!) ls) | (ls, t) <- tensors]
+    [Box (unsafePrim t) [] (P.fmap (index M.!) ls) | (ls, t) <- tensors]
   where
     -- the letters in the order they first appear, with their sorts
     letters = nubOrd (P.concatMap P.fst tensors)
@@ -312,6 +314,7 @@ instance
   ( env ~ BindAll (Reverse ts) '[]
   , Check ts out env
   , Hypergraph k
+  , Sized k
   , os ~ Objs out env
   , r ~ Tensor os
   , SortList os
@@ -319,10 +322,7 @@ instance
   )
   => Einsum '[] out (ts :: [([Char], [k])]) r
   where
-  collect acc = case network @os (P.reverse acc) (chars @out) P.>>= readBack P.id of
-    P.Right r -> r
-    -- the network is built from the tensors' own sorts, so this does not happen
-    P.Left e -> P.error e
+  collect acc = simplify (network @os (P.reverse acc) (chars @out))
 
 -- | Einstein summation: @einsum \@"ij,jk->ik" a b@ is the tensor with entries the sums over @j@ of
 -- the products of the entries of @a@ and @b@. The tensors are given after the specification, one for

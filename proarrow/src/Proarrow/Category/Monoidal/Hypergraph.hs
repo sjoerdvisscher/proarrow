@@ -9,7 +9,7 @@ module Proarrow.Category.Monoidal.Hypergraph where
 
 import Data.Kind (Constraint)
 import Data.Type.Nat (SNatI)
-import Prelude (($))
+import Prelude (Int, ($))
 
 import Proarrow.Category.Instance.Free (FREE)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), NFold, NFoldS, SymMonoidal (..), (==))
@@ -60,6 +60,14 @@ capS @a = Str (cap @a)
 -- | A hypergraph category has a special frobenius algebra for every object, and the
 -- frobenius algebra of any tensor product X ⊗ Y is induced in the canonical way from those of X and Y.
 class (Supplies Frobenius k, CompactClosed k) => Hypergraph k
+
+-- | How many values an object stands for, such as the dimension of a vector space or the number of
+-- elements of a set: what 'Proarrow.Category.Instance.OpenHypergraph.readBack' weighs a wire by
+-- when it chooses the order to contract boxes in. A category without a natural size can give every
+-- object size 2, so that a bundle of wires costs more the more wires it has.
+type Sized :: Kind -> Constraint
+class (CategoryOf k) => Sized k where
+  sizeOf :: forall (a :: k). (Ob a) => Int
 
 -- | A hypergraph category is self-dual compact closed.
 dualHG :: forall {k} (a :: k) b. (Hypergraph k) => a ~> b -> b ~> a

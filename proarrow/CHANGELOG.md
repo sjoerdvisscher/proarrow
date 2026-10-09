@@ -14,6 +14,8 @@
   `Alternative` decoration, a hypergraph category.
 * `Proarrow.Category.Instance.Cospan`: `COSPAN k` is `DECCOSPAN` with the `Undecorated` decoration.
 * `Proarrow.Category.Instance.OpenHypergraph`: open hypergraphs with typed wires.
+* `Proarrow.Category.Monoidal.Hypergraph`: `Sized`, the size of an object (a dimension, a number of
+  elements), which the read-back of open hypergraphs and `einsum` choose their contraction order by.
 * `Proarrow.Optic.Iso`: `DecidableIso`, categories that decide whether two objects are isomorphic,
   with the isomorphism as an optic of any flavour; instances for `Mat`, `FinRel`, `SVG` and `DOT`.
 * `Proarrow.Object`: `ListOf c xs`, a type-level list with the evidence `c` for each element as a

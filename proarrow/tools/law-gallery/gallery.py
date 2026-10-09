@@ -133,6 +133,20 @@ def write(path, text):
         f.write(text)
 
 
+def render_pictures(wiki, subdir, script):
+    """Run `script` in `cabal repl test:test`, which writes SVG files into the directory named by
+    its `{tmp}` placeholders, and copy each into the wiki's images/<subdir>, coloured for GitHub's
+    light and dark themes."""
+    target_dir = os.path.join(wiki, 'images', subdir)
+    os.makedirs(target_dir, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        run_repl('test:test', [line.replace('{tmp}', hs_string(tmp + os.sep)) for line in script])
+        for file in sorted(os.listdir(tmp)):
+            target = os.path.join(target_dir, file)
+            write(target, standalone(read(os.path.join(tmp, file))))
+            print(f'written to {target}')
+
+
 def html_page(svgs, rows, target):
     template = read(os.path.join(HERE, 'template.html'))
     out = ['<nav aria-label="Structures">']

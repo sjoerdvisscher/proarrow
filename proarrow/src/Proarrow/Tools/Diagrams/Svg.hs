@@ -22,7 +22,7 @@ module Proarrow.Tools.Diagrams.Svg where
 
 import Control.Applicative ((<|>))
 import Data.Functor.Identity (Identity (..))
-import Data.Kind (Constraint)
+import Data.Kind (Constraint, Type)
 import Data.List qualified as List
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.List.NonEmpty qualified as NE
@@ -40,7 +40,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, Sized (..), cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
@@ -104,9 +104,6 @@ type family Erase ws where
 -- 'withDualDual' and 'withEraseDual' prove them for lists by induction.
 type KnownWire :: W -> Constraint
 class KnownWire w where
-  -- | The label of the wire as it is shown, and its kind.
-  wireInfo :: (String, WireKind)
-
   withKnownDualW :: ((KnownWire (DualW w)) => r) -> r
   withIsListEraseCons :: forall (ws :: [W]) r. (IsList (Erase ws)) => ((IsList (Erase (w ': ws))) => r) -> r
   withEraseAppendCons
@@ -118,8 +115,33 @@ class KnownWire w where
   withEraseDualCons
     :: forall (ws :: [W]) r. (Erase (DualList ws) ~ Erase ws) => ((Erase (DualList (w ': ws)) ~ Erase (w ': ws)) => r) -> r
 
+  -- | Which kind of wire it is, with its label.
+  wireView :: WireView w
+
+-- | A wire taken apart: its constructor, and the label as a known symbol.
+type WireView :: W -> Type
+data WireView w where
+  WireV :: (KnownSymbol s) => WireView (Wire s)
+  CoV :: (KnownSymbol s) => WireView (Co s)
+  IV :: WireView I
+
+-- | The label of the wire as it is shown, and its kind.
+wireInfo :: forall w. (KnownWire w) => (String, WireKind)
+wireInfo = case wireView @w of
+  WireV @s -> (symbolVal (Proxy @s), Plain)
+  CoV @s -> (symbolVal (Proxy @s) ++ "⁻¹", DualWire)
+  IV -> ("𝐈", UnitWire)
+
+-- | Whether two wires are the same.
+eqWire :: forall a b. (KnownWire a, KnownWire b) => Maybe (a :~: b)
+eqWire = case (wireView @a, wireView @b) of
+  (WireV @s, WireV @t) -> (\Refl -> Refl) <$> Dot.eqSymbol @s @t
+  (CoV @s, CoV @t) -> (\Refl -> Refl) <$> Dot.eqSymbol @s @t
+  (IV, IV) -> Just Refl
+  _ -> Nothing
+
 instance (KnownSymbol s) => KnownWire (Wire s) where
-  wireInfo = (symbolVal (Proxy @s), Plain)
+  wireView = WireV
   withKnownDualW r = r
   withIsListEraseCons @ws r = withIsList2 @'[s] @(Erase ws) r
   withEraseAppendCons r = r
@@ -127,7 +149,7 @@ instance (KnownSymbol s) => KnownWire (Wire s) where
   withEraseDualCons r = r
 
 instance (KnownSymbol s) => KnownWire (Co s) where
-  wireInfo = (symbolVal (Proxy @s) ++ "⁻¹", DualWire)
+  wireView = CoV
   withKnownDualW r = r
   withIsListEraseCons @ws r = withIsList2 @'[s] @(Erase ws) r
   withEraseAppendCons r = r
@@ -135,7 +157,7 @@ instance (KnownSymbol s) => KnownWire (Co s) where
   withEraseDualCons r = r
 
 instance KnownWire I where
-  wireInfo = ("𝐈", UnitWire)
+  wireView = IV
   withKnownDualW r = r
   withIsListEraseCons r = r
   withEraseAppendCons r = r
@@ -358,6 +380,8 @@ instance (Ob as) => CommutativeMonoid (S as)
 instance (Ob as) => Frobenius (S as)
 instance CopyDiscard SVG
 instance Hypergraph SVG
+instance Sized SVG where
+  sizeOf = 2
 
 -- | Two objects are isomorphic when they have the same wires.
 instance DecidableIso SVG where

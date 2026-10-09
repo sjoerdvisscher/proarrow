@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
-import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, cap, cup, curryHG)
+import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, Sized (..), applyHG, cap, cup, curryHG)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Colimit.BinaryCoproduct
@@ -92,6 +92,8 @@ instance (HasPushouts k, HasCoproducts k, Alternative f, Ob a) => CocommutativeC
 instance (HasPushouts k, HasCoproducts k, Alternative f, Ob a) => Frobenius (DC a :: DECCOSPAN (f :: k -> Type))
 instance (HasPushouts k, HasCoproducts k, Alternative f) => Hypergraph (DECCOSPAN (f :: k -> Type))
 instance (HasPushouts k, HasCoproducts k, Alternative f) => CopyDiscard (DECCOSPAN (f :: k -> Type))
+instance (HasPushouts k, Alternative f) => Sized (DECCOSPAN (f :: k -> Type)) where
+  sizeOf = 2
 
 instance (HasPushouts k, HasCoproducts k, Alternative f) => Closed (DECCOSPAN (f :: k -> Type)) where
   type a ~~> b = ExpHG a b

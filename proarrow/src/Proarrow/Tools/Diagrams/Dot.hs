@@ -23,6 +23,7 @@ import Proarrow.Category.Monoidal.Hypergraph
   ( ExpHG
   , Frobenius
   , Hypergraph
+  , Sized (..)
   , applyHG
   , cap
   , cup
@@ -249,6 +250,9 @@ instance CopyDiscard DOT
 -- be bent: each object is its own dual, with cups and caps drawn as a copy or merge point next to
 -- a unit or counit point.
 instance Hypergraph DOT
+
+instance Sized DOT where
+  sizeOf = 2
 
 -- | Two objects are isomorphic when they have the same wires.
 instance DecidableIso DOT where

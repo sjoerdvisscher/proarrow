@@ -16,15 +16,17 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Free (FREE (..), IsFreeOb (..), liftFree, retractFree)
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), toInt)
 import Proarrow.Category.Instance.Nat (Nat (..), first)
+import Proarrow.Category.Instance.OpenHypergraph (SIMPLIFY, WireSorts, Wires, prim, simplifyWith)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Forget, On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.Dialogue (Dual, dualObj)
+import Proarrow.Category.Monoidal.Hypergraph (Hypergraph)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
-import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==))
+import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), singleton, (==))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -246,3 +248,12 @@ instance HasFreeK TracedMonoidal CompactClosed where
           Str @[ap, Dual am] @[Dual am, ap] (swap @_ @ap @(Dual am)) ** Str @'[] @[bm, Dual bm] (dualityUnit @_ @bm)
             == obj @'[Dual am] ** Str @[ap, bm] @[am, bp] f ** obj @'[Dual bm]
             == Str @[Dual am, am] @'[] (dualityCounit @_ @am) ** obj @'[bp] ** obj @'[Dual bm]
+
+type instance FreeK CategoryOf Hypergraph k = SIMPLIFY k
+
+type instance Lift CategoryOf Hypergraph (a :: k) = Wires '[a]
+type instance Retract CategoryOf Hypergraph k ws = Fold (WireSorts ws) :: k
+
+instance HasFreeK CategoryOf Hypergraph where
+  liftK f = prim (singleton f) \\ f
+  retractK f = unStr (simplifyWith (P.const 2) f)

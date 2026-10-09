@@ -11,11 +11,10 @@ light and dark themes the same way as the law diagrams.
 
 import os
 import sys
-import tempfile
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'law-gallery'))
 
-from gallery import hs_string, read, run_repl, standalone, write  # noqa: E402
+from gallery import hs_string, render_pictures  # noqa: E402
 
 PICTURES = [
     ('Examples.Toffoli', 'toffoliPicture', 'toffoli-circuit.svg'),
@@ -27,17 +26,10 @@ PICTURES = [
 def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
-    target_dir = os.path.join(sys.argv[1], 'images', 'smc')
-    os.makedirs(target_dir, exist_ok=True)
-    with tempfile.TemporaryDirectory() as tmp:
-        script = [':m + ' + ' '.join('*' + module for module, _, _ in PICTURES)]
-        for module, name, file in PICTURES:
-            script.append(f'writeFile {hs_string(os.path.join(tmp, file))} {module}.{name}')
-        run_repl('test:test', script)
-        for _, _, file in PICTURES:
-            target = os.path.join(target_dir, file)
-            write(target, standalone(read(os.path.join(tmp, file))))
-            print(f'written to {target}')
+    script = [':m + ' + ' '.join('*' + module for module, _, _ in PICTURES)]
+    for module, name, file in PICTURES:
+        script.append(f'writeFile ({{tmp}} ++ {hs_string(file)}) {module}.{name}')
+    render_pictures(sys.argv[1], 'smc', script)
 
 
 if __name__ == '__main__':

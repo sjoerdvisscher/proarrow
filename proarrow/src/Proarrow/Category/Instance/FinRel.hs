@@ -24,7 +24,7 @@ import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, cap, cup)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, Sized (..), cap, cup)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
@@ -244,6 +244,10 @@ instance Hypergraph FINREL
 -- | @FR n@ and @FR m@ are isomorphic when @n@ and @m@ are equal.
 instance DecidableIso FINREL where
   isoOf @_ @(FR n) @(FR m) = isoFromEquality (P.fmap (\Refl -> Refl) (eqNat @n @m))
+
+-- | The size of @FR n@ is its number of elements, @n@.
+instance Sized FINREL where
+  sizeOf @(FR n) = fromIntegral (snatToNatural (snat @n))
 
 instance CopyDiscard FINREL
 

@@ -1,13 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | Open hypergraphs with wires sorted by 'Int' and 'Bool'. Equality is 'isomorphic', so the laws
+-- | Open hypergraphs with wires sorted by objects of 'Mat'. Equality is 'isomorphic', so the laws
 -- hold up to renaming nodes and reordering boxes, and the examples check that terms equal by the
 -- Frobenius laws give isomorphic hypergraphs and that others do not.
 module Props.OpenHypergraph (test) where
 
 import Control.Monad (replicateM)
-import Data.Kind (Type)
 import Data.List qualified as List
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map.Strict qualified as M
@@ -34,14 +33,15 @@ import Proarrow.Category.Instance.OpenHypergraph
   , isomorphic
   , prim
   , readBack
+  , sameSort
   , simplify
   , someArrow
   , sortList
   , sortOf
   )
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Hypergraph (cap, cup)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Hypergraph (Sized (..), cap, cup)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), singleton)
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -63,12 +63,12 @@ import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.Mat ()
 import Props.SMC (name)
 
-type OH = OPENHG Type String
+type OH = OPENHG (MatK Int) String
 
 -- | One wire of each sort.
-type I = Wires '[Int] :: OH
+type I = Wires '[M2] :: OH
 
-type B = Wires '[Bool] :: OH
+type B = Wires '[M3] :: OH
 
 test :: TestTree
 test =
@@ -130,6 +130,21 @@ test =
                 interp
                 (unStr (einsum @"ij,jk" (name (box @String @'[M2] @'[M3] "f")) (name (box @String @'[M3] @'[M2] "g"))))
             check "differs" (unMat m == unMat ((obj @M2 ** (gm . fm)) . cup @M2))
+        , testProperty "a node made in two layers is merged, not discarded (2, 3)" $ do
+            am <- genNamed @(Unit ~> M3) "a"
+            hm <- genNamed @(Unit ~> M2) "h"
+            gm <- genNamed @(M2 ~> M3) "g"
+            let interp x = case x of
+                  "a" -> someArrow @'[] @'[M3] (Str am)
+                  "h" -> someArrow @'[] @'[M2] (Str hm)
+                  _ -> someArrow (singleton gm)
+            m <-
+              readBackOr
+                interp
+                ( cap @(Wires '[M3])
+                    . (box @_ @'[] @'[M3] "a" ** (box @_ @'[M2] @'[M3] "g" . box @_ @'[] @'[M2] "h"))
+                )
+            check "differs" (unMat m == unMat (cap @M3 . (am ** (gm . hm)) . leftUnitorInv))
         , testProperty "a closed loop reads back as the dimension (3)" $ do
             m <- readBackOr (\_ -> error "no boxes") (counit @(Wires '[M3] :: OM) . mempty @(Wires '[M3]))
             check "not 3" (unMat m == unMat (counit @M3 . mempty @M3))
@@ -142,19 +157,26 @@ test =
             case readBack (\_ -> someArrow (singleton d)) t of
               Right (Str r) -> check "points are drawn" (points (render r) == 0)
               Left e -> testFailed e
+        , testProperty "the trace reads back with one spider on each side of the loop" $ do
+            let d = node @'[Wire "A"] @'[Wire "A"] "h"
+            case readBack
+              (\_ -> someArrow (singleton d))
+              (traceIdxT (box @_ @'[A] @'[A] "h") :: Wires '[] ~> (Wires '[] :: OPENHG SVG String)) of
+              Right (Str r) -> check "not four points" (points (render r) == 4)
+              Left e -> testFailed e
         ]
     ]
   where
     points = length . filter ("<circle" `List.isPrefixOf`) . List.tails
-    f = box @_ @'[Int] @'[Bool] "f"
-    f' = box @_ @'[Int] @'[Bool] "f'"
-    h = box @_ @'[Bool] @'[Int] "h"
-    g = box @_ @'[Int] @'[Int] "g"
-    g' = box @_ @'[Int] @'[Int] "g'"
+    f = box @_ @'[M2] @'[M3] "f"
+    f' = box @_ @'[M2] @'[M3] "f'"
+    h = box @_ @'[M3] @'[M2] "h"
+    g = box @_ @'[M2] @'[M2] "g"
+    g' = box @_ @'[M2] @'[M2] "g'"
 
 type M2 = M Nat2 :: MatK Int
 type M3 = M Nat3 :: MatK Int
-type OM = OPENHG (MatK Int) String
+type OM = OH
 type A = S '[Wire "A"]
 
 -- | The read-back in Mat Int as a matrix, failing the property if it fails.
@@ -168,14 +190,14 @@ readBackOr interp t = case readBack interp t of
   Left e -> testFailed e
 
 instance Testable OH where
-  showOb @a = "Wires " ++ show (sortList @Type @(WireSorts a))
+  showOb @a = "Wires " ++ show (fmap (\(Some @x) -> sizeOf @(MatK Int) @x) (sortList @(MatK Int) @(WireSorts a)))
   genSome =
     genSomeDef
       @'[ Wires '[]
-        , Wires '[Int]
-        , Wires '[Int, Bool]
-        , Wires '[Bool, Bool, Int]
-        , Wires '[Bool, Int, Int]
+        , Wires '[M2]
+        , Wires '[M2, M3]
+        , Wires '[M3, M3, M2]
+        , Wires '[M3, M2, M2]
         ]
 
 instance (Ob a, Ob b) => TestingEqShow (DecCospan a (b :: OH)) where
@@ -192,9 +214,10 @@ instance (Ob a, Ob b) => TestableType (DecCospan a (b :: OH)) where
         c <- genSome @OH
         case c of
           Some @(DC (SUB (FH n))) -> do
-            let nodesOfSort x = [y | y <- universeF @n, sortOf @Type @(FH n) y == x]
-                leg :: forall p. (Sorted Type (FH p)) => Maybe [(p, NonEmpty n)]
-                leg = traverse (\x -> case nodesOfSort (sortOf @Type @(FH p) x) of [] -> Nothing; y : ys -> Just (x, y :| ys)) universeF
+            let nodesOfSort x = [y | y <- universeF @n, sameSort (sortOf @(MatK Int) @(FH n) y) x]
+                leg :: forall p. (Sorted (MatK Int) (FH p)) => Maybe [(p, NonEmpty n)]
+                leg =
+                  traverse (\x -> case nodesOfSort (sortOf @(MatK Int) @(FH p) x) of [] -> Nothing; y : ys -> Just (x, y :| ys)) universeF
             case (leg @(UN FH (UN SUB (UN DC a))), leg @(UN FH (UN SUB (UN DC b)))) of
               (Just la, Just lb) -> do
                 l <- traverse (\(x, ys) -> (x,) <$> elem ys) la
