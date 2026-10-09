@@ -58,6 +58,10 @@ instance (HasInitialObject j, HasInitialObject k) => HasInitialObject (j, k) whe
 instance (CategoryOf j, CategoryOf k) => HasInitialObject (j +-> k) where
   type InitialObject = InitialProfunctor
   initiate = Prof \case {}
+  -- GHC 9.12 and later miscompile this when it is inlined: tag inference takes the thunk around the
+  -- bottoming function for an evaluated 'Prof' in 'Sub''s strict field, which crashes the garbage
+  -- collector (GHC MR !16719 fixes it)
+  {-# NOINLINE initiate #-}
 
 instance (HasInitialObject j, CategoryOf k) => Corepresentable (TerminalProfunctor :: j +-> k) where
   type TerminalProfunctor %% x = InitialObject

@@ -10,8 +10,12 @@
 -- express. 'fromPIso'\/'toPIso' mediate with the profunctor-class-flavored 'PIso'.
 module Proarrow.Optic.Iso where
 
+import Data.Kind (Constraint)
+import Data.Type.Equality ((:~:) (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
-import Proarrow.Core (CategoryOf (..), Promonad (..), type (+->))
+import Prelude (Maybe, fmap)
+
+import Proarrow.Core (CategoryOf (..), Kind, Promonad (..), type (+->))
 import Proarrow.Optic
   ( FLAVOR
   , Flip
@@ -60,6 +64,17 @@ withIso
    . (CategoryOf k, (Ob a, Ob b) => c (Yo a (OP b)))
   => Optic c s t a b -> ((s ~> a) -> (b ~> t) -> r) -> r
 withIso (Optic l) k = case l @(Yo a (OP b)) (Yo id id) of Yo sa bt -> k sa bt
+
+-- | Categories where it can be decided whether two objects are isomorphic, with an isomorphism
+-- when they are. The iso is an optic of any flavor @c@, so it can be used as a
+-- 'Proarrow.Optic.PIso', an 'Iso' or anything those convert to, and taken apart with 'withIso'.
+type DecidableIso :: Kind -> Constraint
+class (CategoryOf k) => DecidableIso k where
+  isoOf :: forall (c :: (k +-> k) -> Constraint) (a :: k) (b :: k). (Ob a, Ob b) => Maybe (Optic c a a b b)
+
+-- | The identity iso when two objects are equal.
+isoFromEquality :: forall {k} c (a :: k) b. (CategoryOf k, Ob a) => Maybe (a :~: b) -> Maybe (Optic c a a b b)
+isoFromEquality = fmap (\Refl -> iso id id)
 
 -- | The two iso encodings are equivalent: this direction instantiates the
 -- profunctor-class-flavored iso at the free 'IsoFl'-strong profunctor @ExOptic 'IsoFl' a b@,

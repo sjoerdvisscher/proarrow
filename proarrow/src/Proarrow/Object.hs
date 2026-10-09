@@ -23,6 +23,7 @@ module Proarrow.Object
   , mapListOf
   , lengthListOf
   , appendListOf
+  , eqListOf
 
     -- * One object of many
   , SomeOf (..)
@@ -32,6 +33,7 @@ module Proarrow.Object
   ) where
 
 import Data.Kind (Constraint, Type)
+import Data.Type.Equality ((:~:) (..))
 import Type.Reflection (SomeTypeRep (..), Typeable, typeRep)
 import Prelude (Int, (+))
 import Prelude qualified as P
@@ -95,6 +97,19 @@ type (++) :: [k] -> [k] -> [k]
 type family as ++ bs where
   '[] ++ bs = bs
   (a ': as) ++ bs = a ': (as ++ bs)
+
+-- | Whether two lists have the same elements, given how to decide that for one element.
+eqListOf
+  :: forall {k} (c :: OB k) as bs
+   . (forall (x :: k) (y :: k). (c x, c y) => P.Maybe (x :~: y))
+  -> ListOf c as
+  -> ListOf c bs
+  -> P.Maybe (as :~: bs)
+eqListOf _ Nil Nil = P.Just Refl
+eqListOf eq (Cons @x xs) (Cons @y ys) = case (eq @x @y, eqListOf @c eq xs ys) of
+  (P.Just Refl, P.Just Refl) -> P.Just Refl
+  _ -> P.Nothing
+eqListOf _ _ _ = P.Nothing
 
 -- | The elements of both lists.
 appendListOf :: ListOf c as -> ListOf c bs -> ListOf c (as ++ bs)

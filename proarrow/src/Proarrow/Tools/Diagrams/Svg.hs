@@ -28,6 +28,7 @@ import Data.List.NonEmpty (NonEmpty (..))
 import Data.List.NonEmpty qualified as NE
 import Data.Maybe (fromMaybe)
 import Data.Proxy (Proxy (..))
+import Data.Type.Equality ((:~:) (..))
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 import Numeric (showFFloat)
 import Prelude hiding (Monoid (..), curry, id, (**), (.))
@@ -53,7 +54,8 @@ import Proarrow.Category.Monoidal.Strictified
   )
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
-import Proarrow.Object (mapListOf)
+import Proarrow.Object (eqListOf, mapListOf)
+import Proarrow.Optic.Iso (DecidableIso (..), isoFromEquality)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Tools.Diagrams.Dot (DOT, Dot)
 import Proarrow.Tools.Diagrams.Dot qualified as Dot
@@ -356,6 +358,10 @@ instance (Ob as) => CommutativeMonoid (S as)
 instance (Ob as) => Frobenius (S as)
 instance CopyDiscard SVG
 instance Hypergraph SVG
+
+-- | Two objects are isomorphic when they have the same wires.
+instance DecidableIso SVG where
+  isoOf @_ @(S as) @(S bs) = isoFromEquality ((\Refl -> Refl) <$> eqListOf eqWire (sList @as) (sList @bs))
 
 -- | The exponential is the *-autonomous one, @'Dual' (a '**' 'Dual' b)@, so curried wires show as
 -- duals.

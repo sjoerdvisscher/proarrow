@@ -10,7 +10,8 @@ import Data.Bifunctor (first)
 import Data.Char (digitToInt, isDigit)
 import Data.List qualified as List
 import Data.Proxy (Proxy (..))
-import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
+import Data.Type.Equality ((:~:) (..))
+import GHC.TypeLits (KnownSymbol, Symbol, sameSymbol, symbolVal)
 import Prelude hiding (Monoid (..), curry, id, (.))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly (..), SymMonoidal (..), Tensor)
@@ -36,7 +37,8 @@ import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified (IsList (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
-import Proarrow.Object (lengthListOf, mapListOf)
+import Proarrow.Object (eqListOf, lengthListOf, mapListOf)
+import Proarrow.Optic.Iso (DecidableIso (..), isoFromEquality)
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
 
@@ -247,6 +249,14 @@ instance CopyDiscard DOT
 -- be bent: each object is its own dual, with cups and caps drawn as a copy or merge point next to
 -- a unit or counit point.
 instance Hypergraph DOT
+
+-- | Two objects are isomorphic when they have the same wires.
+instance DecidableIso DOT where
+  isoOf @_ @(D as) @(D bs) = isoFromEquality ((\Refl -> Refl) <$> eqListOf eqSymbol (sList @as) (sList @bs))
+
+-- | Whether two symbols are the same.
+eqSymbol :: forall x y. (KnownSymbol x, KnownSymbol y) => Maybe (x :~: y)
+eqSymbol = sameSymbol (Proxy @x) (Proxy @y)
 
 instance Closed DOT where
   type a ~~> b = ExpHG a b

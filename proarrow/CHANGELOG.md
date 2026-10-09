@@ -14,6 +14,8 @@
   `Alternative` decoration, a hypergraph category.
 * `Proarrow.Category.Instance.Cospan`: `COSPAN k` is `DECCOSPAN` with the `Undecorated` decoration.
 * `Proarrow.Category.Instance.OpenHypergraph`: open hypergraphs with typed wires.
+* `Proarrow.Optic.Iso`: `DecidableIso`, categories that decide whether two objects are isomorphic,
+  with the isomorphism as an optic of any flavour; instances for `Mat`, `FinRel`, `SVG` and `DOT`.
 * `Proarrow.Object`: `ListOf c xs`, a type-level list with the evidence `c` for each element as a
   value, with `KnownListOf`. It replaces the library's own list singletons:
   * `Strictified`: `SList` is removed; `sList` is a `ListOf Ob'`.

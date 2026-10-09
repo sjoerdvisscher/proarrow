@@ -11,7 +11,8 @@ module Proarrow.Category.Instance.Mat where
 import Data.Complex (Complex, conjugate)
 import Data.Fin (Fin)
 import Data.Kind (Type)
-import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat, snatToNat, type Mult, type Plus)
+import Data.Type.Equality ((:~:) (..))
+import Data.Type.Nat (Nat (..), SNat (..), SNatI, eqNat, snat, snatToNat, type Mult, type Plus)
 import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, reifyList, tabulate, toList, zipWith, (++))
 import Prelude (($), type (~))
 import Prelude qualified as P
@@ -42,6 +43,7 @@ import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Optic.Iso (DecidableIso (..), isoFromEquality)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
@@ -351,6 +353,11 @@ instance (P.Num a, IsNat n) => CocommutativeComonoid (M n :: MatK a)
 instance (P.Num a, IsNat n) => Frobenius (M n :: MatK a)
 instance (P.Num a, IsNat n) => CommutativeMonoid (M n :: MatK a)
 instance (P.Num a) => Hypergraph (MatK a)
+
+-- | @M n@ and @M m@ are isomorphic when @n@ and @m@ are equal.
+instance (P.Num a) => DecidableIso (MatK a) where
+  isoOf @_ @(M n) @(M m) = isoFromEquality (P.fmap (\Refl -> Refl) (eqNat @n @m))
+
 instance (P.Num a) => CopyDiscard (MatK a)
 
 data family Conjugate :: MatK (Complex a) +-> MatK (Complex a)

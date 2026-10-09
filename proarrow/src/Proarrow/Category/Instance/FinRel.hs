@@ -7,7 +7,8 @@
 module Proarrow.Category.Instance.FinRel where
 
 import Data.Fin (Fin (..))
-import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Plus, SNat (..), SNatI, snat, snatToNatural)
+import Data.Type.Equality ((:~:) (..))
+import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Plus, SNat (..), SNatI, eqNat, snat, snatToNatural)
 import Data.Vec.Lazy (Vec (..), chunks, concatMap, repeat, universe, zipWith, (++))
 import GHC.Bits qualified as B
 import GHC.Natural (Natural)
@@ -34,6 +35,7 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Optic.Iso (DecidableIso (..), isoFromEquality)
 import Proarrow.Profunctor.Representable (Rep (..))
 
 newtype Bitstring (n :: Nat) = BS Natural
@@ -238,6 +240,11 @@ instance (SNatI a) => CocommutativeComonoid (FR a)
 instance (SNatI a) => Frobenius (FR a)
 instance (SNatI a) => CommutativeMonoid (FR a)
 instance Hypergraph FINREL
+
+-- | @FR n@ and @FR m@ are isomorphic when @n@ and @m@ are equal.
+instance DecidableIso FINREL where
+  isoOf @_ @(FR n) @(FR m) = isoFromEquality (P.fmap (\Refl -> Refl) (eqNat @n @m))
+
 instance CopyDiscard FINREL
 
 data family Fun :: FINSET +-> FINREL
