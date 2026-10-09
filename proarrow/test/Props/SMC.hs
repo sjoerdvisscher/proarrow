@@ -176,6 +176,31 @@ test =
                   , ("li", [3, 2], entries w)
                   ]
                   "li"
+        , testProperty "ab,bc,xy,yz,cz->ax: two pairs contracted apart, then joined (2, 3)" $ do
+            t <- genNamed @(Unit ~> Fold '[M2, M3]) "t"
+            u <- genNamed @(Unit ~> Fold '[M3, M2]) "u"
+            v <- genNamed @(Unit ~> Fold '[M3, M2]) "v"
+            w <- genNamed @(Unit ~> Fold '[M2, M3]) "w"
+            x <- genNamed @(Unit ~> Fold '[M2, M3]) "x"
+            check "differs from the reference" $
+              entries
+                ( unStr
+                    ( einsum @"ab,bc,xy,yz,cz->ax"
+                        (Str t :: Tensor '[M2, M3])
+                        (Str u :: Tensor '[M3, M2])
+                        (Str v :: Tensor '[M3, M2])
+                        (Str w :: Tensor '[M2, M3])
+                        (Str x :: Tensor '[M2, M3])
+                    )
+                )
+                == reference
+                  [ ("ab", [2, 3], entries t)
+                  , ("bc", [3, 2], entries u)
+                  , ("xy", [3, 2], entries v)
+                  , ("yz", [2, 3], entries w)
+                  , ("cz", [2, 3], entries x)
+                  ]
+                  "ax"
         , testPropertyWith fewer "ij,jk,kl,lm->im is the product of four (3)" $ do
             t <- genNamed @(Unit ~> Fold '[M3, M3]) "t"
             u <- genNamed @(Unit ~> Fold '[M3, M3]) "u"

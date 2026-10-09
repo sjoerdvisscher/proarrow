@@ -366,15 +366,16 @@ readBack
 readBack = readBackWith (sizeFromSized @s)
 
 -- | The term of a hypergraph category that an open hypergraph stands for, given the size of each
--- sort and an arrow for each label: its boxes one at a time along the flow of their wires, with
--- between two boxes one spider per node. A box first merges its own wires of one node and discards
--- those that nothing else needs, and a node is merged as soon as no later box needs it, so a
--- network of tensors is contracted pairwise. The order is numpy's greedy one: the next box is the
--- one whose contraction with what is built so far makes the result grow least, its size less the
--- sizes of the two parts, starting with the best pair. A node that a box uses no later than a box
--- makes it is fed back with a trace, which only a cyclic hypergraph needs. Fails with a message
--- when an arrow does not fit its box. An arrow whose sorts are isomorphic to those of its box is
--- moved along the isomorphisms.
+-- sort and an arrow for each label. A box first merges its own wires of one node and discards those
+-- that nothing else needs, and a node is merged as soon as nothing still to come needs it. The order
+-- is numpy's greedy one, which takes the contraction whose result grows least, its size less the
+-- sizes of the two parts. The boxes without inputs are contracted with each other first, as a tree
+-- of pairs that share a node, so a network of tensors is read back as its contraction tree. The
+-- pieces and the other boxes then follow the flow of their wires one at a time, with between two
+-- boxes one spider per node. A node that a box uses no later than a box makes it is fed back with
+-- a trace, which only a cyclic hypergraph needs. Fails with a message when an arrow does not fit
+-- its box. An arrow whose sorts are isomorphic to those of its box is moved along the
+-- isomorphisms.
 readBackWith
   :: forall {s} l a b
    . (Hypergraph s, DecidableIso s)
@@ -395,13 +396,25 @@ readBackAligned
   -> P.Either P.String (WireSorts a ~> WireSorts b)
 readBackAligned al sizeFn interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (FinHask legOut)) (Boxes boxList)) =
   hg // do
-    arrows <- M.fromList P.<$> P.traverse interpBox boxesIx
-    P.pure P.$ withListOf (P.fmap (nodeSort P.. KN) feedback) \fb ->
+    arrows0 <- M.fromList P.<$> P.traverse interpBox labelled
+    let arrows = M.union arrows0 (M.fromList [(j, pieceArrow al nodeSort arrows0 t) | (j, t) <- merged])
+    P.pure P.$ withListOf (P.fmap (nodeSort P.. KN) (feedback lt)) \fb ->
       let insS = sorts @s @(WireSorts a)
           outsS = sorts @s @(WireSorts b)
           start = appendListOf fb insS
-          (bundle, body) = P.foldl (step arrows) (P.fmap KN (feedback P.++ ins), Built start Same) (P.zip [1 ..] order)
-          final = transition isolated bundle (P.fmap KL feedback P.++ P.fmap outKey outs) `afterBuilt` body
+          (bundle, body) =
+            P.foldl
+              (step al nodeSort lt arrows)
+              (P.fmap KN (feedback lt P.++ shapeIns shape), Built start Same)
+              (P.zip [1 ..] order)
+          final =
+            transition
+              al
+              nodeSort
+              (isolated shape boxes0)
+              bundle
+              (P.fmap KL (feedback lt) P.++ P.fmap (outKey lt) (shapeOuts shape))
+              body
       in case final of
            Built ys whole -> case alignSteps al ys (appendListOf fb outsS) of
              P.Just to -> traceSorts fb insS outsS (arrowOf ys to . arrowOf start whole)
@@ -412,114 +425,244 @@ readBackAligned al sizeFn interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (Fi
     sortC = sortOf @s @(UN SUB c)
     sortAt = M.fromList [(index M.! n, sortC n) | n <- nodes]
     nodeSort k = sortAt M.! keyNode k
-    ins = P.fmap (index M.!) (M.elems legIn)
-    outs = P.fmap (index M.!) (M.elems legOut)
-    boxesIx = P.zip [0 :: P.Int ..] [P.fmap (index M.!) bx | bx <- boxList]
-    -- a box depends on another when it uses a node the other makes
-    dependsOn (i, bi) (j, bj) = i P./= j P.&& P.any (`P.elem` outputs bj) (inputs bi)
-    -- the boxes one at a time, in numpy's greedy order: of the boxes whose inputs are made, the one
-    -- whose contraction with the open nodes costs least, or the first of the cheapest pair while no
-    -- node is open; a box on a cycle when no box is ready
-    order = schedule Set.empty boxesIx
-    schedule _ [] = []
-    schedule placed remaining =
-      let open = openAfter placed remaining
-          after bx = openAfter (Set.union placed (touches bx)) (without bx remaining)
-          cost bx = size (after bx) P.- size open P.- size (alone bx)
-          pairCost (x, y) =
-            size (openAfter (Set.union placed (Set.union (touches x) (touches y))) (without y (without x remaining)))
-              P.- size (alone x)
-              P.- size (alone y)
-          next
-            | Set.null open
-            , _ : _ : _ <- remaining =
-                P.fst (List.minimumBy (comparing pairCost) [(x, y) | x <- candidates remaining, y <- candidates (without x remaining)])
-            | P.otherwise = List.minimumBy (comparing cost) (candidates remaining)
-      in next : schedule (Set.union placed (touches next)) (without next remaining)
-    candidates remaining = case [bx | bx <- remaining, P.not (P.any (dependsOn bx) remaining)] of
-      [] -> P.take 1 remaining
-      ready -> ready
-    without bx = P.filter (\b -> P.fst b P./= P.fst bx)
-    touches (_, bx) = Set.fromList (inputs bx P.++ outputs bx)
-    -- the nodes something still to come or the boundary needs
-    neededBy rest = Set.unions (Set.fromList outs : [touches b | b <- rest])
-    -- the nodes that are open once the placed nodes are in, with the rest to come
-    openAfter placed rest = Set.intersection (Set.union (Set.fromList ins) placed) (neededBy rest)
-    -- what is left of a box on its own: its nodes that the boundary or another box needs
-    alone bx = Set.intersection (touches bx) (Set.union (Set.fromList ins) (neededBy (without bx boxesIx)))
+    labelled = P.zip [0 :: P.Int ..] [P.fmap (index M.!) bx | bx <- boxList]
+    shape =
+      Shape
+        { shapeNodes = M.elems index
+        , shapeIns = P.fmap (index M.!) (M.elems legIn)
+        , shapeOuts = P.fmap (index M.!) (M.elems legOut)
+        }
+    boxes0 = [(i, bx{label = ()}) | (i, bx) <- labelled]
     size ns = P.product [P.fromIntegral (sizeFn (sortAt M.! n)) :: P.Double | n <- Set.toList ns]
-    layerOf = M.fromList (P.zip (P.fmap P.fst order) [1 :: P.Int ..])
-    madeAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- boxesIx, n <- outputs bx]
-    usedAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- boxesIx, n <- inputs bx]
-    layersOf n m = M.findWithDefault [] n m
-    feedback = [n | n <- M.elems index, P.or [mk P.>= u | u <- layersOf n usedAt, mk <- layersOf n madeAt]]
-    isFeedback n = n `P.elem` feedback
-    attached = Set.fromList (ins P.++ outs P.++ P.concat [inputs bx P.++ outputs bx | (_, bx) <- boxesIx])
-    -- a node attached to nothing is a closed loop, a spider without legs
-    isolated = [KN n | n <- M.elems index, n `Set.notMember` attached]
-    outKey n = if isFeedback n then KL n else KN n
-    -- whether a wire is needed after the given box: a later box uses it or makes another part of it,
-    -- or it is an output; what boxes make of a node fed back goes on its other wire, to the end
-    live t (KN n)
-      | isFeedback n = P.any (P.> t) (layersOf n usedAt)
-      | P.otherwise = P.any (P.> t) (layersOf n usedAt P.++ layersOf n madeAt) P.|| n `P.elem` outs
-    live _ (KL _) = P.True
-    step
-      :: forall (xs :: [s])
-       . M.Map P.Int (SomeArrow s)
-      -> ([Key], Built xs)
-      -> (P.Int, (P.Int, Box l P.Int))
-      -> ([Key], Built xs)
-    step arrows (bundle, body) (t, (i, bx)) =
-      let need = P.fmap KN (inputs bx)
-          made = P.fmap outKey (outputs bx)
-          -- a wire goes past the box when it is needed after it or is merged with a wire across it:
-          -- the carried wires, and what is left of the box, its wires of one node merged
-          carry = [k | k <- nubOrd (bundle P.++ need), live t k P.|| k `P.elem` made]
-          kept = [k | k <- nubOrd made, live t k P.|| k `P.elem` carry]
-          -- the box goes after the carried wires, next to the wires it is merged with later
-          run :: forall (ws :: [s]). Sorts ws -> Built ws
-          run ws = splitSorts (P.length carry) ws \pre post ->
-            beside pre (Built pre Same) post (transition [] made kept `afterBuilt` boxThen al (arrows M.! i) post)
-      in ( carry P.++ kept
-         , run `afterBuilt` (transition [] bundle (carry P.++ need) `afterBuilt` body)
-         )
+    (boxesIx, merged) = pathBoxes boxes0 (contractStates size shape boxes0)
+    order = schedule size shape boxesIx
+    lt = lifetimes shape boxesIx order
     interpBox (i, Box x is os) = case interp x of
       arr@(SomeArrow xs ys _)
         | lineUpAll al (someOfList xs) (nodeSorts is) P.&& lineUpAll al (someOfList ys) (nodeSorts os) -> P.Right (i, arr)
         | P.otherwise -> P.Left "readBack: the arrow of a label does not have the sorts of its box"
     nodeSorts = P.fmap (nodeSort P.. KN)
-    -- one spider per wire kind, also for the given kinds without wires, between permutations that
-    -- group the wires
-    transition :: [Key] -> [Key] -> [Key] -> (forall (xs :: [s]). Sorts xs -> Built xs)
-    transition extra from to xs =
-      let present = nubOrd (from P.++ to)
-          kinds = groupOrder from to present P.++ [k | k <- extra, k `P.notElem` present]
-          count k ks = P.length (P.filter (P.== k) ks)
-          positions ks = positionsIn kinds ks
-          identity = P.all (\k -> count k from P.== 1 P.&& count k to P.== 1) kinds
-          spiders :: forall (ws :: [s]). Sorts ws -> Built ws
-          spiders ws
-            | identity = Built ws Same
-            | P.otherwise = spidersThen al [(nodeSort k, count k from, count k to) | k <- kinds] ws
-      in (permuteThen (inverse (positions to)) `afterBuilt` (spiders `afterBuilt` permuteThen (positions from) xs))
-    inverse p = P.fmap P.snd (List.sort (P.zip p [0 ..]))
-    -- the positions of the wires in the order that groups them by kind
-    positionsIn kinds ks = [i | k <- kinds, i <- [j | (j, k') <- P.zip [0 :: P.Int ..] ks, k' P.== k]]
-    -- the order of the kinds that needs the fewest swaps, each weighed by the number of wires it
-    -- crosses: every order for a few kinds, else by the average position of their wires; the swaps
-    -- between two kinds depend only on which of them goes first
-    groupOrder from to present
-      | P.length present P.<= 6 = List.minimumBy (comparing cost) (List.permutations present)
-      | P.otherwise = List.sortOn average present
-      where
-        crossings ks = M.fromListWith (P.+) [((a, b), 1 :: P.Int) | (j, a) <- P.zip [0 :: P.Int ..] ks, b <- P.take j ks, a P./= b]
-        weighed = M.unionWith (P.+) (P.fmap (P.* P.length from) (crossings from)) (P.fmap (P.* P.length to) (crossings to))
-        -- each pair of kinds in the wrong order costs its wires that cross
-        cost kinds = P.sum [M.findWithDefault 0 (a, b) weighed | (j, b) <- P.zip [0 :: P.Int ..] kinds, a <- P.take j kinds]
-        average k =
-          let is = [i | (i, k') <- P.zip [0 :: P.Int ..] (from P.++ to), k' P.== k]
-          in P.fromIntegral (P.sum is) P./ (P.fromIntegral (P.length is) :: P.Double)
+
+-- ** Planning
+
+-- | The nodes of an open hypergraph, numbered from 0, and its boundaries.
+data Shape = Shape {shapeNodes :: [P.Int], shapeIns :: [P.Int], shapeOuts :: [P.Int]}
+
+-- | A numbered box.
+type Ix = (P.Int, Box () P.Int)
+
+touches :: Ix -> Set.Set P.Int
+touches (_, bx) = Set.fromList (inputs bx P.++ outputs bx)
+
+without :: Ix -> [Ix] -> [Ix]
+without bx = P.filter (\b -> P.fst b P./= P.fst bx)
+
+-- | The nodes that the given boxes or the outputs need.
+neededBy :: Shape -> [Ix] -> Set.Set P.Int
+neededBy sh rest = Set.unions (Set.fromList (shapeOuts sh) : [touches b | b <- rest])
+
+-- | The nodes that are open once the placed nodes are in, with the given boxes still to come.
+openAfter :: Shape -> Set.Set P.Int -> [Ix] -> Set.Set P.Int
+openAfter sh placed rest = Set.intersection (Set.union (Set.fromList (shapeIns sh)) placed) (neededBy sh rest)
+
+-- | What is left of a box on its own, among the given boxes: its nodes that the boundary or another
+-- box needs.
+alone :: Shape -> [Ix] -> Ix -> Set.Set P.Int
+alone sh bxs bx = Set.intersection (touches bx) (Set.union (Set.fromList (shapeIns sh)) (neededBy sh (without bx bxs)))
+
+-- | How much a contraction makes the result grow: the size of the result less the sizes of the two
+-- parts, which numpy's greedy order keeps smallest.
+gain :: (Set.Set P.Int -> P.Double) -> Set.Set P.Int -> Set.Set P.Int -> Set.Set P.Int -> P.Double
+gain size whole a b = size whole P.- size a P.- size b
+
+-- | Some of the boxes without inputs, contracted as a tree, with how many of them touch each node and
+-- the nodes something outside them needs.
+data Piece = Piece {pieceTree :: Tree, pieceCounts :: M.Map P.Int P.Int, pieceOpen :: Set.Set P.Int}
+
+-- | The boxes without inputs contracted with each other as a tree, in numpy's greedy order: the pair
+-- that shares a node and whose result grows least, until no two share a node.
+contractStates :: (Set.Set P.Int -> P.Double) -> Shape -> [Ix] -> [Piece]
+contractStates size sh bxs = contract [leaf b | b@(_, bx) <- bxs, P.null (inputs bx)]
+  where
+    -- how many boxes and boundaries touch each node; a piece needs to keep a node that they touch
+    -- more often than its own boxes do
+    total =
+      M.fromListWith
+        (P.+)
+        ([(n, 1) | b <- bxs, n <- Set.toList (touches b)] P.++ [(n, 1) | n <- nubOrd (shapeIns sh P.++ shapeOuts sh)])
+    openIn counts = Set.fromList [n | (n, c) <- M.toList counts, c P.< total M.! n]
+    keysIn open made = [k | k <- nubOrd made, keyNode k `Set.member` open]
+    leaf b@(i, bx) =
+      let counts = M.fromList [(n, 1) | n <- Set.toList (touches b)]
+          open = openIn counts
+      in Piece (Leaf i (P.fmap KN (outputs bx)) (keysIn open (P.fmap KN (outputs bx)))) counts open
+    merge a b =
+      let counts = M.unionWith (P.+) (pieceCounts a) (pieceCounts b)
+          open = openIn counts
+      in Piece (Merge (pieceTree a) (pieceTree b) (keysIn open (treeKeys (pieceTree a) P.++ treeKeys (pieceTree b)))) counts open
+    contract ps =
+      case [ (gain size (pieceOpen ab) (pieceOpen a) (pieceOpen b), a, b, ab)
+           | a : rest <- List.tails ps
+           , b <- rest
+           , P.not (Set.disjoint (pieceOpen a) (pieceOpen b))
+           , let ab = merge a b
+           ] of
+        [] -> ps
+        cs ->
+          let (_, a, b, ab) = List.minimumBy (comparing (\(c, _, _, _) -> c)) cs
+          in contract [if pieceTree q P.== pieceTree a then ab else q | q <- ps, pieceTree q P./= pieceTree b]
+
+-- | The boxes read back along a path: those with inputs, the states left on their own, and one box
+-- for each piece of more than one state, numbered after the boxes, with those pieces.
+pathBoxes :: [Ix] -> [Piece] -> ([Ix], [(P.Int, Tree)])
+pathBoxes bxs pieces =
+  ( [b | b@(i, bx) <- bxs, P.not (P.null (inputs bx)) P.|| i `P.elem` alone']
+      P.++ [(j, Box () [] (P.fmap keyNode (treeKeys t))) | (j, t) <- merged]
+  , merged
+  )
+  where
+    alone' = [i | Piece{pieceTree = Leaf i _ _} <- pieces]
+    merged = [(j, t) | (j, Piece{pieceTree = t@Merge{}}) <- P.zip [P.length bxs ..] pieces]
+
+-- | The boxes one at a time, in numpy's greedy order: of the boxes whose inputs are made, the one
+-- whose contraction with the open nodes costs least, or the first of the cheapest pair while no node
+-- is open; a box on a cycle when no box is ready.
+schedule :: (Set.Set P.Int -> P.Double) -> Shape -> [Ix] -> [Ix]
+schedule size sh bxs = go Set.empty bxs
+  where
+    go _ [] = []
+    go placed remaining =
+      let open = openAfter sh placed remaining
+          after bx = openAfter sh (Set.union placed (touches bx)) (without bx remaining)
+          cost bx = gain size (after bx) open (alone sh bxs bx)
+          pairCost (x, y) =
+            gain
+              size
+              (openAfter sh (Set.union placed (Set.union (touches x) (touches y))) (without y (without x remaining)))
+              (alone sh bxs x)
+              (alone sh bxs y)
+          next
+            | Set.null open
+            , _ : _ : _ <- remaining =
+                P.fst (List.minimumBy (comparing pairCost) [(x, y) | x <- candidates remaining, y <- candidates (without x remaining)])
+            | P.otherwise = List.minimumBy (comparing cost) (candidates remaining)
+      in next : go (Set.union placed (touches next)) (without next remaining)
+    candidates remaining = case [bx | bx <- remaining, P.not (P.any (dependsOn bx) remaining)] of
+      [] -> P.take 1 remaining
+      ready -> ready
+    -- a box depends on another when it uses a node the other makes
+    dependsOn (i, bi) (j, bj) = i P./= j P.&& P.any (`P.elem` outputs bj) (inputs bi)
+
+-- | When the wires of the read-back are needed, for the boxes in the given order.
+data Lifetimes = Lifetimes
+  { feedback :: [P.Int]
+  -- ^ the nodes that a box uses no later than a box makes them, fed back with a trace
+  , outKey :: P.Int -> Key
+  -- ^ the wire that a box makes of a node
+  , live :: P.Int -> Key -> P.Bool
+  -- ^ whether a wire is needed after the given step: a later box uses it or makes another part of
+  -- it, or it is an output; what boxes make of a node fed back goes on its other wire, to the end
+  }
+
+lifetimes :: Shape -> [Ix] -> [Ix] -> Lifetimes
+lifetimes sh bxs order = Lifetimes{feedback = fb, outKey = key, live = alive}
+  where
+    layerOf = M.fromList (P.zip (P.fmap P.fst order) [1 :: P.Int ..])
+    madeAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- bxs, n <- outputs bx]
+    usedAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- bxs, n <- inputs bx]
+    layersOf n m = M.findWithDefault [] n m
+    fb = [n | n <- shapeNodes sh, P.or [mk P.>= u | u <- layersOf n usedAt, mk <- layersOf n madeAt]]
+    key n = if n `P.elem` fb then KL n else KN n
+    alive t (KN n)
+      | n `P.elem` fb = P.any (P.> t) (layersOf n usedAt)
+      | P.otherwise = P.any (P.> t) (layersOf n usedAt P.++ layersOf n madeAt) P.|| n `P.elem` shapeOuts sh
+    alive _ (KL _) = P.True
+
+-- | The nodes attached to none of the given boxes and to no boundary: closed loops, spiders without
+-- legs.
+isolated :: Shape -> [Ix] -> [Key]
+isolated sh bxs = [KN n | n <- shapeNodes sh, n `Set.notMember` attached]
+  where
+    attached = Set.fromList (shapeIns sh P.++ shapeOuts sh P.++ P.concat [inputs bx P.++ outputs bx | (_, bx) <- bxs])
+
+-- ** Building
+
+-- | The term of a piece: a state with its own wires of one node merged and those nothing else needs
+-- discarded, or two halves side by side with the nodes only they need merged away.
+pieceArrow
+  :: forall s. (Hypergraph s) => Align s -> (Key -> SomeSort s) -> M.Map P.Int (SomeArrow s) -> Tree -> SomeArrow s
+pieceArrow al nodeSort arrows0 t0 = case go t0 of
+  Built ys f -> SomeArrow Nil ys (arrowOf Nil f)
+  where
+    go :: Tree -> Built ('[] :: [s])
+    go t = transition al nodeSort [] (treeMade t) (treeKeys t) (body t)
+    body (Leaf i _ _) = boxThen al (arrows0 M.! i) Nil
+    body (Merge l r _) = beside Nil (go l) Nil (go r)
+
+-- | One box placed after the wires that go past it, between the spiders before and after it.
+step
+  :: forall s (xs :: [s])
+   . (Hypergraph s)
+  => Align s
+  -> (Key -> SomeSort s)
+  -> Lifetimes
+  -> M.Map P.Int (SomeArrow s)
+  -> ([Key], Built xs)
+  -> (P.Int, Ix)
+  -> ([Key], Built xs)
+step al nodeSort lt arrows (bundle, body) (t, (i, bx)) =
+  let need = P.fmap KN (inputs bx)
+      made = P.fmap (outKey lt) (outputs bx)
+      -- a wire goes past the box when it is needed after it or is merged with a wire across it:
+      -- the carried wires, and what is left of the box, its wires of one node merged
+      carry = [k | k <- nubOrd (bundle P.++ need), live lt t k P.|| k `P.elem` made]
+      kept = [k | k <- nubOrd made, live lt t k P.|| k `P.elem` carry]
+      -- the box goes after the carried wires, next to the wires it is merged with later
+      run :: forall (ws :: [s]). Sorts ws -> Built ws
+      run ws = splitSorts (P.length carry) ws \pre post ->
+        beside pre (Built pre Same) post (transition al nodeSort [] made kept (boxThen al (arrows M.! i) post))
+  in ( carry P.++ kept
+     , run `afterBuilt` transition al nodeSort [] bundle (carry P.++ need) body
+     )
+
+-- | What is built so far followed by one spider per wire kind, also for the given kinds without
+-- wires, between permutations that group the wires. Each step is composed onto what is built so far
+-- by itself, so that in a category of matrices a state is only ever multiplied by one step.
+transition
+  :: forall s (xs :: [s])
+   . (Hypergraph s) => Align s -> (Key -> SomeSort s) -> [Key] -> [Key] -> [Key] -> Built xs -> Built xs
+transition al nodeSort extra from to built =
+  let present = nubOrd (from P.++ to)
+      kinds = groupOrder from to present P.++ [k | k <- extra, k `P.notElem` present]
+      count k ks = P.length (P.filter (P.== k) ks)
+      identity = P.all (\k -> count k from P.== 1 P.&& count k to P.== 1) kinds
+      spiders :: forall (ws :: [s]). Sorts ws -> Built ws
+      spiders ws
+        | identity = Built ws Same
+        | P.otherwise = spidersThen al [(nodeSort k, count k from, count k to) | k <- kinds] ws
+  in permuteThen (inverse (positionsIn kinds to)) (spiders `afterBuilt` permuteThen (positionsIn kinds from) built)
+  where
+    inverse p = P.fmap P.snd (List.sort (P.zip p [0 :: P.Int ..]))
+
+-- | The positions of the wires in the order that groups them by kind.
+positionsIn :: [Key] -> [Key] -> [P.Int]
+positionsIn kinds ks = [i | k <- kinds, i <- [j | (j, k') <- P.zip [0 :: P.Int ..] ks, k' P.== k]]
+
+-- | The order of the kinds that needs the fewest swaps, each weighed by the number of wires it
+-- crosses: every order for a few kinds, else by the average position of their wires. The swaps
+-- between two kinds depend only on which of them goes first.
+groupOrder :: [Key] -> [Key] -> [Key] -> [Key]
+groupOrder from to present
+  | P.length present P.<= 6 = List.minimumBy (comparing cost) (List.permutations present)
+  | P.otherwise = List.sortOn average present
+  where
+    crossings ks = M.fromListWith (P.+) [((a, b), 1 :: P.Int) | (j, a) <- P.zip [0 :: P.Int ..] ks, b <- P.take j ks, a P./= b]
+    weighed = M.unionWith (P.+) (P.fmap (P.* P.length from) (crossings from)) (P.fmap (P.* P.length to) (crossings to))
+    -- each pair of kinds in the wrong order costs its wires that cross
+    cost kinds = P.sum [M.findWithDefault 0 (a, b) weighed | (j, b) <- P.zip [0 :: P.Int ..] kinds, a <- P.take j kinds]
+    average k =
+      let is = [i | (i, k') <- P.zip [0 :: P.Int ..] (from P.++ to), k' P.== k]
+      in P.fromIntegral (P.sum is) P./ (P.fromIntegral (P.length is) :: P.Double)
 
 -- * Simplifying
 
@@ -573,6 +716,20 @@ byIso @_ @x @y = P.fmap (\o -> withIso @Profunctor o \f _ -> Arrow (singleton f)
 -- | Sorts taken to be equal, as they are when they come from the same arrow.
 trusted :: forall s. Align s
 trusted @_ @x @y = P.Just (unsafeCoerce (Same :: Step '[x] '[x]) :: Step '[x] '[y])
+
+-- | The states contracted into one piece, as a tree of box numbers, each with the wires it ends in:
+-- its open nodes, each once, in the order their wires come in. A leaf also has the wires of its box.
+data Tree = Leaf P.Int [Key] [Key] | Merge Tree Tree [Key]
+  deriving (P.Eq)
+
+treeKeys :: Tree -> [Key]
+treeKeys (Leaf _ _ ks) = ks
+treeKeys (Merge _ _ ks) = ks
+
+-- | The wires that come into the last step of a piece.
+treeMade :: Tree -> [Key]
+treeMade (Leaf _ made _) = made
+treeMade (Merge l r _) = treeKeys l P.++ treeKeys r
 
 -- | The wires of the read-back: a node, and the part of a node that cyclic boxes make, which is fed
 -- back to the node.
@@ -649,10 +806,10 @@ boxThen al (SomeArrow as bs f) xs = splitSorts (lengthListOf as) xs \pre post ->
   P.Just into -> beside pre (Built bs (Arrow (f . arrowOf pre into))) post (Built post Same)
   P.Nothing -> P.error "readBack: a box was planned on wires of other sorts"
 
--- | The wires in the order that @p@ lists them, as adjacent swaps: the wire at position @j@ of the
--- result is wire @p !! j@ of the source.
-permuteThen :: (Hypergraph s) => [P.Int] -> Sorts (xs :: [s]) -> Built xs
-permuteThen p xs0 = P.foldl (\built i -> swapThen i `afterBuilt` built) (Built xs0 Same) (P.reverse (bubble p []))
+-- | What is built so far followed by its wires in the order that @p@ lists them, as adjacent swaps
+-- composed one at a time: the wire at position @j@ of the result is wire @p !! j@ before.
+permuteThen :: (Hypergraph s) => [P.Int] -> Built (xs :: [s]) -> Built xs
+permuteThen p built0 = P.foldl (\built i -> swapThen i `afterBuilt` built) built0 (P.reverse (bubble p []))
   where
     -- the positions of the adjacent swaps that sort @p@
     bubble ps acc = case [i | (i, (a, b)) <- P.zip [0 ..] (P.zip ps (P.drop 1 ps)), a P.> b] of

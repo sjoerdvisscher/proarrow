@@ -11,7 +11,7 @@
 -- The specification is an open hypergraph ("Proarrow.Category.Instance.OpenHypergraph"): a node for
 -- each letter, the tensors as boxes, and the output letters as its boundary. It is already in normal
 -- form, and the result is its 'Proarrow.Category.Instance.OpenHypergraph.simplify': the tensors
--- one at a time, each letter summed out by a spider as soon as no later tensor has it.
+-- contracted in pairs, each letter summed out by a spider as soon as nothing still to come has it.
 module Proarrow.Tools.Einsum
   ( Tensor
   , einsum

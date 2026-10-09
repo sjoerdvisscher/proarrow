@@ -145,6 +145,19 @@ test =
                     . (box @_ @'[] @'[M3] "a" ** (box @_ @'[M2] @'[M3] "g" . box @_ @'[] @'[M2] "h"))
                 )
             check "differs" (unMat m == unMat (cap @M3 . (am ** (gm . hm)) . leftUnitorInv))
+        , testProperty "two states merged, then a box on the merge (2, 3)" $ do
+            am <- genNamed @(Unit ~> M3) "a"
+            bm <- genNamed @(Unit ~> M3) "b"
+            gm <- genNamed @(M3 ~> M2) "g"
+            let interp x = case x of
+                  "a" -> someArrow @'[] @'[M3] (Str am)
+                  "b" -> someArrow @'[] @'[M3] (Str bm)
+                  _ -> someArrow (singleton gm)
+            m <-
+              readBackOr
+                interp
+                (box @_ @'[M3] @'[M2] "g" . mappend @(Wires '[M3]) . (box @_ @'[] @'[M3] "a" ** box @_ @'[] @'[M3] "b"))
+            check "differs" (unMat m == unMat (gm . mappend @M3 . (am ** bm) . leftUnitorInv))
         , testProperty "a closed loop reads back as the dimension (3)" $ do
             m <- readBackOr (\_ -> error "no boxes") (counit @(Wires '[M3] :: OM) . mempty @(Wires '[M3]))
             check "not 3" (unMat m == unMat (counit @M3 . mempty @M3))
