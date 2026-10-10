@@ -52,7 +52,7 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (KnownListOf (..), mapListOf, someOfList)
 
 -- | A tensor with indices of the given objects: a state of their tensor, as a morphism of
--- 'Strictified' from @'[]@.
+-- 'Proarrow.Category.Monoidal.Strictified.Strictified' from @'[]@.
 type Tensor :: forall k. [k] -> Type
 type Tensor xs = State xs
 

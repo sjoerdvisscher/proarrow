@@ -119,7 +119,7 @@ type PortSorts :: forall s. FINHASK -> [s]
 type family PortSorts a where
   PortSorts (FH (Port xs)) = xs
 
--- | The finite sets of ports with sorts of kind @s@, @'FH' ('Port' xs)@.
+-- | The finite sets of ports with sorts of kind @s@, @'FH' (Port xs)@.
 type Sorted :: Kind -> OB FINHASK
 class (Ob a, a ~ FH (Port (PortSorts @s a)), SortList (PortSorts @s a)) => Sorted s a
 

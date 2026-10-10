@@ -1,6 +1,6 @@
 # Revision history for proarrow
 
-## Unreleased
+## 0.3.0.0 -- 2026-10-10
 
 * `Proarrow.Tools.Einsum`: `einsum @"ij,jk->ik" a b` on tensors in hypergraph categories.
 * `Proarrow.Tools.SMC`: index notation for categories whose index types are `Frobenius`: `sumOver`
