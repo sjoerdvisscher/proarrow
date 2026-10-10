@@ -33,6 +33,12 @@ extra-source-files:
     lattice.dot
     mkdocs.sh
 
+flag blas
+    description: Contract tensor networks of floating-point numbers with the system's BLAS: Accelerate
+                 on macOS, OpenBLAS elsewhere.
+    default: False
+    manual: True
+
 common extensions
     default-language: GHC2024
     ghc-options:      -Wall
@@ -101,6 +107,7 @@ library
         Proarrow.Category.Instance.Simplex
         Proarrow.Category.Instance.Span
         Proarrow.Category.Instance.Sub
+        Proarrow.Category.Instance.TensorNetwork
         Proarrow.Category.Instance.Unit
         Proarrow.Category.Instance.Zero
         Proarrow.Category.Instance.ZX
@@ -230,8 +237,17 @@ library
         , containers >=0.6 && <0.9
         , fin >= 0.3.2 && <1
         , vec >= 0.5.1 && <1
+        , vector >= 0.13 && <0.14
         , universe-base >= 1.1.4 && <1.2
     hs-source-dirs:   src
+    other-modules:
+        Proarrow.Category.Instance.TensorNetwork.Blas
+    if flag(blas)
+        cpp-options: -DBLAS
+        if os(darwin)
+            frameworks: Accelerate
+        else
+            extra-libraries: openblas
 
 library testing
     import: extensions
@@ -281,6 +297,7 @@ test-suite test
         Props.Dot
         Props.SMC
         Props.Svg
+        Props.TensorNetwork
         Props.FinHask
         Props.FinRel
         Props.IntConstruction
@@ -313,3 +330,4 @@ test-suite test
         , universe-base >= 1.1.4 && <1.2
         , tasty >=1.4 && <1.6
         , tasty-falsify >=0.1 && <0.2
+        , vector >= 0.13 && <0.14

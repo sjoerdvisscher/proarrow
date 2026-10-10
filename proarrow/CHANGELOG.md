@@ -16,6 +16,14 @@
 * `Proarrow.Category.Instance.OpenHypergraph`: open hypergraphs with typed wires.
 * `Proarrow.Category.Monoidal.Hypergraph`: `Sized`, the size of an object (a dimension, a number of
   elements), which the read-back of open hypergraphs and `einsum` choose their contraction order by.
+* `Proarrow.Category.Instance.TensorNetwork`: `TNET e`, matrices kept as tensor networks over lists of
+  dimensions, a hypergraph category whose structure costs nothing; `einsum` in it contracts pairwise.
+  `Scalar`, the entry types, with a contraction loop compiled for each, which hands matrix products of
+  `Double`, `Float` and `Complex Double` entries to the system's BLAS with the new `blas` flag.
+  Biproducts as direct sums, the dagger, distributivity and traces, as in `Mat`; entries in and out as
+  storable vectors (`fromVector`, `toVector`) or lists of rows.
+* `Proarrow.Category.Instance.FinHask`: `unionFind`, the representatives after joining pairs, used by the
+  coequalizers of `FINHASK` and `FINSET`.
 * `Proarrow.Optic.Iso`: `DecidableIso`, categories that decide whether two objects are isomorphic,
   with the isomorphism as an optic of any flavour; instances for `Mat`, `FinRel`, `SVG` and `DOT`.
 * `Proarrow.Object`: `ListOf c xs`, a type-level list with the evidence `c` for each element as a

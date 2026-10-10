@@ -32,6 +32,7 @@ import Data.Vec.Lazy
 import Prelude (($))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.FinHask (unionFind)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
@@ -290,10 +291,8 @@ instance HasPullbacks FINSET where
 instance HasCoequalizers FINSET where
   coequalize (FinSet @_ @a f) (FinSet g) k =
     let
-      find m i = P.maybe i (find m) $ IM.lookup (P.fromEnum i) m
-      union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert (P.fromEnum ri) rj m
-      unionFind = P.foldl union IM.empty (zipWith (,) f g)
-      step m x = IM.insertWith (P.++) (P.fromEnum $ find unionFind x) [x] m
+      rep = unionFind (toList (zipWith (,) f g))
+      step m x = IM.insertWith (P.++) (P.fromEnum (rep x)) [x] m
       groups = IM.elems $ P.foldl step IM.empty (universe @a)
     in
       reifyList groups \vec -> k (FinSet (tabulate (\a -> findIndex (P.elem a) vec)))

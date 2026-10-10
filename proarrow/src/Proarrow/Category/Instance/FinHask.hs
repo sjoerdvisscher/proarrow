@@ -238,13 +238,19 @@ instance HasPullbacks FINHASK where
     in
       reifyList groups \e -> k (FinHask (P.fst P.<$> e)) (FinHask (P.snd P.<$> e))
 
+-- | The representative of each element after joining the given pairs: union-find, on a map of
+-- parent pointers.
+unionFind :: (P.Ord a) => [(a, a)] -> a -> a
+unionFind pairs = find (P.foldl union M.empty pairs)
+  where
+    find m i = P.maybe i (find m) (M.lookup i m)
+    union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else M.insert ri rj m
+
 instance HasCoequalizers FINHASK where
   coequalize (FinHask @_ @b f) (FinHask g) k =
     let
-      find m i = P.maybe i (find m) $ M.lookup i m
-      union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else M.insert ri rj m
-      unionFind = P.foldl union M.empty (P.zip (M.elems f) (M.elems g))
-      step m x = M.insertWith (P.++) (find unionFind x) [x] m
+      rep = unionFind (P.zip (M.elems f) (M.elems g))
+      step m x = M.insertWith (P.++) (rep x) [x] m
       groups = M.elems $ P.foldl step M.empty (universeF @b)
     in
       reifyList groups \ce ->
