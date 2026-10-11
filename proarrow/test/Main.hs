@@ -14,12 +14,14 @@ import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
+import Examples.Probabilistic qualified as Probabilistic
 import Examples.Sessions qualified as Sessions
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
+import Props.ContractionOrder qualified as ContractionOrder
 import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
 import Props.Cps qualified as Cps
@@ -93,6 +95,7 @@ main =
           , Span.test
           , Svg.test
           , TensorNetwork.test
+          , ContractionOrder.test
           , Diff.test
           , ZX.test
           ]
@@ -108,6 +111,7 @@ main =
           , IntComposition.test
           , LinearLogic.test
           , Learning.test
+          , Probabilistic.test
           , Sessions.test
           , Cbpv.test
           , Toffoli.test

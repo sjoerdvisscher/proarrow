@@ -100,6 +100,7 @@ import Proarrow.Object
   , withListOf
   )
 import Proarrow.Optic.Iso (DecidableIso (..), withIso)
+import Proarrow.Tools.ContractionOrder (Plan (..), planContraction)
 
 -- * Sorts
 
@@ -379,7 +380,8 @@ readBack = readBackWith (sizeFromSized @s)
 -- that nothing else needs, and a node is merged as soon as nothing still to come needs it. The order
 -- is numpy's greedy one, which takes the contraction whose result grows least, its size less the
 -- sizes of the two parts. The boxes without inputs are contracted with each other first, as a tree
--- of pairs that share a node, so a network of tensors is read back as its contraction tree. The
+-- of pairs that share a node, so a network of tensors is read back as its contraction tree; for
+-- that tree a min-fill elimination order is planned too, and the cheaper plan is taken. The
 -- pieces and the other boxes then follow the flow of their wires one at a time, with between two
 -- boxes one spider per node. A node that a box uses no later than a box makes it is fed back with
 -- a trace, which only a cyclic hypergraph needs. Fails with a message when an arrow does not fit
@@ -484,15 +486,21 @@ alone sh bxs bx = Set.intersection (touches bx) (Set.union (Set.fromList (shapeI
 gain :: (Set.Set P.Int -> P.Double) -> Set.Set P.Int -> Set.Set P.Int -> Set.Set P.Int -> P.Double
 gain size whole a b = size whole P.- size a P.- size b
 
--- | Some of the boxes without inputs, contracted as a tree, with how many of them touch each node and
--- the nodes something outside them needs.
-data Piece = Piece {pieceTree :: Tree, pieceCounts :: M.Map P.Int P.Int, pieceOpen :: Set.Set P.Int}
+-- | Some of the boxes without inputs, contracted as a tree, with how many of them touch each node.
+data Piece = Piece {pieceTree :: Tree, pieceCounts :: M.Map P.Int P.Int}
 
--- | The boxes without inputs contracted with each other as a tree, in numpy's greedy order: the pair
--- that shares a node and whose result grows least, until no two share a node.
+-- | The boxes without inputs contracted with each other as a tree, until no two share a node, in
+-- the order of 'planContraction'.
 contractStates :: (Set.Set P.Int -> P.Double) -> Shape -> [Ix] -> [Piece]
-contractStates size sh bxs = contract [leaf b | b@(_, bx) <- bxs, P.null (inputs bx)]
+contractStates size sh bxs = P.fmap run (planContraction size (P.const P.True) needed (P.fmap touches states))
   where
+    states = [b | b@(_, bx) <- bxs, P.null (inputs bx)]
+    -- the nodes of the boundary and of the boxes with inputs
+    needed =
+      Set.fromList
+        (shapeIns sh P.++ shapeOuts sh P.++ [n | b@(_, bx) <- bxs, P.not (P.null (inputs bx)), n <- Set.toList (touches b)])
+    run (Factor k) = leaf (M.fromList (P.zip [0 ..] states) M.! k)
+    run (Contract a b) = merge (run a) (run b)
     -- how many boxes and boundaries touch each node; a piece needs to keep a node that they touch
     -- more often than its own boxes do
     total =
@@ -504,22 +512,11 @@ contractStates size sh bxs = contract [leaf b | b@(_, bx) <- bxs, P.null (inputs
     leaf b@(i, bx) =
       let counts = M.fromList [(n, 1) | n <- Set.toList (touches b)]
           open = openIn counts
-      in Piece (Leaf i (P.fmap KN (outputs bx)) (keysIn open (P.fmap KN (outputs bx)))) counts open
+      in Piece (Leaf i (P.fmap KN (outputs bx)) (keysIn open (P.fmap KN (outputs bx)))) counts
     merge a b =
       let counts = M.unionWith (P.+) (pieceCounts a) (pieceCounts b)
           open = openIn counts
-      in Piece (Merge (pieceTree a) (pieceTree b) (keysIn open (treeKeys (pieceTree a) P.++ treeKeys (pieceTree b)))) counts open
-    contract ps =
-      case [ (gain size (pieceOpen ab) (pieceOpen a) (pieceOpen b), a, b, ab)
-           | a : rest <- List.tails ps
-           , b <- rest
-           , P.not (Set.disjoint (pieceOpen a) (pieceOpen b))
-           , let ab = merge a b
-           ] of
-        [] -> ps
-        cs ->
-          let (_, a, b, ab) = List.minimumBy (comparing (\(c, _, _, _) -> c)) cs
-          in contract [if pieceTree q P.== pieceTree a then ab else q | q <- ps, pieceTree q P./= pieceTree b]
+      in Piece (Merge (pieceTree a) (pieceTree b) (keysIn open (treeKeys (pieceTree a) P.++ treeKeys (pieceTree b)))) counts
 
 -- | The boxes read back along a path: those with inputs, the states left on their own, and one box
 -- for each piece of more than one state, numbered after the boxes, with those pieces.

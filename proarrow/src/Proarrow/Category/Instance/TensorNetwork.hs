@@ -40,7 +40,6 @@ import Data.IntMap.Strict qualified as IM
 import Data.IntSet qualified as IS
 import Data.Kind (Constraint, Type)
 import Data.List qualified as List
-import Data.Ord (comparing)
 import Data.Proxy (Proxy (..))
 import Data.Set qualified as Set
 import Data.Type.Equality ((:~:) (..))
@@ -75,6 +74,7 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Object (KnownListOf (..), eqListOf, mapListOf, withKnownAppend, withKnownAssoc, type (++))
 import Proarrow.Optic.Iso (DecidableIso (..), isoFromEquality)
+import Proarrow.Tools.ContractionOrder qualified as Plan
 
 -- | The entries of the factors: numbers that can be stored unboxed. An instance needs no methods:
 -- the loop that contracts factors is then compiled for its type.
@@ -398,7 +398,7 @@ normalize (Net dims is os fs) =
     (P.fmap (dims P.!!) kept)
     (P.fmap renumber is)
     (P.fmap renumber os)
-    (P.fmap relabel (scalars (loops P.++ sumOut reduced shared)))
+    (P.fmap relabel (scalars (loops P.++ P.fmap (P.fst P.. run) plans)))
   where
     summed = [n | n <- [0 .. P.length dims - 1], n `Set.notMember` keptSet]
     -- the number of factors on each node
@@ -415,23 +415,30 @@ normalize (Net dims is os fs) =
       [] -> []
       ns -> [factor [] (SV.singleton (P.fromIntegral (extent dims ns)))]
     shared = [n | n <- summed, factorsOn n P.> 1]
-    -- the factors on a shared node multiplied two at a time, first the pair whose result grows least
-    -- (its size less those of the two factors, as the read-back chooses), each node summed out by
-    -- the product that brings together the last two factors on it
-    sumOut gs [] = gs
-    sumOut gs ns@(n : _) =
-      let (touching, others) = List.partition (onFactor n) gs
-          numbered = P.zip [0 :: Int ..] touching
-          pairs = [(f, g, [h | (k, h) <- numbered, k P./= i, k P./= j] P.++ others) | (i, f) <- numbered, (j, g) <- numbered, i P.< j]
-          product (f, g, outside) =
-            let ds = [m | m <- ns, onFactor m f P.|| onFactor m g, P.not (P.any (onFactor m) outside)]
-                left = nubOrd (axes f P.++ axes g) List.\\ ds
-                -- a product that is not a matrix product puts the nodes that a later product sums
-                -- last, where a matrix product wants them
-                keep = if matrixProduct f g ds then left else let (later, now) = List.partition (`P.elem` ns) left in now P.++ later
-            in (extent dims keep - extent dims (axes f) - extent dims (axes g), (contract dims f g keep ds, outside, ds))
-          (_, (fg, rest, done)) = List.minimumBy (comparing P.fst) (P.fmap product pairs)
-      in sumOut (fg : rest) (ns List.\\ done)
+    sharedSet = Set.fromList shared
+    -- the factors contracted in the order of 'Plan.planContraction', until no two share a summed node
+    plans =
+      Plan.planContraction
+        (P.fromIntegral P.. extent dims P.. Set.toList)
+        (`Set.member` sharedSet)
+        keptSet
+        (P.fmap (Set.fromList P.. axes) reduced)
+    reducedAt = IM.fromList (P.zip [0 ..] reduced)
+    -- the factor a plan makes, with how many of the factors in it touch each node
+    run (Plan.Factor k) = let f = reducedAt IM.! k in (f, IM.fromList [(m, 1 :: Int) | m <- axes f])
+    run (Plan.Contract a b) =
+      let (f, cf) = run a
+          (g, cg) = run b
+          cs = IM.unionWith (+) cf cg
+          both = nubOrd (axes f P.++ axes g)
+          -- the shared nodes that no factor outside the two is on, summed out by this product
+          ds = [m | m <- both, m `Set.member` sharedSet, cs IM.! m == factorsOn m]
+          left = both List.\\ ds
+          -- a product that is not a matrix product puts the nodes that a later product sums last,
+          -- where a matrix product wants them
+          keep =
+            if matrixProduct f g ds then left else let (later, now) = List.partition (`Set.member` sharedSet) left in now P.++ later
+      in (contract dims f g keep ds, cs)
     -- the factors without axes multiplied into one
     scalars gs = case List.partition (P.null P.. axes) gs of
       (c : d : more, rest) -> factor [] (SV.singleton (P.product [SV.head (values x) | x <- c : d : more])) : rest

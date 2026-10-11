@@ -6,6 +6,9 @@
 * `Proarrow.Category.Instance.TensorNetwork`: `matMul`, a product of matrices given as vectors,
   through BLAS when the `blas` flag is on; the dagger copies no entries, and complex ones are
   conjugated once, when first needed.
+* `Proarrow.Tools.ContractionOrder`: `planContraction`, the order to contract a network of factors
+  in, the cheaper of numpy's greedy order and a min-fill elimination order (`minFillOrder`). The
+  read-back of open hypergraphs, and with it einsum, and tensor networks contract along it.
 * `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
 * `Proarrow.Tools.SMC`: tuple patterns, binds and tuples of five and six.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
