@@ -164,8 +164,8 @@ import Proarrow.Tools.SMC.Internal.Term
 -- 'loop' and 'cont', the alternatives of 'with' and 'caseOf', and the left of a bind in @do@
 -- notation, the input arrives through a pattern: a variable, @()@, or a tuple of patterns. A
 -- variable stands for the whole input, whatever its type, and is discarded if it is not used. @()@
--- matches the unit 'I'. A pair matches a tensor @a ':**' b@ and binds its two sides, and a triple
--- or quadruple is pairs nested to the left, as @a ':**' b ':**' c@ is. At a computation,
+-- matches the unit 'I'. A pair matches a tensor @a ':**' b@ and binds its two sides, and a tuple
+-- of three to six is pairs nested to the left, as @a ':**' b ':**' c@ is. At a computation,
 -- @'Up' (a ':**' b)@ or @'Up' 'I'@, a pair or @()@ pattern runs the computation and matches its
 -- value, so the rest of the block must be of a negative type; a variable at a computation only
 -- names it.

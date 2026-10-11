@@ -71,6 +71,22 @@ instance
   {-# INLINE bindTerm #-}
   bindTerm = bindPat
 
+instance
+  {-# INCOHERENT #-}
+  (BindPat k (Term d g a) (v, w, x, y, z) cont r)
+  => BindTerm k (v, w, x, y, z) (Term d g (a :: SYN k)) cont r
+  where
+  {-# INLINE bindTerm #-}
+  bindTerm = bindPat
+
+instance
+  {-# INCOHERENT #-}
+  (BindPat k (Term d g a) (u, v, w, x, y, z) cont r)
+  => BindTerm k (u, v, w, x, y, z) (Term d g (a :: SYN k)) cont r
+  where
+  {-# INLINE bindTerm #-}
+  bindTerm = bindPat
+
 instance {-# INCOHERENT #-} (BindPat k (Term d g a) () cont r) => BindTerm k () (Term d g (a :: SYN k)) cont r where
   {-# INLINE bindTerm #-}
   bindTerm = bindPat

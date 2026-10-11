@@ -4,7 +4,8 @@
 -- | Tensor networks with integer entries, compared by their entries.
 module Props.TensorNetwork (test) where
 
-import Data.Complex (Complex (..))
+import Data.Complex (Complex (..), conjugate)
+import Data.List (transpose)
 import Data.Vector.Storable qualified as SV
 import GHC.TypeNats (KnownNat)
 import Test.Falsify (Property)
@@ -78,11 +79,20 @@ test =
         , testProperty "fromVector then toVector is the vector (2, 3)" $ do
             f <- genNamed @(T2 ~> T3) "f"
             expect "entries" (toVector f) (toVector (fromVector @'[2] @'[3] (toVector f)))
-        , testProperty "the dagger conjugates complex entries" $
-            expect
-              "entries"
-              (SV.fromList [1 :+ (-2), 3 :+ 4])
-              (toVector (dagger (fromVector @'[1] @'[2] (SV.fromList [1 :+ 2, 3 :+ (-4)] :: SV.Vector (Complex Double)))))
+        , testProperty "the dagger of complex entries is the conjugate transpose" do
+            f <- complexArrow @'[2] @'[3]
+            expect "entries" (conjugateTranspose (entries f)) (entries (dagger f))
+        , testProperty "the complex dagger reverses composition" do
+            f <- complexArrow @'[2] @'[3]
+            g <- complexArrow @'[3] @'[2]
+            expect "entries" (entries (dagger f . dagger g)) (entries (dagger (g . f)))
+        , testProperty "a complex dagger composed with entries that are not conjugated" do
+            f <- complexArrow @'[2] @'[3]
+            g <- complexArrow @'[2] @'[3]
+            expect "entries" (entries (fromEntries @'[3] @'[2] (conjugateTranspose (entries f)) . g)) (entries (dagger f . g))
+        , testProperty "two complex daggers cancel" do
+            f <- complexArrow @'[2] @'[3]
+            expect "entries" (entries f) (entries (dagger (dagger f)))
         ]
     , testGroup
         "einsum"
@@ -112,6 +122,20 @@ test =
   where
     -- a product of all four would have 32^8 entries; each pairwise contraction costs about 32^3
     fewer = defaultTestOptions{overrideNumTests = Just 5}
+
+-- | An arrow with complex entries, whose real and imaginary parts are small integers.
+complexArrow
+  :: forall as bs
+   . (KnownListOf KnownNat as, KnownListOf KnownNat bs)
+  => Property (TensorNetwork (TN as :: TNET (Complex Double)) (TN bs))
+complexArrow = do
+  re <- genNamed @(TN as ~> (TN bs :: TNET Int)) "re"
+  im <- genNamed @(TN as ~> (TN bs :: TNET Int)) "im"
+  pure (fromVector (SV.zipWith (\x y -> fromIntegral x :+ fromIntegral y) (toVector re) (toVector im)))
+
+-- | The conjugate transpose of rows of entries.
+conjugateTranspose :: [[Complex Double]] -> [[Complex Double]]
+conjugateTranspose = map (map conjugate) . transpose
 
 -- | The same arrow with its entries as 'Double's, which are contracted with 'gemm' where there is
 -- one.

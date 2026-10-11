@@ -126,7 +126,7 @@ import Proarrow.Functor qualified as Rep
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Object (KnownListOf (..), SomeOf (..), someOfList)
-import Proarrow.Profunctor.Corepresentable (type (%%))
+import Proarrow.Profunctor.Corepresentable (Corep (..), type (%%))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Exponential ((:~>:) (..))
@@ -597,6 +597,12 @@ instance (TestableType (a ~> (f Rep.@ b)), Ob b) => TestableType (Rep f a b) whe
 instance (TestingEqShow (a ~> (f Rep.@ b)), Ob b) => TestingEqShow (Rep f a b) where
   eqP (Rep l) (Rep r) = eqP l r
   showP (Rep p) = showP p
+
+instance (TestableType ((f Rep.@ a) ~> b), Ob a) => TestableType (Corep f a b) where
+  gen = invmap Corep unCorep (gen @(f Rep.@ a ~> b))
+instance (TestingEqShow ((f Rep.@ a) ~> b), Ob a) => TestingEqShow (Corep f a b) where
+  eqP (Corep l) (Corep r) = eqP l r
+  showP (Corep p) = showP p
 
 instance (TestingEqShow (catk a1 b1), TestingEqShow (catj a2 b2)) => TestingEqShow ((catk :**: catj) '(a1, a2) '(b1, b2)) where
   eqP (l1 :**: l2) (r1 :**: r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)

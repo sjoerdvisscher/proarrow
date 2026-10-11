@@ -12,6 +12,7 @@ import Examples.Einsum qualified as Einsum
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
+import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
 import Examples.Sessions qualified as Sessions
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
@@ -23,6 +24,7 @@ import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
 import Props.Cps qualified as Cps
 import Props.DPO qualified as DPO
+import Props.Diff qualified as Diff
 import Props.Discrete qualified as Discrete
 import Props.Dot qualified as Dot
 import Props.FinHask qualified as FinHask
@@ -91,6 +93,7 @@ main =
           , Span.test
           , Svg.test
           , TensorNetwork.test
+          , Diff.test
           , ZX.test
           ]
       , testGroup
@@ -104,6 +107,7 @@ main =
           , ULC.test
           , IntComposition.test
           , LinearLogic.test
+          , Learning.test
           , Sessions.test
           , Cbpv.test
           , Toffoli.test

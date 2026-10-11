@@ -150,6 +150,23 @@ duality =
           ( toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(w, x, y, z) -> z SMC.** x SMC.** w SMC.** y)
               == toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(((w, x), y), z) -> z SMC.** x SMC.** w SMC.** y)
           )
+    , testProperty "a quintuple pattern is the left-nested pairs (FinRel 2, 1, 3, 2, 1)" $
+        check
+          "differs"
+          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1) (\(v, w, x, y, z) -> z SMC.** x SMC.** v SMC.** y SMC.** w)
+              == toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1) (\((((v, w), x), y), z) -> z SMC.** x SMC.** v SMC.** y SMC.** w)
+          )
+    , testProperty "a sextuple bind is the left-nested pairs (FinRel 2, 1, 3, 2, 1, 2)" $
+        check
+          "differs"
+          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1 :** F F2)
+              ( \t -> SMC.do
+                  (u, v, w, x, y, z) <- t
+                  z SMC.** x SMC.** u SMC.** y SMC.** w SMC.** v
+              )
+              == toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1 :** F F2)
+                (\(((((u, v), w), x), y), z) -> z SMC.** x SMC.** u SMC.** y SMC.** w SMC.** v)
+          )
     , testProperty "combineDual (FinRel 2, 3)" $
         check "differs from combineDual" (combineDualT @F2 @F3 == combineDual @F2 @F3)
     , -- the Int construction's duals swap the two halves; bigger objects than these get expensive

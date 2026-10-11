@@ -23,6 +23,8 @@ module Proarrow.Object
   , mapListOf
   , lengthListOf
   , appendListOf
+  , withKnownAppend
+  , withKnownAssoc
   , eqListOf
 
     -- * One object of many
@@ -115,6 +117,20 @@ eqListOf _ _ _ = P.Nothing
 appendListOf :: ListOf c as -> ListOf c bs -> ListOf c (as ++ bs)
 appendListOf Nil ys = ys
 appendListOf (Cons @x xs) ys = Cons @x (appendListOf xs ys)
+
+-- | The class for the elements of both lists.
+withKnownAppend
+  :: forall {k} (c :: OB k) as bs r. (KnownListOf c as, KnownListOf c bs) => ((KnownListOf c (as ++ bs)) => r) -> r
+withKnownAppend = withKnownListOf (appendListOf (listOf @c @as) (listOf @c @bs))
+
+-- | The class for the elements of three lists, appended either way round.
+withKnownAssoc
+  :: forall {k} (c :: OB k) as bs cs r
+   . (KnownListOf c as, KnownListOf c bs, KnownListOf c cs)
+  => ((KnownListOf c ((as ++ bs) ++ cs), KnownListOf c (as ++ (bs ++ cs))) => r) -> r
+withKnownAssoc r =
+  withKnownAppend @c @as @bs
+    (withKnownAppend @c @(as ++ bs) @cs (withKnownAppend @c @bs @cs (withKnownAppend @c @as @(bs ++ cs) r)))
 
 -- | Some type with the evidence @c@, which one known only at runtime.
 type SomeOf :: forall {k}. OB k -> Type

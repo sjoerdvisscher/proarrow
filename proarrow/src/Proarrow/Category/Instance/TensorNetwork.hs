@@ -31,6 +31,7 @@ module Proarrow.Category.Instance.TensorNetwork
   , toVector
   , fromEntries
   , entries
+  , matMul
   ) where
 
 import Data.Complex (Complex, conjugate)
@@ -72,7 +73,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), 
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
-import Proarrow.Object (KnownListOf (..), appendListOf, eqListOf, mapListOf, withKnownListOf, type (++))
+import Proarrow.Object (KnownListOf (..), eqListOf, mapListOf, withKnownAppend, withKnownAssoc, type (++))
 import Proarrow.Optic.Iso (DecidableIso (..), isoFromEquality)
 
 -- | The entries of the factors: numbers that can be stored unboxed. An instance needs no methods:
@@ -87,9 +88,9 @@ class (P.Num e, Storable e) => Scalar e where
   kernel = contractLoop
   {-# INLINE kernel #-}
 
-  -- | The conjugate of an entry, which the dagger takes: the identity on real numbers.
-  conj :: e -> e
-  conj = P.id
+  -- | The conjugation of entries, when it is not the identity, as for complex numbers.
+  conj :: P.Maybe (e -> e)
+  conj = P.Nothing
 
   -- | A fast matrix product, which a contraction of two factors that is one is handed to.
   gemm :: P.Maybe (Gemm e)
@@ -101,7 +102,7 @@ instance Scalar P.Double where
 instance Scalar P.Float where
   gemm = gemmFloat
 instance Scalar (Complex P.Double) where
-  conj = conjugate
+  conj = P.Just conjugate
   gemm = gemmComplexDouble
 
 -- | The loop that 'kernel' runs, written once for every type: a loop over each axis of the result,
@@ -162,8 +163,14 @@ type data TNET (e :: Type) = TN [Nat]
 dimsOf :: forall ns. (KnownListOf KnownNat ns) => [Dim]
 dimsOf = mapListOf @KnownNat (\ @n -> P.fromIntegral (natVal (Proxy @n))) (listOf @KnownNat @ns)
 
--- | A dense factor: its entries, row by row over its axes, and the node of each axis.
-data Factor e = Factor {axes :: [Node], values :: SV.Vector e}
+-- | A dense factor: its entries, row by row over its axes, the node of each axis, and the
+-- conjugates of its entries. Both are computed when first needed, so the dagger can swap them, and
+-- each factor conjugates its entries at most once.
+data Factor e = Factor {axes :: [Node], values :: ~(SV.Vector e), conjugates :: ~(SV.Vector e)}
+
+-- | The factor with the given axes and entries.
+factor :: (Scalar e) => [Node] -> SV.Vector e -> Factor e
+factor as vs = Factor as vs (P.maybe vs (`SV.map` vs) conj)
 
 -- | The nodes, numbered from 0 with their dimensions, the node of each input and output wire, and
 -- the factors. Kept so that every node is on a wire and no factor has an axis twice.
@@ -196,7 +203,7 @@ fromVector
   => SV.Vector e -> TensorNetwork (TN as :: TNET e) (TN bs)
 fromVector vs
   | SV.length vs P./= P.product dims = P.error "fromVector: the length is not the product of the dimensions"
-  | P.otherwise = TensorNetwork (Net dims is os [Factor (os P.++ is) vs])
+  | P.otherwise = TensorNetwork (Net dims is os [factor (os P.++ is) vs])
   where
     dims = dimsOf @as P.++ dimsOf @bs
     is = wires @as
@@ -283,18 +290,21 @@ contract :: forall e. (Scalar e) => [Dim] -> Factor e -> Factor e -> [Node] -> [
 contract dims f g keep summed
   | P.Just mm <- gemm, P.Just r <- viaGemm mm dims f g keep summed = r
   | P.otherwise =
-      Factor
+      factor
         keep
         ( kernel
-            [(dims P.!! x, stride dims f x, stride dims g x) | x <- keep]
-            (offsets f summed)
-            (offsets g summed)
+            [(dims P.!! x, sf x, sg x) | x <- keep]
+            (offsets sf summed)
+            (offsets sg summed)
             (values f)
             (values g)
         )
   where
+    sf = stride dims f
+    sg = stride dims g
     -- the offset into a factor's entries of each index of the given nodes
-    offsets h = P.foldl (\acc x -> step acc (dims P.!! x) (stride dims h x)) (UV.singleton 0)
+    offsets s [x] = UV.generate (dims P.!! x) (* s x)
+    offsets s xs = P.foldl (\acc x -> step acc (dims P.!! x) (s x)) (UV.singleton 0) xs
     step acc d s = UV.generate (UV.length acc * d) \j -> let (q, r) = j `P.quotRem` d in acc `UV.unsafeIndex` q + r * s
 
 -- | One factor with the given nodes kept, in that order, and the others summed: its product with the
@@ -306,8 +316,8 @@ contract1 dims f keep summed
   | P.otherwise = contract dims f unit keep summed
 
 -- | The factor without axes whose entry is 1.
-unit :: (P.Num e, Storable e) => Factor e
-unit = Factor [] (SV.singleton 1)
+unit :: (Scalar e) => Factor e
+unit = factor [] (SV.singleton 1)
 
 -- | A contraction of two factors as a matrix product, when it is one: something is summed, every
 -- summed node is on both factors, and the kept nodes of the first come before those of the second,
@@ -316,8 +326,8 @@ unit = Factor [] (SV.singleton 1)
 viaGemm :: (Scalar e) => Gemm e -> [Dim] -> Factor e -> Factor e -> [Node] -> [Node] -> P.Maybe (Factor e)
 viaGemm mm dims f g keep summed
   | P.not (matrixProduct f g summed) P.|| rows * cols * inner P.< gemmWork = P.Nothing
-  | keep == ms P.++ ns = P.Just (Factor keep (mm ta tb rows cols inner va vb))
-  | keep == ns P.++ ms = P.Just (Factor keep (mm (P.not tb) (P.not ta) cols rows inner vb va))
+  | keep == ms P.++ ns = P.Just (factor keep (mm ta tb rows cols inner va vb))
+  | keep == ns P.++ ms = P.Just (factor keep (mm (P.not tb) (P.not ta) cols rows inner vb va))
   | P.otherwise = P.Nothing
   where
     ms = [x | x <- axes f, P.not (onFactor x g)]
@@ -335,9 +345,11 @@ viaGemm mm dims f g keep summed
       | P.otherwise = (P.False, values (contract1 dims h (rs P.++ cs) []))
 
 -- | How far a step along a node moves in a factor's entries: the strides of its axes on that node,
--- 0 when it has none.
+-- 0 when it has none. Applied to a factor alone, it works out the strides of its axes once.
 stride :: [Dim] -> Factor e -> Node -> Int
-stride dims f node = P.sum [s | (a, s) <- P.zip (axes f) (P.drop 1 (P.scanr (*) 1 (P.fmap (dims P.!!) (axes f)))), a == node]
+stride dims f = \node -> P.sum [s | (a, s) <- axisStrides, a == node]
+  where
+    axisStrides = P.zip (axes f) (P.drop 1 (P.scanr (*) 1 (P.fmap (dims P.!!) (axes f))))
 
 -- | Whether no element of the list is there twice.
 distinct :: [Node] -> P.Bool
@@ -363,6 +375,21 @@ extent dims = P.product P.. P.fmap (dims P.!!)
 gemmWork :: Int
 gemmWork = 4096
 
+-- | The product of two matrices given row by row, for products that are not part of a network:
+-- whether the first and the second are stored transposed, the numbers of rows, columns and summed
+-- indices, and the two matrices; the result row by row. It is the contraction of two factors on the
+-- nodes of the rows, the columns and the summed index, so large products go to 'gemm'.
+matMul :: (Scalar e) => P.Bool -> P.Bool -> Int -> Int -> Int -> SV.Vector e -> SV.Vector e -> SV.Vector e
+matMul ta tb rows cols inner a b =
+  values
+    ( contract
+        [rows, cols, inner]
+        (factor (if ta then [2, 0] else [0, 2]) a)
+        (factor (if tb then [1, 2] else [2, 1]) b)
+        [0, 1]
+        [2]
+    )
+
 -- | The network with every factor's axes distinct, every node that is on no wire summed out, and
 -- the nodes renumbered.
 normalize :: (Scalar e) => Net e -> Net e
@@ -386,7 +413,7 @@ normalize (Net dims is os fs) =
     -- the summed nodes on no factor, as of closed loops: a scalar of their dimensions
     loops = case [n | n <- summed, factorsOn n == 0] of
       [] -> []
-      ns -> [Factor [] (SV.singleton (P.fromIntegral (extent dims ns)))]
+      ns -> [factor [] (SV.singleton (P.fromIntegral (extent dims ns)))]
     shared = [n | n <- summed, factorsOn n P.> 1]
     -- the factors on a shared node multiplied two at a time, first the pair whose result grows least
     -- (its size less those of the two factors, as the read-back chooses), each node summed out by
@@ -407,12 +434,12 @@ normalize (Net dims is os fs) =
       in sumOut (fg : rest) (ns List.\\ done)
     -- the factors without axes multiplied into one
     scalars gs = case List.partition (P.null P.. axes) gs of
-      (c : d : more, rest) -> Factor [] (SV.singleton (P.product [SV.head (values x) | x <- c : d : more])) : rest
+      (c : d : more, rest) -> factor [] (SV.singleton (P.product [SV.head (values x) | x <- c : d : more])) : rest
       _ -> gs
     kept = nubOrd (is P.++ os)
     keptSet = Set.fromList kept
     renumber = renumbering kept
-    relabel (Factor as vs) = Factor (P.fmap renumber as) vs
+    relabel f = f{axes = P.fmap renumber (axes f)}
 
 -- | The new number of each of the given nodes: its place in the list.
 renumbering :: [Node] -> Node -> Node
@@ -424,7 +451,7 @@ besideNet (Net d1 i1 o1 f1) (Net d2 i2 o2 f2) =
   Net (d1 P.++ d2) (i1 P.++ P.fmap (+ k) i2) (o1 P.++ P.fmap (+ k) o2) (f1 P.++ P.fmap shift f2)
   where
     k = P.length d1
-    shift (Factor as vs) = Factor (P.fmap (+ k) as) vs
+    shift f = f{axes = P.fmap (+ k) (axes f)}
 
 -- | The second network after the first: their wirings glued along the wires in between, and the
 -- nodes that are then on no wire summed out.
@@ -438,7 +465,7 @@ composeNet f g
             [nodeDims both P.!! r | r <- live]
             (P.fmap node (ins f))
             (P.fmap (node P.. (+ k)) (outs g))
-            [Factor (P.fmap node as) vs | Factor as vs <- factors both]
+            [h{axes = P.fmap node (axes h)} | h <- factors both]
         )
   where
     both = besideNet f g
@@ -463,13 +490,7 @@ transposeNet (Net d i o fs) = Net d o i fs
 
 withAppend
   :: forall as bs r. (KnownListOf KnownNat as, KnownListOf KnownNat bs) => ((KnownListOf KnownNat (as ++ bs)) => r) -> r
-withAppend = withKnownListOf (appendListOf (listOf @KnownNat @as) (listOf @KnownNat @bs))
-
-withAssoc
-  :: forall as bs cs r
-   . (KnownListOf KnownNat as, KnownListOf KnownNat bs, KnownListOf KnownNat cs)
-  => ((KnownListOf KnownNat ((as ++ bs) ++ cs), KnownListOf KnownNat (as ++ (bs ++ cs))) => r) -> r
-withAssoc r = withAppend @as @bs (withAppend @(as ++ bs) @cs (withAppend @bs @cs (withAppend @as @(bs ++ cs) r)))
+withAppend = withKnownAppend @KnownNat @as @bs
 
 -- | The arrow the other way round: its wiring with inputs and outputs swapped.
 transpose :: TensorNetwork (a :: TNET e) b -> TensorNetwork b a
@@ -488,10 +509,10 @@ instance (Scalar e) => CategoryOf (TNET e) where
   type (~>) = TensorNetwork
   type Ob a = (Is TN a, KnownListOf KnownNat (UN TN a))
 
--- | The conjugate transpose. 'dual' is the transpose without conjugating, since the compact-closed
--- structure is bilinear.
+-- | The conjugate transpose: the factors with their entries and conjugates swapped. 'dual' is the
+-- transpose without conjugating, since the compact-closed structure is bilinear.
 instance (Scalar e) => DaggerProfunctor (TensorNetwork :: CAT (TNET e)) where
-  dagger (TensorNetwork n) = TensorNetwork (transposeNet n){factors = [Factor as (SV.map conj vs) | Factor as vs <- factors n]}
+  dagger (TensorNetwork n) = TensorNetwork (transposeNet n){factors = [h{values = conjugates h, conjugates = values h} | h <- factors n]}
 
 -- | A wire of dimension 0.
 instance (Scalar e) => HasInitialObject (TNET e) where
@@ -534,8 +555,8 @@ instance (Scalar e) => Monoidal (TNET e) where
   leftUnitorInv = id
   rightUnitor @(TN as) = withAppend @as @'[] straight
   rightUnitorInv @(TN as) = withAppend @as @'[] straight
-  associator @(TN as) @(TN bs) @(TN cs) = withAssoc @as @bs @cs straight
-  associatorInv @(TN as) @(TN bs) @(TN cs) = withAssoc @as @bs @cs straight
+  associator @(TN as) @(TN bs) @(TN cs) = withKnownAssoc @KnownNat @as @bs @cs straight
+  associatorInv @(TN as) @(TN bs) @(TN cs) = withKnownAssoc @KnownNat @as @bs @cs straight
 
 instance (Scalar e) => SymMonoidal (TNET e) where
   swap @(TN as) @(TN bs) =

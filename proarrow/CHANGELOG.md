@@ -1,5 +1,15 @@
 # Revision history for proarrow
 
+## Unreleased
+
+* `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
+* `Proarrow.Category.Instance.TensorNetwork`: `matMul`, a product of matrices given as vectors,
+  through BLAS when the `blas` flag is on; the dagger copies no entries, and complex ones are
+  conjugated once, when first needed.
+* `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
+* `Proarrow.Tools.SMC`: tuple patterns, binds and tuples of five and six.
+* `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
+
 ## 0.3.0.0 -- 2026-10-10
 
 * `Proarrow.Tools.Einsum`: `einsum @"ij,jk->ik" a b` on tensors in hypergraph categories.

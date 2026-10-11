@@ -67,7 +67,7 @@ ret t = withSynOb @a (lift @a @(Up a) (doubleNegInv @k @(Interp a))) (tuple @k @
 
 -- | A term built from a tuple of terms, by the type it is expected to have: a term is itself, a
 -- pair at a tensor is the tensor of its parts, and a pair at a computation @'Up' a@ is the
--- computation of the pair at @a@. A triple or quadruple stands for pairs nested to the left, as in
+-- computation of the pair at @a@. A tuple of three to six stands for pairs nested to the left, as in
 -- patterns. The parts must be at the same depth, and their contexts are merged.
 type Tuple :: forall k -> Type -> SYN k -> Constraint
 class Tuple k t a where
@@ -78,7 +78,9 @@ type TupleCtx :: forall k -> Type -> Ctx k
 type family TupleCtx k t where
   TupleCtx k (x, y) = Union (TupleCtx k x) (TupleCtx k y)
   TupleCtx k (x, y, z) = TupleCtx k ((x, y), z)
-  TupleCtx k (w, x, y, z) = TupleCtx k (((w, x), y), z)
+  TupleCtx k (w, x, y, z) = TupleCtx k ((w, x, y), z)
+  TupleCtx k (v, w, x, y, z) = TupleCtx k ((v, w, x, y), z)
+  TupleCtx k (u, v, w, x, y, z) = TupleCtx k ((u, v, w, x, y), z)
   TupleCtx k t = CtxOf @k t
 
 -- | The depth of a tuple of terms: that of its first part.
@@ -87,6 +89,8 @@ type family TupleDepth t where
   TupleDepth (x, y) = TupleDepth x
   TupleDepth (x, y, z) = TupleDepth x
   TupleDepth (w, x, y, z) = TupleDepth w
+  TupleDepth (v, w, x, y, z) = TupleDepth v
+  TupleDepth (u, v, w, x, y, z) = TupleDepth u
   TupleDepth t = DepthOf t
 
 -- The generic instances are incoherent, as for patterns: a term's type is often still unknown when
@@ -121,9 +125,17 @@ instance (Tuple k ((x, y), z) a) => Tuple k (x, y, z) a where
   {-# INLINE tuple #-}
   tuple (x, y, z) = tuple @k @((x, y), z) @a ((x, y), z)
 
-instance (Tuple k (((w, x), y), z) a) => Tuple k (w, x, y, z) a where
+instance (Tuple k ((w, x, y), z) a) => Tuple k (w, x, y, z) a where
   {-# INLINE tuple #-}
-  tuple (w, x, y, z) = tuple @k @(((w, x), y), z) @a (((w, x), y), z)
+  tuple (w, x, y, z) = tuple @k @((w, x, y), z) @a ((w, x, y), z)
+
+instance (Tuple k ((v, w, x, y), z) a) => Tuple k (v, w, x, y, z) a where
+  {-# INLINE tuple #-}
+  tuple (v, w, x, y, z) = tuple @k @((v, w, x, y), z) @a ((v, w, x, y), z)
+
+instance (Tuple k ((u, v, w, x, y), z) a) => Tuple k (u, v, w, x, y, z) a where
+  {-# INLINE tuple #-}
+  tuple (u, v, w, x, y, z) = tuple @k @((u, v, w, x, y), z) @a ((u, v, w, x, y), z)
 
 -- | The pattern @t@ of a binder: it takes apart the variable @(n, a)@, and the binder's body
 -- @cont@ then gives a term at depth @n + 1@ with type @b@, whose context is @g@ and possibly that
@@ -166,7 +178,7 @@ instance
   {-# INLINE bindPat #-}
   bindPat = pat @k @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont) @gr
 
--- | A pattern: a variable, @()@, or a pair of patterns. A triple or quadruple stands for pairs
+-- | A pattern: a variable, @()@, or a pair of patterns. A tuple of three to six stands for pairs
 -- nested to the left, as @a ':**' b ':**' c@ is: @(x, y, z)@ is @((x, y), z)@. Binding it at depth
 -- @d@ to a term with context @g@ and type @a@, with a continuation with context @g'@ and type @c@,
 -- gives a term with context @gr@, which each instance fixes. A pair or @()@ at a computation,
@@ -180,7 +192,9 @@ type PSize :: Type -> Nat
 type family PSize t where
   PSize (x, y) = 2 + PSize x + PSize y
   PSize (x, y, z) = PSize ((x, y), z)
-  PSize (w, x, y, z) = PSize (((w, x), y), z)
+  PSize (w, x, y, z) = PSize ((w, x, y), z)
+  PSize (v, w, x, y, z) = PSize ((v, w, x, y), z)
+  PSize (u, v, w, x, y, z) = PSize ((u, v, w, x, y), z)
   PSize t = 0
 
 -- The generic instances are incoherent: a variable pattern's type is often still unknown when the
@@ -260,6 +274,21 @@ instance {-# INCOHERENT #-} (Pat k ((x, y), z) d g a g' c gr) => Pat k (x, y, z)
   {-# INLINE pat #-}
   pat s k = pat @k @((x, y), z) @d @g @a @g' @c @gr s (\((px, py), pz) -> k (px, py, pz))
 
-instance {-# INCOHERENT #-} (Pat k (((w, x), y), z) d g a g' c gr) => Pat k (w, x, y, z) d g a g' c gr where
+instance {-# INCOHERENT #-} (Pat k ((w, x, y), z) d g a g' c gr) => Pat k (w, x, y, z) d g a g' c gr where
   {-# INLINE pat #-}
-  pat s k = pat @k @(((w, x), y), z) @d @g @a @g' @c @gr s (\(((pw, px), py), pz) -> k (pw, px, py, pz))
+  pat s k = pat @k @((w, x, y), z) @d @g @a @g' @c @gr s (\((pw, px, py), pz) -> k (pw, px, py, pz))
+
+instance {-# INCOHERENT #-} (Pat k ((v, w, x, y), z) d g a g' c gr) => Pat k (v, w, x, y, z) d g a g' c gr where
+  {-# INLINE pat #-}
+  pat s k = pat @k @((v, w, x, y), z) @d @g @a @g' @c @gr s (\((pv, pw, px, py), pz) -> k (pv, pw, px, py, pz))
+
+instance
+  {-# INCOHERENT #-}
+  (Pat k ((u, v, w, x, y), z) d g a g' c gr)
+  => Pat k (u, v, w, x, y, z) d g a g' c gr
+  where
+  {-# INLINE pat #-}
+  pat s k =
+    pat @k @((u, v, w, x, y), z) @d @g @a @g' @c @gr
+      s
+      (\((pu, pv, pw, px, py), pz) -> k (pu, pv, pw, px, py, pz))

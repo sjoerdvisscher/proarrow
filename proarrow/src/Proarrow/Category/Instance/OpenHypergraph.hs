@@ -95,6 +95,7 @@ import Proarrow.Object
   , appendListOf
   , lengthListOf
   , someOfList
+  , withKnownAppend
   , withKnownListOf
   , withListOf
   )
@@ -172,7 +173,7 @@ instance HasInitialObject (SORTED s) where
 -- | The ports of both, those of the second numbered after those of the first.
 instance HasBinaryCoproducts (SORTED s) where
   type (||) @(SORTED s) a b = SUB (FH (Port (PortSorts @s (UN SUB a) ++ PortSorts @s (UN SUB b))))
-  withObCoprod @a @b r = withKnownListOf (appendListOf (sorts @s @(PortSorts @s (UN SUB a))) (sorts @s @(PortSorts @s (UN SUB b)))) r
+  withObCoprod @a @b r = withKnownAppend @SortOb @(PortSorts @s (UN SUB a)) @(PortSorts @s (UN SUB b)) r
   lft @a @b =
     withObCoprod @(SORTED s) @a @b
       (Sub (FinHask (M.fromList [(Port i, Port i) | Port i <- universeF @(Port (PortSorts @s (UN SUB a)))])))
@@ -259,9 +260,17 @@ box x =
     na = lengthListOf (sorts @s @as)
     ports = P.fmap Port [0 .. na P.+ lengthListOf (sorts @s @bs) P.- 1]
 
--- | The open hypergraph with nodes of the given sorts, the wires of @as@ and of @bs@ attached to
--- the given nodes, and boxes on the given nodes, numbered from 0. Fails with a message unless every
--- wire has a sort isomorphic to that of its node and every node exists.
+-- | The open hypergraph with the given nodes, boundaries and boxes. The first argument lists the
+-- sorts of the nodes, and a node is referred to by its position in that list, counting from 0. The
+-- second and third arguments give, for each wire of @as@ and of @bs@ in order, the node it is
+-- attached to, and each box lists the nodes of its inputs and of its outputs. A node that occurs
+-- several times joins all those wires and ports. Fails with a message unless every node referred
+-- to exists and every wire has a sort isomorphic to that of its node.
+--
+-- The product of a box @a@ from @x@ to @y@ and a box @b@ from @y@ to @z@ has nodes of the sorts
+-- @x@, @y@ and @z@, with @y@ shared between the boxes:
+--
+-- > openHypergraph @'[x] @'[z] [sx, sy, sz] [0] [2] [Box a [0] [1], Box b [1] [2]]
 openHypergraph
   :: forall {s} l (as :: [s]) (bs :: [s])
    . (SortList as, SortList bs, DecidableIso s)
@@ -286,10 +295,10 @@ openHypergraph nodeSorts ins outs boxList
   where
     sortAt = M.fromList (P.zip [0 ..] nodeSorts)
 
--- | 'openHypergraph' without its checks: the boundaries must have as many wires as their sorts,
--- every wire and box must be attached to nodes that exist, and every wire must have the sort of its
--- node. Only for hypergraphs that satisfy this by construction, such as those that 'simplify' is
--- given, which trusts the sorts to be equal.
+-- | 'openHypergraph' without its checks, with the same arguments: the boundaries must have as many
+-- wires as their sorts, every wire and box must be attached to nodes that exist, and every wire must
+-- have the sort of its node. Only for hypergraphs that satisfy this by construction, such as those
+-- that 'simplify' is given, which trusts the sorts to be equal.
 unsafeOpenHypergraph
   :: forall {s} l (as :: [s]) (bs :: [s])
    . (SortList as, SortList bs)
