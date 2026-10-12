@@ -9,3 +9,7 @@ This repository holds two Haskell packages:
   top of `proarrow`.
 
 See [`proarrow/README.md`](proarrow/README.md) for the core ideas behind the library.
+The [wiki](https://github.com/sjoerdvisscher/proarrow/wiki) has worked examples and illustrated
+guides to monoidal terms, sessions, optics, and tensor networks. Start with
+[Einsum and hypergraph categories](https://github.com/sjoerdvisscher/proarrow/wiki/Einsum-and-hypergraph-categories)
+for a tour from matrix operations to string diagrams and tensor contraction.

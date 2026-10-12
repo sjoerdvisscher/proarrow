@@ -4,6 +4,26 @@
 
 A Haskell library for doing category theory with a central role for profunctors.
 
+## Guided tours
+
+The [wiki](https://github.com/sjoerdvisscher/proarrow/wiki) explains the ideas through worked examples
+and string diagrams. Choose a starting point:
+
+- [Einsum and hypergraph categories](https://github.com/sjoerdvisscher/proarrow/wiki/Einsum-and-hypergraph-categories):
+  start with familiar matrix operations, then see how the same notation describes relations,
+  string diagrams, and tensor networks, and why contraction order matters.
+- [Linear terms for monoidal categories](https://github.com/sjoerdvisscher/proarrow/wiki/Linear-terms-for-monoidal-categories):
+  build a Toffoli circuit as one term in several categories, then explore traces, functions,
+  copying, and duals with `Proarrow.Tools.SMC`.
+- [Producers, consumers and sessions](https://github.com/sjoerdvisscher/proarrow/wiki/Producers-consumers-and-sessions):
+  compare categorical morphisms, session processes, the μμ̃-calculus, and SMC terms on the same
+  examples, then connect them to call by push value.
+- [Optics in proarrow](https://github.com/sjoerdvisscher/proarrow/wiki/Optics-in-proarrow):
+  for readers familiar with mixed optics, see how witness pairs and their eliminators define
+  optic flavors, subtyping, and lawfulness.
+- [Law diagrams](https://github.com/sjoerdvisscher/proarrow/wiki/Law-diagrams):
+  use the illustrated equations as a reference alongside the laws stated in the code.
+
 ## Core ideas
 
 ### One category per kind
