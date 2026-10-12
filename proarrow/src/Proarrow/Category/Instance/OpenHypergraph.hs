@@ -49,6 +49,7 @@ module Proarrow.Category.Instance.OpenHypergraph
   , prim
   , simplify
   , simplifyWith
+  , simplifyFlat
   ) where
 
 import Control.Monad (foldM, msum)
@@ -69,7 +70,7 @@ import Proarrow.Category.Instance.FinHask (FINHASK (..), FinHask (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..))
-import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized (..), traceHG)
+import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized (..), cupS, traceHG)
 import Proarrow.Category.Monoidal.Strictified
   ( Fold
   , Strictified (..)
@@ -85,7 +86,7 @@ import Proarrow.Category.Monoidal.Strictified
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
-import Proarrow.Core (CategoryOf (..), Kind, OB, Ob', Profunctor, Promonad (..), UN, (//))
+import Proarrow.Core (CategoryOf (..), Kind, OB, Ob', Profunctor, Promonad (..), UN, obj, (//))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (comultS, counitS, mappendS, memptyS)
 import Proarrow.Object
@@ -705,6 +706,24 @@ simplifyWith
 simplifyWith sizeFn t = case readBackAligned trusted sizeFn (\(Prim a) -> a) t of
   P.Right r -> r
   P.Left e -> P.error e
+
+-- | 'simplify' with every box bent into a state on all its wires, its inputs turned into outputs
+-- with cups. The read-back then contracts the whole network in the order of 'planContraction',
+-- instead of following the flow from inputs to outputs, and needs no traces for cycles. For
+-- computing with a term rather than drawing it, as the result is drawn with cups and caps.
+simplifyFlat :: forall {k} a b. (Hypergraph k, Sized k) => (a :: SIMPLIFY k) ~> b -> WireSorts a ~> WireSorts b
+simplifyFlat (DecCospan l r (Boxes bxs)) = simplify (DecCospan l r (Boxes (P.fmap bent bxs)))
+  where
+    bent bx@(Box (Prim (SomeArrow xs ys f)) is os)
+      | P.null is = bx
+      | P.otherwise = Box (Prim (bendInputs xs ys f)) [] (P.reverse is P.++ os)
+
+-- | An arrow with its inputs bent over to its outputs with cups, one at a time from the first, so
+-- that the state's wires are the inputs in reverse order followed by the outputs.
+bendInputs :: forall {s} (as :: [s]) bs. (Hypergraph s) => Sorts as -> Sorts bs -> as ~> bs -> SomeArrow s
+bendInputs Nil ys f = SomeArrow Nil ys f
+bendInputs (Cons @x @rest xs) ys f =
+  withIsListOf xs P.$ bendInputs xs (Cons @x ys) ((obj @'[x] ** f) . (cupS @x ** obj @rest))
 
 -- | The size of a sort, from 'Sized'.
 sizeFromSized :: forall s. (Sized s) => SomeSort s -> P.Int

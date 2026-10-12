@@ -9,6 +9,9 @@
 --   probabilities, the connectives are 0-1 matrices, and @observe@ picks out the entry for true.
 --   Discarding a wire sums it out and copying a wire copies its value, so the program computes the
 --   probability of each result together with the observations holding: running it is inference.
+-- * Run as one network instead, with every building block a tensor on all its wires, the
+--   read-back of open hypergraphs contracts the whole program in a planned order, as the paper's
+--   algebraisation does, and gives the same probabilities.
 -- * In string diagrams the same program is drawn, with a box for each coin and connective.
 -- * Functions that call functions are evaluated once each and then combined, so a family of
 --   programs whose probability of true is @2^-2^(n+1)@ costs linear time in @n@.
@@ -21,9 +24,11 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (**), (.))
 
+import Proarrow.Category.Instance.OpenHypergraph (SIMPLIFY, Wires, prim, simplifyFlat)
 import Proarrow.Category.Instance.TensorNetwork (TNET (..), fromEntries, toVector)
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
@@ -100,6 +105,23 @@ tensors =
     , observeP = fromEntries [[0, 1]]
     }
 
+-- | The building blocks as boxes of open hypergraphs, to run a whole program as one network.
+boxedTensors :: Prims (Wires '[Bit] :: SIMPLIFY (TNET Double))
+boxedTensors =
+  Prims
+    { flipP = \q -> prim (Str (flipP tensors q))
+    , andP = prim (Str (andP tensors))
+    , orP = prim (Str (orP tensors))
+    , notP = prim (Str (notP tensors))
+    , observeP = prim (Str (observeP tensors))
+    }
+
+-- | A program run as one network of tensors, each box bent into a state on all its wires, and
+-- contracted in the order of 'Proarrow.Tools.ContractionOrder.planContraction', as the paper's
+-- algebraisation does.
+asNetwork :: (Unit ~> (Wires '[Bit] :: SIMPLIFY (TNET Double))) -> Unit ~> Bit
+asNetwork f = unStr (simplifyFlat f)
+
 -- | The probability of each result of a program together with its observations holding.
 probabilities :: (Unit ~> Bit) -> (Double, Double)
 probabilities f = let v = toVector f in (v SV.! 0, v SV.! 1)
@@ -134,6 +156,10 @@ test =
             expectedIll = prior * 0.99 * 0.01
             expectedHealthy = (1 - prior) * 0.02 * 0.98
         check ("found " ++ show (healthy, ill)) (abs (ill - expectedIll) < 1e-15 && abs (healthy - expectedHealthy) < 1e-15)
+    , testProperty "run as one network of tensors, contracted in a planned order, it gives the same" do
+        let (healthy, ill) = probabilities (hasDisease tensors)
+            (healthy', ill') = probabilities (asNetwork (hasDisease boxedTensors))
+        check ("found " ++ show (healthy', ill')) (abs (healthy - healthy') < 1e-15 && abs (ill - ill') < 1e-15)
     , testProperty "the nested family is true with doubly exponentially small probability" do
         let (_, true5) = probabilities (family tensors 5)
             (_, true1000) = probabilities (family tensors 1000)

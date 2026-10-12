@@ -9,6 +9,8 @@
 * `Proarrow.Tools.ContractionOrder`: `planContraction`, the order to contract a network of factors
   in, the cheaper of numpy's greedy order and a min-fill elimination order (`minFillOrder`). The
   read-back of open hypergraphs, and with it einsum, and tensor networks contract along it.
+  `Proarrow.Category.Instance.OpenHypergraph`: `simplifyFlat`, which bends every box into a state
+  first, so the whole network is contracted in that order.
 * `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
 * `Proarrow.Tools.SMC`: tuple patterns, binds and tuples of five and six.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.

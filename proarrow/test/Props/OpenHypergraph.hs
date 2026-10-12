@@ -35,6 +35,7 @@ import Proarrow.Category.Instance.OpenHypergraph
   , readBack
   , sameSort
   , simplify
+  , simplifyFlat
   , someArrow
   , sortList
   , sortOf
@@ -161,6 +162,34 @@ test =
         , testProperty "a closed loop reads back as the dimension (3)" $ do
             m <- readBackOr (\_ -> error "no boxes") (counit @(Wires '[M3] :: OM) . mempty @(Wires '[M3]))
             check "not 3" (unMat m == unMat (counit @M3 . mempty @M3))
+        ]
+    , testGroup
+        "flat read-back in Mat Int, every box bent into a state"
+        [ testProperty "matrix multiplication in index notation is composition (2, 3)" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            gm <- genNamed @(M3 ~> M2) "g"
+            let Str m = simplifyFlat (matMulT (prim (singleton fm)) (prim (singleton gm)))
+            check "differs from g . f" (unMat m == unMat (gm . fm))
+        , testProperty "the trace, a cycle, needs no trace (3)" $ do
+            gm <- genNamed @(M3 ~> M3) "g"
+            let Str m = simplifyFlat (traceIdxT (prim (singleton gm)))
+            check "differs" (unMat m == unMat (traceIdxT gm))
+        , testProperty "the entrywise product (2, 3)" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            gm <- genNamed @(M2 ~> M3) "g"
+            let Str m = simplifyFlat (hadamardT (prim (singleton fm)) (prim (singleton gm)))
+            check "differs" (unMat m == unMat (hadamardT fm gm))
+        , testProperty "two states merged, then a box on the merge (2, 3)" $ do
+            am <- genNamed @(Unit ~> M3) "a"
+            bm <- genNamed @(Unit ~> M3) "b"
+            gm <- genNamed @(M3 ~> M2) "g"
+            let Str m =
+                  simplifyFlat
+                    ( prim (singleton gm)
+                        . mappend @(Wires '[M3])
+                        . (prim @'[] @'[M3] (Str am) ** prim @'[] @'[M3] (Str bm))
+                    )
+            check "differs" (unMat m == unMat (gm . mappend @M3 . (am ** bm) . leftUnitorInv))
         ]
     , testGroup
         "read-back in SVG"
