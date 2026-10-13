@@ -9,6 +9,7 @@
 -- points that way.
 module Proarrow.Category.Monoidal.Cartesian where
 
+import Data.Kind (Type)
 import Prelude (($), type (~))
 import Prelude qualified as P
 
@@ -18,7 +19,7 @@ import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), Traversable (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (||))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , HasProducts
@@ -62,6 +63,14 @@ instance (HasProducts k, Ob a) => CocommutativeComonoid (PR (a :: k))
 -- | A category with products, viewed through 'PROD' as a monoidal category, is cartesian.
 instance (HasProducts k) => CopyDiscard (PROD k)
 
+instance Closed (PROD Type) where
+  -- The wrapper must also stay opaque until the helper's inlining phase.
+  {-# INLINE [0] curry #-}
+  type a ~~> b = PR (UN PR a ~~> UN PR b)
+  withObExp @(PR a) @(PR b) r = withObExp @Type @a @b r
+  curry (Prod f) = Prod (curryProd f)
+  apply @(PR a) @(PR b) = Prod (applyProd @a @b)
+
 -- | In a cartesian category the tensor /is/ the product ('TensorIsProduct'), but GHC only applies
 -- that equation at the top of a type, never under another type family such as @('||')@, and
 -- using the quantified form of it directly sends the solver in circles. These two identities take
@@ -95,6 +104,20 @@ unparRepCartesian f g = f . repMap @p (fst @j @a @b) &&& g . repMap @p (snd @j @
 
 class (Cartesian k, Closed k) => CCC k
 instance (Cartesian k, Closed k) => CCC k
+
+-- | Currying with the product, obtained from 'curry' using the cartesian tensor/product equality.
+-- It satisfies the currying bijection in the laws of 'Closed'.
+-- Keep @INLINE [0]@ on a delegating instance method too, to preserve delayed inlining.
+curryProd :: forall {k} (a :: k) b c. (CCC k, TensorIsProduct a b, Ob a, Ob b) => (a && b) ~> c -> a ~> (b ~~> c)
+curryProd = curry @k @a @b
+-- Delay exposing the underlying curry to limit dictionary expansion in nested SMC terms.
+{-# INLINE [0] curryProd #-}
+
+-- | Evaluation with the product, obtained from 'apply' using the cartesian tensor/product equality.
+-- Together with 'curryProd' it satisfies the currying bijection in the laws of 'Closed'.
+applyProd :: forall {k} (a :: k) b. (CCC k, TensorIsProduct (a ~~> b) a, Ob a, Ob b) => ((a ~~> b) && a) ~> b
+applyProd = apply @k @a @b
+{-# INLINE applyProd #-}
 
 type Bicartesian k = (Cartesian k, Distributive k)
 

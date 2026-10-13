@@ -1,5 +1,5 @@
--- | A HOAS front end for building morphisms in any symmetric monoidal category, the
--- resource-aware counterpart of "Proarrow.Tools.CCC", which grows with the structure of the target: traces,
+-- | A HOAS front end for building morphisms in any symmetric monoidal category, with
+-- "Proarrow.Tools.CCC" as its cartesian specialization. It grows with the structure of the target: traces,
 -- duals, additives, and the polarised System L reading of inputs and outputs in a dialogue
 -- category. A 'Term' is indexed by its context, the variables it uses, so a variable is the
 -- identity on its own type. Terms combine by merging their contexts, which reorders wires. A

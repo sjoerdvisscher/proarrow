@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+* `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`, with
+  constraints added by the operations used rather than requiring `BiCCC k` for every term.
+  `toCCC` compiles a function on terms; `F` wraps base objects and `Interp` unwraps their
+  interpretations. The former `Free`, `Syntax`, `Ctx`, `Mul`, `Cast`, `KnownCtx` and `BiCCCStructs`
+  API is replaced by SMC's term and context API; `:&`, `$`, `either`, `lft` and `rgt` are replaced
+  by tuple patterns and `**`, `!`, `caseOf`, `inl` and `inr`.
+  `Closed (PROD Type)` supplies the product exponential for Haskell types, using the new
+  `curryProd` and `applyProd` helpers for existing cartesian closed instances. `curryProd` inlines
+  in the final simplifier phase to reduce compilation cost for nested lambda terms.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
 * `Proarrow.Category.Instance.TensorNetwork`: `matMul`, a product of matrices given as vectors,
   through BLAS when the `blas` flag is on; the dagger copies no entries, and complex ones are

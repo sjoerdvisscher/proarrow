@@ -370,14 +370,14 @@ pullbackJoin c ls f = PulledBack (ByJoin [meet g | SomeLeg (Under g) <- ls]) \(U
 
 -- | The sum coverage on a free category with binary coproducts: a sum is covered by its two
 -- injections. This is the syntactic site of Spiwack's post (see the module header). In the free
--- bicartesian closed category 'Proarrow.Tools.CCC.Syntax', the booleans @TermF '+' TermF@ are
+-- bicartesian closed category @FREE cs p@, the booleans @TermF '+' TermF@ are
 -- covered by @true@ and @false@.
 --
 -- Read @p a@ as the ways of producing an @a@. Being a sheaf means @p Bool ≅ p TermF × p TermF@:
 -- every pair of branches has a conditional, and only one. With too many, a proof by cases
 -- establishes nothing. With too few, @if-then-else@ is not definable. On a representable the
 -- conditional is @'|||'@, which is why 'glue' below is @[t, e]@. The conditional on a test
--- @f :: c '~>' Bool@ is 'Proarrow.Tools.CCC.either', which needs the distributive law as well.
+-- @f :: c '~>' Bool@ uses the distributive law as well, as in 'Proarrow.Tools.CCC.caseOf'.
 --
 -- __Stability does not hold.__ It would need every arrow into a sum to split its source into a
 -- sum (/extensivity/), and a free bicartesian category is not extensive. The restriction of

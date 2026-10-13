@@ -5,6 +5,7 @@ module Main where
 import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
+import Examples.CCC qualified as CCC
 import Examples.Cbpv qualified as Cbpv
 import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
@@ -102,6 +103,7 @@ main =
       , testGroup
           "Examples"
           [ CustomLaws.test
+          , CCC.test
           , Database.test
           , Einsum.test
           , FreeExample.test
