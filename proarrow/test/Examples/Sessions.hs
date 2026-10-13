@@ -41,6 +41,7 @@ import Proarrow.Tools.SMC
   , toSMC
   , unit
   , (**)
+  , (-<)
   , (|>)
   , type (:##)
   )
@@ -202,13 +203,13 @@ computeByHand = Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)
 
 -- | A message, from nothing.
 put :: forall a d. a -> SMC.Term d '[] (F (L (Ur a)))
-put x = lift @I @(F (L (Ur a))) (Linear \() -> Ur x) unit
+put x = (Linear \() -> Ur x) -< unit
 
 compute :: SMC.Term d g (F Name :** F Credit) -> SMC.Term d g (F Receipt)
-compute = lift @(F Name :** F Credit) @(F Receipt) (Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c))
+compute p = (Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)) -< p
 
 lookupPrice :: SMC.Term d g (F Name) -> SMC.Term d g (F Price)
-lookupPrice = lift @(F Name) @(F Price) (Linear \(Ur n) -> Ur (length n))
+lookupPrice x = (Linear \(Ur n) -> Ur (length n)) -< x
 
 annotate :: SMC.Term d g (F Receipt) -> SMC.Term d g (F Receipt)
-annotate = lift @(F Receipt) @(F Receipt) (Linear \(Ur s) -> Ur (s ++ " (via broker)"))
+annotate x = (Linear \(Ur s) -> Ur (s ++ " (via broker)")) -< x

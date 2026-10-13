@@ -26,6 +26,33 @@ toSMC
   -> Interp a ~> Interp b
 toSMC k = withSynOb @a (bound @0 @'[] @a @b k . leftUnitorInv @k @(Interp a))
 
+-- | Lift a morphism onto a term or tuple of terms, with its result embedded by 'F'.
+-- The result object is inferred from the morphism. Use 'lift' for composite result syntax.
+{-# INLINE liftF #-}
+liftF
+  :: forall {k} (a :: SYN k) b t
+   . (CategoryOf k, Tuple k t a)
+  => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx k t) (F b)
+liftF f t = lift @a @(F b) f (tuple t)
+
+infixr 0 -<
+
+-- | Arrow application, mirroring @f -< x@ in Haskell's arrow notation.
+-- This is infix 'liftF': the input may be a term or tuple, and the result is embedded by 'F'.
+-- The @Arrows@ extension must be disabled, since it reserves this symbol.
+{-# INLINE (-<) #-}
+(-<)
+  :: forall {k} (a :: SYN k) b t
+   . (CategoryOf k, Tuple k t a)
+  => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx k t) (F b)
+(-<) = liftF @a @b
+
+-- | The identity morphism, named as in Haskell's arrow notation.
+-- An alias for 'Proarrow.Core.id'; @returnA -< x@ embeds the input by 'F'.
+{-# INLINE returnA #-}
+returnA :: (Promonad p, Ob a) => p a a
+returnA = id
+
 -- | The shift of a positive type to a negative one: a computation that produces an @a@. A term of
 -- it is a consumer of consumers of @a@, so in a category with @'Dual' a = a ~~> r@ it is the
 -- continuation passing type @(a -> r) -> r@.
@@ -243,6 +270,17 @@ instance
 instance {-# INCOHERENT #-} (t ~ Term (DepthOf t) g a, gr ~ g') => Pat k t d g a g' c gr where
   {-# INLINE pat #-}
   pat x k = k (recast x)
+
+-- | A pair pattern at an embedded tensor exposes its two embedded components.
+-- The tensor pattern supplies the binding and context operations.
+instance
+  ( a ~ (a1 ** a2)
+  , Pat k (x, y) d g (F a1 :** F a2) g' c gr
+  )
+  => Pat k (x, y) d g (F (a :: k)) g' c gr
+  where
+  {-# INLINE pat #-}
+  pat (MkTerm f) k = pat @k @(x, y) @d @g @(F a1 :** F a2) (MkTerm f) k
 
 instance
   {-# INCOHERENT #-}

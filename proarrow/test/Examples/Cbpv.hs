@@ -17,7 +17,7 @@ import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Core (CategoryOf (..))
 import Proarrow.Testing (check)
-import Proarrow.Tools.SMC (SYN (F, I, (:**)), Up, dup, force, lam, lift, ret, thunk, toSMC, unit, (!), (**))
+import Proarrow.Tools.SMC (SYN (F, I, (:**)), Up, dup, force, lam, lift, ret, thunk, toSMC, unit, (!), (**), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- | The category: functions, with the actions @m ()@ as the answer object.
@@ -46,7 +46,7 @@ effect f = lift @(V m a) @(Eff m) (Cps \a k -> f a >>= k)
 
 -- | A constant.
 val :: forall m a d. a -> SMC.Term d '[] (V m a)
-val a = lift @I @(V m a) (Cps (const a)) unit
+val a = Cps (const a) -< unit
 
 -- | Run a closed computation: give its result to a final continuation.
 run :: (Unit ~> Dual (Dual (C a :: K m))) -> (a -> m ()) -> m ()
@@ -65,7 +65,7 @@ addT readX readY say = toSMC @I @(Comp m Int) \() -> SMC.do
   ret s'
 
 plus :: forall m d g. SMC.Term d g (V m Int :** V m Int) -> SMC.Term d g (V m Int)
-plus = lift @(V m Int :** V m Int) @(V m Int) (Cps (uncurry (+)))
+plus p = Cps (uncurry (+)) -< p
 
 -- | Two computations made in one order and run in the other. A computation is a value until it is
 -- bound, so the effects happen in the order of the binds, not in the order the actions were

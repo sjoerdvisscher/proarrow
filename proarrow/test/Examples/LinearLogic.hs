@@ -40,7 +40,7 @@ import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Promonad.Cont (Cont (..))
 import Proarrow.Testing (check, genNamed)
 import Proarrow.Tools.Diagrams.Svg qualified as Svg
-import Proarrow.Tools.SMC (SYN (F, Not, (:&&), (:**)), annihilate, cont, ret, toSMC, (|>), type (:##))
+import Proarrow.Tools.SMC (SYN (F, Not, (:&&), (:**)), annihilate, cont, ret, toSMC, (-<), (|>), type (:##))
 import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Tools.SMC.Examples
   ( bothWaysT
@@ -89,7 +89,7 @@ resources =
           "differs from comult . h"
           ( toSMC @(F F2) @(F F3 :** F F3)
               ( \x -> SMC.do
-                  y <- SMC.lift h x
+                  y <- h -< x
                   y SMC.** y
               )
               == comult . h
@@ -98,7 +98,7 @@ resources =
         h <- genNamed @(F2 ~> F3) "h"
         check
           "differs from (h ** h) . comult"
-          ( toSMC @(F F2) @(F F3 :** F F3) (\x -> SMC.lift h x SMC.** SMC.lift h x)
+          ( toSMC @(F F2) @(F F3 :** F F3) (\x -> (h -< x) SMC.** (h -< x))
               == (h ** h) . comult
           )
     , testProperty "a fed back variable of a rec block that is also used after it is copied" $
@@ -115,13 +115,13 @@ resources =
 -- the result its first three elements next to the list itself.
 recCopyT :: Int -> ([Int], [Int])
 recCopyT = toSMC @(F Int) @(F [Int] :** F [Int]) \a -> SMC.do
-  rec (b, u) <- SMC.lift @(F Int :** F [Int]) @(F [Int] :** F [Int]) (\(x, us) -> (take 3 us, x : us)) (a SMC.** u)
+  rec (b, u) <- (\(x, us) -> (take 3 us, x : us)) -< (a, u)
   b SMC.** u
 
 -- | A @rec@ block with a variable that nothing uses, which is discarded.
 recDropT :: Int -> [Int]
 recDropT = toSMC @(F Int) @(F [Int]) \a -> SMC.do
-  rec (_b, u) <- SMC.lift @(F Int :** F [Int]) @(F [Int] :** F [Int]) (\(x, us) -> (take 3 us, x : us)) (a SMC.** u)
+  rec (_b, u) <- (\(x, us) -> (take 3 us, x : us)) -< (a, u)
   u
 
 -- * Duals

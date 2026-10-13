@@ -22,10 +22,10 @@ import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, (\\))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Testing (check, genNamed)
+import Proarrow.Testing (check, expect, genNamed)
 import Proarrow.Testing.Laws (defaultTestOptions)
 import Proarrow.Tools.Einsum (EinsumType, Tensor, einsum)
-import Proarrow.Tools.SMC (SYN (..), delta, lift, sumOver, toSMC, unit, (*^))
+import Proarrow.Tools.SMC (SYN (..), delta, liftF, returnA, sumOver, toSMC, unit, (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.FinRel ()
@@ -40,7 +40,7 @@ type M3 = M Nat3 :: MatK Int
 
 -- | The transpose in index notation: the entry at @j@ and @i@ is the entry of @f@ at @i@ and @j@.
 transposeT :: Mat M2 M3 -> Mat M3 M2
-transposeT f = toSMC @(F M3) \j -> sumOver @(F M2) \i -> delta (lift f i) j *^ i
+transposeT f = toSMC @(F M3) \j -> sumOver @(F M2) \i -> delta (f -< i) j *^ i
 
 -- | A morphism as a tensor with an index for its input and one for its output.
 name :: forall {k} (a :: k) b. (Hypergraph k) => a ~> b -> Tensor '[a, b]
@@ -58,7 +58,29 @@ test =
     "SMC"
     [ testGroup
         "FinRel"
-        [ testProperty "matrix multiplication is composition (2, 3, 4)" $ do
+        [ testProperty "arrow application assembles tensor inputs" $ do
+            f <- genNamed @(F2 ~> F3) "f"
+            g <- genNamed @(F3 ~> F4) "g"
+            let actual = toSMC @(F F2 :** F F3) @(F (F3 ** F4)) \(x, y) ->
+                  (f ** g) -< (x, y)
+            expect "tensor application" (f ** g) actual
+            expect "term application" f (toSMC @(F F2) @(F F3) (\x -> f -< x))
+            let pipeline = toSMC @(F F2) @(F F4) \x -> SMC.do
+                  y <- f -< x
+                  z <- liftF g y
+                  returnA -< z
+            expect "inferred intermediate result" (g . f) pipeline
+        , testProperty "arrow application binds tensor results" $ do
+            f <- genNamed @(F2 ~> (F2 ** F3)) "f"
+            g <- genNamed @(F2 ~> F4) "g"
+            h <- genNamed @(F3 ~> F2) "h"
+            let actual = toSMC @(F F2) @(F (F4 ** F2)) \z -> SMC.do
+                  (x, y) <- f -< z
+                  u <- g -< x
+                  v <- h -< y
+                  returnA -< (u, v)
+            expect "process both components" ((g ** h) . f) actual
+        , testProperty "matrix multiplication is composition (2, 3, 4)" $ do
             f <- genNamed @(F2 ~> F3) "f"
             g <- genNamed @(F3 ~> F4) "g"
             check "differs from g . f" (matMulT f g == g . f)

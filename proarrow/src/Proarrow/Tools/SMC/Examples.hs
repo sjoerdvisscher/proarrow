@@ -92,7 +92,7 @@ traceT h = toSMC @(F a) \a -> SMC.do
 -- >>> loopT @Int @[Int] @[Int] (\(a, u) -> (take 3 u, a : u)) 1
 -- [1,1,1]
 loopT :: forall {k} (a :: k) b u. (TracedMonoidal k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
-loopT h = toSMC @(F a) \a -> loop @(F u) \u -> lift @(F a :** F u) @(F b :** F u) h (a ** u)
+loopT h = toSMC @(F a) \a -> loop @(F u) @(F b) \u -> recast (h -< (a, u))
 
 -- | A trace from the duality alone, so for any compact closed category: feed @u@ in along one
 -- end of a new pair and join its new value with the other end.
@@ -168,7 +168,7 @@ bindT f = toSMC @(Up (F a)) @(Up (F b)) \m -> SMC.do
 
 -- | Contraposition: a consumer of @b@ consumes @a@ through @f@.
 contraT :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => (a ~> b) -> Dual b ~> Dual a
-contraT f = toSMC @(Not (F b)) @(Not (F a)) \nb -> cont \x -> cut nb (lift @(F a) @(F b) f x)
+contraT f = toSMC @(Not (F b)) @(Not (F a)) \nb -> cont \x -> cut nb (f -< x)
 
 -- | Par is symmetric: bind both outputs and hand them to the input the other way round. This is
 -- 'Proarrow.Category.Monoidal.Dialogue.parSwap'.
@@ -189,16 +189,16 @@ weakDistT = toSMC @(F a :** (F b :## F c)) @((F a :** F b) :## F c) \(a, bc) ->
 -- @j@ of the entries of @f@ and @g@. It is @g . f@.
 matMulT :: forall {k} (a :: k) b c. (SymMonoidal k, Frobenius b, Frobenius c, Ob a) => (a ~> b) -> (b ~> c) -> a ~> c
 matMulT f g = toSMC @(F a) \i -> sumOver @(F c) \k -> sumOver @(F b) \j ->
-  delta (lift f i) j *^ delta (lift g j) k *^ k
+  delta (f -< i) j *^ delta (g -< j) k *^ k
 
 -- | The trace in index notation: the sum of the diagonal entries.
 traceIdxT :: forall {k} (a :: k). (SymMonoidal k, Frobenius a) => (a ~> a) -> Unit ~> (Unit :: k)
-traceIdxT f = toSMC @I \() -> sumOver @(F a) \i -> delta (lift f i) i
+traceIdxT f = toSMC @I \() -> sumOver @(F a) \i -> delta (f -< i) i
 
 -- | The entrywise product of two morphisms: two boxes that produce the same index.
 hadamardT :: forall {k} (a :: k) b. (SymMonoidal k, Frobenius a, Frobenius b) => (a ~> b) -> (a ~> b) -> a ~> b
 hadamardT f g = toSMC @(F a) \i -> sumOver @(F b) \j ->
-  delta (lift f i) j *^ delta (lift g i) j *^ j
+  delta (f -< i) j *^ delta (g -< i) j *^ j
 
 -- | The snake on the dual: join the input with the first end of a new pair, and continue with the
 -- second. Here the wires meet in the order they come, so no swap is needed.

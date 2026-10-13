@@ -32,7 +32,7 @@ import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (SYN (..), Term, lift, toSMC, unit, (**), (*^))
+import Proarrow.Tools.SMC (SYN (..), Term, lift, toSMC, unit, (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * Programs
@@ -54,15 +54,15 @@ andT
     :: forall {k} (b :: k) d g1 g2
      . (Monoidal k, Ob b, SMC.Merge g1 g2)
     => Prims b -> Term d g1 (F b) -> Term d g2 (F b) -> Term d (SMC.Union g1 g2) (F b)
-andT p x y = lift @(F b :** F b) @(F b) (andP p) (x ** y)
-orT p x y = lift @(F b :** F b) @(F b) (orP p) (x ** y)
+andT p x y = andP p -< (x, y)
+orT p x y = orP p -< (x, y)
 
 notT :: forall {k} (b :: k) d g. (Monoidal k, Ob b) => Prims b -> Term d g (F b) -> Term d g (F b)
-notT p = lift @(F b) @(F b) (notP p)
+notT p x = notP p -< x
 
 -- | A program without inputs as a term: a call of it.
 call :: forall {k} (b :: k) d. (Monoidal k, Ob b) => (Unit ~> b) -> Term d '[] (F b)
-call f = lift @I @(F b) f unit
+call f = f -< unit
 
 -- | A coin that is true with the given probability.
 coin :: (Monoidal k, Ob (b :: k)) => Prims b -> Double -> Term d '[] (F b)
@@ -78,7 +78,7 @@ diseaseTest p = toSMC @(F b) @(F b) \z -> orT p (andT p z (coin p 0.99)) (andT p
 hasDisease :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> Unit ~> b
 hasDisease p = toSMC @I @(F b) \() -> SMC.do
   x <- coin p 1e-4
-  let t = lift @(F b) @(F b) (diseaseTest p)
+  let t y = diseaseTest p -< y
   lift @(F b) @I (observeP p) (andT p (t x) (notT p (t x))) *^ x
 
 -- | A family of programs: @f 0@ is the conjunction of two fair coins, and @f (n + 1)@ the

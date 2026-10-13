@@ -39,7 +39,7 @@ import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, lift, toSMC, (**))
+import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, toSMC, (**), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * The circuit
@@ -54,21 +54,17 @@ data Gates q = Gates
   }
 
 toffoliWith :: forall {k} (q :: k). (SymMonoidal k, Ob q) => Gates q -> q ** q ** q ~> q ** q ** q
-toffoliWith gates = toSMC @(F q :** F q :** F q) \(a0, b0, x0) -> SMC.do
-  (a1, x1) <- cnot a0 (h x0)
-  (b1, x2) <- cnot b0 (t' x1)
-  (a2, x3) <- cnot a1 (t x2)
-  (b2, x4) <- cnot b1 (t' x3)
-  (b3, a3) <- cnot b2 (t a2)
-  (b4, a4) <- cnot (t b3) (t' a3)
-  a4 ** b4 ** h (t x4)
+toffoliWith (Gates h t t' controlledNot) = toSMC @(F q :** F q :** F q) @(F q :** F q :** F q) \(a0, b0, x0) -> SMC.do
+  (a1, x1) <- cnot a0 (h -< x0)
+  (b1, x2) <- cnot b0 (t' -< x1)
+  (a2, x3) <- cnot a1 (t -< x2)
+  (b2, x4) <- cnot b1 (t' -< x3)
+  (b3, a3) <- cnot b2 (t -< a2)
+  (b4, a4) <- cnot (t -< b3) (t' -< a3)
+  a4 ** b4 ** (h -< t -< x4)
   where
-    h, t, t' :: Term d g (F q) -> Term d g (F q)
-    h = lift (hadamardG gates)
-    t = lift (tG gates)
-    t' = lift (tInvG gates)
-    cnot :: (Merge g1 g2) => Term d g1 (F q) -> Term d g2 (F q) -> Term d (Union g1 g2) (F q :** F q)
-    cnot c x = lift (cnotG gates) (c ** x)
+    cnot :: (Merge g1 g2) => Term d g1 (F q) -> Term d g2 (F q) -> Term d (Union g1 g2) (F (q ** q))
+    cnot c x = controlledNot -< (c, x)
 
 -- | The same circuit written directly with the monoidal structure, for comparison. The wires are
 -- @a ** b ** x@, and each two-qubit gate needs its two wires moved next to each other by hand.

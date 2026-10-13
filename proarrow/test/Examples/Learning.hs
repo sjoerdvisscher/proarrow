@@ -67,7 +67,7 @@ import Proarrow.Optic.Lens (Lens', lens, withLens)
 import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (SYN (..), Term, delta, lift, toSMC, (**), (*^))
+import Proarrow.Tools.SMC (SYN (..), Term, delta, toSMC, (**), (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 type R1 :: DIFF
@@ -97,17 +97,17 @@ plus
   :: forall n d g1 g2
    . (KnownNat n, SMC.Merge g1 g2)
   => Term d g1 (F (DF '[n])) -> Term d g2 (F (DF '[n])) -> Term d (SMC.Union g1 g2) (F (DF '[n]))
-plus a b = lift mappend (a ** b)
+plus a b = mappend -< (a, b)
 
 -- | The dot product of two terms.
 dot
   :: forall n d g1 g2
    . (KnownNat n, SMC.Merge g1 g2) => Term d g1 (F (DF '[n])) -> Term d g2 (F (DF '[n])) -> Term d (SMC.Union g1 g2) (F R1)
-dot a b = lift (Diff.dot @n) (a ** b)
+dot a b = Diff.dot @n -< (a, b)
 
 -- | @tanh@ on each coordinate of a term.
 tanhT :: (KnownNat n) => Term d g (F (DF '[n])) -> Term d g (F (DF '[n]))
-tanhT = lift (pointwise tanh \x -> 1 - tanh x * tanh x)
+tanhT x = (pointwise tanh \y -> 1 - tanh y * tanh y) -< x
 
 -- * Training
 
@@ -116,7 +116,7 @@ layer
   :: forall m n b d g1 g2
    . (KnownNat m, KnownNat n, KnownNat b, KnownNat (n * m), KnownNat (b * n), KnownNat (b * m), SMC.Merge g1 g2)
   => Term d g1 (F (Batch n b)) -> Term d g2 (F (DF '[n * m])) -> Term d (SMC.Union g1 g2) (F (Batch m b))
-layer x w = lift (matMat @b @n @m) (x ** w)
+layer x w = matMat @b @n @m -< (x, w)
 
 -- | An affine layer on a batch of vectors: weights from @n@ inputs to @m@ outputs applied to each vector, plus
 -- an offset.
@@ -135,12 +135,12 @@ affineLayer
   -> Term d g2 (F (DF '[n * m]))
   -> Term d g3 (F (DF '[m]))
   -> Term d (SMC.Union (SMC.Union g1 g2) g3) (F (Batch m b))
-affineLayer x w c = plus (layer @m @n @b x w) (lift (broadcast @m @b) c)
+affineLayer x w c = plus (layer @m @n @b x w) (broadcast @m @b -< c)
 
 -- | The sum of the squared differences of predictions and targets.
 squaredError :: forall n. (KnownNat n) => DF '[n] ** DF '[n] ~> R1
 squaredError = toSMC @(F (DF '[n]) :** F (DF '[n])) \(prediction, target) -> SMC.do
-  d <- plus prediction (lift (pointwise negate (const (-1))) target)
+  d <- plus prediction (pointwise negate (const (-1)) -< target)
   dot d d
 
 -- | The loss of a model on a batch, inputs and targets: the model, with the targets passed
@@ -305,11 +305,11 @@ attentionWith
    . (CopyDiscard c, Ob x, Ob w, Ob s, Ob a, Ob wo, Ob o)
   => AttentionSteps x w s a wo o -> w ** w ** w ** wo ** x ~> o
 attentionWith st = toSMC @(F w :** F w :** F w :** F wo :** F x) \(wq, wk, wv, wo, x) ->
-  let q = lift @(F x :** F w) @(F s) (project st) (x ** wq)
-      k = lift @(F x :** F w) @(F s) (project st) (x ** wk)
-      v = lift @(F x :** F w) @(F s) (project st) (x ** wv)
-      a = lift @(F s :** F s) @(F a) (weigh st) (q ** k)
-  in lift @(F s :** F wo) @(F o) (output st) (lift @(F a :** F s) @(F s) (mix st) (a ** v) ** wo)
+  let q = project st -< (x, wq)
+      k = project st -< (x, wk)
+      v = project st -< (x, wv)
+      a = weigh st -< (q, k)
+  in output st -< (mix st -< (a, v), wo)
 
 -- | Attention on sequences of four positions with two features each, and a number for each
 -- position: queries, keys and values of dimension 4, the scores scaled by @1/2@ and their softmax for

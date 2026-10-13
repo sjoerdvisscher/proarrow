@@ -28,6 +28,9 @@ module Proarrow.Tools.CCC
   , Term
   , toCCC
   , lift
+  , liftF
+  , (-<)
+  , returnA
   , unit
   , (**)
   , split
@@ -81,7 +84,7 @@ import Proarrow.Category.Monoidal.Distributive (Distributive)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts, type (||))
 import Proarrow.Core (CategoryOf (..), Is, UN)
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD (..), Prod (..), type (&&))
-import Proarrow.Tools.SMC hiding (F, Interp, lift)
+import Proarrow.Tools.SMC hiding (F, Interp, lift, liftF, (-<))
 import Proarrow.Tools.SMC qualified as SMC
 import Prelude (uncurry)
 
@@ -110,6 +113,27 @@ lift
    . (CategoryOf k, Is PR (SMC.Interp a), Is PR (SMC.Interp b))
   => Interp a ~> Interp b -> Term d g a -> Term d g b
 lift f = SMC.lift @a @b (Prod f)
+
+-- | Lift a base-category arrow onto a term or tuple of terms, embedding its result by 'F'.
+-- The result object is inferred from the arrow. Use 'lift' for composite result syntax.
+{-# INLINE liftF #-}
+liftF
+  :: forall {k} (a :: SYN (PROD k)) b t
+   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (PROD k) t a)
+  => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx (PROD k) t) (F b)
+liftF f = SMC.liftF @a @(PR b) (Prod f)
+
+infixr 0 -<
+
+-- | Arrow application, mirroring @f -< x@ in Haskell's arrow notation.
+-- This is infix 'liftF': the input may be a term or tuple, and the result is embedded by 'F'.
+-- The @Arrows@ extension must be disabled, since it reserves this symbol.
+{-# INLINE (-<) #-}
+(-<)
+  :: forall {k} (a :: SYN (PROD k)) b t
+   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (PROD k) t a)
+  => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx (PROD k) t) (F b)
+(-<) = liftF @a @b
 
 -- | Inject as the right element of a sum.
 --

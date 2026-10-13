@@ -15,13 +15,12 @@
 -- and inside a binder needs 'recast' at the inner use: @x ** lam (\\z -> recast x ** z)@.
 --
 -- Types are 'SYN' expressions, interpreted in the target category by 'Interp'. Their tensor is a
--- constructor, so a pattern can take a term's type apart, which the target's own @**@, a type
--- family, would not allow.
+-- constructor, so patterns can determine its shape without inverting the target's @**@ type family.
 --
 -- Every variable has an id, the number of binders around it, and a context lists its variables
 -- by descending id. Merging compares ids, so it only reduces where the depths are known, which is
 -- the case for terms built directly inside 'toSMC'. A reusable piece is compiled on its own with
--- 'toSMC' and used with 'lift', with no inputs from @'I'@. 'toSMC' starts again at depth 0, so it
+-- 'toSMC' and used with '(-<)' or 'lift'; a piece without inputs takes 'unit'. 'toSMC' starts again at depth 0, so it
 -- must not be used inside another term: a variable of that term used in it could be taken for one
 -- of its own. Inside a term, bind with @do@ notation instead.
 --
@@ -71,6 +70,9 @@ module Proarrow.Tools.SMC
   , Term
   , toSMC
   , lift
+  , liftF
+  , (-<)
+  , returnA
   , unit
   , (**)
   , split
@@ -169,10 +171,33 @@ import Proarrow.Tools.SMC.Internal.Term
 -- @'Up' (a ':**' b)@ or @'Up' 'I'@, a pair or @()@ pattern runs the computation and matches its
 -- value, so the rest of the block must be of a negative type; a variable at a computation only
 -- names it.
+-- A pair also matches @'F' (a ** b)@, binding terms of @'F' a@ and @'F' b@. The morphism and
+-- uses of the pattern's variables determine the component objects.
 --
 -- Tuples build terms as well, the mirror image of taking them apart: 'ret' of a tuple makes a pair
 -- at a tensor into '(**)' of its parts and a pair at a computation into the computation of the
 -- pair.
+--
+-- '(-<)' mirrors arrow application in Haskell's arrow notation. The wiring of
+--
+-- > proc (x, y) -> do
+-- >   z <- f -< x
+-- >   returnA -< (z, y)
+--
+-- can be written as
+--
+-- > toSMC \(x, y) -> SMC.do
+-- >   z <- f -< x
+-- >   returnA -< (z, y)
+--
+-- Here 'toSMC' binds the input wires, and 'returnA' is the identity morphism.
+-- '(-<)' is infix 'liftF': @f -< (x, y)@ applies @f@ to @x ** y@ and embeds its result by 'F'.
+-- Use 'lift' for composite result syntax.
+-- A tensor result can also be taken apart directly with a pattern:
+--
+-- > toSMC \z -> SMC.do
+-- >   (x, y) <- f -< z
+-- >   returnA -< (y, x)
 
 -- $index
 -- Index notation, as in Einstein summation, for a category whose index types are special
@@ -180,11 +205,11 @@ import Proarrow.Tools.SMC.Internal.Term
 -- is such an object. Using an index more than once copies it, so every use sees the same value,
 -- and 'sumOver' binds an index that is summed over. 'delta' says that two wires carry the same
 -- value, which is how a morphism lifted onto an index is tied to another index: in "Proarrow.Category.Instance.Mat",
--- @'delta' ('lift' f i) j@ is the entry of @f@ at @i@ and @j@. A term of type 'I' is a scalar, and
+-- @'delta' (f -< i) j@ is the entry of @f@ at @i@ and @j@. A term of type 'I' is a scalar, and
 -- @(*^)@ and @(^*)@ multiply a term by one. An output index is a summed index that the term also
 -- returns, so matrix multiplication is 'Proarrow.Tools.SMC.Examples.matMulT':
 --
--- > \i -> sumOver \k -> sumOver \j -> delta (lift f i) j *^ delta (lift g j) k *^ k
+-- > \i -> sumOver \k -> sumOver \j -> delta (f -< i) j *^ delta (g -< j) k *^ k
 --
 -- What the sum is depends on the category: in 'Proarrow.Category.Instance.Mat.Mat' it is the sum
 -- of numbers, in 'Proarrow.Category.Instance.FinRel.FinRel' it is "there is", and in the diagram

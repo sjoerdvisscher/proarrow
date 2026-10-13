@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (\\))
-import Proarrow.Tools.SMC (SYN (F, (:**)), lift, toSMC, (**))
+import Proarrow.Tools.SMC (SYN (F, (:**)), lift, toSMC, (**), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 data INT k = I k k
@@ -68,12 +68,10 @@ instance (TracedMonoidal k) => MonoidalProfunctor (IntConstruction :: CAT (INT k
   Int @ap @am @bp @bm f ** Int @cp @cm @dp @dm g =
     withOb2 @(INT k) @(I ap am) @(I cp cm) $
       withOb2 @(INT k) @(I bp bm) @(I dp dm) $
-        Int $ toSMC @((F ap :** F cp) :** (F bm :** F dm)) \x -> SMC.do
-          let f' = lift @(F ap :** F bm) @(F am :** F bp) f
-              g' = lift @(F cp :** F dm) @(F cm :** F dp) g
+        Int $ toSMC @((F ap :** F cp) :** (F bm :** F dm)) @((F am :** F cm) :** (F bp :** F dp)) \x -> SMC.do
           ((ap, cp), (bm, dm)) <- x
-          (am, bp) <- f' (ap ** bm)
-          (cm, dp) <- g' (cp ** dm)
+          (am, bp) <- f -< (ap, bm)
+          (cm, dp) <- g -< (cp, dm)
           (am ** cm) ** (bp ** dp)
 
 -- | The monoidal tensor is pointwise, tensoring of the plus and minus parts.

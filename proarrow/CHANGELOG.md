@@ -21,7 +21,12 @@
   `Proarrow.Category.Instance.OpenHypergraph`: `simplifyFlat`, which bends every box into a state
   first, so the whole network is contracted in that order.
 * `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
-* `Proarrow.Tools.SMC`: tuple patterns, binds and tuples of five and six.
+* `Proarrow.Tools.SMC`: tuple patterns, binds and tuples of five and six; `liftF` applies a
+  morphism to a term or tuple of terms and embeds its result by `F`, allowing the result object
+  to be inferred. Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror
+  Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`.
+  Tuple patterns can take apart tensors embedded by `F`, including results of `liftF` and `(-<)`.
+  Examples use `(-<)` where the result syntax can be inferred.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
 
 ## 0.3.0.0 -- 2026-10-10
