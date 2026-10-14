@@ -1,10 +1,12 @@
 {-# LANGUAGE QualifiedDo #-}
+{-# LANGUAGE RecursiveDo #-}
 
 -- | Index notation in "Proarrow.Tools.SMC", checked against the structure of the category: in
 -- 'FinRel', where a sum over an index is "there is", and in 'Mat' over 'Int', where it is a sum of
 -- numbers.
 module Props.SMC (test, name) where
 
+import Control.Arrow qualified as A
 import Data.Containers.ListUtils (nubOrd)
 import Data.Foldable (toList)
 import Data.Map.Strict qualified as M
@@ -22,6 +24,7 @@ import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, (\\))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Profunctor.Instance.Arrow (Arr (..))
 import Proarrow.Testing (check, expect, genNamed)
 import Proarrow.Testing.Laws (defaultTestOptions)
 import Proarrow.Tools.Einsum (EinsumType, Tensor, einsum)
@@ -50,6 +53,62 @@ name f = Str ((obj @a ** f) . cup @a) \\ f
 matMulE :: EinsumType "ij,jk" '[ '[M2, M3], '[M3, M2]]
 matMulE = einsum @"ij,jk"
 
+-- The signature checks that case analysis needs ArrowChoice without ArrowApply.
+choiceT
+  :: (A.ArrowChoice arr)
+  => arr (Either Int Bool) (Either Int Bool)
+  -> arr (Int, Int) Int
+  -> arr (Bool, Int) Int
+  -> arr ((Either Int Bool, Int), Int) Int
+choiceT select left right = unArr $ SMC.proc @((F (Either Int Bool) :** F Int) :** F Int) @(F Int) \((tag, n), m) -> SMC.do
+  s <- Arr select -< tag
+  SMC.caseOf s (\x -> Arr left -< (x, n)) (\b -> Arr right -< (b, m))
+
+injectLeftT :: (A.Arrow arr) => arr Int Int -> arr Int (Either Int Bool)
+injectLeftT f = unArr $ SMC.proc @(F Int) @(F Int :|| F Bool) \x -> SMC.inl (Arr f -< x)
+
+injectRightT :: (A.Arrow arr) => arr Bool Bool -> arr Bool (Either Int Bool)
+injectRightT f = unArr $ SMC.proc @(F Bool) @(F Int :|| F Bool) \x -> SMC.inr (Arr f -< x)
+
+-- The signature checks that feedback needs ArrowLoop without ArrowApply or ArrowChoice.
+arrowLoopT
+  :: (A.ArrowLoop arr)
+  => arr Int Int
+  -> arr (Int, [Int]) (Int, [Int])
+  -> arr Int Int
+  -> arr Int Int
+arrowLoopT before body after = unArr $ SMC.proc @(F Int) @(F Int) \n -> SMC.do
+  x <- Arr before -< n
+  y <- SMC.loop @(F [Int]) @(F Int) \u -> SMC.recast (Arr body -< (x, u))
+  Arr after -< y
+
+arrowRecT
+  :: (A.ArrowLoop arr)
+  => arr Int Int
+  -> arr (Int, [Int]) (Int, [Int])
+  -> arr Int Int
+  -> arr Int Int
+arrowRecT before body after = unArr $ SMC.proc @(F Int) @(F Int) \n -> SMC.do
+  x <- Arr before -< n
+  rec (y, u) <- Arr body -< (x, u)
+  Arr after -< y
+
+arrowRecCopyT :: (A.ArrowLoop arr) => arr (Int, [Int]) ([Int], [Int]) -> arr Int ([Int], [Int])
+arrowRecCopyT body = unArr $ SMC.proc @(F Int) @(F ([Int], [Int])) \n -> SMC.do
+  rec (ys, u) <- Arr body -< (n, u)
+  Arr (A.second (A.arr (take 3))) -< (ys, u)
+
+arrowRecDropT :: (A.ArrowLoop arr) => arr (Int, [Int]) (Int, [Int]) -> arr Int [Int]
+arrowRecDropT body = unArr $ SMC.proc @(F Int) @(F [Int]) \n -> SMC.do
+  rec (_ignored, u) <- Arr body -< (n, u)
+  Arr (A.arr (take 3)) -< u
+
+arrowRecDiscardT :: (A.ArrowLoop arr) => arr Int Int -> arr Int () -> arr Int ()
+arrowRecDiscardT body after = unArr $ SMC.proc @(F Int) @(F ()) \n -> SMC.do
+  rec _ignored <- Arr body -< n
+  z <- Arr after -< n
+  returnA -< z
+
 -- `\_ -> unit` binds a summed index that is not used, which is what is tested.
 {- HLINT ignore test "Use const" -}
 test :: TestTree
@@ -57,6 +116,57 @@ test =
   testGroup
     "SMC"
     [ testGroup
+        "ArrowChoice"
+        [ testProperty "only the selected branch runs with its captured variable" $ do
+            let select = A.Kleisli (["select"],)
+                left = A.Kleisli (\(x, n) -> (["left"], x + n))
+                right = A.Kleisli (\(b, m) -> (["right"], if b then m else negate m))
+                run :: ((Either Int Bool, Int), Int) -> ([String], Int)
+                run = A.runKleisli (choiceT select left right)
+            expect "left context" (["select", "left"], 13) (run ((Left 3, 10), 100))
+            expect "right context" (["select", "right"], 100) (run ((Right True, 10), 100))
+            expect "right payload" (["select", "right"], -100) (run ((Right False, 10), 100))
+        , testProperty "pure injections preserve the preceding effect" $ do
+            let left :: Int -> ([String], Either Int Bool)
+                left = A.runKleisli (injectLeftT (A.Kleisli (["left input"],)))
+                right :: Bool -> ([String], Either Int Bool)
+                right = A.runKleisli (injectRightT (A.Kleisli (["right input"],)))
+            expect "left injection" (["left input"], Left 3) (left 3)
+            expect "right injection" (["right input"], Right True) (right True)
+        ]
+    , testGroup
+        "ArrowLoop"
+        [ testProperty "lazy feedback preserves surrounding effects and runs the body once" $ do
+            n <- genNamed @Int "input"
+            let before = A.Kleisli (\x -> (["before"], x + 1))
+                body = A.Kleisli (\(x, u) -> (["loop"], (sum (take 3 u), x : u)))
+                after = A.Kleisli (\x -> (["after"], x - 2))
+                run :: Int -> ([String], Int)
+                run = A.runKleisli (arrowLoopT before body after)
+            expect "feedback and effects" (["before", "loop", "after"], 3 * (n + 1) - 2) (run n)
+        , testProperty "recursive do preserves surrounding effects and runs the body once" $ do
+            n <- genNamed @Int "input"
+            let before = A.Kleisli (\x -> (["before"], x + 1))
+                body = A.Kleisli (\(x, u) -> (["rec"], (sum (take 3 u), x : u)))
+                after = A.Kleisli (\x -> (["after"], x - 2))
+                run :: Int -> ([String], Int)
+                run = A.runKleisli (arrowRecT before body after)
+            expect "recursive feedback and effects" (["before", "rec", "after"], 3 * (n + 1) - 2) (run n)
+        , testProperty "recursive do copies feedback values and discards unused outputs" $ do
+            n <- genNamed @Int "input"
+            let copyBody = A.Kleisli (\(x, u) -> (["copy"], (take 2 u, x : u)))
+                dropBody = A.Kleisli (\(x, u) -> (["discard"], (x, x : u)))
+                runCopy :: Int -> ([String], ([Int], [Int]))
+                runCopy = A.runKleisli (arrowRecCopyT copyBody)
+                runDrop :: Int -> ([String], [Int])
+                runDrop = A.runKleisli (arrowRecDropT dropBody)
+                runDiscard :: Int -> ([String], ())
+                runDiscard = A.runKleisli (arrowRecDiscardT (A.Kleisli (["unused"],)) (A.Kleisli (\x -> ([show x], ()))))
+            expect "feedback also used afterwards" (["copy"], (replicate 2 n, replicate 3 n)) (runCopy n)
+            expect "unused output" (["discard"], replicate 3 n) (runDrop n)
+            expect "no feedback or used outputs" (["unused", show n], ()) (runDiscard n)
+        ]
+    , testGroup
         "FinRel"
         [ testProperty "arrow application assembles tensor inputs" $ do
             f <- genNamed @(F2 ~> F3) "f"

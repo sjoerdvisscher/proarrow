@@ -25,7 +25,9 @@
 -- of its own. Inside a term, bind with @do@ notation instead.
 --
 -- The module also provides @do@ notation, for use with @QualifiedDo@, and with @RecursiveDo@ a
--- @rec@ block traces, which needs a traced monoidal category. Composition in the Int construction
+-- @rec@ block traces, which needs a traced monoidal category for 'Term', or
+-- 'Proarrow.Category.Monoidal.Strength.Costrong' 'Proarrow.Category.Monoidal.Tensor' @p@ for
+-- 'TermP' @p@. Composition in the Int construction
 -- ("Proarrow.Category.Instance.IntConstruction") uses both: the two morphisms run side by side,
 -- and the wires each needs from the other are fed back.
 --
@@ -68,7 +70,9 @@ module Proarrow.Tools.SMC
 
     -- ** Symmetric monoidal categories
   , Term
+  , TermP
   , toSMC
+  , proc
   , lift
   , liftF
   , (-<)
@@ -132,6 +136,7 @@ module Proarrow.Tools.SMC
   , inl
   , inr
   , caseOf
+  , Sum
   , absurd
 
     -- * Contexts
@@ -198,6 +203,20 @@ import Proarrow.Tools.SMC.Internal.Term
 -- > toSMC \z -> SMC.do
 -- >   (x, y) <- f -< z
 -- >   returnA -< (y, x)
+--
+-- 'proc' compiles the same way to an arrow of a promonad @p@ instead of a morphism, such as an
+-- 'Proarrow.Profunctor.Instance.Arrow.Arr' wrapping a "Control.Arrow" arrow. Then '(-<)' takes
+-- arrows of @p@, variables are values of the category, and the computations run in the order
+-- they are written: statements from top to bottom, the parts of a tuple from left to right.
+-- Terms at @p@ are 'TermP' @p@. Most operations work at any @p@, using the category's pure
+-- structure through profunctor mapping. 'inl' and 'inr' use the category's pure injections; 'caseOf'
+-- additionally needs 'Proarrow.Category.Monoidal.Distributive.DistributiveProfunctor' @p@,
+-- supplied by 'Control.Arrow.ArrowChoice' for 'Proarrow.Profunctor.Instance.Arrow.Arr'. The
+-- scrutinee may use '(:||)' or be a sum embedded by 'F', including a result of '(-<)'. The
+-- operations 'loop' and @rec@ blocks need 'Proarrow.Category.Monoidal.Strength.Costrong'
+-- 'Proarrow.Category.Monoidal.Tensor' @p@, supplied by 'Control.Arrow.ArrowLoop' for
+-- 'Proarrow.Profunctor.Instance.Arrow.Arr'. 'with', 'lam', 'cont', and the special tuple and
+-- bind rules at 'Up' work at @p = ('~>')@, that is 'Term'.
 
 -- $index
 -- Index notation, as in Einstein summation, for a category whose index types are special

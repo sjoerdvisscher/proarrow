@@ -51,6 +51,7 @@ module Proarrow.Tools.CCC
   , inl
   , inr
   , caseOf
+  , Sum
   , absurd
 
     -- * Contexts
@@ -82,7 +83,7 @@ import Proarrow.Category.Monoidal.Cartesian ()
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts, type (||))
-import Proarrow.Core (CategoryOf (..), Is, UN)
+import Proarrow.Core (CategoryOf (..), Hom, Is, UN)
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD (..), Prod (..), type (&&))
 import Proarrow.Tools.SMC hiding (F, Interp, lift, liftF, (-<))
 import Proarrow.Tools.SMC qualified as SMC
@@ -101,7 +102,7 @@ type Interp a = UN PR (SMC.Interp a)
 {-# INLINE toCCC #-}
 toCCC
   :: forall {k} (a :: SYN (PROD k)) b t cont
-   . (HasProducts k, Binds 0 '[] a b t cont)
+   . (HasProducts k, Binds (~>) 0 '[] a b t cont)
   => (t -> cont) -> Interp a ~> Interp b
 toCCC f = case SMC.toSMC @a @b f of Prod g -> g
 
@@ -119,7 +120,7 @@ lift f = SMC.lift @a @b (Prod f)
 {-# INLINE liftF #-}
 liftF
   :: forall {k} (a :: SYN (PROD k)) b t
-   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (PROD k) t a)
+   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (Hom (PROD k)) t a)
   => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx (PROD k) t) (F b)
 liftF f = SMC.liftF @a @(PR b) (Prod f)
 
@@ -131,7 +132,7 @@ infixr 0 -<
 {-# INLINE (-<) #-}
 (-<)
   :: forall {k} (a :: SYN (PROD k)) b t
-   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (PROD k) t a)
+   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (Hom (PROD k)) t a)
   => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx (PROD k) t) (F b)
 (-<) = liftF @a @b
 

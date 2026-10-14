@@ -6,9 +6,9 @@ module Proarrow.Tools.SMC.Internal.Frobenius where
 
 import GHC.TypeNats (type (+))
 
-import Proarrow.Category.Monoidal (Monoidal (..), rightUnitorInvWith)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor, rightUnitorInvWith)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, cap)
-import Proarrow.Core (Promonad (..))
+import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Monoid (..))
 
 import Proarrow.Tools.SMC.Internal.Context
@@ -24,15 +24,15 @@ infixl 7 ^*
 -- index through a pattern (see /Patterns/).
 {-# INLINE sumOver #-}
 sumOver
-  :: forall {k} (a :: SYN k) d r b t cont
-   . (Monoidal k, Frobenius (Interp a), Binds d r a b t cont)
+  :: forall {k} {p} (a :: SYN k) d r b t cont
+   . (Profunctor p, Frobenius (Interp a), Binds p d r a b t cont)
   => (t -> cont)
-  -> Term d r b
+  -> TermP p d r b
 sumOver k =
   withCtxOb @r
     ( withSynOb @a
         ( MkTerm
-            (bound @d @r @a @b k . rightUnitorInvWith @(Interp (Mul r)) (mempty @(Interp a)))
+            (lmap (rightUnitorInvWith @(Interp (Mul r)) (mempty @(Interp a))) (bound @p @d @r @a @b k))
         )
     )
 
@@ -40,37 +40,37 @@ sumOver k =
 -- @d@ instead of through a pattern.
 {-# INLINE sumVar #-}
 sumVar
-  :: forall {k} (a :: SYN k) d g' g b
-   . (Monoidal k, Frobenius (Interp a), KnownObj a, BindVar d a g' g)
-  => Term (d + 1) g' b
-  -> Term d g b
+  :: forall {k} {p} (a :: SYN k) d g' g b
+   . (Profunctor p, Frobenius (Interp a), KnownObj a, BindVar d a g' g)
+  => TermP p (d + 1) g' b
+  -> TermP p d g b
 sumVar (MkTerm body) =
   withCtxOb @g
     ( withSynOb @a
-        (MkTerm (body . bindVar @d @a @g' @g . rightUnitorInvWith @(Interp (Mul g)) (mempty @(Interp a))))
+        (MkTerm (lmap (bindVar @d @a @g' @g . rightUnitorInvWith @(Interp (Mul g)) (mempty @(Interp a))) body))
     )
 
 -- | The Kronecker delta: the scalar that says two wires of an index type carry the same value. It
 -- is the cap of the Frobenius algebra, @'Proarrow.Monoid.counit' . 'Proarrow.Monoid.mappend'@.
 {-# INLINE delta #-}
 delta
-  :: forall {k} (a :: SYN k) d g1 g2
-   . (Frobenius (Interp a), KnownObj a, Merge g1 g2)
-  => Term d g1 a -> Term d g2 a -> Term d (Union g1 g2) I
-delta x y = lift @(a :** a) @I (cap @(Interp a)) (x ** y)
+  :: forall {k} {p} (a :: SYN k) d g1 g2
+   . (MonoidalProfunctor p, Frobenius (Interp a), KnownObj a, Merge g1 g2)
+  => TermP p d g1 a -> TermP p d g2 a -> TermP p d (Union g1 g2) I
+delta x y = rmapT (cap @(Interp a)) (x ** y)
 
 -- | A term multiplied by a scalar on its left. At 'I' it is the product of two scalars.
 {-# INLINE (*^) #-}
 (*^)
-  :: forall {k} d g1 g2 (a :: SYN k)
-   . (Monoidal k, KnownObj a, Merge g1 g2)
-  => Term d g1 I -> Term d g2 a -> Term d (Union g1 g2) a
-s *^ x = lift @(I :** a) @a (withSynOb @a (leftUnitor @k @(Interp a))) (s ** x)
+  :: forall {k} {p} d g1 g2 (a :: SYN k)
+   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2)
+  => TermP p d g1 I -> TermP p d g2 a -> TermP p d (Union g1 g2) a
+s *^ x = withSynOb @a (rmapT (leftUnitor @k @(Interp a)) (s ** x))
 
 -- | A term multiplied by a scalar on its right.
 {-# INLINE (^*) #-}
 (^*)
-  :: forall {k} d g1 g2 (a :: SYN k)
-   . (Monoidal k, KnownObj a, Merge g1 g2)
-  => Term d g1 a -> Term d g2 I -> Term d (Union g1 g2) a
-x ^* s = lift @(a :** I) @a (withSynOb @a (rightUnitor @k @(Interp a))) (x ** s)
+  :: forall {k} {p} d g1 g2 (a :: SYN k)
+   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2)
+  => TermP p d g1 a -> TermP p d g2 I -> TermP p d (Union g1 g2) a
+x ^* s = withSynOb @a (rmapT (rightUnitor @k @(Interp a)) (x ** s))

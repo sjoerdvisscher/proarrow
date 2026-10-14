@@ -2,15 +2,14 @@
 
 ## Unreleased
 
-* `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`, with
-  constraints added by the operations used rather than requiring `BiCCC k` for every term.
-  `toCCC` compiles a function on terms; `F` wraps base objects and `Interp` unwraps their
-  interpretations. The former `Free`, `Syntax`, `Ctx`, `Mul`, `Cast`, `KnownCtx` and `BiCCCStructs`
-  API is replaced by SMC's term and context API; `:&`, `$`, `either`, `lft` and `rgt` are replaced
-  by tuple patterns and `**`, `!`, `caseOf`, `inl` and `inr`.
-  `Closed (PROD Type)` supplies the product exponential for Haskell types, using the new
-  `curryProd` and `applyProd` helpers for existing cartesian closed instances. `curryProd` inlines
-  in the final simplifier phase to reduce compilation cost for nested lambda terms.
+* `Proarrow.Tools.SMC`: 
+  * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
+  * Tuple patterns, binds and tuples of five and six; `liftF` applies a morphism to a term or 
+    tuple of terms and embeds its result by `F`, allowing the result object to be inferred. 
+    Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror
+    Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`. 
+  * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`; 
+    `Term` is `TermP (~>)`.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
 * `Proarrow.Category.Instance.TensorNetwork`: `matMul`, a product of matrices given as vectors,
   through BLAS when the `blas` flag is on; the dagger copies no entries, and complex ones are
@@ -21,12 +20,6 @@
   `Proarrow.Category.Instance.OpenHypergraph`: `simplifyFlat`, which bends every box into a state
   first, so the whole network is contracted in that order.
 * `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
-* `Proarrow.Tools.SMC`: tuple patterns, binds and tuples of five and six; `liftF` applies a
-  morphism to a term or tuple of terms and embeds its result by `F`, allowing the result object
-  to be inferred. Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror
-  Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`.
-  Tuple patterns can take apart tensors embedded by `F`, including results of `liftF` and `(-<)`.
-  Examples use `(-<)` where the result syntax can be inferred.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
 
 ## 0.3.0.0 -- 2026-10-10

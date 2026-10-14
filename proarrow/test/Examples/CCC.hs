@@ -63,6 +63,10 @@ arrowResultNested = toCCC @(F Int) @(F ((Int, Int), Int)) \z -> CCC.do
   (x, y, t) <- (\n -> ((n + 1, n + 2), n + 3)) -< z
   returnA -< (t, x, y)
 
+embeddedSum :: Either Int Bool -> Int
+embeddedSum = toCCC @(F (Either Int Bool)) @(F Int) \s ->
+  CCC.caseOf s ((+ 1) -<) ((\v -> if v then 10 else 20) -<)
+
 test :: TestTree
 test =
   testGroup
@@ -74,6 +78,10 @@ test =
     , testProperty "arrow application binds tensor results" $ do
         expect "pair result" (12, 11) (arrowResultPair 10)
         expect "nested result" ((13, 11), 12) (arrowResultNested 10)
+    , testProperty "case analysis on a sum embedded by F" $ do
+        expect "left payload" 4 (embeddedSum (Left 3))
+        expect "right payload" 10 (embeddedSum (Right True))
+        expect "right alternative" 20 (embeddedSum (Right False))
     , testProperty "products, lifting and do binding" $ do
         mapM_ (\x -> expect ("duplicate " ++ show x) (x, x) (duplicate @Bool x)) ([False, True] :: [Bool])
         mapM_
