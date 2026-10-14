@@ -1,9 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
 : "${CABAL:=cabal}"
 : "${HADDOCK:=haddock}"
 : "${ARG_COMPILER:=}"
 # Where the "Contents" link at the top of each page goes. Empty means the index.html generated
 # below (GitHub Pages); hackage-docs.sh sets it to ../, Hackage's own package page.
 : "${USE_CONTENTS:=}"
+
+python3 -m unittest discover -s tools/haddock
 
 # The optics lattice diagram (Proarrow.Optics) is generated from lattice.dot:
 #   dot -Tsvg lattice.dot -o lattice.svg
@@ -34,18 +39,16 @@ ${CABAL} haddock lib:proarrow lib:testing ${ARG_COMPILER} \
     ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}}
     --odir=docs"
 
-# cabal writes the haddock interface of each library into its build directory; the newest ones
-# are from the run above
-version=$(awk '$1 == "version:" { print $2 }' proarrow.cabal)
-main_iface=$(ls -t $(find ../dist-newstyle/build -path "*/proarrow-${version}/doc/*" -name proarrow.haddock) | head -1)
-testing_iface=$(ls -t $(find ../dist-newstyle/build -path "*/proarrow-${version}/l/testing/*" -name testing.haddock) | head -1)
-cp "$main_iface" docs/proarrow.haddock
-cp "$testing_iface" docs/testing.haddock
+# The build plan locates the interfaces in this checkout, CI's unpacked packages, or a custom builddir.
+python3 tools/haddock/interfaces.py ${ARG_COMPILER}
 
 # regenerate the contents and index pages covering both libraries
 ${HADDOCK} --gen-contents --gen-index -o docs --title=proarrow ${USE_CONTENTS:+--use-contents=${USE_CONTENTS}} \
   --read-interface=,docs/proarrow.haddock \
   --read-interface=,docs/testing.haddock
+
+# A partial contents page must not be published.
+python3 tools/haddock/interfaces.py --check-index
 
 # the testing modules live under testing/, not src/
 grep -rl 'proarrow/src/Proarrow/Testing' docs | xargs perl -pi -e 's|proarrow/src/(Proarrow/Testing[^"]*\.hs)|proarrow/testing/$1|g'

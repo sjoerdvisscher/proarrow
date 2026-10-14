@@ -37,8 +37,7 @@ name="proarrow-${version}-docs"
 
 bash mkdocs.sh
 
-# mkdocs.sh keeps going after a failed haddock run, so check that both libraries made it into the
-# tree and into the combined contents page.
+# Check that both libraries made it into the tree and into the combined contents page.
 for f in proarrow.haddock testing.haddock index.html Proarrow.html Proarrow-Testing.html; do
   if [[ ! -f "docs/$f" ]]; then
     echo "mkdocs.sh did not produce docs/$f" >&2
