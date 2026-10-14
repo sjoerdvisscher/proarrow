@@ -51,6 +51,7 @@ module Proarrow.Tools.CCC
   , inl
   , inr
   , caseOf
+  , ifThenElse
   , Sum
   , absurd
 

@@ -118,6 +118,30 @@ caseOf (MkTerm x) f h =
         )
     )
 
+-- | 'caseOf' as overloaded @if@ syntax with @RebindableSyntax@. Import 'ifThenElse'
+-- unqualified and write @if x then \l -> ... else \r -> ...@. The @then@ branch handles
+-- the left alternative and the @else@ branch handles the right; each receives its payload.
+{-# INLINE ifThenElse #-}
+ifThenElse
+  :: forall {k} (a :: SYN k) b c d g r1 r2 t1 cont1 t2 cont2 s (p :: CAT k)
+   . ( Distributive k
+     , Promonad p
+     , DistributiveProfunctor p
+     , Sum s a b
+     , KnownObj a
+     , KnownObj b
+     , Binds p d r1 a c t1 cont1
+     , Binds p d r2 b c t2 cont2
+     , Thin (Union r1 r2) r1
+     , Thin (Union r1 r2) r2
+     , Merge (Union r1 r2) g
+     )
+  => TermP p d g s
+  -> (t1 -> cont1)
+  -> (t2 -> cont2)
+  -> TermP p d (Union (Union r1 r2) g) c
+ifThenElse = caseOf @a @b @c @d @g @r1 @r2 @t1 @cont1 @t2 @cont2 @s @p
+
 -- | There is no term of 'Zero', so from one, together with the rest of the context, anything
 -- follows.
 {-# INLINE absurd #-}

@@ -1,5 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE QualifiedDo #-}
+{-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE RecursiveDo #-}
 
 -- | Examples of "Proarrow.Tools.SMC". They are compiled at @k = 'Data.Kind.Type'@, where the result
@@ -130,7 +131,9 @@ combineDualT = toSMC @(Not (F a) :** Not (F b)) @(Not (F a :** F b)) \(da, db) -
 distT
   :: forall {k} (a :: k) b c. (Distributive k, SymMonoidal k, Ob a, Ob b, Ob c) => a ** (b || c) ~> (a ** b) || (a ** c)
 distT = toSMC @(F a :** (F b :|| F c)) \(a, bc) ->
-  caseOf bc (\b -> inl (a ** b)) (\c -> inr (a ** c))
+  if bc
+    then \b -> inl (a ** b)
+    else \c -> inr (a ** c)
 
 -- | Swap a coproduct, with nothing to share.
 --
@@ -147,7 +150,7 @@ swapEitherT = toSMC @(F a :|| F b) \x -> caseOf x (\a -> inr a) (\b -> inl b)
 -- ((1,True),(True,1))
 bothWaysT
   :: forall {k} (a :: k) b. (SymMonoidal k, HasBinaryProducts k, Ob a, Ob b) => a ** b ~> (a ** b) && (b ** a)
-bothWaysT = toSMC @(F a :** F b) \p -> with p (split p \x y -> y ** x)
+bothWaysT = toSMC @(F a :** F b) \(x, y) -> (x ** y) `with` (y ** x)
 
 -- | Double negation introduction: a consumer of a consumer of @a@ hands it the @a@. This is
 -- 'ret', written out.

@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE RecursiveDo #-}
 
 -- | 'Star' embeds a functor @f@ as a profunctor with the functor on the target side:
 -- @Star f a b = a ~> f b@. It is the representable profunctor of @f@; for a Haskell monad @m@,
@@ -12,6 +13,7 @@ import Data.Kind (Type)
 import Data.Traversable qualified as P
 import Prelude qualified as P
 
+import Control.Monad.Fix qualified as P
 import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Category.Instance.Nat (ApplyAction, Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -19,7 +21,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tenso
 import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction, SubAction)
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), Traversing, baseTraverse, repTraverse)
-import Proarrow.Category.Monoidal.Strength (MonStrong, Strong (..), strongId)
+import Proarrow.Category.Monoidal.Strength (Costrong (..), MonStrong, Strong (..), strongId)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, (++))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
@@ -57,6 +59,11 @@ instance (Profunctor p) => Promonad (Star ((:+:) p)) where
 instance (P.Monad m) => Promonad (Star (Prelude m)) where
   id = Star (Prelude . P.pure)
   Star g . Star f = Star \a -> Prelude (unPrelude (f a) P.>>= (unPrelude . g))
+
+instance (P.MonadFix m) => Costrong Tensor (Star (Prelude m)) where
+  coact (Star f) = Star P.$ \x -> Prelude P.$ do
+    rec (a, y) <- unPrelude (f (a, x))
+    P.return y
 
 composeStar :: (Functor f) => Star f :.: Star g :~> Star (Compose f g)
 composeStar (Star f :.: Star g) = Star (Compose . map g . f)

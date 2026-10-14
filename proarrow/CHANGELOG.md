@@ -8,6 +8,8 @@
     tuple of terms and embeds its result by `F`, allowing the result object to be inferred. 
     Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror
     Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`. 
+  * `ifThenElse`, an alias for `caseOf`, supports sum elimination with `RebindableSyntax`
+    in SMC and CCC: `if x then \l -> ... else \r -> ...`.
   * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`; 
     `Term` is `TermP (~>)`.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
@@ -20,6 +22,8 @@
   `Proarrow.Category.Instance.OpenHypergraph`: `simplifyFlat`, which bends every box into a state
   first, so the whole network is contracted in that order.
 * `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
+* `Proarrow.Profunctor.Instance.Star`: `Costrong Tensor (Star (Prelude m))` for `MonadFix m`,
+  supporting feedback through SMC's `loop` and recursive `do`.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
 
 ## 0.3.0.0 -- 2026-10-10

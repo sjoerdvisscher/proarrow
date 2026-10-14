@@ -1,4 +1,5 @@
 {-# LANGUAGE QualifiedDo #-}
+{-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE RecursiveDo #-}
 
 -- | Index notation in "Proarrow.Tools.SMC", checked against the structure of the category: in
@@ -7,11 +8,14 @@
 module Props.SMC (test, name) where
 
 import Control.Arrow qualified as A
+import Control.Monad.Fix (MonadFix)
+import Data.Bool (bool)
 import Data.Containers.ListUtils (nubOrd)
 import Data.Foldable (toList)
 import Data.Map.Strict qualified as M
 import Data.Type.Nat (Nat (..), Nat2, Nat3)
 import Data.Vec.Lazy (Vec (..))
+import GHC.Exts (fromList, fromListN)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (TestOptions (..), testProperty, testPropertyWith)
 import Prelude hiding (id, mappend, mempty, (**), (.))
@@ -23,12 +27,14 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, (\\))
+import Proarrow.Functor (Prelude (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Instance.Arrow (Arr (..))
+import Proarrow.Profunctor.Instance.Star (unStar, pattern Star)
 import Proarrow.Testing (check, expect, genNamed)
 import Proarrow.Testing.Laws (defaultTestOptions)
 import Proarrow.Tools.Einsum (EinsumType, Tensor, einsum)
-import Proarrow.Tools.SMC (SYN (..), delta, liftF, returnA, sumOver, toSMC, unit, (*^), (-<))
+import Proarrow.Tools.SMC (SYN (..), delta, ifThenElse, liftF, returnA, sumOver, toSMC, unit, (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.FinRel ()
@@ -62,7 +68,9 @@ choiceT
   -> arr ((Either Int Bool, Int), Int) Int
 choiceT select left right = unArr $ SMC.proc @((F (Either Int Bool) :** F Int) :** F Int) @(F Int) \((tag, n), m) -> SMC.do
   s <- Arr select -< tag
-  SMC.caseOf s (\x -> Arr left -< (x, n)) (\b -> Arr right -< (b, m))
+  if s
+    then \x -> Arr left -< (x, n)
+    else \b -> Arr right -< (b, m)
 
 injectLeftT :: (A.Arrow arr) => arr Int Int -> arr Int (Either Int Bool)
 injectLeftT f = unArr $ SMC.proc @(F Int) @(F Int :|| F Bool) \x -> SMC.inl (Arr f -< x)
@@ -109,6 +117,38 @@ arrowRecDiscardT body after = unArr $ SMC.proc @(F Int) @(F ()) \n -> SMC.do
   z <- Arr after -< n
   returnA -< z
 
+starLoopT
+  :: (MonadFix m)
+  => (Int -> m Int)
+  -> ((Int, [Int]) -> m (Int, [Int]))
+  -> (Int -> m Int)
+  -> Int
+  -> m Int
+starLoopT before body after =
+  unPrelude
+    . unStar
+      ( SMC.proc @(F Int) @(F Int) \n -> SMC.do
+          x <- Star (Prelude . before) -< n
+          y <- SMC.loop @(F [Int]) @(F Int) \u -> SMC.recast (Star (Prelude . body) -< (x, u))
+          Star (Prelude . after) -< y
+      )
+
+starRecT
+  :: (MonadFix m)
+  => (Int -> m Int)
+  -> ((Int, [Int]) -> m (Int, [Int]))
+  -> (Int -> m Int)
+  -> Int
+  -> m Int
+starRecT before body after =
+  unPrelude
+    . unStar
+      ( SMC.proc @(F Int) @(F Int) \n -> SMC.do
+          x <- Star (Prelude . before) -< n
+          rec (y, u) <- Star (Prelude . body) -< (x, u)
+          Star (Prelude . after) -< y
+      )
+
 -- `\_ -> unit` binds a summed index that is not used, which is what is tested.
 {- HLINT ignore test "Use const" -}
 test :: TestTree
@@ -120,7 +160,7 @@ test =
         [ testProperty "only the selected branch runs with its captured variable" $ do
             let select = A.Kleisli (["select"],)
                 left = A.Kleisli (\(x, n) -> (["left"], x + n))
-                right = A.Kleisli (\(b, m) -> (["right"], if b then m else negate m))
+                right = A.Kleisli (\(b, m) -> (["right"], bool (negate m) m b))
                 run :: ((Either Int Bool, Int), Int) -> ([String], Int)
                 run = A.runKleisli (choiceT select left right)
             expect "left context" (["select", "left"], 13) (run ((Left 3, 10), 100))
@@ -165,6 +205,20 @@ test =
             expect "feedback also used afterwards" (["copy"], (replicate 2 n, replicate 3 n)) (runCopy n)
             expect "unused output" (["discard"], replicate 3 n) (runDrop n)
             expect "no feedback or used outputs" (["unused", show n], ()) (runDiscard n)
+        ]
+    , testGroup
+        "Star MonadFix"
+        [ testProperty "loop and recursive do tie lazy feedback and preserve effect order" $ do
+            n <- genNamed @Int "input"
+            let before x = (["before"], x + 1)
+                body (x, u) = (["body"], (sum (take 3 u), x : u))
+                after x = (["after"], x - 2)
+                runLoop, runRec :: Int -> ([String], Int)
+                runLoop = starLoopT before body after
+                runRec = starRecT before body after
+                expected = (["before", "body", "after"], 3 * (n + 1) - 2)
+            expect "Star loop" expected (runLoop n)
+            expect "Star recursive do" expected (runRec n)
         ]
     , testGroup
         "FinRel"
@@ -370,11 +424,12 @@ entries (Mat m) = concatMap toList m
 -- entries, the first index varying fastest, written out as sums of products.
 reference :: [(String, [Int], [Int])] -> String -> [Int]
 reference ins out =
-  [ if consistent
-      then sum [product [at dims vs (pick ls) | (ls, dims, vs) <- ins] | rest <- tuples restDims, let pick = assign rest]
-      else 0
+  [ bool
+      0
+      (sum [product [at dims vs (pick ls) | (ls, dims, vs) <- ins] | rest <- tuples restDims, let pick = assign rest])
+      consistent
   | o <- tuples (fmap size out)
-  , let fixed = M.fromListWith (\a b -> if a == b then a else -1) (zip out o)
+  , let fixed = M.fromListWith (\a b -> bool (-1) a (a == b)) (zip out o)
         consistent = (-1) `notElem` M.elems fixed
         assign rest ls = [M.findWithDefault (M.fromList (zip summed rest) M.! l) l fixed | l <- ls]
   ]

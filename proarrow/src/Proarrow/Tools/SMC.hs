@@ -136,6 +136,7 @@ module Proarrow.Tools.SMC
   , inl
   , inr
   , caseOf
+  , ifThenElse
   , Sum
   , absurd
 
