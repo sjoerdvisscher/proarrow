@@ -12,9 +12,9 @@ and string diagrams. Choose a starting point:
 - [Einsum and hypergraph categories](https://github.com/sjoerdvisscher/proarrow/wiki/Einsum-and-hypergraph-categories):
   start with familiar matrix operations, then see how the same notation describes relations,
   string diagrams, and tensor networks, and why contraction order matters.
-- [Linear terms for monoidal categories](https://github.com/sjoerdvisscher/proarrow/wiki/Linear-terms-for-monoidal-categories):
-  build a Toffoli circuit as one term in several categories, then explore traces, functions,
-  copying, and duals with `Proarrow.Tools.SMC`.
+- [Programming with monoidal categories](https://github.com/sjoerdvisscher/proarrow/wiki/Programming-with-monoidal-categories):
+  build quantum circuits and audio feedback with `Proarrow.Tools.SMC`, then explore traces,
+  functions, copying, and duals.
 - [Producers, consumers and sessions](https://github.com/sjoerdvisscher/proarrow/wiki/Producers-consumers-and-sessions):
   compare categorical morphisms, session processes, the μμ̃-calculus, and SMC terms on the same
   examples, then connect them to call by push value.

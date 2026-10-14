@@ -12,6 +12,11 @@ mkdir docs
 # copy the optics lattice image next to the module HTML so Haddock's <<lattice.svg>> resolves
 cp lattice.svg docs/
 
+# Audio examples accompany the GitHub Pages docs. Hackage uses its own contents page.
+if [ -z "$USE_CONTENTS" ]; then
+  ${CABAL} run exe:smc-audio ${ARG_COMPILER} -- docs/audio || exit $?
+fi
+
 # Both libraries render into one doc tree (Hackage has a single documentation set per package).
 # This is hand-rolled rather than `cabal haddock-project` because that documents the whole
 # project (proarrow-equipment included), nests pages per component (breaking published URLs and

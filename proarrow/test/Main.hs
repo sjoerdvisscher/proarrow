@@ -10,6 +10,7 @@ import Examples.Cbpv qualified as Cbpv
 import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
 import Examples.Einsum qualified as Einsum
+import Examples.FRP qualified as FRP
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
@@ -106,6 +107,7 @@ main =
           , CCC.test
           , Database.test
           , Einsum.test
+          , FRP.test
           , FreeExample.test
           , Graph.test
           , STLC.test

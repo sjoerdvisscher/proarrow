@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Draw the pictures of the wiki's Linear-terms-for-monoidal-categories page.
+"""Draw the pictures of the wiki's Programming-with-monoidal-categories page.
 
     python3 proarrow/tools/smc/smc.py PATH/TO/proarrow.wiki
 
-The pictures are Examples.Toffoli.toffoliPicture, Examples.IntComposition.compositionPicture and
-Examples.LinearLogic.snakePicture,
-rendered through `cabal repl test:test` run from the repository root, and coloured for GitHub's
-light and dark themes the same way as the law diagrams.
+The pictures are the Toffoli circuit, the Yampa feedback echo, composition in the Int construction
+and the snake equation, rendered through `cabal repl test:test` run from the repository root,
+and coloured for GitHub's light and dark themes the same way as the law diagrams.
 """
 
 import os
@@ -18,6 +17,7 @@ from gallery import hs_string, render_pictures  # noqa: E402
 
 PICTURES = [
     ('Examples.Toffoli', 'toffoliPicture', 'toffoli-circuit.svg'),
+    ('SmcAudio', 'echoPicture', 'feedback-echo.svg'),
     ('Examples.IntComposition', 'compositionPicture', 'int-composition.svg'),
     ('Examples.LinearLogic', 'snakePicture', 'snake.svg'),
 ]

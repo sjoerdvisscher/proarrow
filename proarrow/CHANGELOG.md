@@ -10,6 +10,9 @@
     Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`. 
   * `ifThenElse`, an alias for `caseOf`, supports sum elimination with `RebindableSyntax`
     in SMC and CCC: `if x then \l -> ... else \r -> ...`.
+  * A Yampa feedback-echo example and `smc-audio` executable render dry and echoed WAV files
+    and a string diagram from the same SMC network. The GitHub Pages documentation build
+    includes the audio files for listening from the wiki.
   * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`; 
     `Term` is `TermP (~>)`.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
