@@ -32,7 +32,7 @@ import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (SYN (..), Term, lift, toSMC, unit, (*^), (-<))
+import Proarrow.Tools.SMC (SYN (..), Term, toSMC, unit, (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * Programs
@@ -79,7 +79,7 @@ hasDisease :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> Unit ~> b
 hasDisease p = toSMC @I @(F b) \() -> SMC.do
   x <- coin p 1e-4
   let t y = diseaseTest p -< y
-  lift @(F b) @I (observeP p) (andT p (t x) (notT p (t x))) *^ x
+  (observeP p -< andT p (t x) (notT p (t x))) *^ x
 
 -- | A family of programs: @f 0@ is the conjunction of two fair coins, and @f (n + 1)@ the
 -- conjunction of two calls of @f n@, so it is true with probability @2^-2^(n+1)@. Each @f n@ is a

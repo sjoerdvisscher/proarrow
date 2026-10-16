@@ -45,7 +45,7 @@ module Proarrow.Tools.CCC
 
     -- ** Product exponentials
   , lam
-  , (!)
+  , Apply (..)
 
     -- ** Coproducts
   , inl

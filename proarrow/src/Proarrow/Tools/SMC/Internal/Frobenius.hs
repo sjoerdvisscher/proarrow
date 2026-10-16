@@ -10,6 +10,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor, rightUnito
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, cap)
 import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Monoid (..))
+import Prelude (type (~))
 
 import Proarrow.Tools.SMC.Internal.Context
 import Proarrow.Tools.SMC.Internal.Pattern
@@ -59,18 +60,19 @@ delta
   => TermP p d g1 a -> TermP p d g2 a -> TermP p d (Union g1 g2) I
 delta x y = rmapT (cap @(Interp a)) (x ** y)
 
--- | A term multiplied by a scalar on its left. At 'I' it is the product of two scalars.
+-- | A term multiplied by a scalar on its left. The scalar's type interprets to 'Unit',
+-- including both 'I' and @'F' Unit@. At 'I' it is the product of two scalars.
 {-# INLINE (*^) #-}
 (*^)
-  :: forall {k} {p} d g1 g2 (a :: SYN k)
-   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2)
-  => TermP p d g1 I -> TermP p d g2 a -> TermP p d (Union g1 g2) a
+  :: forall {k} {p} d g1 g2 (a :: SYN k) s
+   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2, Interp s ~ Unit)
+  => TermP p d g1 s -> TermP p d g2 a -> TermP p d (Union g1 g2) a
 s *^ x = withSynOb @a (rmapT (leftUnitor @k @(Interp a)) (s ** x))
 
 -- | A term multiplied by a scalar on its right.
 {-# INLINE (^*) #-}
 (^*)
-  :: forall {k} {p} d g1 g2 (a :: SYN k)
-   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2)
-  => TermP p d g1 a -> TermP p d g2 I -> TermP p d (Union g1 g2) a
+  :: forall {k} {p} d g1 g2 (a :: SYN k) s
+   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2, Interp s ~ Unit)
+  => TermP p d g1 a -> TermP p d g2 s -> TermP p d (Union g1 g2) a
 x ^* s = withSynOb @a (rmapT (rightUnitor @k @(Interp a)) (x ** s))

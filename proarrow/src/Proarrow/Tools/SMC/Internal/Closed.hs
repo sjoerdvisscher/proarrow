@@ -4,10 +4,13 @@
 -- the public module keeps hidden.
 module Proarrow.Tools.SMC.Internal.Closed where
 
+import Data.Kind (Constraint, Type)
+import Prelude (type (~))
+
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Strength (Costrong, trace)
-import Proarrow.Core (CategoryOf (..), Profunctor (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..))
 
 import Proarrow.Tools.SMC.Internal.Context
 import Proarrow.Tools.SMC.Internal.Pattern
@@ -41,10 +44,34 @@ loop k =
     )
 
 -- | Function application. A variable both the function and its argument use is copied.
-{-# INLINE (!) #-}
-(!)
-  :: forall {k} {p} d g1 g2 (a :: SYN k) b
-   . (Closed k, M.MonoidalProfunctor p, KnownObj a, KnownObj b, Merge g1 g2)
-  => TermP p d g1 (a :-> b) -> TermP p d g2 a -> TermP p d (Union g1 g2) b
-MkTerm f ! MkTerm x =
-  withSynOb @a (withSynOb @b (MkTerm (dimap (merge @g1 @g2) (apply @k @(Interp a) @(Interp b)) (f M.** x))))
+-- Explicit exponentials determine their result syntax. Embedded function objects, such as
+-- results of '(-<)', take their result syntax from the surrounding term.
+type Apply :: forall {k}. CAT k -> Type -> Type -> Type -> Constraint
+class Apply (p :: CAT k) f x r | f -> p where
+  (!)
+    :: (Closed k, M.MonoidalProfunctor p, KnownObj (TyOf @k x), KnownObj (TyOf @k r), Merge (CtxOf @k f) (CtxOf @k x))
+    => f -> x -> r
+
+instance (x ~ TermP p d g2 a, r ~ TermP p d (Union g1 g2) b) => Apply p (TermP p d g1 (a :-> b :: SYN k)) x r where
+  {-# INLINE (!) #-}
+  (!) = applyTerm @a @b
+
+instance
+  (f ~ (Interp a ~~> Interp b), x ~ TermP p d g2 a, r ~ TermP p d (Union g1 g2) b)
+  => Apply p (TermP p d g1 (F f :: SYN k)) x r
+  where
+  {-# INLINE (!) #-}
+  (!) = applyTerm @a @b
+
+{-# INLINE applyTerm #-}
+applyTerm
+  :: forall {k} (a :: SYN k) b p d g1 g2 f
+   . (Closed k, M.MonoidalProfunctor p, KnownObj a, KnownObj b, Merge g1 g2, Interp f ~ (Interp a ~~> Interp b))
+  => TermP p d g1 f
+  -> TermP p d g2 a
+  -> TermP p d (Union g1 g2) b
+applyTerm (MkTerm f) (MkTerm x) =
+  withSynOb @a
+    ( withSynOb @b
+        (MkTerm (dimap (merge @g1 @g2) (apply @k @(Interp a) @(Interp b)) (f M.** x)))
+    )

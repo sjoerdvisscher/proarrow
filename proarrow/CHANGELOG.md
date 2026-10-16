@@ -12,6 +12,9 @@
 * `Proarrow.Optic.Action`: `runMonoidalOptic` connects a tensor-action optic's forward and
   backward passes into one computation.
 * `Proarrow.Tools.SMC`: 
+  * `(!)` also accepts embedded function objects, including results of `(-<)`, in SMC and CCC.
+  * Computation binds accept embedded dual objects as continuation results, allowing `(-<)` there.
+  * Scalar multiplication accepts `F Unit`, including results of `(-<)`.
   * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
   * Tuple patterns, binds and tuples of five and six; `liftF` applies a morphism to a term or 
     tuple of terms and embeds its result by `F`, allowing the result object to be inferred. 

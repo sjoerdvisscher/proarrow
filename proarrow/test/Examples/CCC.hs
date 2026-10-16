@@ -17,7 +17,7 @@ import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD, type (&&))
 import Proarrow.Testing (expect)
 import Proarrow.Testing.Laws (testClosed)
-import Proarrow.Tools.CCC (SYN (..), liftF, returnA, toCCC, (**), (-<), type F)
+import Proarrow.Tools.CCC (SYN (..), liftF, returnA, toCCC, (!), (**), (-<), type F)
 import Proarrow.Tools.CCC qualified as CCC
 import Props.Hask ()
 
@@ -67,6 +67,12 @@ embeddedSum :: Either Int Bool -> Int
 embeddedSum = toCCC @(F (Either Int Bool)) @(F Int) \s ->
   CCC.caseOf s ((+ 1) -<) ((\v -> if v then 10 else 20) -<)
 
+embeddedFunction :: (Int -> Int, Int) -> Int
+embeddedFunction = toCCC @(F (Int -> Int) :** F Int) @(F Int) (uncurry (!))
+
+liftedFunction :: (Int, Int) -> Int
+liftedFunction = toCCC @(F Int :** F Int) @(F Int) \(x, y) -> ((+) -< x) ! y
+
 test :: TestTree
 test =
   testGroup
@@ -92,6 +98,9 @@ test =
     , testProperty "application and currying" $ do
         expect "application" False (CCC.applyPair @Bool @Bool (not, True))
         expect "currying" (True, False) (CCC.curryPair @Bool @Bool True False)
+    , testProperty "application accepts embedded and lifted functions" $ do
+        expect "embedded function" 7 (embeddedFunction ((+ 3), 4))
+        expect "lifted function" 7 (liftedFunction (3, 4))
     , testProperty "nested lambdas with a repeated argument" $
         mapM_
           (\(a, b) -> expect ("arguments " ++ show (a, b)) a (CCC.flipCurried3 @Bool @Bool @Bool (\x y z -> y && (x == z)) a b))

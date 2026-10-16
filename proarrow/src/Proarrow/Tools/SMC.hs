@@ -87,7 +87,7 @@ module Proarrow.Tools.SMC
 
     -- ** Closed categories
   , lam
-  , (!)
+  , Apply (..)
 
     -- ** CopyDiscard / Comonoids
   , dup

@@ -16,9 +16,10 @@ import Proarrow.Category.Instance.Cps (CPS (..), Cps (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Core (CategoryOf (..))
-import Proarrow.Testing (check)
+import Proarrow.Testing (check, expect)
 import Proarrow.Tools.SMC (SYN (F, I, (:**)), Up, dup, force, lam, lift, ret, thunk, toSMC, unit, (!), (**), (-<))
 import Proarrow.Tools.SMC qualified as SMC
+import Proarrow.Tools.SMC.Examples (bindT)
 
 -- | The category: functions, with the actions @m ()@ as the answer object.
 type K m = CPS (m () :: Type)
@@ -133,4 +134,14 @@ test =
         check "wrong effects" (logOf (droppedT (tell "never")) (const "done") == ["done"])
     , testProperty "a function's effect happens at each application" $
         check "wrong effects" (logOf (twiceT (tell . ("say " ++) . show)) (const "done") == ["say 1", "say 2", "done"])
+    , testProperty "bind accepts an embedded computation as its continuation result" $ do
+        let step :: (C Int :: K W) ~> Dual (Dual (C Int :: K W))
+            step = Cps \n k -> tell ("step " ++ show n) >> k (n + 1)
+            source k = tell "source" >> k 2 >> tell "between" >> k 3
+            Cps bound = bindT step
+            (calls, ()) = bound source (tell . ("return " ++) . show)
+        expect
+          "effect order and repeated continuation calls"
+          ["source", "step 2", "return 3", "between", "step 3", "return 4"]
+          calls
     ]

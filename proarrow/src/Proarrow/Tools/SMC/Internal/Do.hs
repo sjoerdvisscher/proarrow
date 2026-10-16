@@ -8,7 +8,7 @@ import Data.Kind (Constraint, Type)
 import GHC.TypeNats (Nat, type (+))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor, SymMonoidal, Tensor)
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Category.Monoidal.Dialogue (Dialogue)
+import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Core (CAT, Hom, Profunctor (..), Promonad (..))
 import Prelude (type (~))
@@ -100,20 +100,28 @@ instance
   {-# INLINE bindTerm #-}
   bindTerm = bindPat
 
+-- An explicit consumer determines what it consumes. An embedded dual object instead
+-- uses the negative result expected by the surrounding computation.
+type Negative :: forall {k}. SYN k -> SYN k -> Constraint
+class (Interp c ~ Dual (Interp y)) => Negative c y
+
+instance (y ~ y') => Negative (Not y') y
+instance (f ~ Dual (Interp y)) => Negative (F f) y
+
 -- | A computation on the right hand side runs first, and the rest of the block is negative.
 instance
   ( p ~ Hom k
   , Dialogue k
   , KnownObj y
   , Merge g r
-  , TyOf @k cont ~ Not y
-  , Binds p d r a (Not y) t cont
+  , Negative (TyOf @k cont) y
+  , Binds p d r a (TyOf @k cont) t cont
   , r' ~ TermP p d (Union g r) (Not y)
   )
   => Bind p (TermP p d g (Not (Not a) :: SYN k)) t cont r'
   where
   {-# INLINE (>>=) #-}
-  m >>= k = runUp @d @g @r @a @y m (bound @p @d @r @a @(Not y) k)
+  m >>= k = runUp @d @g @r @a @y m (bound @p @d @r @a @(TyOf @k cont) k)
 
 -- | The statement of a @rec@ block, whose continuation is its 'return'.
 instance

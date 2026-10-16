@@ -24,6 +24,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.FinRel (FINREL (..))
 import Proarrow.Category.Instance.Mat (Mat (..), MatK (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Closed qualified as Closed
 import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, (\\))
@@ -34,7 +35,7 @@ import Proarrow.Profunctor.Instance.Star (unStar, pattern Star)
 import Proarrow.Testing (check, expect, genNamed)
 import Proarrow.Testing.Laws (defaultTestOptions)
 import Proarrow.Tools.Einsum (EinsumType, Tensor, einsum)
-import Proarrow.Tools.SMC (SYN (..), delta, ifThenElse, liftF, returnA, sumOver, toSMC, unit, (*^), (-<))
+import Proarrow.Tools.SMC (SYN (..), delta, ifThenElse, liftF, returnA, sumOver, toSMC, unit, (*^), (-<), (^*))
 import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.FinRel ()
@@ -222,7 +223,12 @@ test =
         ]
     , testGroup
         "FinRel"
-        [ testProperty "arrow application assembles tensor inputs" $ do
+        [ testProperty "application of a lifted exponential agrees with uncurrying" $ do
+            f <- genNamed @((F2 ** F3) ~> F4) "f"
+            let curried = Closed.curry @_ @F2 @F3 @F4 f
+                actual = toSMC @(F F2 :** F F3) @(F F4) \(x, y) -> (curried -< x) SMC.! y
+            expect "apply lifted function" f actual
+        , testProperty "arrow application assembles tensor inputs" $ do
             f <- genNamed @(F2 ~> F3) "f"
             g <- genNamed @(F3 ~> F4) "g"
             let actual = toSMC @(F F2 :** F F3) @(F (F3 ** F4)) \(x, y) ->
@@ -266,7 +272,14 @@ test =
         ]
     , testGroup
         "Mat Int"
-        [ testProperty "matrix multiplication is composition (2, 3, 2)" $ do
+        [ testProperty "embedded unit results act as scalars on either side" $ do
+            s <- genNamed @((Unit :: MatK Int) ~> Unit) "scalar"
+            f <- genNamed @(M2 ~> M3) "f"
+            let left = toSMC @(F M2) @(F M3) \x -> (s -< unit) *^ (f -< x)
+                right = toSMC @(F M2) @(F M3) \x -> (f -< x) ^* (s -< unit)
+            expect "left scalar" (unMat (leftUnitor . (s ** f) . leftUnitorInv)) (unMat left)
+            expect "right scalar" (unMat (rightUnitor . (f ** s) . rightUnitorInv)) (unMat right)
+        , testProperty "matrix multiplication is composition (2, 3, 2)" $ do
             f <- genNamed @(M2 ~> M3) "f"
             g <- genNamed @(M3 ~> M2) "g"
             check "differs from g . f" (unMat (matMulT f g) == unMat (g . f))

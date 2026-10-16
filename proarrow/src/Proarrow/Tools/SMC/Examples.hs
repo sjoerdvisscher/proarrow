@@ -167,7 +167,7 @@ dneT = toSMC @(Up (F a)) @(F a) \nn -> classical nn
 bindT :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => (a ~> Dual (Dual b)) -> Dual (Dual a) ~> Dual (Dual b)
 bindT f = toSMC @(Up (F a)) @(Up (F b)) \m -> SMC.do
   x <- m
-  lift @(F a) @(Up (F b)) f x
+  f -< x
 
 -- | Contraposition: a consumer of @b@ consumes @a@ through @f@.
 contraT :: forall {k} (a :: k) b. (Dialogue k, Ob a, Ob b) => (a ~> b) -> Dual b ~> Dual a
