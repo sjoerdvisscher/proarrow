@@ -12,9 +12,10 @@ import Proarrow.Category.Instance.OpenHypergraph
   , SomeArrow
   , SomeSort
   , Wires
+  , frobenius
+  , frobeniusWith
   , openHypergraph
   , readBack
-  , readBackWith
   , someArrow
   )
 import Proarrow.Category.Instance.OpenHypergraph qualified as OH
@@ -110,8 +111,8 @@ drawRead = either error (draw . unStr)
 ringSized :: String
 ringSized =
   drawRead
-    ( readBackWith
-        matSize
+    ( readBack
+        (frobeniusWith matSize)
         ringArrow
         (ring [OH.Box "V" [] [3, 4], OH.Box "U" [] [1, 3, 3], OH.Box "T" [] [0, 1, 2], OH.Box "W" [] [4, 0]])
     )
@@ -119,7 +120,7 @@ ringSized =
 -- | The ring with everything tensored first: one box that is all four tensors side by side, whose
 -- ports are joined afterwards.
 ringNaive :: String
-ringNaive = drawRead (readBack ringArrow (ring [OH.Box "VUTW" [] [3, 4, 1, 3, 3, 0, 1, 2, 4, 0]]))
+ringNaive = drawRead (readBack frobenius ringArrow (ring [OH.Box "VUTW" [] [3, 4, 1, 3, 3, 0, 1, 2, 4, 0]]))
 
 -- | The ring pictures, each with the file the wiki shows it in.
 ringPictures :: [(FilePath, String)]

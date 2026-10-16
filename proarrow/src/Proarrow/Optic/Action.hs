@@ -15,7 +15,7 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , OplaxMonoidalRep
-  , SymMonoidal
+  , SymMonoidal (..)
   , Tensor
   , unpar0Rep
   , unparRep
@@ -55,6 +55,21 @@ instance (ActFl act f g, ActFl act f' g') => ActFl act (f :.: f') (g' :.: g) whe
       withActP @act @f' @g' f' g' \ @y f2 g2 ->
         withOb2 @_ @x @y $
           k @(x ** y) (composeActs @act @x @y @a f1 f2) (decomposeActs @act @x @y @b g2 g1)
+
+-- | Connect a tensor-action optic's forward and backward passes. The forward pass produces
+-- the focus @a@ and a residual, which the backward pass consumes together with @b@ to produce
+-- @t@. The residual is used once; no copying, discarding or tracing is required.
+runMonoidalOptic
+  :: forall {k} c (s :: k) t a b
+   . (SymMonoidal k, (Ob a, Ob b) => c (ExOptic (ActFl Tensor) a b))
+  => Optic c s t a b -> (s ** b) ~> (a ** t)
+runMonoidalOptic o@Objs =
+  withLegs @(ActFl Tensor) o \l r ->
+    withActP @Tensor l r \ @m forward backward ->
+      (obj @a ** backward)
+        . associator @k @a @m @b
+        . (swap @k @m @a ** obj @b)
+        . (forward ** obj @b)
 
 -- | An Eilenberg-Moore algebra for the monad @m@ (a representable 'Promonad' on @k@, acting as
 -- the functor @m '%' -@, see "Proarrow.Promonad"): a structure map @m % a ~> a@, coherent with the

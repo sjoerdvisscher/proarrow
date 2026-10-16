@@ -7,6 +7,7 @@
 module Props.OpenHypergraph (test) where
 
 import Control.Monad (replicateM)
+import Data.Kind (Type)
 import Data.List qualified as List
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map.Strict qualified as M
@@ -25,27 +26,44 @@ import Proarrow.Category.Instance.OpenHypergraph
   ( Box (..)
   , Boxes (..)
   , OPENHG
+  , Port (..)
+  , SIMPLIFY
   , SomeArrow
+  , SomeHypergraph (..)
+  , SomeSort
   , Sorted
   , WireSorts
   , Wires
+  , Wiring
   , box
+  , copyDiscard
+  , frobenius
   , isomorphic
+  , openHypergraph
+  , permutations
   , prim
   , readBack
   , sameSort
   , simplify
   , simplifyFlat
+  , simplifyHypergraph
   , someArrow
   , sortList
   , sortOf
+  , substitute
+  , substituteWith
+  , tracedWith
+  , unsafeOpenHypergraph
   )
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Hypergraph (Sized (..), cap, cup)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized (..), cap, cup, traceHG)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), singleton)
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object (pattern Objs)
+import Proarrow.Optic.Iso (DecidableIso)
+import Proarrow.Profunctor.Free (HasFreeK (..))
 import Proarrow.Testing
   ( SomeOf (..)
   , Testable (..)
@@ -53,15 +71,17 @@ import Proarrow.Testing
   , TestableType (..)
   , TestingEqShow (..)
   , check
+  , expect
   , genNamed
   , genSomeDef
   , pattern GenNonEmpty
   )
 import Proarrow.Testing.Laws
-import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
+import Proarrow.Tools.Diagrams.Svg (SVG (..), Svg (..), W (Wire), node, render)
 import Proarrow.Tools.Einsum (einsum)
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.Mat ()
+import Props.OpenHypergraph.Generated qualified as Generated
 import Props.SMC (name)
 
 type OH = OPENHG (MatK Int) String
@@ -75,7 +95,8 @@ test :: TestTree
 test =
   testGroup
     "Open hypergraphs"
-    [ testCategory @OH
+    [ Generated.test
+    , testCategory @OH
     , testDagger @OH
     , testMonoidal_ @OH
     , testSymMonoidal_ @OH
@@ -106,11 +127,332 @@ test =
             check "not isomorphic" (isomorphic (unStr (einsum @"ij,jk" (name f) (name h))) (unStr (name (h . f))))
         ]
     , testGroup
+        "substitution"
+        [ testProperty "identity substitution" $ do
+            actual <- substituteOr (\x -> if x == "f" then SomeHypergraph f else SomeHypergraph h) (h . f)
+            expectGraph "same diagram" (h . f) actual
+        , testProperty "substitution composes" $ do
+            let twice x = SomeHypergraph (box @_ @'[M2] @'[M2] x . box @_ @'[M2] @'[M2] x)
+            first <- substituteOr twice g
+            actual <- substituteOr twice first
+            direct <- substituteOr (\_ -> SomeHypergraph (g . g . g . g)) g
+            expectGraph "two stages" direct actual
+        , testProperty "preserves composition" $ do
+            let replace _ = SomeHypergraph (g' . g')
+            actual <- substituteOr replace (g . g)
+            single <- substituteOr replace g
+            expectGraph "composition" (single . single) actual
+        , testProperty "preserves tensor" $ do
+            let replace _ = SomeHypergraph (g' . g')
+            actual <- substituteOr replace (g ** g)
+            single <- substituteOr replace g
+            expectGraph "tensor" (single ** single) actual
+        , testProperty "identity replacement merges nodes" $ do
+            actual <- substituteOr (\_ -> SomeHypergraph (obj @I)) (g . g)
+            expectGraph "identity" (obj @I) actual
+        , testProperty "repeated ports and shared nodes" $ do
+            actual <- substituteOr (\_ -> SomeHypergraph (obj @I)) (hadamardT g g)
+            expectGraph "special Frobenius algebra" (obj @I) actual
+        , testProperty "copy and discard replacements" $ do
+            let copy = box @_ @'[M2] @'[M2, M2] "copy"
+                discard = box @_ @'[M2] @'[] "drop"
+                replace x = if x == "copy" then SomeHypergraph (comult @I) else SomeHypergraph (counit @I)
+            actual <- substituteOr replace ((obj @I ** discard) . copy)
+            expectGraph "counit law" (rightUnitorInv @OH @I) actual
+        , testProperty "feedback becomes an isolated loop" $ do
+            actual <- substituteOr (\_ -> SomeHypergraph (obj @I)) (traceIdxT g)
+            expectGraph "closed loop" (counit @I . mempty @I) actual
+        , testProperty "replacement keeps isolated nodes" $ do
+            let loop = counit @I . mempty @I
+            actual <- substituteOr (\_ -> SomeHypergraph (g ** loop)) g
+            expectGraph "loop beside box" (g ** loop) actual
+        , testProperty "rejects a different arity" $
+            expectFailure "arity" (substitute (\_ -> SomeHypergraph (comult @I)) g)
+        , testProperty "rejects a different sort" $
+            expectFailure "sorts" (substitute (\_ -> SomeHypergraph (obj @B)) g)
+        , testProperty "empty diagrams keep their nodes" $ do
+            let graph = counit @I . mempty @I
+            actual <- substituteOr (\_ -> error "no boxes") graph
+            expectGraph "closed loop" graph actual
+        , testProperty "circuit expansion commutes with interpretation" $ do
+            hm <- genNamed @(M2 ~> M2) "H"
+            zm <- genNamed @(M2 ~> M2) "Z"
+            let gate x = box @_ @'[M2] @'[M2] x
+                circuit = gate "X" . gate "H"
+                expand x = SomeHypergraph (if x == "X" then gate "H" . gate "Z" . gate "H" else gate x)
+                interpret x = someArrow (singleton (case x of "H" -> hm; "Z" -> zm; _ -> hm . zm . hm))
+            expanded <- substituteOr expand circuit
+            expectGraph "H-Z-H decomposition" (gate "H" . gate "Z" . gate "H" . gate "H") expanded
+            before <- readBackOr interpret circuit
+            after <- readBackOr interpret expanded
+            expect "same matrix" (unMat before) (unMat after)
+        , testProperty "replacement labels can have a different type" $ do
+            actual <- substituteOr (\_ -> SomeHypergraph (box @Int @'[M2] @'[M2] 1)) g
+            expectGraph "relabelled box" (box @Int @'[M2] @'[M2] 1) actual
+        , testProperty "nullary boxes can add a closed component" $ do
+            let emptyBox = box @_ @'[] @'[] "loop"
+            actual <- substituteOr (\_ -> SomeHypergraph (counit @I . mempty @I)) emptyBox
+            expectGraph "closed component" (counit @I . mempty @I) actual
+        , testProperty "separate replacement nodes remain separate" $ do
+            let replacement = unsafeOpenHypergraph @String @'[M2] @'[M2] (sortList @_ @'[M2, M2]) [0] [1] []
+            actual <- substituteOr (\_ -> SomeHypergraph replacement) g
+            expectGraph "discard then create" (mempty @I . counit @I) actual
+        ]
+    , testGroup
+        "sort expansion"
+        [ testProperty "singleton expansion agrees with substitution" $ do
+            let replace x = if x == "f" then SomeHypergraph f else SomeHypergraph h
+            expected <- substituteOr replace (h . f)
+            expectExpanded expected (substituteWith (: []) replace (h . f))
+        , testProperty "empty expansion removes wires but keeps boxes" $
+            expectExpanded
+              (emptyGate "g" . emptyGate "g")
+              (substituteWith (const []) (SomeHypergraph . emptyGate) (g . g))
+        , testProperty "empty expansion removes isolated loops" $
+            expectExpanded
+              (obj @(Unit :: OH))
+              (substituteWith (const []) (\_ -> error "no boxes") (counit @I . mempty @I))
+        , testProperty "multiple wires preserve composition" $
+            expectExpanded
+              (pairGate "g" . pairGate "g")
+              (substituteWith pairSorts (SomeHypergraph . pairGate) (g . g))
+        , testProperty "multiple wires preserve tensor" $
+            expectExpanded
+              (pairGate "g" ** pairGate "g'")
+              (substituteWith pairSorts (SomeHypergraph . pairGate) (g ** g'))
+        , testProperty "expanded copies keep boundary order" $
+            expectExpanded
+              (comult @(I ** B))
+              (substituteWith pairSorts (\_ -> error "no boxes") (comult @I))
+        , testProperty "expanded repeated ports share their nodes" $
+            expectExpanded
+              (hadamardT (pairGate "g") (pairGate "g"))
+              (substituteWith pairSorts (SomeHypergraph . pairGate) (hadamardT g g))
+        , testProperty "feedback expands into two loops" $
+            expectExpanded
+              (traceIdxT (pairGate "g"))
+              (substituteWith pairSorts (SomeHypergraph . pairGate) (traceIdxT g))
+        , testProperty "isolated nodes expand independently" $
+            expectExpanded
+              (counit @(I ** B) . mempty @(I ** B))
+              (substituteWith pairSorts (\_ -> error "no boxes") (counit @I . mempty @I))
+        , testProperty "sorts can expand to different lengths" $
+            let mapSort s = if sameSort s (Some @M2) then sortList @_ @'[M2, M3] else []
+                fi = box @_ @'[M2, M3] @'[] "f"
+                hi = box @_ @'[] @'[M2, M3] "h"
+                replace x = if x == "f" then SomeHypergraph fi else SomeHypergraph hi
+            in expectExpanded (hi . fi) (substituteWith mapSort replace (h . f))
+        , testProperty "rejects replacement arity before expansion" $
+            expectFailure "arity" (substituteWith pairSorts (\_ -> SomeHypergraph g) g)
+        , testProperty "rejects replacement sort order" $
+            expectFailure
+              "sorts"
+              (substituteWith pairSorts (\_ -> SomeHypergraph (box @_ @'[M3, M2] @'[M3, M2] "g")) g)
+        , testProperty "can change the kind of sorts" $
+            expectExpanded
+              (box @String @'[A] @'[A] "g")
+              ( substituteWith
+                  (const [Some @A])
+                  (\x -> SomeHypergraph (box @String @'[A] @'[A] x))
+                  g
+              )
+        ]
+    , testGroup
+        "symmetric monoidal read-back"
+        [ testProperty "composition agrees with hypergraph read-back" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            hm <- genNamed @(M3 ~> M2) "h"
+            let interp x = if x == "f" then someArrow (singleton fm) else someArrow (singleton hm)
+            expectReadBack permutations interp (h . f)
+        , testProperty "parallel boxes agree with hypergraph read-back" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            expectReadBack permutations (const (someArrow (singleton fm))) (f ** f)
+        , testProperty "permutations need no boxes" $
+            case readBack permutations (\_ -> error "no boxes") (swap @OH @I @B) of
+              Left err -> testFailed err
+              Right (Str actual) -> expect "swap" (unMat (swap @(MatK Int) @M2 @M3)) (unMat actual)
+        , testProperty "nullary boxes and scalar components" $
+            let state = box @String @'[] @'[M2] "state"
+                finish = box @String @'[M2] @'[] "finish"
+                scalar = box @String @'[] @'[] "scalar"
+                interp x = case x of
+                  "state" -> someArrow @'[] @'[M2] (Str (mempty @M2))
+                  "finish" -> someArrow @'[M2] @'[] (Str (counit @M2))
+                  _ -> someArrow @'[] @'[] (Str (obj @(Unit :: MatK Int)))
+            in case readBack permutations interp ((finish . state) ** scalar) of
+                 Left err -> testFailed err
+                 Right (Str actual) -> expect "scalar" (unMat (counit @M2 . mempty @M2)) (unMat actual)
+        , testProperty "rejects copying" $
+            expectFailure "consumers" (readBack permutations (\_ -> error "no boxes") (comult @I))
+        , testProperty "rejects merging" $
+            expectFailure "producer" (readBack permutations (\_ -> error "no boxes") (mappend @I))
+        , testProperty "rejects discarding" $
+            expectFailure "consumers" (readBack permutations (\_ -> error "no boxes") (counit @I))
+        , testProperty "rejects isolated loops" $
+            expectFailure "isolated" (readBack permutations (\_ -> error "no boxes") (counit @I . mempty @I))
+        , testProperty "rejects a directed cycle" $
+            expectFailure "trace" (readBack permutations (const (someArrow (singleton (obj @M2)))) (traceIdxT g))
+        , testProperty "rejects an ill-typed box" $
+            expectFailure "box" (readBack permutations (const (someArrow (singleton (obj @M2)))) f)
+        , testProperty "empty graph reads back as the unit identity" $
+            case readBack permutations (\_ -> error "no boxes") (obj @(Unit :: OH)) of
+              Left err -> testFailed err
+              Right (Str actual) -> expect "unit" (unMat (obj @(Unit :: MatK Int))) (unMat actual)
+        ]
+    , testGroup
+        "copy-discard read-back"
+        [ testProperty "sharing between boxes agrees with hypergraph read-back" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            hm <- genNamed @(M3 ~> M2) "h"
+            let interp x = if x == "f" then someArrow (singleton fm) else someArrow (singleton hm)
+            expectReadBack copyDiscard interp ((h ** h) . comult @B . f)
+        , testProperty "repeated inputs release a box only when all are available" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            let source = box @String @'[M2] @'[M2] "source"
+                join = box @String @'[M2, M2] @'[M2] "join"
+                -- Put the dependent box first in the graph's box list.
+                graph =
+                  unsafeOpenHypergraph @String @'[M2] @'[M2]
+                    (sortList @_ @'[M2, M2, M2])
+                    [0]
+                    [2]
+                    [Box "join" [1, 1] [2], Box "source" [0] [1]]
+                interp x = if x == "source" then someArrow (singleton gm) else someArrow @'[M2, M2] @'[M2] (Str (mappend @M2))
+            expectGraph "dependent box first" (join . comult @I . source) graph
+            expectReadBack copyDiscard interp graph
+        , testProperty "a shared node survives until its last consumer" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            expectReadBack copyDiscard (const (someArrow (singleton gm))) ((g ** g) . comult @I)
+        , testProperty "a node can feed a box and an output boundary" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            expectReadBack copyDiscard (const (someArrow (singleton gm))) ((obj @I ** g) . comult @I)
+        , testProperty "unused box outputs are discarded without removing the box" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            expectReadBack copyDiscard (const (someArrow (singleton gm))) (counit @I . g)
+        , testProperty "unused box output is discarded before a later box" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            expectReadBack copyDiscard (const (someArrow (singleton gm))) ((counit @I . g) ** g)
+        , testProperty "unused boundary inputs are discarded" $
+            expectReadBack copyDiscard (\_ -> error "no boxes") (obj @I ** counit @B)
+        , testProperty "repeated output ports are copied and permuted" $
+            expectReadBack
+              copyDiscard
+              (\_ -> error "no boxes")
+              ( unsafeOpenHypergraph @String @'[M2, M3] @'[M3, M2, M3, M2, M2]
+                  (sortList @_ @'[M2, M3])
+                  [0, 1]
+                  [1, 0, 1, 0, 0]
+                  []
+              )
+        , testProperty "nullary boxes can produce shared values" $
+            let state = box @String @'[] @'[M2] "state"
+            in expectReadBack copyDiscard (const (someArrow @'[] @'[M2] (Str (mempty @M2)))) (comult @I . state)
+        , testProperty "empty graph" $
+            expectReadBack copyDiscard (\_ -> error "no boxes") (obj @(Unit :: OH))
+        , testProperty "rejects merging" $
+            expectFailure "producer" (readBack copyDiscard (\_ -> error "no boxes") (mappend @I))
+        , testProperty "rejects a node without a producer" $
+            expectFailure "producer" (readBack copyDiscard (\_ -> error "no boxes") (mempty @I))
+        , testProperty "rejects isolated nodes" $
+            expectFailure "isolated" (readBack copyDiscard (\_ -> error "no boxes") (counit @I . mempty @I))
+        , testProperty "rejects cycles" $
+            expectFailure "trace" (readBack copyDiscard (const (someArrow (singleton (obj @M2)))) (traceIdxT g))
+        , testProperty "rejects an ill-typed box" $
+            expectFailure "box" (readBack copyDiscard (const (someArrow (singleton (obj @M2)))) f)
+        , testProperty "primitive graph executes as a Haskell function with sharing" $
+            let inc = prim (singleton ((+ 1) :: Int -> Int))
+                add = prim @'[Int, Int] @'[Int] (Str (uncurry (+) :: (Int, Int) -> Int))
+            in case simplify copyDiscard (add . comult . inc) of
+                 Left err -> testFailed err
+                 Right (Str actual) -> expect "shared result" 16 (actual 7)
+        ]
+    , testGroup
+        "independent feedback capability"
+        [ testProperty "permutations with trace agree with hypergraph read-back" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            expectReadBack (tracedWith permutations) (const (someArrow (singleton gm))) (traceIdxT g)
+        , testProperty "cuts a multi-box cycle" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            hm <- genNamed @(M3 ~> M2) "h"
+            let interp x = if x == "f" then someArrow (singleton fm) else someArrow (singleton hm)
+                graph = traceIdxT (h . f)
+            expectReadBack (tracedWith permutations) interp graph
+        , testProperty "disconnected cycles close independently" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            let interp = const (someArrow (singleton gm))
+                graph = traceIdxT g ** traceIdxT g
+            expectReadBack (tracedWith permutations) interp graph
+        , testProperty "copying a feedback wire to an output" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            let graph =
+                  unsafeOpenHypergraph @String @'[] @'[M2]
+                    (sortList @_ @'[M2, M2])
+                    []
+                    [0]
+                    [Box "g" [0] [1], Box "g" [1] [0]]
+                interp = const (someArrow (singleton gm))
+            expectReadBack (tracedWith copyDiscard) interp graph
+        , testProperty "copying a producerless feedback wire to an output" $
+            let graph = traceHG @I @(Unit :: OH) @I (comult @I . rightUnitor)
+            in expectReadBack (tracedWith copyDiscard) (\_ -> error "no boxes") graph
+        , testProperty "producerless feedback supplies a box input" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            let graph = g . traceHG @I @(Unit :: OH) @I (comult @I . rightUnitor)
+            expectReadBack (tracedWith copyDiscard) (const (someArrow (singleton gm))) graph
+        , testProperty "repeated cyclic inputs are copied" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            let graph =
+                  unsafeOpenHypergraph @String @'[] @'[]
+                    (sortList @_ @'[M2])
+                    []
+                    []
+                    [Box "g" [0, 0] [0]]
+                interp = const (someArrow @'[M2, M2] @'[M2] (Str (mappend @M2 . (gm ** gm))))
+            expectReadBack (tracedWith copyDiscard) interp graph
+        , testProperty "trace alone still rejects copying" $
+            expectFailure "consumers" (readBack (tracedWith permutations) (\_ -> error "no boxes") (comult @I))
+        , testProperty "trace alone rejects a producerless state" $
+            expectFailure "producer" (readBack (tracedWith permutations) (\_ -> error "no boxes") (mempty @I))
+        , testProperty "traced copying still rejects merging" $
+            expectFailure "producer" (readBack (tracedWith copyDiscard) (\_ -> error "no boxes") (mappend @I))
+        , testProperty "isolated loop is a traced identity" $
+            case readBack (tracedWith permutations) (\_ -> error "no boxes") (counit @I . mempty @I) of
+              Left err -> testFailed err
+              Right (Str actual) -> expect "dimension" (unMat (counit @M2 . mempty @M2)) (unMat actual)
+        , testProperty "tracedWith replaces Frobenius feedback" $
+            let d = node @'[Wire "A"] @'[Wire "A"] "g"
+                graph = traceIdxT (box @_ @'[A] @'[A] "g") :: Wires '[] ~> (Wires '[] :: OPENHG SVG String)
+            in case readBack (tracedWith frobenius) (const (someArrow (singleton d))) graph of
+                 Left err -> testFailed err
+                 Right (Str (Svg _ diagram)) -> check "target trace is missing" ("Trace " `List.isInfixOf` show diagram)
+        , testProperty "Frobenius wiring reads an acyclic graph" $ do
+            gm <- genNamed @(M2 ~> M2) "g"
+            let graph = hadamardT g g
+                interp = const (someArrow (singleton gm))
+            expectReadBack frobenius interp graph
+        , testProperty "Haskell feedback without copying" $
+            case simplify (tracedWith permutations) productiveLoop of
+              Left err -> testFailed err
+              Right (Str actual) -> expect "productive loop" 21 (actual 7)
+        , testProperty "Haskell feedback combined with copying" $
+            case simplify (tracedWith copyDiscard) (comult . productiveLoop) of
+              Left err -> testFailed err
+              Right (Str actual) -> expect "shared loop result" (21, 21) (actual 7)
+        ]
+    , testGroup
         "read-back in Mat Int"
-        [ testProperty "matrix multiplication in index notation reads back as composition (2, 3)" $ do
+        [ testProperty "free hypergraph retraction preserves shared inputs" $ do
+            fm <- genNamed @(M2 ~> M3) "f"
+            let lifted = liftK @CategoryOf @Hypergraph fm
+                graph = (lifted ** lifted) . comult @(Wires '[M2])
+                actual = retractK @CategoryOf @Hypergraph @(MatK Int) graph
+            expect "retracted matrix" (unMat ((fm ** fm) . comult @M2)) (unMat actual)
+        , testProperty "rejects a box with other sorts" $
+            expectFailure "sorts" (readBack frobenius (const (someArrow (singleton (obj @M2)))) f)
+        , testProperty "matrix multiplication in index notation reads back as composition (2, 3)" $ do
             fm <- genNamed @(M2 ~> M3) "f"
             gm <- genNamed @(M3 ~> M2) "g"
-            let Str m = simplify (matMulT (prim (singleton fm)) (prim (singleton gm)))
+            let Str m = simplifyHypergraph (matMulT (prim (singleton fm)) (prim (singleton gm)))
             check "differs from g . f" (unMat m == unMat (gm . fm))
         , testProperty "the trace reads back as the trace (3)" $ do
             gm <- genNamed @(M3 ~> M3) "g"
@@ -196,12 +538,13 @@ test =
         [ testProperty "matrix multiplication in index notation reads back with no points" $ do
             let d = node @'[Wire "A"] @'[Wire "A"] "f"
                 t = matMulT (box @_ @'[A] @'[A] "f") (box @_ @'[A] @'[A] "f") :: Wires '[A] ~> (Wires '[A] :: OPENHG SVG String)
-            case readBack (\_ -> someArrow (singleton d)) t of
+            case readBack frobenius (\_ -> someArrow (singleton d)) t of
               Right (Str r) -> check "points are drawn" (points (render r) == 0)
               Left e -> testFailed e
         , testProperty "the trace reads back with one spider on each side of the loop" $ do
             let d = node @'[Wire "A"] @'[Wire "A"] "h"
             case readBack
+              frobenius
               (\_ -> someArrow (singleton d))
               (traceIdxT (box @_ @'[A] @'[A] "h") :: Wires '[] ~> (Wires '[] :: OPENHG SVG String)) of
               Right (Str r) -> check "not four points" (points (render r) == 4)
@@ -221,15 +564,78 @@ type M3 = M Nat3 :: MatK Int
 type OM = OH
 type A = S '[Wire "A"]
 
+-- The feedback equation is u = n : u; only three elements are demanded for the result.
+productiveLoop :: (Wires '[Int] :: SIMPLIFY Type) ~> Wires '[Int]
+productiveLoop =
+  traceHG @(Wires '[[Int]]) @(Wires '[Int]) @(Wires '[Int])
+    (prim @'[[Int], Int] @'[[Int], Int] (Str (\(u, n) -> (n : u, sum (take 3 u)))))
+
+pairSorts :: SomeSort (MatK Int) -> [SomeSort (MatK Int)]
+pairSorts _ = sortList @_ @'[M2, M3]
+
+pairGate :: String -> Wires '[M2, M3] ~> (Wires '[M2, M3] :: OH)
+pairGate = box
+
+emptyGate :: String -> Wires '[] ~> (Wires '[] :: OH)
+emptyGate = box
+
+expectExpanded
+  :: forall {s} l as bs
+   . (Eq l, DecidableIso s)
+  => (Wires as :: OPENHG s l) ~> Wires bs
+  -> Either String (SomeHypergraph s l)
+  -> Property ()
+expectExpanded expected@Objs result = case result of
+  Left err -> testFailed err
+  Right (SomeHypergraph (DecCospan @c (Sub (FinHask l)) (Sub (FinHask r)) (Boxes boxes))) ->
+    let unPort (Port i) = i
+    in case openHypergraph @l @as @bs
+         (sortList @_ @(WireSorts (DC c)))
+         (fmap unPort (M.elems l))
+         (fmap unPort (M.elems r))
+         (fmap (fmap unPort) boxes) of
+         Left err -> testFailed err
+         Right actual -> expectGraph "expanded diagram" expected actual
+
+expectFailure :: String -> Either String a -> Property ()
+expectFailure reason result = case result of
+  Left err -> check ("wrong error: " ++ err) (reason `List.isInfixOf` err)
+  Right _ -> testFailed ("expected an error about " ++ reason)
+
+expectGraph :: forall {s} l a b. (Eq l, DecidableIso s) => String -> (a :: OPENHG s l) ~> b -> a ~> b -> Property ()
+expectGraph message expected actual = check message (isomorphic expected actual)
+
+substituteOr
+  :: forall l a b
+   . (String -> SomeHypergraph (MatK Int) l)
+  -> (a :: OH) ~> b
+  -> Property (Wires (WireSorts a) ~> (Wires (WireSorts b) :: OPENHG (MatK Int) l))
+substituteOr replace graph = case substitute replace graph of
+  Left err -> testFailed err
+  Right result -> pure result
+
 -- | The read-back in Mat Int as a matrix, failing the property if it fails.
 readBackOr
   :: forall a b
    . (String -> SomeArrow (MatK Int))
   -> (a :: OM) ~> b
   -> Property (Fold (WireSorts a) ~> Fold (WireSorts b))
-readBackOr interp t = case readBack interp t of
+readBackOr interp t = case readBack frobenius interp t of
   Right (Str m) -> pure m
   Left e -> testFailed e
+
+-- Compare against the full reader in a non-cartesian target: discarded boxes can still matter.
+expectReadBack
+  :: forall a b
+   . Wiring (MatK Int)
+  -> (String -> SomeArrow (MatK Int))
+  -> (a :: OH) ~> b
+  -> Property ()
+expectReadBack wiring interp graph = do
+  Mat values <- readBackOr interp graph
+  case readBack wiring interp graph of
+    Left err -> testFailed err
+    Right (Str actual) -> expect "matrix" values (unMat actual)
 
 instance Testable OH where
   showOb @a = "Wires " ++ show (fmap (\(Some @x) -> sizeOf @(MatK Int) @x) (sortList @(MatK Int) @(WireSorts a)))

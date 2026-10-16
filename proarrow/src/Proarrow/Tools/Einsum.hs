@@ -10,7 +10,7 @@
 --
 -- The specification is an open hypergraph ("Proarrow.Category.Instance.OpenHypergraph"): a node for
 -- each letter, the tensors as boxes, and the output letters as its boundary. It is already in normal
--- form, and the result is its 'Proarrow.Category.Instance.OpenHypergraph.simplify': the tensors
+-- form, and the result is its 'Proarrow.Category.Instance.OpenHypergraph.simplifyHypergraph': the tensors
 -- contracted in pairs, each letter summed out by a spider as soon as nothing still to come has it.
 module Proarrow.Tools.Einsum
   ( Tensor
@@ -38,7 +38,7 @@ import Proarrow.Category.Instance.OpenHypergraph
   , SomeArrow (..)
   , SortList
   , Wires
-  , simplify
+  , simplifyHypergraph
   , someArrow
   , unsafeOpenHypergraph
   , unsafePrim
@@ -322,7 +322,7 @@ instance
   )
   => Einsum '[] out (ts :: [([Char], [k])]) r
   where
-  collect acc = simplify (network @os (P.reverse acc) (chars @out))
+  collect acc = simplifyHypergraph (network @os (P.reverse acc) (chars @out))
 
 -- | Einstein summation: @einsum \@"ij,jk->ik" a b@ is the tensor with entries the sums over @j@ of
 -- the products of the entries of @a@ and @b@. The tensors are given after the specification, one for

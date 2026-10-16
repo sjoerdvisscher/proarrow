@@ -16,7 +16,14 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Free (FREE (..), IsFreeOb (..), liftFree, retractFree)
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), toInt)
 import Proarrow.Category.Instance.Nat (Nat (..), first)
-import Proarrow.Category.Instance.OpenHypergraph (SIMPLIFY, WireSorts, Wires, prim, simplifyWith)
+import Proarrow.Category.Instance.OpenHypergraph
+  ( SIMPLIFY
+  , WireSorts
+  , Wires
+  , frobeniusWith
+  , prim
+  , simplify
+  )
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Forget, On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
@@ -256,4 +263,4 @@ type instance Retract CategoryOf Hypergraph k ws = Fold (WireSorts ws) :: k
 
 instance HasFreeK CategoryOf Hypergraph where
   liftK f = prim (singleton f) \\ f
-  retractK f = unStr (simplifyWith (P.const 2) f)
+  retractK f = P.either P.error unStr (simplify (frobeniusWith (P.const 2)) f)

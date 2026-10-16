@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Optic composition by graph substitution</title>
+<style>
+body{font:16px system-ui,sans-serif;margin:32px;color:#1f2328;background:#fff}
+main{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap}
+figure{margin:0}figcaption{font-weight:600;margin-bottom:16px}img{max-width:100%;height:auto}
+p{max-width:850px;line-height:1.5}
+@media(prefers-color-scheme:dark){body{color:#e6edf3;background:#0d1117}}
+</style>
+<h1>Optic composition by graph substitution</h1>
+<p>Each source wire expands to a forward (+) and backward (−) wire. Each generator expands
+into a forward box and a backward box, connected by a residual m_f or m_g.
+The forward pass runs f then g; the backward pass runs g then f.</p>
+<p>The encoding composes with paired boundaries. Moving the external backward wires gives
+inputs (a+, c−) and outputs (c+, a−). Residuals connect the two passes without recomputing them.</p>
+<main>
+<figure><figcaption>Source: g ∘ f</figcaption><img src="source.svg" alt="Two source boxes"></figure>
+<figure><figcaption>Paired boundaries</figcaption><img src="encoded.svg" alt="Encoded optics with paired boundaries"></figure>
+<figure><figcaption>Forward and backward computation</figcaption><img src="composition.svg" alt="Composed forward and backward passes"></figure>
+</main>
+<h2>Reverse derivative of sin(x²)</h2>
+<p>Here a⁺ is x, b⁺ is z = x² and c⁺ is y = sin z. The reverse pass receives a seed dy
+on c⁻ and returns dx = 2x cos(x²) dy on a⁻. The square saves x on m_f; the sine saves
+cos z on m_g. Each forward box occurs once and the backward boxes use these saved values.</p>
+<main>
+<figure><figcaption>Source function</figcaption><img src="derivative-source.svg" alt="Square followed by sine"></figure>
+<figure><figcaption>Value and reverse derivative</figcaption><img src="derivative.svg" alt="Square and sine forward, then their reverse derivatives using saved values"></figure>
+</main>
+<p>The matching SMC program is tested numerically against the chain rule, finite differences,
+and Proarrow.Category.Instance.Diff. A writer records exactly one call to each primitive,
+in forward-then-backward order. The translated graph also executes directly as a Haskell function through the symmetric
+monoidal read-back; its numerical results agree with the SMC schedule. The SVG uses the
+hypergraph read-back.</p>
+<p>Generated from Examples.OpticDiagrams. Tests compare the substituted graph with a hand-built
+composite and an SMC program. Construction follows §10 of
+<a href="https://arxiv.org/abs/2305.01041">Wilson and Zanasi, Data-Parallel Algorithms for String Diagrams</a>.</p>
+</html>

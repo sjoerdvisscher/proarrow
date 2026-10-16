@@ -16,6 +16,7 @@ import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
+import Examples.OpticDiagrams qualified as OpticDiagrams
 import Examples.Probabilistic qualified as Probabilistic
 import Examples.Sessions qualified as Sessions
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
@@ -116,6 +117,7 @@ main =
           , LinearLogic.test
           , Learning.test
           , Probabilistic.test
+          , OpticDiagrams.test
           , Sessions.test
           , Cbpv.test
           , Toffoli.test

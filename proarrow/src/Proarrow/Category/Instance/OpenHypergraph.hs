@@ -33,6 +33,10 @@ module Proarrow.Category.Instance.OpenHypergraph
   , box
   , openHypergraph
   , unsafeOpenHypergraph
+  , SomeHypergraph (..)
+  , substitute
+  , substituteWith
+  , unsafeSubstituteWith
   , isomorphic
   , sameSort
 
@@ -40,7 +44,12 @@ module Proarrow.Category.Instance.OpenHypergraph
   , SomeArrow (..)
   , someArrow
   , readBack
-  , readBackWith
+  , Wiring
+  , permutations
+  , copyDiscard
+  , frobenius
+  , frobeniusWith
+  , tracedWith
 
     -- * Simplifying
   , SIMPLIFY
@@ -48,7 +57,7 @@ module Proarrow.Category.Instance.OpenHypergraph
   , unsafePrim
   , prim
   , simplify
-  , simplifyWith
+  , simplifyHypergraph
   , simplifyFlat
   ) where
 
@@ -66,11 +75,13 @@ import Unsafe.Coerce (unsafeCoerce)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.DecoratedCospan (DECCOSPAN (..), DecCospan (..))
-import Proarrow.Category.Instance.FinHask (FINHASK (..), FinHask (..))
+import Proarrow.Category.Instance.FinHask (FINHASK (..), FinHask (..), unionFind)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), SymMonoidal, Tensor, type (**))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..))
-import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized (..), cupS, traceHG)
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, Sized (..), cupS, traceHG)
+import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal)
 import Proarrow.Category.Monoidal.Strictified
   ( Fold
   , Strictified (..)
@@ -80,15 +91,14 @@ import Proarrow.Category.Monoidal.Strictified
   , splitMany
   , swap2
   , withIsListOf
-  , withObFold
   , type (++)
   )
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
-import Proarrow.Core (CategoryOf (..), Kind, OB, Ob', Profunctor, Promonad (..), UN, obj, (//))
+import Proarrow.Core (CategoryOf (..), Hom, Kind, OB, Ob', Profunctor, Promonad (..), UN, obj, (//))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Monoid (comultS, counitS, mappendS, memptyS)
+import Proarrow.Monoid (CocommutativeComonoid, Supplies, comultS, counitS, mappendS, memptyS)
 import Proarrow.Object
   ( KnownListOf (..)
   , ListOf (..)
@@ -99,6 +109,7 @@ import Proarrow.Object
   , withKnownAppend
   , withKnownListOf
   , withListOf
+  , pattern Objs
   )
 import Proarrow.Optic.Iso (DecidableIso (..), withIso)
 import Proarrow.Tools.ContractionOrder (Plan (..), planContraction)
@@ -315,6 +326,136 @@ unsafeOpenHypergraph nodeSorts ins outs boxList = reifySorts nodeSorts \ @ns ->
     (Sub (FinHask (M.fromList (P.zip universeF (P.fmap (Port @_ @ns) outs)))))
     (Boxes (P.fmap (P.fmap Port) boxList))
 
+-- | An open hypergraph whose boundaries are known at runtime, for replacing a labelled box.
+type SomeHypergraph :: Kind -> Type -> Type
+data SomeHypergraph s l where
+  SomeHypergraph :: (a :: OPENHG s l) ~> b -> SomeHypergraph s l
+
+-- | Replace every box by the diagram assigned to its label. Each replacement must have as many
+-- inputs and outputs as the box, in the same order, with isomorphic sorts. All replacements are
+-- glued together in one union-find pass. Shared nodes, repeated ports and isolated nodes are kept.
+-- Replacement labels are not substituted again.
+--
+-- Adapted from the functor-application construction in §9 of Wilson and Zanasi,
+-- <https://arxiv.org/abs/2305.01041 Data-Parallel Algorithms for String Diagrams>, restricted to an
+-- identity object map. This implementation uses maps and union-find rather than the paper's
+-- data-parallel representation.
+substitute
+  :: forall {s} l m a b
+   . (DecidableIso s)
+  => (l -> SomeHypergraph s m)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (Wires (WireSorts a) ~> (Wires (WireSorts b) :: OPENHG s m))
+substitute replace hg =
+  hg // do
+    (nodes, ins, outs, boxes) <- substituteParts byIso replace (hypergraphParts hg)
+    P.pure (unsafeOpenHypergraph nodes ins outs boxes)
+
+-- | Apply an object map and a generator map to an open hypergraph. Each source sort becomes a list
+-- of target sorts, and each box is replaced by a diagram with the expanded inputs and outputs.
+-- Every occurrence of a node uses the same expanded nodes, including repeated ports and boundaries.
+-- An empty list removes a node; an isolated node expands to one isolated node per target sort.
+-- The resulting boundaries are known at runtime, so the result is a 'SomeHypergraph'.
+--
+-- The object map must send isomorphic source sorts to lists of pairwise isomorphic target sorts
+-- for composition to be preserved. Replacement boundaries are checked as in 'substitute'.
+--
+-- Adapted from the functor-application construction in §9 of Wilson and Zanasi,
+-- <https://arxiv.org/abs/2305.01041 Data-Parallel Algorithms for String Diagrams>.
+-- This implementation uses lists, maps and union-find rather than the paper's data-parallel representation.
+substituteWith
+  :: forall {s} {t} l m a b
+   . (DecidableIso t)
+  => (SomeSort s -> [SomeSort t])
+  -> (l -> SomeHypergraph t m)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (SomeHypergraph t m)
+substituteWith = substituteWithAligned byIso
+
+-- | 'substituteWith' without comparing sorts. Replacement boundaries must have the sorts
+-- specified by the object map, in order. Arity is still checked. For typed primitive translations
+-- whose source and replacement ports agree by construction; otherwise use 'substituteWith'.
+unsafeSubstituteWith
+  :: forall {s} {t} l m a b
+   . (SomeSort s -> [SomeSort t])
+  -> (l -> SomeHypergraph t m)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (SomeHypergraph t m)
+unsafeSubstituteWith = substituteWithAligned trusted
+
+substituteWithAligned
+  :: forall {s} {t} l m a b
+   . Align t
+  -> (SomeSort s -> [SomeSort t])
+  -> (l -> SomeHypergraph t m)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (SomeHypergraph t m)
+substituteWithAligned al mapSort replace hg = do
+  let (original, ins, outs, boxes) = hypergraphParts hg
+      expanded = P.fmap mapSort original
+      sizes = P.fmap P.length expanded
+      offsets = P.scanl (P.+) 0 sizes
+      segments = M.fromList (P.zip [0 ..] (P.zipWith (\offset n -> [offset .. offset P.+ n P.- 1]) offsets sizes))
+      ports = P.concatMap (segments M.!)
+  (nodes, inputs', outputs', boxes') <-
+    substituteParts
+      al
+      replace
+      (P.concat expanded, ports ins, ports outs, [Box x (ports i) (ports o) | Box x i o <- boxes])
+  let sortAt = M.fromList (P.zip [0 ..] nodes)
+  reifySorts (P.fmap (sortAt M.!) inputs') \ @as ->
+    reifySorts (P.fmap (sortAt M.!) outputs') \ @bs ->
+      P.pure (SomeHypergraph (unsafeOpenHypergraph @m @as @bs nodes inputs' outputs' boxes'))
+
+substituteParts
+  :: forall {s} l m
+   . Align s
+  -> (l -> SomeHypergraph s m)
+  -> ([SomeSort s], [P.Int], [P.Int], [Box l P.Int])
+  -> P.Either P.String ([SomeSort s], [P.Int], [P.Int], [Box m P.Int])
+substituteParts al replace (original, ins, outs, bs) = do
+  let sortAt = M.fromList (P.zip [0 ..] original)
+      add (offset, ns, boxes, joins) (Box x i o) =
+        case replace x of
+          SomeHypergraph replacement ->
+            let (nodes, ri, ro, rb) = hypergraphParts replacement
+                replacementSorts = M.fromList (P.zip [0 ..] nodes)
+                matches ports boundary =
+                  lineUpAll al (P.fmap (sortAt M.!) ports) (P.fmap (replacementSorts M.!) boundary)
+                shift n = offset P.+ n
+            in if matches i ri P.&& matches o ro
+                 then
+                   P.Right
+                     ( offset P.+ P.length nodes
+                     , nodes : ns
+                     , P.fmap (P.fmap shift) rb : boxes
+                     , (P.zip i (P.fmap shift ri) P.++ P.zip o (P.fmap shift ro)) : joins
+                     )
+                 else P.Left "substitute: a replacement boundary has different arity or sorts"
+  (nodeCount, chunks, boxes, joins) <- foldM add (P.length original, [original], [], []) bs
+  let nodeSorts = P.concat (P.reverse chunks)
+      root = unionFind (P.concat joins)
+      roots = M.fromList [(n, root n) | n <- [0 .. nodeCount P.- 1]]
+      quotient = M.fromList (P.zip (M.elems roots) nodeSorts)
+      indices = M.fromList (P.zip (M.keys quotient) [0 ..])
+      renumber = (M.!) (P.fmap (indices M.!) roots)
+  P.pure
+    ( M.elems quotient
+    , P.fmap renumber ins
+    , P.fmap renumber outs
+    , P.fmap (P.fmap renumber) (P.concat (P.reverse boxes))
+    )
+
+hypergraphParts :: forall {s} l a b. (a :: OPENHG s l) ~> b -> ([SomeSort s], [P.Int], [P.Int], [Box l P.Int])
+hypergraphParts (DecCospan @c (Sub (FinHask l)) (Sub (FinHask r)) (Boxes bs)) =
+  ( sortList @s @(PortSorts @s (UN SUB c))
+  , P.fmap unPort (M.elems l)
+  , P.fmap unPort (M.elems r)
+  , P.fmap (P.fmap unPort) bs
+  )
+  where
+    unPort (Port i) = i
+
 -- | Whether two open hypergraphs differ only in the names of their nodes, the order of their boxes
 -- and their sorts up to isomorphism: a bijection between the nodes that keeps their sorts, agrees
 -- with both boundaries and takes the boxes of one to those of the other.
@@ -366,51 +507,125 @@ data SomeArrow s where
 someArrow :: forall {s} (as :: [s]) bs. (SortList as, SortList bs) => as ~> bs -> SomeArrow s
 someArrow = SomeArrow (sorts @s @as) (sorts @s @bs)
 
--- | The term of a hypergraph category that an open hypergraph stands for, given an arrow for each
--- label: 'readBackWith' with the sizes from 'Sized'.
+-- | Wiring operations and their feedback policy. 'permutations' and 'copyDiscard' reject
+-- cycles; 'frobenius' supplies its cup-and-cap trace. 'tracedWith' replaces the feedback policy
+-- with the target's trace while keeping the wiring operations and contraction plan.
+type Wiring :: Kind -> Type
+data Wiring s = Wiring
+  { wiringFeedback :: Feedback s
+  , runWiring
+      :: forall l a b
+       . Align s
+      -> Feedback s
+      -> (l -> SomeArrow s)
+      -> (a :: OPENHG s l) ~> b
+      -> P.Either P.String (WireSorts a ~> WireSorts b)
+  }
+
+-- | Only permutations: every node has one producer and one consumer. Nullary boxes and scalars
+-- are allowed; copying, merging and discarding need stronger wiring operations. With 'tracedWith',
+-- isolated loops are traced identities.
+permutations :: (SymMonoidal s) => Wiring s
+permutations = Wiring acyclic (\al fb -> readBackDirected al fb (P.== 1) permuteWires)
+  where
+    permuteWires bundle wanted =
+      let positions = M.fromList (P.zip bundle [0 ..])
+      in permuteThen (P.fmap (positions M.!) wanted)
+
+-- | Each node has one producer and any number of consumers. Copy when a wire branches and
+-- discard it when unused. Boxes with unused outputs still run; copying and discarding need not
+-- be natural. Directed cycles are rejected unless 'tracedWith' enables the target's trace.
+-- With tracing, nodes without producers feed themselves and their consumers through copying.
+copyDiscard :: (CopyDiscard s) => Wiring s
+copyDiscard = Wiring acyclic (\al fb -> readBackDirected al fb (P.const P.True) copyWires)
+
+-- | Frobenius spiders with sizes from 'Sized', planned as in 'frobeniusWith'.
+frobenius :: (Hypergraph s, Sized s) => Wiring s
+frobenius = frobeniusWith sizeFromSized
+
+-- | Frobenius spiders with the given wire sizes. State boxes are contracted as a tree, using
+-- the cheaper of numpy's greedy order and min-fill elimination. Remaining boxes follow a path;
+-- nodes are merged and discarded as soon as their other uses allow. This preserves the
+-- contraction planner used by 'Proarrow.Tools.Einsum.einsum'. Feedback uses the trace from
+-- Frobenius cups and caps.
+frobeniusWith :: (Hypergraph s) => (SomeSort s -> P.Int) -> Wiring s
+frobeniusWith sizeFn = Wiring hypergraphTrace (\al fb -> readBackFrobenius al fb sizeFn)
+
+-- | Use the target's trace for feedback, replacing the wiring's default feedback policy.
+-- For example, @tracedWith copyDiscard@ supports copying, discarding and directed cycles.
+tracedWith :: (TracedMonoidal s) => Wiring s -> Wiring s
+tracedWith wiring = wiring{wiringFeedback = traced}
+
+-- | How to close feedback wires, independently of the wiring operations.
+type Feedback :: Kind -> Type
+data Feedback s = Feedback
+  { allowsCycles :: P.Bool
+  , closeFeedback
+      :: forall us xs ys
+       . Sorts (us :: [s])
+      -> Sorts xs
+      -> Sorts ys
+      -> (us ++ xs) ~> (us ++ ys)
+      -> P.Either P.String (xs ~> ys)
+  }
+
+-- | Reject directed feedback. No trace constraint is required.
+acyclic :: forall s. Feedback s
+acyclic = Feedback P.False close
+  where
+    close
+      :: forall us xs ys
+       . Sorts (us :: [s])
+      -> Sorts xs
+      -> Sorts ys
+      -> (us ++ xs) ~> (us ++ ys)
+      -> P.Either P.String (xs ~> ys)
+    close Nil _ _ f = P.Right f
+    close _ _ _ _ = P.Left "readBack: feedback requires a trace"
+
+-- | Close feedback with the target's trace. Requires no copying or merging.
+traced :: forall s. (TracedMonoidal s) => Feedback s
+traced = Feedback P.True (\us xs ys f -> P.Right (traceSorts (\ @u @x @y -> coact @Tensor @(Hom s) @u @x @y) us xs ys f))
+
+-- | Close feedback with the trace derived from Frobenius cups and caps ('traceHG'). This keeps
+-- the cup-and-cap form of hypergraph diagrams and needs no separate 'TracedMonoidal' instance.
+hypergraphTrace :: (Hypergraph s) => Feedback s
+hypergraphTrace = Feedback P.True (\us xs ys f -> P.Right (traceSorts (\ @u @x @y -> traceHG @u @x @y) us xs ys f))
+
+-- | Interpret a graph using the given wiring, for example @readBack copyDiscard interpret graph@
+-- or @readBack (tracedWith permutations) interpret graph@.
+-- Sorts supplied from outside are compared by 'DecidableIso'; boxes are transported along the
+-- resulting isomorphisms. Unsupported incidences or feedback return an error.
 readBack
   :: forall {s} l a b
-   . (Hypergraph s, Sized s, DecidableIso s)
-  => (l -> SomeArrow s)
-  -> (a :: OPENHG s l) ~> b
-  -> P.Either P.String (WireSorts a ~> WireSorts b)
-readBack = readBackWith (sizeFromSized @s)
-
--- | The term of a hypergraph category that an open hypergraph stands for, given the size of each
--- sort and an arrow for each label. A box first merges its own wires of one node and discards those
--- that nothing else needs, and a node is merged as soon as nothing still to come needs it. The order
--- is numpy's greedy one, which takes the contraction whose result grows least, its size less the
--- sizes of the two parts. The boxes without inputs are contracted with each other first, as a tree
--- of pairs that share a node, so a network of tensors is read back as its contraction tree; for
--- that tree a min-fill elimination order is planned too, and the cheaper plan is taken. The
--- pieces and the other boxes then follow the flow of their wires one at a time, with between two
--- boxes one spider per node. A node that a box uses no later than a box makes it is fed back with
--- a trace, which only a cyclic hypergraph needs. Fails with a message when an arrow does not fit
--- its box. An arrow whose sorts are isomorphic to those of its box is moved along the
--- isomorphisms.
-readBackWith
-  :: forall {s} l a b
-   . (Hypergraph s, DecidableIso s)
-  => (SomeSort s -> P.Int)
+   . (DecidableIso s)
+  => Wiring s
   -> (l -> SomeArrow s)
   -> (a :: OPENHG s l) ~> b
   -> P.Either P.String (WireSorts a ~> WireSorts b)
-readBackWith = readBackAligned (byIso @s)
+readBack wiring = runWiring wiring (byIso @s) (wiringFeedback wiring)
 
 -- | The read-back, with the sorts lined up by the given alignment.
-readBackAligned
+readBackFrobenius
   :: forall {s} l a b
-   . (Hypergraph s)
+   . (SymMonoidal s, Supplies Frobenius s)
   => Align s
+  -> Feedback s
   -> (SomeSort s -> P.Int)
   -> (l -> SomeArrow s)
   -> (a :: OPENHG s l) ~> b
   -> P.Either P.String (WireSorts a ~> WireSorts b)
-readBackAligned al sizeFn interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (FinHask legOut)) (Boxes boxList)) =
+readBackFrobenius al fbChoice sizeFn interp hg =
   hg // do
-    arrows0 <- M.fromList P.<$> P.traverse interpBox labelled
+    arrows0 <-
+      interpretBoxes
+        al
+        (sortAt M.!)
+        interp
+        "readBack: the arrow of a label does not have the sorts of its box"
+        labelled
     let arrows = M.union arrows0 (M.fromList [(j, pieceArrow al nodeSort arrows0 t) | (j, t) <- merged])
-    P.pure P.$ withListOf (P.fmap (nodeSort P.. KN) (feedback lt)) \fb ->
+    withListOf (P.fmap (nodeSort P.. KN) (feedback lt)) \fb ->
       let insS = sorts @s @(WireSorts a)
           outsS = sorts @s @(WireSorts b)
           start = appendListOf fb insS
@@ -429,31 +644,153 @@ readBackAligned al sizeFn interp hg@(DecCospan @c (Sub (FinHask legIn)) (Sub (Fi
               body
       in case final of
            Built ys whole -> case alignSteps al ys (appendListOf fb outsS) of
-             P.Just to -> traceSorts fb insS outsS (arrowOf ys to . arrowOf start whole)
+             P.Just to -> closeFeedback fbChoice fb insS outsS (arrowOf ys to . arrowOf start whole)
              P.Nothing -> P.error "readBack: the boundaries were planned with other sorts"
   where
-    nodes = universeF @(UN FH (UN SUB c))
-    index = M.fromList (P.zip nodes [0 :: P.Int ..])
-    sortC = sortOf @s @(UN SUB c)
-    sortAt = M.fromList [(index M.! n, sortC n) | n <- nodes]
+    (shape, sortAt, labelled) = prepareReadBack hg
     nodeSort k = sortAt M.! keyNode k
-    labelled = P.zip [0 :: P.Int ..] [P.fmap (index M.!) bx | bx <- boxList]
-    shape =
-      Shape
-        { shapeNodes = M.elems index
-        , shapeIns = P.fmap (index M.!) (M.elems legIn)
-        , shapeOuts = P.fmap (index M.!) (M.elems legOut)
-        }
     boxes0 = [(i, bx{label = ()}) | (i, bx) <- labelled]
     size ns = P.product [P.fromIntegral (sizeFn (sortAt M.! n)) :: P.Double | n <- Set.toList ns]
     (boxesIx, merged) = pathBoxes boxes0 (contractStates size shape boxes0)
     order = schedule size shape boxesIx
     lt = lifetimes shape boxesIx order
-    interpBox (i, Box x is os) = case interp x of
-      arr@(SomeArrow xs ys _)
-        | lineUpAll al (someOfList xs) (nodeSorts is) P.&& lineUpAll al (someOfList ys) (nodeSorts os) -> P.Right (i, arr)
-        | P.otherwise -> P.Left "readBack: the arrow of a label does not have the sorts of its box"
-    nodeSorts = P.fmap (nodeSort P.. KN)
+
+-- Directed readers keep one wire per available node between boxes. Routing supplies the
+-- current inputs and retains only those nodes needed by later boxes or the output boundary.
+readBackDirected
+  :: forall {s} l a b
+   . (SymMonoidal s)
+  => Align s
+  -> Feedback s
+  -> (P.Int -> P.Bool)
+  -> (forall xs. [Key] -> [Key] -> Built (xs :: [s]) -> Built xs)
+  -> (l -> SomeArrow s)
+  -> (a :: OPENHG s l) ~> b
+  -> P.Either P.String (WireSorts a ~> WireSorts b)
+readBackDirected al fbChoice acceptsConsumers route interp hg =
+  hg // do
+    let (shape@(Shape _ ins outs), sortAt, numbered) = prepareReadBack hg
+    (order, fbNodes) <- directedOrder (allowsCycles fbChoice) acceptsConsumers shape numbered
+    arrows <- interpretBoxes al (sortAt M.!) interp "readBack: an arrow does not fit its box" numbered
+    withListOf (P.fmap (sortAt M.!) fbNodes) \fb -> do
+      let insS = sorts @s @(WireSorts a)
+          outsS = sorts @s @(WireSorts b)
+          start = appendListOf fb insS
+          produced = Set.fromList (P.concatMap (outputs P.. P.snd) numbered)
+          feedbackOutputs = Set.intersection (Set.fromList fbNodes) produced
+          made n = if n `Set.member` feedbackOutputs then KL n else KN n
+          wanted = P.fmap made fbNodes P.++ P.fmap KN outs
+          uses = P.zip [0 :: P.Int ..] order
+          lastUse =
+            M.fromListWith
+              P.max
+              ([(n, P.length order) | n <- wanted] P.++ [(KN n, j) | (j, (_, bx)) <- uses, n <- inputs bx])
+          place bundle body [] = route bundle wanted body
+          place bundle body ((j, (i, bx)) : rest) =
+            let carry = P.filter (\n -> M.findWithDefault (-1) n lastUse P.> j) bundle
+                reordered = route bundle (carry P.++ P.fmap KN (inputs bx)) body
+                run :: forall ws. Sorts (ws :: [s]) -> Built ws
+                run = carryThen (P.length carry) (boxThen al (arrows M.! i))
+            in place (carry P.++ P.fmap made (outputs bx)) (run `afterBuilt` reordered) rest
+      case place (P.fmap KN (fbNodes P.++ ins)) (Built start Same) uses of
+        Built ys whole -> case alignSteps al ys (appendListOf fb outsS) of
+          P.Just into -> closeFeedback fbChoice fb insS outsS (arrowOf ys into . arrowOf start whole)
+          P.Nothing -> P.Left "readBack: the output boundary has other sorts"
+
+-- Copy each available wire to its requested multiplicity, then permute the individual copies.
+copyWires :: forall {s} xs. (CopyDiscard s) => [Key] -> [Key] -> Built (xs :: [s]) -> Built xs
+copyWires bundle wanted body = permuteThen permutation (expand bundle `afterBuilt` body)
+  where
+    counts = M.fromListWith (P.+) [(n, 1 :: P.Int) | n <- wanted]
+    count n = M.findWithDefault 0 n counts
+    expanded = P.concatMap (\n -> P.replicate (count n) n) bundle
+    numbered ns = P.snd (List.mapAccumL number M.empty ns)
+    number seen n =
+      let i = M.findWithDefault (0 :: P.Int) n seen
+      in (M.insert n (i P.+ 1) seen, (n, i))
+    positions = M.fromList (P.zip (numbered expanded) [0 ..])
+    permutation = P.fmap (positions M.!) (numbered wanted)
+    expand :: [Key] -> Sorts (ws :: [s]) -> Built ws
+    expand [] Nil = Built Nil Same
+    expand (n : ns) (Cons @x xs) = beside (single @x) (copies @x (count n)) xs (expand ns xs)
+    expand _ _ = P.error "readBack: the bundle has other sorts"
+
+-- The same node numbering is used by the planners and by box interpretation.
+prepareReadBack
+  :: forall {s} l a b
+   . (a :: OPENHG s l) ~> b
+  -> (Shape, M.Map P.Int (SomeSort s), [(P.Int, Box l P.Int)])
+prepareReadBack hg =
+  let (nodes, ins, outs, boxes) = hypergraphParts hg
+  in (Shape [0 .. P.length nodes P.- 1] ins outs, M.fromList (P.zip [0 ..] nodes), P.zip [0 ..] boxes)
+
+interpretBoxes
+  :: forall {s} l
+   . Align s
+  -> (P.Int -> SomeSort s)
+  -> (l -> SomeArrow s)
+  -> P.String
+  -> [(P.Int, Box l P.Int)]
+  -> P.Either P.String (M.Map P.Int (SomeArrow s))
+interpretBoxes al nodeSort interp message = P.fmap M.fromList P.. P.traverse checkBox
+  where
+    checkBox (i, Box x is os) = case interp x of
+      arrow@(SomeArrow xs ys _)
+        | lineUpAll al (someOfList xs) (P.fmap nodeSort is)
+            P.&& lineUpAll al (someOfList ys) (P.fmap nodeSort os) ->
+            P.Right (i, arrow)
+        | P.otherwise -> P.Left message
+
+-- Each node has at most one producer. With copying and tracing, a node without a producer
+-- feeds itself and its consumers. Cut unavailable inputs of the first blocked box to schedule cycles.
+directedOrder
+  :: P.Bool
+  -> (P.Int -> P.Bool)
+  -> Shape
+  -> [(P.Int, Box l P.Int)]
+  -> P.Either P.String ([(P.Int, Box l P.Int)], [P.Int])
+directedOrder canTrace acceptsConsumers sh boxes
+  | P.not (P.all acceptsProducer (shapeNodes sh)) =
+      P.Left "readBack: every node must have one producer"
+  | P.not (P.all (\n -> n `Set.member` loops P.|| acceptsConsumers (M.findWithDefault 0 n consumerCounts)) (shapeNodes sh)) =
+      P.Left "readBack: unsupported number of consumers"
+  | P.not canTrace P.&& P.not (Set.null loops) = P.Left "readBack: isolated loops require a trace"
+  | P.otherwise = go available0 ready counts [] (Set.toDescList sources)
+  where
+    producers = M.fromListWith (P.+) [(n, 1 :: P.Int) | n <- shapeIns sh P.++ P.concatMap (outputs P.. P.snd) boxes]
+    consumerCounts = M.fromListWith (P.+) [(n, 1 :: P.Int) | n <- shapeOuts sh P.++ P.concatMap (inputs P.. P.snd) boxes]
+    sources = Set.fromList (shapeNodes sh) `Set.difference` M.keysSet producers
+    loops = sources `Set.difference` M.keysSet consumerCounts
+    acceptsProducer n = case M.findWithDefault 0 n producers of
+      1 -> P.True
+      0 -> n `Set.member` loops P.|| (canTrace P.&& acceptsConsumers (1 P.+ M.findWithDefault 0 n consumerCounts))
+      _ -> P.False
+    available0 = Set.union sources (Set.fromList (shapeIns sh))
+    counts = M.fromList [(i, P.length (P.filter (`Set.notMember` available0) (inputs bx))) | (i, bx) <- boxes]
+    ready = M.keysSet (M.filter (P.== 0) counts)
+    consumers = M.fromListWith (P.++) [(n, [i]) | (i, bx) <- boxes, n <- inputs bx]
+    table = M.fromList boxes
+    release acc n = P.foldl releaseBox acc (M.findWithDefault [] n consumers)
+    releaseBox acc@(queue, remaining) i = case M.lookup i remaining of
+      P.Nothing -> acc
+      P.Just count ->
+        let count' = count P.- 1
+        in (if count' P.== 0 then Set.insert i queue else queue, M.insert i count' remaining)
+    go available queue remaining acc cutsRev = case Set.minView queue of
+      P.Nothing -> case M.lookupMin remaining of
+        P.Nothing -> P.Right (P.reverse acc, P.reverse cutsRev)
+        P.Just (i, _)
+          | canTrace ->
+              let missing = Set.fromList (inputs (table M.! i)) `Set.difference` available
+                  ns = Set.toList missing
+                  (next, counts') = P.foldl release (queue, remaining) ns
+              in go (Set.union available missing) next counts' acc (P.reverse ns P.++ cutsRev)
+          | P.otherwise -> P.Left "readBack: a directed cycle requires a trace"
+      P.Just (i, rest) ->
+        let bx = table M.! i
+            fresh = Set.fromList (outputs bx) `Set.difference` available
+            (next, counts') = P.foldl release (rest, M.delete i remaining) (Set.toList fresh)
+        in go (Set.union available fresh) next counts' ((i, bx) : acc) cutsRev
 
 -- ** Planning
 
@@ -597,7 +934,9 @@ isolated sh bxs = [KN n | n <- shapeNodes sh, n `Set.notMember` attached]
 -- | The term of a piece: a state with its own wires of one node merged and those nothing else needs
 -- discarded, or two halves side by side with the nodes only they need merged away.
 pieceArrow
-  :: forall s. (Hypergraph s) => Align s -> (Key -> SomeSort s) -> M.Map P.Int (SomeArrow s) -> Tree -> SomeArrow s
+  :: forall s
+   . (SymMonoidal s, Supplies Frobenius s)
+  => Align s -> (Key -> SomeSort s) -> M.Map P.Int (SomeArrow s) -> Tree -> SomeArrow s
 pieceArrow al nodeSort arrows0 t0 = case go t0 of
   Built ys f -> SomeArrow Nil ys (arrowOf Nil f)
   where
@@ -609,7 +948,7 @@ pieceArrow al nodeSort arrows0 t0 = case go t0 of
 -- | One box placed after the wires that go past it, between the spiders before and after it.
 step
   :: forall s (xs :: [s])
-   . (Hypergraph s)
+   . (SymMonoidal s, Supplies Frobenius s)
   => Align s
   -> (Key -> SomeSort s)
   -> Lifetimes
@@ -626,8 +965,8 @@ step al nodeSort lt arrows (bundle, body) (t, (i, bx)) =
       kept = [k | k <- nubOrd made, live lt t k P.|| k `P.elem` carry]
       -- the box goes after the carried wires, next to the wires it is merged with later
       run :: forall (ws :: [s]). Sorts ws -> Built ws
-      run ws = splitSorts (P.length carry) ws \pre post ->
-        beside pre (Built pre Same) post (transition al nodeSort [] made kept (boxThen al (arrows M.! i) post))
+      run = carryThen (P.length carry) \post ->
+        transition al nodeSort [] made kept (boxThen al (arrows M.! i) post)
   in ( carry P.++ kept
      , run `afterBuilt` transition al nodeSort [] bundle (carry P.++ need) body
      )
@@ -637,7 +976,8 @@ step al nodeSort lt arrows (bundle, body) (t, (i, bx)) =
 -- by itself, so that in a category of matrices a state is only ever multiplied by one step.
 transition
   :: forall s (xs :: [s])
-   . (Hypergraph s) => Align s -> (Key -> SomeSort s) -> [Key] -> [Key] -> [Key] -> Built xs -> Built xs
+   . (SymMonoidal s, Supplies Frobenius s)
+  => Align s -> (Key -> SomeSort s) -> [Key] -> [Key] -> [Key] -> Built xs -> Built xs
 transition al nodeSort extra from to built =
   let present = nubOrd (from P.++ to)
       kinds = groupOrder from to present P.++ [k | k <- extra, k `P.notElem` present]
@@ -694,25 +1034,33 @@ prim f = box (Prim (someArrow f))
 unsafePrim :: SomeArrow k -> Prim k
 unsafePrim = Prim
 
--- | The term of @k@ that a term run in 'SIMPLIFY' stands for: its read-back, with each box the
--- arrow it was made from, and the sizes from 'Sized'.
-simplify :: forall {k} a b. (Hypergraph k, Sized k) => (a :: SIMPLIFY k) ~> b -> WireSorts a ~> WireSorts b
-simplify = simplifyWith (sizeFromSized @k)
+-- | Read a primitive graph using the given wiring. Primitive sorts are trusted, so
+-- 'DecidableIso' is unnecessary: for example, @simplify copyDiscard graph@ can execute a graph
+-- as a Haskell function.
+simplify
+  :: forall {k} a b
+   . Wiring k
+  -> (a :: SIMPLIFY k) ~> b
+  -> P.Either P.String (WireSorts a ~> WireSorts b)
+simplify wiring = runWiring wiring trusted (wiringFeedback wiring) (\(Prim arrow) -> arrow)
 
--- | 'simplify' with the given sizes. The sorts of a box are those of its arrow, so they need not be
--- compared.
-simplifyWith
-  :: forall {k} a b. (Hypergraph k) => (SomeSort k -> P.Int) -> (a :: SIMPLIFY k) ~> b -> WireSorts a ~> WireSorts b
-simplifyWith sizeFn t = case readBackAligned trusted sizeFn (\(Prim a) -> a) t of
-  P.Right r -> r
-  P.Left e -> P.error e
+-- | Interpret a primitive graph in its hypergraph target, with wire sizes from 'Sized'.
+-- This is 'simplify' with 'frobenius': every graph is supported and
+-- primitive sorts are trusted, so the result needs no 'P.Either'.
+simplifyHypergraph
+  :: forall {k} a b
+   . (Hypergraph k, Sized k)
+  => (a :: SIMPLIFY k) ~> b
+  -> WireSorts a ~> WireSorts b
+simplifyHypergraph = P.either P.error P.id P.. simplify frobenius
 
--- | 'simplify' with every box bent into a state on all its wires, its inputs turned into outputs
+-- | 'simplifyHypergraph' with every box bent into a state on all its wires, its inputs turned into outputs
 -- with cups. The read-back then contracts the whole network in the order of 'planContraction',
 -- instead of following the flow from inputs to outputs, and needs no traces for cycles. For
 -- computing with a term rather than drawing it, as the result is drawn with cups and caps.
 simplifyFlat :: forall {k} a b. (Hypergraph k, Sized k) => (a :: SIMPLIFY k) ~> b -> WireSorts a ~> WireSorts b
-simplifyFlat (DecCospan l r (Boxes bxs)) = simplify (DecCospan l r (Boxes (P.fmap bent bxs)))
+simplifyFlat (DecCospan l r (Boxes bxs)) =
+  simplifyHypergraph (DecCospan l r (Boxes (P.fmap bent bxs)))
   where
     bent bx@(Box (Prim (SomeArrow xs ys f)) is os)
       | P.null is = bx
@@ -825,6 +1173,16 @@ alignSteps _ _ _ = P.Nothing
 single :: forall {s} (x :: s). (Ob' x) => Sorts '[x]
 single = Cons @x Nil
 
+-- | Leave the first wires unchanged while building a step on the rest.
+carryThen
+  :: forall {s} (xs :: [s])
+   . (Monoidal s)
+  => P.Int
+  -> (forall (ys :: [s]). Sorts ys -> Built ys)
+  -> Sorts xs
+  -> Built xs
+carryThen n build xs = splitSorts n xs \pre post -> beside pre (Built pre Same) post (build post)
+
 -- | The box on the first wires, and the rest of the wires unchanged.
 boxThen :: (Monoidal s) => Align s -> SomeArrow s -> Sorts (xs :: [s]) -> Built xs
 boxThen al (SomeArrow as bs f) xs = splitSorts (lengthListOf as) xs \pre post -> case alignSteps al pre as of
@@ -833,7 +1191,7 @@ boxThen al (SomeArrow as bs f) xs = splitSorts (lengthListOf as) xs \pre post ->
 
 -- | What is built so far followed by its wires in the order that @p@ lists them, as adjacent swaps
 -- composed one at a time: the wire at position @j@ of the result is wire @p !! j@ before.
-permuteThen :: (Hypergraph s) => [P.Int] -> Built (xs :: [s]) -> Built xs
+permuteThen :: (SymMonoidal s) => [P.Int] -> Built (xs :: [s]) -> Built xs
 permuteThen p built0 = P.foldl (\built i -> swapThen i `afterBuilt` built) built0 (P.reverse (bubble p []))
   where
     -- the positions of the adjacent swaps that sort @p@
@@ -842,27 +1200,29 @@ permuteThen p built0 = P.foldl (\built i -> swapThen i `afterBuilt` built) built
       i : _ -> bubble (P.take i ps P.++ [ps P.!! (i P.+ 1), ps P.!! i] P.++ P.drop (i P.+ 2) ps) (i : acc)
 
 -- | The swap of the wires at positions @i@ and @i + 1@.
-swapThen :: (Hypergraph s) => P.Int -> Sorts (xs :: [s]) -> Built xs
+swapThen :: (SymMonoidal s) => P.Int -> Sorts (xs :: [s]) -> Built xs
 swapThen 0 (Cons @x (Cons @y rest)) = Built (Cons @y (Cons @x rest)) (Arrow (swap2 @x @y ** withIsListOf rest id))
 swapThen i (Cons @x rest) = case swapThen (i P.- 1) rest of
   Built ys f -> Built (Cons @x ys) (Arrow (obj1 @x ** arrowOf rest f))
 swapThen _ Nil = P.error "readBack: a swap beyond the wires was planned"
 
 -- | For each sort, a spider from the given number of wires to the given number.
-spidersThen :: (Hypergraph s) => Align s -> [(SomeSort s, P.Int, P.Int)] -> Sorts (xs :: [s]) -> Built xs
+spidersThen
+  :: (SymMonoidal s, Supplies Frobenius s) => Align s -> [(SomeSort s, P.Int, P.Int)] -> Sorts (xs :: [s]) -> Built xs
 spidersThen _ [] Nil = Built Nil Same
 spidersThen _ [] _ = P.error "readBack: wires without a spider were planned"
 spidersThen al ((x, c, m) : rest) xs = splitSorts c xs \pre post -> beside pre (spider al x c m pre) post (spidersThen al rest post)
 
 -- | The spider of a sort from @c@ wires to @m@: merging all of them, then copying the result.
-spider :: (Hypergraph s) => Align s -> SomeSort s -> P.Int -> P.Int -> Sorts (pre :: [s]) -> Built pre
+spider
+  :: (SymMonoidal s, Supplies Frobenius s) => Align s -> SomeSort s -> P.Int -> P.Int -> Sorts (pre :: [s]) -> Built pre
 spider al (Some @x) c m pre
   | c P.== 1 P.&& m P.== 1 = Built pre Same
   | P.otherwise = case copies @x m of Built ys f -> Built ys (Arrow (arrowOf (single @x) f . merges @x al pre))
 
 -- | All the wires merged into one of sort @x@, each lined up with it first, or the unit of @x@ when
 -- there are none.
-merges :: forall {s} (x :: s) pre. (Hypergraph s, Ob x) => Align s -> Sorts pre -> pre ~> '[x]
+merges :: forall {s} (x :: s) pre. (SymMonoidal s, Supplies Frobenius s, Ob x) => Align s -> Sorts pre -> pre ~> '[x]
 merges _ Nil = memptyS @x
 merges al (Cons @y Nil) = toX @y al
 merges al (Cons @y rest@Cons{}) = mappendS @x . (toX @y al ** merges @x al rest)
@@ -873,7 +1233,7 @@ toX al = case al @y @x of
   P.Nothing -> P.error "readBack: a spider was planned on wires of other sorts"
 
 -- | One wire of sort @x@ copied to @m@, or discarded when @m@ is 0.
-copies :: forall {s} (x :: s). (Hypergraph s, Ob x) => P.Int -> Built '[x]
+copies :: forall {s} (x :: s). (CocommutativeComonoid x) => P.Int -> Built '[x]
 copies 0 = Built Nil (Arrow (counitS @x))
 copies 1 = Built (single @x) Same
 copies 2 = Built (Cons @x (single @x)) (Arrow (comultS @x))
@@ -883,23 +1243,23 @@ copies m = case copies @x (m P.- 1) of
 -- | The trace over the first wires, @us@, which feeds their outputs back to their inputs.
 traceSorts
   :: forall {s} (us :: [s]) xs ys
-   . (Hypergraph s)
-  => Sorts us
+   . (SymMonoidal s)
+  => (forall (u :: s) x y. (Ob u, Ob x, Ob y) => u ** x ~> u ** y -> x ~> y)
+  -> Sorts us
   -> Sorts xs
   -> Sorts ys
   -> (us ++ xs) ~> (us ++ ys)
   -> xs ~> ys
-traceSorts Nil _ _ f = f
-traceSorts us xs ys f =
+traceSorts _ Nil _ _ f = f
+traceSorts close us xs ys f =
   withIsListOf us P.$
     withIsListOf xs P.$
       withIsListOf ys P.$
-        withObFold @us P.$
-          withObFold @xs P.$
-            withObFold @ys P.$
-              splitMany @ys
-                . Str
-                  ( traceHG @(Fold us) @(Fold xs) @(Fold ys)
-                      (unStr ((concatMany @us ** concatMany @ys) . f . (splitMany @us ** splitMany @xs)))
-                  )
-                . concatMany @xs
+        case (splitMany @us, splitMany @xs, concatMany @ys) of
+          (splitUs@Objs, splitXs@Objs, concatYs@Objs) ->
+            splitMany @ys
+              . Str
+                ( close @(Fold us) @(Fold xs) @(Fold ys)
+                    (unStr ((concatMany @us ** concatYs) . f . (splitUs ** splitXs)))
+                )
+              . concatMany @xs

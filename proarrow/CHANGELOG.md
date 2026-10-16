@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+* `Proarrow.Category.Instance.OpenHypergraph`: graph substitution with optional wire-sort expansion.
+  `readBack` and `simplify` now take a `Wiring`, supporting symmetric monoidal, copy/discard
+  and Frobenius structure, with optional tracing via `tracedWith`.
+  `frobeniusWith` replaces `readBackWith` and `simplifyWith`; `simplifyHypergraph` provides
+  total read-back for primitive graphs in hypergraph targets.
+* `Proarrow.Tools.Optic`: compile SMC programs of optics to forward/backward computations
+  through graph substitution, requiring only symmetric monoidal structure in the target.
+* `Proarrow.Optic.Action`: `runMonoidalOptic` connects a tensor-action optic's forward and
+  backward passes into one computation.
 * `Proarrow.Tools.SMC`: 
   * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
   * Tuple patterns, binds and tuples of five and six; `liftF` applies a morphism to a term or 

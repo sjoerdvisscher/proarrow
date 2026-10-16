@@ -93,7 +93,7 @@ module Proarrow.Optics
 
     -- | Exactly one eliminator per flavor: 'view', 'review', 'preview', 'matching', 'over',
     -- 'foldMapOf', 'traverseOf', 'monTraverseOf', 'powerGrateOf', 'cotraverseOf', 'kaleidoscopeOf',
-    -- 'zipWithOf', 'classifyOf' and 'tracerOf' /run/ the optic; 'withIso', 'withLens',
+    -- 'zipWithOf', 'classifyOf', 'tracerOf' and 'runMonoidalOptic' /run/ the optic; 'withIso', 'withLens',
     -- 'withMonLens', 'withPrism', 'withGrate' and 'withGlass' /recover its two legs/.
   , view
   , review
@@ -109,6 +109,7 @@ module Proarrow.Optics
   , zipWithOf
   , classifyOf
   , tracerOf
+  , runMonoidalOptic
   , withIso
   , withLens
   , withMonLens
@@ -143,6 +144,7 @@ import Proarrow.Optic.Action
   , algebraicLens
   , classifyOf
   , classifyingLens
+  , runMonoidalOptic
   , (.?)
   )
 import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
