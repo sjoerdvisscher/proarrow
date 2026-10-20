@@ -13,14 +13,16 @@ import Data.Kind (Type)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Applicative (Alternative (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, Sized (..), applyHG, cap, cup, curryHG)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.BinaryCoproduct
   ( HasBinaryCoproducts (..)
   , HasCoproducts
@@ -34,7 +36,7 @@ import Proarrow.Colimit.BinaryCoproduct
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 
 type data DECCOSPAN (f :: k -> Type) = DC k
@@ -120,6 +122,16 @@ instance (HasPushouts k, HasCoproducts k, Alternative f) => IsoMix (DECCOSPAN (f
 instance (HasPushouts k, HasCoproducts k, Alternative f) => CompactClosed (DECCOSPAN (f :: k -> Type)) where
   distribDual @(DC a) @(DC b) = withObCoprod @k @a @b id
   dualityUnit @a = cup @a
+
+instance
+  ( HasPushouts k
+  , HasCoproducts k
+  , Alternative f
+  , MonoidalAction (t :: (DECCOSPAN f, DECCOSPAN f) +-> DECCOSPAN f)
+  )
+  => Costrong t (DecCospan :: CAT (DECCOSPAN (f :: k -> Type)))
+  where
+  coact @a = coactCC @t @a
 
 instance (HasPushouts k, Alternative f) => DaggerProfunctor (DecCospan :: CAT (DECCOSPAN (f :: k -> Type))) where
   dagger (DecCospan f g s) = DecCospan g f s

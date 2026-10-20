@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+* SVG diagrams declare UTF-8 encoding for standalone viewers.
+* Decorated cospans, including open hypergraphs, now support traced SMC notation.
+* `Proarrow.Category.Instance.Circuit` and `Simulator`: typed digital circuits with clocked
+  simulation and Verilog generation, plus an SMC counter demo.
 * `Proarrow.Category.Instance.OpenHypergraph`: graph substitution with optional wire-sort expansion.
   `readBack` and `simplify` now take a `Wiring`, supporting symmetric monoidal, copy/discard
   and Frobenius structure, with optional tracing via `tracedWith`.

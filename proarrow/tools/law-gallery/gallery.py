@@ -162,6 +162,7 @@ def html_page(svgs, rows, target):
             if key != s['key']:
                 continue
             svg = read(os.path.join(svgs, fid + '.svg'))
+            svg = svg[svg.index('<svg '):]
             svg = svg.replace('<svg ', '<svg role="img" aria-label="' + html.escape(name) + '" ', 1)
             w = float(re.search(r'viewBox="[-\d.]+ [-\d.]+ ([\d.]+)', svg).group(1))
             cls = ' class="wide"' if w > 520 else ''

@@ -1483,7 +1483,8 @@ proLawSvgsWith o = [(proLawName law, draw law) | law <- proLaws @c]
 -- set), which a page can set to its background.
 document :: Geo -> String
 document g =
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"sd\" viewBox=\""
+  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    ++ "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"sd\" viewBox=\""
     ++ unwords (map num [-margin, -margin, geoWidth g + 2 * margin, geoHeight g + 2 * margin])
     ++ "\" width=\""
     ++ num (geoWidth g + 2 * margin)

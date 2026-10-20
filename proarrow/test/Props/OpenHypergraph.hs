@@ -107,6 +107,7 @@ test =
     , testCompactClosed_ @OH
     , testCopyDiscard_ @OH
     , testHypergraph_ @OH
+    , testTraced_ @OH
     , testGroup
         "the Frobenius laws"
         [ testProperty "matrix multiplication in index notation is composition" $

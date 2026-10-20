@@ -7,6 +7,7 @@ import Prelude
 
 import Examples.CCC qualified as CCC
 import Examples.Cbpv qualified as Cbpv
+import Examples.Circuit qualified as Circuit
 import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
 import Examples.Einsum qualified as Einsum
@@ -24,6 +25,7 @@ import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
+import Props.Circuit qualified as CircuitLaws
 import Props.ContractionOrder qualified as ContractionOrder
 import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
@@ -54,6 +56,7 @@ import Props.Sheaf qualified as Sheaf
 import Props.Sheaf.Chain qualified as SheafChain
 import Props.Sheaf.Collage qualified as SheafCollage
 import Props.Simplex qualified as Simplex
+import Props.Simulator qualified as Simulator
 import Props.Span qualified as Span
 import Props.Svg qualified as Svg
 import Props.TensorNetwork qualified as TensorNetwork
@@ -67,6 +70,7 @@ main =
       [ testGroup
           "Proarrow"
           [ Bool.test
+          , CircuitLaws.test
           , Discrete.test
           , Cospan.test
           , OpenHypergraph.test
@@ -94,6 +98,7 @@ main =
           , SheafChain.test
           , SheafCollage.test
           , Simplex.test
+          , Simulator.test
           , SMC.test
           , Span.test
           , Svg.test
@@ -120,6 +125,7 @@ main =
           , OpticDiagrams.test
           , Sessions.test
           , Cbpv.test
+          , Circuit.test
           , Toffoli.test
           , Vitrea.test
           ]

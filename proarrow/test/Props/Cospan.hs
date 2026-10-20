@@ -41,6 +41,7 @@ test =
     , testCompactClosed_ @(COSPAN FINSET)
     , testCopyDiscard_ @(COSPAN FINSET)
     , testHypergraph_ @(COSPAN FINSET)
+    , testTraced_ @(COSPAN FINSET)
     ]
 
 -- instance (Testable k, HasPushouts k, TestObIsOb k) => Testable (COSPAN k) where
