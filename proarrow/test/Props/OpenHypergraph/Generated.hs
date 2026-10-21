@@ -34,7 +34,7 @@ import Proarrow.Category.Instance.OpenHypergraph
   , frobenius
   , layered
   , permutations
-  , prim
+  , prim1
   , simplify
   , tracedWith
   )
@@ -43,7 +43,7 @@ import Proarrow.Category.Instance.TensorNetwork qualified as TNet
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), UnitF, type (**!))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosedStructures)
 import Proarrow.Category.Monoidal.Hypergraph (traceHG)
-import Proarrow.Category.Monoidal.Strictified (Strictified (..), singleton, type (++))
+import Proarrow.Category.Monoidal.Strictified (Strictified (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..), Supplies)
@@ -268,7 +268,7 @@ compareReadBack :: [(String, Wiring (TNET Int))] -> SomeDiagram -> Property ()
 compareReadBack readers diagram@(SomeDiagram a b f) = do
   let dense = entries (fold @Structures @(Rep Dense) denseGate f)
       expected :: [[Int]] = [[fromInteger (dense !! i !! j) | j <- basisOrder a] | i <- basisOrder b]
-      graph = fold @Structures @(Rep Graph) (\g -> case networkGate g of n@Objs -> prim (singleton n)) f
+      graph = fold @Structures @(Rep Graph) (prim1 . networkGate) f
   mapM_
     ( \(name, wiring) -> case simplify wiring graph of
         Left err -> testFailed (name ++ ": " ++ err ++ "\n" ++ show diagram) :: Property ()

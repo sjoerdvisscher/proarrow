@@ -28,6 +28,7 @@
   and Frobenius structure, with optional tracing via `tracedWith`.
   `frobeniusWith` replaces `readBackWith` and `simplifyWith`; `simplifyHypergraph` provides
   total read-back for primitive graphs in hypergraph targets.
+  `prim0` through `prim3` lift ordinary arrows as boxes with zero to three inputs and one output.
 * `OpenHypergraph` read-back reduces swap cost, including within contraction trees; `layered` exposes parallel tensor layers.
 * `Proarrow.Tools.ContractionOrder`: `planContraction`, the order to contract a network of factors
   in, the cheaper of numpy's greedy order and a min-fill elimination order (`minFillOrder`). The

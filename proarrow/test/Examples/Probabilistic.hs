@@ -24,7 +24,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, (**), (.))
 
-import Proarrow.Category.Instance.OpenHypergraph (SIMPLIFY, Wires, prim, simplifyFlat)
+import Proarrow.Category.Instance.OpenHypergraph (SIMPLIFY, Wires, prim, prim0, prim1, prim2, simplifyFlat)
 import Proarrow.Category.Instance.TensorNetwork (TNET (..), fromEntries, toVector)
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
@@ -109,10 +109,10 @@ tensors =
 boxedTensors :: Prims (Wires '[Bit] :: SIMPLIFY (TNET Double))
 boxedTensors =
   Prims
-    { flipP = \q -> prim (Str (flipP tensors q))
-    , andP = prim (Str (andP tensors))
-    , orP = prim (Str (orP tensors))
-    , notP = prim (Str (notP tensors))
+    { flipP = \q -> prim0 (flipP tensors q)
+    , andP = prim2 (andP tensors)
+    , orP = prim2 (orP tensors)
+    , notP = prim1 (notP tensors)
     , observeP = prim (Str (observeP tensors))
     }
 

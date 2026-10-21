@@ -21,7 +21,7 @@ import Proarrow.Category.Instance.OpenHypergraph
   , WireSorts
   , Wires
   , frobeniusWith
-  , prim
+  , prim1
   , simplify
   )
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -33,7 +33,7 @@ import Proarrow.Category.Monoidal.Dialogue (Dual, dualObj)
 import Proarrow.Category.Monoidal.Hypergraph (Hypergraph)
 import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
-import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), singleton, (==))
+import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -262,5 +262,5 @@ type instance Lift CategoryOf Hypergraph (a :: k) = Wires '[a]
 type instance Retract CategoryOf Hypergraph k ws = Fold (WireSorts ws) :: k
 
 instance HasFreeK CategoryOf Hypergraph where
-  liftK f = prim (singleton f) \\ f
+  liftK = prim1
   retractK f = P.either P.error unStr (simplify (frobeniusWith (P.const 2)) f)

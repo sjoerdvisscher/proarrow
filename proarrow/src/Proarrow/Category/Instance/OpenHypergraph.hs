@@ -57,6 +57,10 @@ module Proarrow.Category.Instance.OpenHypergraph
   , Prim
   , unsafePrim
   , prim
+  , prim0
+  , prim1
+  , prim2
+  , prim3
   , simplify
   , simplifyHypergraph
   , simplifyFlat
@@ -78,7 +82,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.DecoratedCospan (DECCOSPAN (..), DecCospan (..))
 import Proarrow.Category.Instance.FinHask (FINHASK (..), FinHask (..), unionFind)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), SymMonoidal, Tensor, type (**))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor, type (**))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph, Sized (..), cupS, traceHG)
@@ -1208,6 +1212,29 @@ newtype Prim k = Prim (SomeArrow k)
 prim
   :: forall {k} (as :: [k]) bs. (SortList as, SortList bs) => as ~> bs -> Wires as ~> (Wires bs :: SIMPLIFY k)
 prim f = box (Prim (someArrow f))
+
+-- | An arrow from the tensor unit as a box with no inputs and one output.
+prim0 :: forall {k} (a :: k). (Monoidal k) => Unit ~> a -> Wires '[] ~> (Wires '[a] :: SIMPLIFY k)
+prim0 f@Objs = prim (Str f)
+
+-- | An arrow as a box with one input and one output.
+prim1 :: forall {k} (a :: k) b. (CategoryOf k) => a ~> b -> Wires '[a] ~> (Wires '[b] :: SIMPLIFY k)
+prim1 f@Objs = prim (singleton f)
+
+-- | An arrow from a tensor as a box with two inputs and one output.
+prim2
+  :: forall {k} (a :: k) b c
+   . (Monoidal k, Ob a, Ob b)
+  => (a ** b ~> c) -> Wires '[a, b] ~> (Wires '[c] :: SIMPLIFY k)
+prim2 f@Objs = prim (Str f)
+
+-- | An arrow from a left-associated tensor as a box with three inputs and one output.
+-- Reassociates the right-associated port list to the arrow's input tensor.
+prim3
+  :: forall {k} (a :: k) b c d
+   . (Monoidal k, Ob a, Ob b, Ob c)
+  => (a ** b ** c ~> d) -> Wires '[a, b, c] ~> (Wires '[d] :: SIMPLIFY k)
+prim3 f@Objs = prim (Str (f . associatorInv @k @a @b @c))
 
 -- | An arrow as the label of a box with any sorts. Only for boxes whose sorts are equal to the
 -- arrow's by construction, as for 'unsafeOpenHypergraph'.

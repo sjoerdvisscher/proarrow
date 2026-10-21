@@ -44,6 +44,10 @@ import Proarrow.Category.Instance.OpenHypergraph
   , openHypergraph
   , permutations
   , prim
+  , prim0
+  , prim1
+  , prim2
+  , prim3
   , readBack
   , sameSort
   , simplify
@@ -140,7 +144,7 @@ test =
     , testTraced_ @OH
     , testProperty "layered read-back tensors independent boxes" do
         let gate = node @'[Wire "a"] @'[Wire "a"] "f"
-            graph = prim (singleton gate) ** prim (singleton gate)
+            graph = prim1 gate ** prim1 gate
         case (simplify permutations graph, simplify (layered permutations) graph) of
           (Right (Str (Svg _ serial)), Right (Str (Svg _ parallel))) ->
             check
@@ -148,7 +152,7 @@ test =
               (Svg.layoutHeight (Svg.layout Svg.defaultOptions parallel) < Svg.layoutHeight (Svg.layout Svg.defaultOptions serial))
           _ -> testFailed "independent boxes could not be read back"
     , testProperty "read-back keeps carried wires beside and between gates" do
-        let gate title = prim (singleton (node @'[Wire "a"] @'[Wire "a"] title))
+        let gate title = prim1 (node @'[Wire "a"] @'[Wire "a"] title)
             left = gate "g" . gate "f"
             right = gate "j" . gate "i"
             checkLayout :: Wiring SVG -> (a :: SIMPLIFY SVG) ~> b -> Property ()
@@ -167,13 +171,13 @@ test =
         -- Both orders need one crossing. Crossing the inputs costs 100; crossing the outputs
         -- costs 1. List g first so unweighted tie-breaking would retain the expensive order.
         let graph =
-              (prim (singleton (weightedGate "g")) ** prim (singleton (weightedGate "f")))
+              (prim1 (weightedGate "g") ** prim1 (weightedGate "f"))
                 . swap @(SIMPLIFY Weighted) @(Wires '[Large]) @(Wires '[Large])
         case simplify (layered permutations) graph of
           Left err -> testFailed err
           Right (Str (Sub (Svg _ diagram))) -> expect "weighted box order" ["f", "g"] (boxNames diagram)
     , testProperty "Frobenius read-back preserves custom swap weights" do
-        let gate title = prim (singleton (node @'[Wire "large"] @'[Wire "small"] title))
+        let gate title = prim1 (node @'[Wire "large"] @'[Wire "small"] title)
             graph =
               (gate "g" ** gate "f")
                 . swap @(SIMPLIFY SVG) @(Wires '[S '[Wire "large"]]) @(Wires '[S '[Wire "large"]])
@@ -457,9 +461,19 @@ test =
             expectFailure "trace" (readBack copyDiscard (const (someArrow (singleton (obj @M2)))) (traceIdxT g))
         , testProperty "rejects an ill-typed box" $
             expectFailure "box" (readBack copyDiscard (const (someArrow (singleton (obj @M2)))) f)
+        , testProperty "primitive arities compose with ordered ports in a non-strict category" $
+            let graph :: (Wires '[Int, Bool, Char] :: SIMPLIFY Type) ~> Wires '[String]
+                graph =
+                  prim3 (\((n, text), suffix) -> show (n :: Int) ++ text ++ suffix)
+                    . (prim2 (\(n, b) -> if b then n + 1 else n - 1) ** prim1 (: []) ** prim0 (const "done"))
+            in case simplify permutations graph of
+                 Left err -> testFailed err
+                 Right (Str actual) -> do
+                   expect "true branch and port order" "4!done" (actual (3, (True, '!')))
+                   expect "false branch and port order" "2?done" (actual (3, (False, '?')))
         , testProperty "primitive graph executes as a Haskell function with sharing" $
-            let inc = prim (singleton ((+ 1) :: Int -> Int))
-                add = prim @'[Int, Int] @'[Int] (Str (uncurry (+) :: (Int, Int) -> Int))
+            let inc = prim1 ((+ 1) :: Int -> Int)
+                add = prim2 (uncurry (+) :: (Int, Int) -> Int)
             in case simplify copyDiscard (add . comult . inc) of
                  Left err -> testFailed err
                  Right (Str actual) -> expect "shared result" 16 (actual 7)
@@ -550,7 +564,7 @@ test =
         , testProperty "matrix multiplication in index notation reads back as composition (2, 3)" $ do
             fm <- genNamed @(M2 ~> M3) "f"
             gm <- genNamed @(M3 ~> M2) "g"
-            let Str m = simplifyHypergraph (matMulT (prim (singleton fm)) (prim (singleton gm)))
+            let Str m = simplifyHypergraph (matMulT (prim1 fm) (prim1 gm))
             check "differs from g . f" (unMat m == unMat (gm . fm))
         , testProperty "the trace reads back as the trace (3)" $ do
             gm <- genNamed @(M3 ~> M3) "g"
@@ -608,16 +622,16 @@ test =
         [ testProperty "matrix multiplication in index notation is composition (2, 3)" $ do
             fm <- genNamed @(M2 ~> M3) "f"
             gm <- genNamed @(M3 ~> M2) "g"
-            let Str m = simplifyFlat (matMulT (prim (singleton fm)) (prim (singleton gm)))
+            let Str m = simplifyFlat (matMulT (prim1 fm) (prim1 gm))
             check "differs from g . f" (unMat m == unMat (gm . fm))
         , testProperty "the trace, a cycle, needs no trace (3)" $ do
             gm <- genNamed @(M3 ~> M3) "g"
-            let Str m = simplifyFlat (traceIdxT (prim (singleton gm)))
+            let Str m = simplifyFlat (traceIdxT (prim1 gm))
             check "differs" (unMat m == unMat (traceIdxT gm))
         , testProperty "the entrywise product (2, 3)" $ do
             fm <- genNamed @(M2 ~> M3) "f"
             gm <- genNamed @(M2 ~> M3) "g"
-            let Str m = simplifyFlat (hadamardT (prim (singleton fm)) (prim (singleton gm)))
+            let Str m = simplifyFlat (hadamardT (prim1 fm) (prim1 gm))
             check "differs" (unMat m == unMat (hadamardT fm gm))
         , testProperty "two states merged, then a box on the merge (2, 3)" $ do
             am <- genNamed @(Unit ~> M3) "a"
@@ -625,9 +639,9 @@ test =
             gm <- genNamed @(M3 ~> M2) "g"
             let Str m =
                   simplifyFlat
-                    ( prim (singleton gm)
+                    ( prim1 gm
                         . mappend @(Wires '[M3])
-                        . (prim @'[] @'[M3] (Str am) ** prim @'[] @'[M3] (Str bm))
+                        . (prim0 am ** prim0 bm)
                     )
             check "differs" (unMat m == unMat (gm . mappend @M3 . (am ** bm) . leftUnitorInv))
         ]

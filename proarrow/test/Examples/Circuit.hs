@@ -150,17 +150,17 @@ type GraphBit = HG.Wires '[Control]
 expandedCounterGraph :: GraphBit ** GraphBit ~> GraphBit ** GraphBit ** GraphBit ** GraphBit
 expandedCounterGraph =
   counterWith @GraphBit @(GraphBit ** GraphBit ** GraphBit ** GraphBit)
-    (zero4With @GraphBit (HG.prim @'[] @'[Control] (Str (node "0"))))
-    (mux4With @GraphBit (HG.prim @'[Control, Control, Control] @'[Control] (Str (node "MUX"))))
+    (zero4With @GraphBit (HG.prim0 (node "0")))
+    (mux4With @GraphBit (HG.prim3 (node "MUX")))
     ( incrementWith @GraphBit
-        (HG.prim @'[] @'[Control] (Str (node "1")))
-        (HG.prim @'[Control, Control] @'[Control] (Str (node "XOR")))
-        (HG.prim @'[Control, Control] @'[Control] (Str (node "AND")))
+        (HG.prim0 (node "1"))
+        (HG.prim2 (node "XOR"))
+        (HG.prim2 (node "AND"))
     )
     (delay ** delay ** delay ** delay)
   where
     delay :: GraphBit ~> GraphBit
-    delay = HG.prim @'[Control] @'[Control] (Str (node "D (0)"))
+    delay = HG.prim1 (node "D (0)")
 
 type Control :: SVG
 type Control = S '[Wire "b₁"]
