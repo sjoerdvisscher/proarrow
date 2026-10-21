@@ -63,8 +63,13 @@ class (Supplies Frobenius k, CompactClosed k) => Hypergraph k
 
 -- | How many values an object stands for, such as the dimension of a vector space or the number of
 -- elements of a set: what 'Proarrow.Category.Instance.OpenHypergraph.readBack' weighs a wire by
--- when it chooses the order to contract boxes in. A category without a natural size can give every
--- object size 2, so that a bundle of wires costs more the more wires it has.
+-- when choosing contraction order and estimating swap cost in layered read-back.
+--
+-- Sizes should be nonnegative and invariant under isomorphism. For monoidal categories, prefer
+-- a unit size of 1 and a tensor size equal to the product of the factors' sizes.
+-- These are recommendations rather than laws: sizes may also be heuristic weights. A category
+-- without a natural size can give every object size 2; the planner multiplies the weights of
+-- separate wires in a bundle, even when 'sizeOf' itself does not preserve tensor products.
 type Sized :: Kind -> Constraint
 class (CategoryOf k) => Sized k where
   sizeOf :: forall (a :: k). (Ob a) => Int

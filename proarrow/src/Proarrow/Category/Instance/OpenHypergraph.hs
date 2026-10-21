@@ -50,6 +50,7 @@ module Proarrow.Category.Instance.OpenHypergraph
   , frobenius
   , frobeniusWith
   , tracedWith
+  , layered
 
     -- * Simplifying
   , SIMPLIFY
@@ -66,7 +67,7 @@ import Data.Containers.ListUtils (nubOrd)
 import Data.Kind (Constraint, Type)
 import Data.List qualified as List
 import Data.Map.Strict qualified as M
-import Data.Maybe (isJust)
+import Data.Maybe (fromMaybe, isJust, isNothing)
 import Data.Ord (comparing)
 import Data.Set qualified as Set
 import Data.Type.Equality (type (~))
@@ -507,16 +508,21 @@ data SomeArrow s where
 someArrow :: forall {s} (as :: [s]) bs. (SortList as, SortList bs) => as ~> bs -> SomeArrow s
 someArrow = SomeArrow (sorts @s @as) (sorts @s @bs)
 
--- | Wiring operations and their feedback policy. 'permutations' and 'copyDiscard' reject
+-- | Wiring operations, feedback and box scheduling. 'permutations' and 'copyDiscard' reject
 -- cycles; 'frobenius' supplies its cup-and-cap trace. 'tracedWith' replaces the feedback policy
 -- with the target's trace while keeping the wiring operations and contraction plan.
+-- Read-back reduces estimated swap cost; 'layered' also places independent boxes side by side.
 type Wiring :: Kind -> Type
 data Wiring s = Wiring
   { wiringFeedback :: Feedback s
+  , wiringScheduling :: Scheduling
+  , wiringSize :: P.Maybe (SomeSort s -> P.Int)
   , runWiring
       :: forall l a b
        . Align s
       -> Feedback s
+      -> Scheduling
+      -> (SomeSort s -> P.Int)
       -> (l -> SomeArrow s)
       -> (a :: OPENHG s l) ~> b
       -> P.Either P.String (WireSorts a ~> WireSorts b)
@@ -526,7 +532,7 @@ data Wiring s = Wiring
 -- are allowed; copying, merging and discarding need stronger wiring operations. With 'tracedWith',
 -- isolated loops are traced identities.
 permutations :: (SymMonoidal s) => Wiring s
-permutations = Wiring acyclic (\al fb -> readBackDirected al fb (P.== 1) permuteWires)
+permutations = Wiring acyclic Sequential P.Nothing (\al fb mode sizeFn -> readBackDirected al fb mode sizeFn (P.== 1) permuteWires)
   where
     permuteWires bundle wanted =
       let positions = M.fromList (P.zip bundle [0 ..])
@@ -537,7 +543,12 @@ permutations = Wiring acyclic (\al fb -> readBackDirected al fb (P.== 1) permute
 -- be natural. Directed cycles are rejected unless 'tracedWith' enables the target's trace.
 -- With tracing, nodes without producers feed themselves and their consumers through copying.
 copyDiscard :: (CopyDiscard s) => Wiring s
-copyDiscard = Wiring acyclic (\al fb -> readBackDirected al fb (P.const P.True) copyWires)
+copyDiscard =
+  Wiring
+    acyclic
+    Sequential
+    P.Nothing
+    (\al fb mode sizeFn -> readBackDirected al fb mode sizeFn (P.const P.True) copyWires)
 
 -- | Frobenius spiders with sizes from 'Sized', planned as in 'frobeniusWith'.
 frobenius :: (Hypergraph s, Sized s) => Wiring s
@@ -547,14 +558,26 @@ frobenius = frobeniusWith sizeFromSized
 -- the cheaper of numpy's greedy order and min-fill elimination. Remaining boxes follow a path;
 -- nodes are merged and discarded as soon as their other uses allow. This preserves the
 -- contraction planner used by 'Proarrow.Tools.Einsum.einsum'. Feedback uses the trace from
--- Frobenius cups and caps.
+-- Frobenius cups and caps. The given sizes also weight swap reduction, including wire routing
+-- within state contractions; routing preserves the contraction tree and its eliminated indices.
 frobeniusWith :: (Hypergraph s) => (SomeSort s -> P.Int) -> Wiring s
-frobeniusWith sizeFn = Wiring hypergraphTrace (\al fb -> readBackFrobenius al fb sizeFn)
+frobeniusWith sizeFn = Wiring hypergraphTrace Sequential (P.Just sizeFn) readBackFrobenius
 
 -- | Use the target's trace for feedback, replacing the wiring's default feedback policy.
 -- For example, @tracedWith copyDiscard@ supports copying, discarding and directed cycles.
 tracedWith :: (TracedMonoidal s) => Wiring s -> Wiring s
 tracedWith wiring = wiring{wiringFeedback = traced}
+
+-- | Place independent boxes side by side with tensor, routing wires between layers. Swap reduction
+-- uses the wiring's existing sizes, or 'Sized' when no sizes were supplied. Each crossing is weighted
+-- by the product of the wire sizes. Wiring operations and feedback are unchanged.
+-- Without this modifier boxes are placed one at a time, with uniform swap costs unless the wiring
+-- supplies sizes, as 'frobenius' and 'frobeniusWith' do.
+layered :: (Sized s) => Wiring s -> Wiring s
+layered wiring =
+  wiring{wiringScheduling = Layered, wiringSize = P.Just (fromMaybe sizeFromSized (wiringSize wiring))}
+
+data Scheduling = Sequential | Layered
 
 -- | How to close feedback wires, independently of the wiring operations.
 type Feedback :: Kind -> Type
@@ -603,7 +626,13 @@ readBack
   -> (l -> SomeArrow s)
   -> (a :: OPENHG s l) ~> b
   -> P.Either P.String (WireSorts a ~> WireSorts b)
-readBack wiring = runWiring wiring (byIso @s) (wiringFeedback wiring)
+readBack wiring =
+  runWiring
+    wiring
+    (byIso @s)
+    (wiringFeedback wiring)
+    (wiringScheduling wiring)
+    (fromMaybe (P.const 1) (wiringSize wiring))
 
 -- | The read-back, with the sorts lined up by the given alignment.
 readBackFrobenius
@@ -611,11 +640,12 @@ readBackFrobenius
    . (SymMonoidal s, Supplies Frobenius s)
   => Align s
   -> Feedback s
+  -> Scheduling
   -> (SomeSort s -> P.Int)
   -> (l -> SomeArrow s)
   -> (a :: OPENHG s l) ~> b
   -> P.Either P.String (WireSorts a ~> WireSorts b)
-readBackFrobenius al fbChoice sizeFn interp hg =
+readBackFrobenius al fbChoice mode sizeFn interp hg =
   hg // do
     arrows0 <-
       interpretBoxes
@@ -624,23 +654,33 @@ readBackFrobenius al fbChoice sizeFn interp hg =
         interp
         "readBack: the arrow of a label does not have the sorts of its box"
         labelled
-    let arrows = M.union arrows0 (M.fromList [(j, pieceArrow al nodeSort arrows0 t) | (j, t) <- merged])
+    let arrows =
+          M.union
+            arrows0
+            (M.fromList [(j, pieceArrow al nodeSort arrows0 (routeTree (P.toInteger P.. sizeFn P.. nodeSort) t)) | (j, t) <- merged])
     withListOf (P.fmap (nodeSort P.. KN) (feedback lt)) \fb ->
       let insS = sorts @s @(WireSorts a)
           outsS = sorts @s @(WireSorts b)
           start = appendListOf fb insS
-          (bundle, body) =
-            P.foldl
-              (step al nodeSort lt arrows)
-              (P.fmap KN (feedback lt P.++ shapeIns shape), Built start Same)
-              (P.zip [1 ..] order)
+          initial = P.fmap KN (feedback lt P.++ shapeIns shape)
+          wanted = P.fmap KL (feedback lt) P.++ P.fmap (outKey lt) (shapeOuts shape)
+          plan bundle0 (t, layer) =
+            let entries = [gateEntry (outKey lt) bx | bx <- layer]
+                need = P.concatMap entryInputs entries
+                made = P.concatMap entryOutputs entries
+                carry = [k | k <- nubOrd (bundle0 P.++ need), live lt t k P.|| k `P.elem` made]
+                whole = P.fmap identityEntry carry P.++ entries
+            in (P.concatMap entryOutputs whole, whole)
+          planned = P.snd (List.mapAccumL plan initial (P.zip [1 ..] layers))
+          ordered = orderLayers (P.toInteger P.. sizeFn P.. nodeSort) initial wanted planned
+          (bundle, body) = buildLayers al (transition al nodeSort []) arrows initial (Built start Same) ordered
           final =
             transition
               al
               nodeSort
               (isolated shape boxes0)
               bundle
-              (P.fmap KL (feedback lt) P.++ P.fmap (outKey lt) (shapeOuts shape))
+              wanted
               body
       in case final of
            Built ys whole -> case alignSteps al ys (appendListOf fb outsS) of
@@ -653,7 +693,8 @@ readBackFrobenius al fbChoice sizeFn interp hg =
     size ns = P.product [P.fromIntegral (sizeFn (sortAt M.! n)) :: P.Double | n <- Set.toList ns]
     (boxesIx, merged) = pathBoxes boxes0 (contractStates size shape boxes0)
     order = schedule size shape boxesIx
-    lt = lifetimes shape boxesIx order
+    layers = boxLayers mode (feedback (lifetimes shape boxesIx (P.fmap (: []) order))) order
+    lt = lifetimes shape boxesIx layers
 
 -- Directed readers keep one wire per available node between boxes. Routing supplies the
 -- current inputs and retains only those nodes needed by later boxes or the output boundary.
@@ -662,12 +703,14 @@ readBackDirected
    . (SymMonoidal s)
   => Align s
   -> Feedback s
+  -> Scheduling
+  -> (SomeSort s -> P.Int)
   -> (P.Int -> P.Bool)
   -> (forall xs. [Key] -> [Key] -> Built (xs :: [s]) -> Built xs)
   -> (l -> SomeArrow s)
   -> (a :: OPENHG s l) ~> b
   -> P.Either P.String (WireSorts a ~> WireSorts b)
-readBackDirected al fbChoice acceptsConsumers route interp hg =
+readBackDirected al fbChoice mode sizeFn acceptsConsumers route interp hg =
   hg // do
     let (shape@(Shape _ ins outs), sortAt, numbered) = prepareReadBack hg
     (order, fbNodes) <- directedOrder (allowsCycles fbChoice) acceptsConsumers shape numbered
@@ -680,19 +723,21 @@ readBackDirected al fbChoice acceptsConsumers route interp hg =
           feedbackOutputs = Set.intersection (Set.fromList fbNodes) produced
           made n = if n `Set.member` feedbackOutputs then KL n else KN n
           wanted = P.fmap made fbNodes P.++ P.fmap KN outs
-          uses = P.zip [0 :: P.Int ..] order
+          layers = boxLayers mode fbNodes order
+          uses = P.zip [0 :: P.Int ..] layers
           lastUse =
             M.fromListWith
               P.max
-              ([(n, P.length order) | n <- wanted] P.++ [(KN n, j) | (j, (_, bx)) <- uses, n <- inputs bx])
-          place bundle body [] = route bundle wanted body
-          place bundle body ((j, (i, bx)) : rest) =
-            let carry = P.filter (\n -> M.findWithDefault (-1) n lastUse P.> j) bundle
-                reordered = route bundle (carry P.++ P.fmap KN (inputs bx)) body
-                run :: forall ws. Sorts (ws :: [s]) -> Built ws
-                run = carryThen (P.length carry) (boxThen al (arrows M.! i))
-            in place (carry P.++ P.fmap made (outputs bx)) (run `afterBuilt` reordered) rest
-      case place (P.fmap KN (fbNodes P.++ ins)) (Built start Same) uses of
+              ([(n, P.length layers) | n <- wanted] P.++ [(KN n, j) | (j, layer) <- uses, (_, bx) <- layer, n <- inputs bx])
+          plan bundle0 (j, layer) =
+            let carry = P.filter (\n -> M.findWithDefault (-1) n lastUse P.> j) bundle0
+                entries = P.fmap identityEntry carry P.++ P.fmap (gateEntry made) layer
+            in (P.concatMap entryOutputs entries, entries)
+          initial = P.fmap KN (fbNodes P.++ ins)
+          planned = P.snd (List.mapAccumL plan initial uses)
+          ordered = orderLayers (P.toInteger P.. sizeFn P.. (sortAt M.!) P.. keyNode) initial wanted planned
+          (bundle, body) = buildLayers al route arrows initial (Built start Same) ordered
+      case route bundle wanted body of
         Built ys whole -> case alignSteps al ys (appendListOf fb outsS) of
           P.Just into -> closeFeedback fbChoice fb insS outsS (arrowOf ys into . arrowOf start whole)
           P.Nothing -> P.Left "readBack: the output boundary has other sorts"
@@ -793,6 +838,167 @@ directedOrder canTrace acceptsConsumers sh boxes
         in go (Set.union available fresh) next counts' ((i, bx) : acc) cutsRev
 
 -- ** Planning
+
+-- Pack the existing order into earliest dependency layers. Feedback inputs are supplied by the
+-- trace, independently of the outputs that close it.
+boxLayers :: Scheduling -> [P.Int] -> [(P.Int, Box l P.Int)] -> [[(P.Int, Box l P.Int)]]
+boxLayers Sequential _ order = P.fmap (: []) order
+boxLayers Layered feedbackNodes order =
+  P.fmap P.reverse (M.elems (M.fromListWith (P.++) [(t, [bx]) | (t, bx) <- placed]))
+  where
+    cut = Set.fromList feedbackNodes
+    (_, placed) = List.mapAccumL place M.empty order
+    place made bx@(_, b) =
+      let t :: P.Int
+          t = 1 P.+ P.maximum (0 : [M.findWithDefault 0 n made | n <- inputs b, n `Set.notMember` cut])
+          made' = P.foldr (\n -> M.insertWith P.max n t) made (outputs b)
+      in (made', (t, bx))
+
+-- Carried wires participate in layout as identity boxes, without adding hypergraph nodes.
+data LayerEntry = LayerEntry
+  { entryInputs :: [Key]
+  , entryOutputs :: [Key]
+  , entryBox :: P.Maybe P.Int
+  }
+
+identityEntry :: Key -> LayerEntry
+identityEntry k = LayerEntry [k] [k] P.Nothing
+
+gateEntry :: (P.Int -> Key) -> (P.Int, Box l P.Int) -> LayerEntry
+gateEntry made (i, bx) = LayerEntry (P.fmap KN (inputs bx)) (P.fmap made (outputs bx)) (P.Just i)
+
+-- Four alternating sweeps exchange adjacent entries only when the total estimated routing cost
+-- decreases. Layer membership and each box's port order stay fixed; ties retain their order.
+orderLayers
+  :: (Key -> P.Integer) -> [Key] -> [Key] -> [[LayerEntry]] -> [[LayerEntry]]
+orderLayers size initial wanted layers0 =
+  P.snd (List.foldl' sweep start passes)
+  where
+    -- Start identities near their incoming positions, even across several idle layers.
+    -- Moving them one layer at a time can require cost-neutral swaps.
+    seeded = P.snd (List.mapAccumL seed initial layers0)
+    seed bundle layer =
+      let positions = M.fromList (P.zip bundle [0 :: P.Int ..])
+          position entry = P.minimum (P.length bundle : [i | k <- entryInputs entry, P.Just i <- [M.lookup k positions]])
+          ordered = List.sortOn position layer
+      in (P.concatMap entryOutputs ordered, ordered)
+    originalCost = cost layers0
+    seededCost = cost seeded
+    start
+      | originalCost P.== 0 P.|| originalCost P.<= seededCost = (originalCost, layers0)
+      | P.otherwise = (seededCost, seeded)
+    cost layers =
+      P.sum
+        ( P.zipWith
+            crossings
+            (initial : P.fmap (P.concatMap entryOutputs) layers)
+            (P.fmap (P.concatMap entryInputs) layers P.++ [wanted])
+        )
+    -- Shared wires use the same position; Frobenius merging is an estimate of spider routing.
+    crossings from to =
+      let positions = M.fromList (P.zip from [0 :: P.Int ..])
+          edges = [(i, size k) | k <- to, P.Just i <- [M.lookup k positions]]
+      in weightedInversions edges
+    passes :: [[(P.Int, P.Int)]]
+    passes = [forward, backward, forward, backward]
+    forward = [(i, j) | (i, layer) <- P.zip [0 ..] layers0, j <- [0 .. P.length layer P.- 2]]
+    backward = P.reverse forward
+    sweep current@(0, _) _ = current
+    sweep current [] = current
+    sweep current (move : rest) = sweep (improve current move) rest
+    improve current@(best, layers) (i, j) = case P.splitAt i layers of
+      (pre, layer : rest) ->
+        let from = case P.reverse pre of
+              [] -> initial
+              previous : _ -> P.concatMap entryOutputs previous
+            to = case rest of
+              [] -> wanted
+              following : _ -> P.concatMap entryInputs following
+            -- Reordering a layer changes only its incoming and outgoing frontiers.
+            localCost entries = crossings from (P.concatMap entryInputs entries) P.+ crossings (P.concatMap entryOutputs entries) to
+            candidate = exchangeAt j layer
+            next = best P.+ localCost candidate P.- localCost layer
+        in if next P.< best then (next, pre P.++ (candidate : rest)) else current
+      _ -> current
+    exchangeAt n xs = case P.splitAt n xs of
+      (pre, a : b : rest) -> pre P.++ (b : a : rest)
+      _ -> xs
+
+-- Crossing costs use Integer so large object sizes do not overflow during comparison.
+weightedInversions :: [(P.Int, P.Integer)] -> P.Integer
+weightedInversions edges = P.sum [a P.* b | (i, a) : rest <- List.tails edges, (j, b) <- rest, i P.> j]
+
+-- Reorder the exposed wires of proper subtrees. Changing one boundary affects only its own
+-- transition and its parent's, so each accepted swap reduces their combined routing cost.
+-- The root boundary, contraction tree and the indices eliminated at each node stay fixed.
+routeTree :: (Key -> P.Integer) -> Tree -> Tree
+routeTree size t0 = List.foldl' (\t backwards -> visit backwards (P.const 0) P.False t) t0 passes
+  where
+    passes :: [P.Bool]
+    passes = [P.False, P.True, P.False, P.True]
+    visit backwards above movable t =
+      let rebuilt = case t of
+            Leaf{} -> t
+            Merge l r ks
+              | backwards ->
+                  let r' = visit backwards (\out -> routingCost (treeKeys l P.++ out) ks) P.True r
+                      l' = visit backwards (\out -> routingCost (out P.++ treeKeys r') ks) P.True l
+                  in Merge l' r' ks
+              | P.otherwise ->
+                  let l' = visit backwards (\out -> routingCost (out P.++ treeKeys r) ks) P.True l
+                      r' = visit backwards (\out -> routingCost (treeKeys l' P.++ out) ks) P.True r
+                  in Merge l' r' ks
+          cost tree = routingCost (treeMade tree) (treeKeys tree) P.+ above (treeKeys tree)
+          positions = [0 .. P.length (treeKeys rebuilt) P.- 2]
+          improve current@(best, tree) i =
+            let ks = treeKeys tree
+                candidate = case P.splitAt i ks of
+                  (pre, a : b : rest) -> setKeys (pre P.++ (b : a : rest)) tree
+                  _ -> tree
+                next = cost candidate
+            in if next P.< best then (next, candidate) else current
+      in if movable
+           then P.snd (List.foldl' improve (cost rebuilt, rebuilt) (if backwards then P.reverse positions else positions))
+           else rebuilt
+    setKeys ks (Leaf i made _) = Leaf i made ks
+    setKeys ks (Merge l r _) = Merge l r ks
+    routingCost from to =
+      let kinds = groupOrder from to (nubOrd (from P.++ to))
+          ranks = M.fromList (P.zip kinds [0 :: P.Int ..])
+          grouped wires = weightedInversions [(ranks M.! k, size k) | k <- wires]
+      in grouped from P.+ grouped to
+
+-- Route each frontier and tensor its gates with the identities of the carried wires.
+buildLayers
+  :: forall s (xs :: [s])
+   . (SymMonoidal s)
+  => Align s
+  -> (forall ws. [Key] -> [Key] -> Built (ws :: [s]) -> Built ws)
+  -> M.Map P.Int (SomeArrow s)
+  -> [Key]
+  -> Built xs
+  -> [[LayerEntry]]
+  -> ([Key], Built xs)
+buildLayers al route arrows = go
+  where
+    go :: [Key] -> Built xs -> [[LayerEntry]] -> ([Key], Built xs)
+    go bundle body [] = (bundle, body)
+    go bundle body (layer : rest) =
+      let need = P.concatMap entryInputs layer
+          made = P.concatMap entryOutputs layer
+          run :: forall ws. Sorts (ws :: [s]) -> Built ws
+          run = build layer
+      in go made (run `afterBuilt` route bundle need body) rest
+    build :: forall ws. [LayerEntry] -> Sorts (ws :: [s]) -> Built ws
+    build [] ws = Built ws Same
+    build (entry : rest) ws = case entryBox entry of
+      P.Nothing ->
+        let (identities, remaining) = P.span (isNothing P.. entryBox) rest
+        in carryThen (1 P.+ P.length identities) (build remaining) ws
+      P.Just i -> case arrows M.! i of
+        arrow@(SomeArrow ins _ _) -> case rest of
+          [] -> boxThen al arrow ws
+          _ -> splitSorts (lengthListOf ins) ws \pre post -> beside pre (boxThen al arrow pre) post (build rest post)
 
 -- | The nodes of an open hypergraph, numbered from 0, and its boundaries.
 data Shape = Shape {shapeNodes :: [P.Int], shapeIns :: [P.Int], shapeOuts :: [P.Int]}
@@ -908,10 +1114,10 @@ data Lifetimes = Lifetimes
   -- it, or it is an output; what boxes make of a node fed back goes on its other wire, to the end
   }
 
-lifetimes :: Shape -> [Ix] -> [Ix] -> Lifetimes
-lifetimes sh bxs order = Lifetimes{feedback = fb, outKey = key, live = alive}
+lifetimes :: Shape -> [Ix] -> [[Ix]] -> Lifetimes
+lifetimes sh bxs layers = Lifetimes{feedback = fb, outKey = key, live = alive}
   where
-    layerOf = M.fromList (P.zip (P.fmap P.fst order) [1 :: P.Int ..])
+    layerOf = M.fromList [(i, t) | (t, layer) <- P.zip [1 :: P.Int ..] layers, (i, _) <- layer]
     madeAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- bxs, n <- outputs bx]
     usedAt = M.fromListWith (P.++) [(n, [layerOf M.! i]) | (i, bx) <- bxs, n <- inputs bx]
     layersOf n m = M.findWithDefault [] n m
@@ -944,32 +1150,6 @@ pieceArrow al nodeSort arrows0 t0 = case go t0 of
     go t = transition al nodeSort [] (treeMade t) (treeKeys t) (body t)
     body (Leaf i _ _) = boxThen al (arrows0 M.! i) Nil
     body (Merge l r _) = beside Nil (go l) Nil (go r)
-
--- | One box placed after the wires that go past it, between the spiders before and after it.
-step
-  :: forall s (xs :: [s])
-   . (SymMonoidal s, Supplies Frobenius s)
-  => Align s
-  -> (Key -> SomeSort s)
-  -> Lifetimes
-  -> M.Map P.Int (SomeArrow s)
-  -> ([Key], Built xs)
-  -> (P.Int, Ix)
-  -> ([Key], Built xs)
-step al nodeSort lt arrows (bundle, body) (t, (i, bx)) =
-  let need = P.fmap KN (inputs bx)
-      made = P.fmap (outKey lt) (outputs bx)
-      -- a wire goes past the box when it is needed after it or is merged with a wire across it:
-      -- the carried wires, and what is left of the box, its wires of one node merged
-      carry = [k | k <- nubOrd (bundle P.++ need), live lt t k P.|| k `P.elem` made]
-      kept = [k | k <- nubOrd made, live lt t k P.|| k `P.elem` carry]
-      -- the box goes after the carried wires, next to the wires it is merged with later
-      run :: forall (ws :: [s]). Sorts ws -> Built ws
-      run = carryThen (P.length carry) \post ->
-        transition al nodeSort [] made kept (boxThen al (arrows M.! i) post)
-  in ( carry P.++ kept
-     , run `afterBuilt` transition al nodeSort [] bundle (carry P.++ need) body
-     )
 
 -- | What is built so far followed by one spider per wire kind, also for the given kinds without
 -- wires, between permutations that group the wires. Each step is composed onto what is built so far
@@ -1042,7 +1222,14 @@ simplify
    . Wiring k
   -> (a :: SIMPLIFY k) ~> b
   -> P.Either P.String (WireSorts a ~> WireSorts b)
-simplify wiring = runWiring wiring trusted (wiringFeedback wiring) (\(Prim arrow) -> arrow)
+simplify wiring =
+  runWiring
+    wiring
+    trusted
+    (wiringFeedback wiring)
+    (wiringScheduling wiring)
+    (fromMaybe (P.const 1) (wiringSize wiring))
+    (\(Prim arrow) -> arrow)
 
 -- | Interpret a primitive graph in its hypergraph target, with wire sizes from 'Sized'.
 -- This is 'simplify' with 'frobenius': every graph is supported and

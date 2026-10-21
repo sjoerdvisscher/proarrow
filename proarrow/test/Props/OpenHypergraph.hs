@@ -7,7 +7,7 @@
 module Props.OpenHypergraph (test) where
 
 import Control.Monad (replicateM)
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import Data.List qualified as List
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map.Strict qualified as M
@@ -38,7 +38,9 @@ import Proarrow.Category.Instance.OpenHypergraph
   , box
   , copyDiscard
   , frobenius
+  , frobeniusWith
   , isomorphic
+  , layered
   , openHypergraph
   , permutations
   , prim
@@ -59,7 +61,7 @@ import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, Sized (..), cap, cup, traceHG)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), singleton)
-import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, obj)
+import Proarrow.Core (Any, CAT, CategoryOf (..), Promonad (..), UN, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic.Iso (DecidableIso)
@@ -78,6 +80,7 @@ import Proarrow.Testing
   )
 import Proarrow.Testing.Laws
 import Proarrow.Tools.Diagrams.Svg (SVG (..), Svg (..), W (Wire), node, render)
+import Proarrow.Tools.Diagrams.Svg qualified as Svg
 import Proarrow.Tools.Einsum (einsum)
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.Mat ()
@@ -90,6 +93,33 @@ type OH = OPENHG (MatK Int) String
 type I = Wires '[M2] :: OH
 
 type B = Wires '[M3] :: OH
+
+-- The full SVG category with unequal sort sizes, to distinguish crossing count from cost.
+type Weighted = SUBCAT (Any :: SVG -> Constraint)
+type Large :: Weighted
+type Large = SUB (S '[Wire "large"])
+type Small :: Weighted
+type Small = SUB (S '[Wire "small"])
+
+instance Sized Weighted where
+  sizeOf @(SUB (S ws)) = product [if wireLabel == "large" then 10 else 1 | (wireLabel, _) <- Svg.wires @ws]
+
+weightedGate :: String -> Large ~> Small
+weightedGate title = Sub (node @'[Wire "large"] @'[Wire "small"] title)
+
+diagramParts :: Svg.Diagram -> [Svg.Diagram]
+diagramParts = \case
+  Svg.Seq a b -> diagramParts a ++ diagramParts b
+  Svg.Beside a b -> diagramParts a ++ diagramParts b
+  Svg.Trace _ d -> diagramParts d
+  d -> [d]
+
+boxNames :: Svg.Diagram -> [String]
+boxNames diagram = [title | Svg.Node _ title _ _ <- diagramParts diagram]
+
+wireCrossings :: Svg.Diagram -> Int
+wireCrossings diagram =
+  sum [length (filter (< i) rest) | Svg.Permute _ _ positions <- diagramParts diagram, i : rest <- List.tails positions]
 
 test :: TestTree
 test =
@@ -108,6 +138,73 @@ test =
     , testCopyDiscard_ @OH
     , testHypergraph_ @OH
     , testTraced_ @OH
+    , testProperty "layered read-back tensors independent boxes" do
+        let gate = node @'[Wire "a"] @'[Wire "a"] "f"
+            graph = prim (singleton gate) ** prim (singleton gate)
+        case (simplify permutations graph, simplify (layered permutations) graph) of
+          (Right (Str (Svg _ serial)), Right (Str (Svg _ parallel))) ->
+            check
+              "independent boxes remain sequential"
+              (Svg.layoutHeight (Svg.layout Svg.defaultOptions parallel) < Svg.layoutHeight (Svg.layout Svg.defaultOptions serial))
+          _ -> testFailed "independent boxes could not be read back"
+    , testProperty "read-back keeps carried wires beside and between gates" do
+        let gate title = prim (singleton (node @'[Wire "a"] @'[Wire "a"] title))
+            left = gate "g" . gate "f"
+            right = gate "j" . gate "i"
+            checkLayout :: Wiring SVG -> (a :: SIMPLIFY SVG) ~> b -> Property ()
+            checkLayout wiring graph = case simplify wiring graph of
+              Left err -> testFailed err
+              Right (Str (Svg _ diagram)) -> expect "unnecessary crossings" 0 (wireCrossings diagram)
+        sequence_
+          [ do
+              checkLayout wiring (left ** gate "h")
+              checkLayout wiring (left ** gate "h" ** right)
+              checkLayout wiring ((left . left . left) ** gate "h" ** (right . right))
+          | base <- [permutations, copyDiscard, frobenius]
+          , wiring <- [base, layered base]
+          ]
+    , testProperty "layered read-back prefers crossing small wires" do
+        -- Both orders need one crossing. Crossing the inputs costs 100; crossing the outputs
+        -- costs 1. List g first so unweighted tie-breaking would retain the expensive order.
+        let graph =
+              (prim (singleton (weightedGate "g")) ** prim (singleton (weightedGate "f")))
+                . swap @(SIMPLIFY Weighted) @(Wires '[Large]) @(Wires '[Large])
+        case simplify (layered permutations) graph of
+          Left err -> testFailed err
+          Right (Str (Sub (Svg _ diagram))) -> expect "weighted box order" ["f", "g"] (boxNames diagram)
+    , testProperty "Frobenius read-back preserves custom swap weights" do
+        let gate title = prim (singleton (node @'[Wire "large"] @'[Wire "small"] title))
+            graph =
+              (gate "g" ** gate "f")
+                . swap @(SIMPLIFY SVG) @(Wires '[S '[Wire "large"]]) @(Wires '[S '[Wire "large"]])
+            -- SVG's Sized weights are uniform. These weights favor crossing after both boxes.
+            custom = frobeniusWith (\s -> if sameSort s (Some @(S '[Wire "large"])) then 10 else 1)
+            afterBox = takeWhile (\case Svg.Node{} -> False; _ -> True) . reverse
+            checkWeights :: Wiring SVG -> Int -> Property ()
+            checkWeights wiring expected = case simplify wiring graph of
+              Left err -> testFailed err
+              Right (Str (Svg _ diagram)) ->
+                expect "crossing after the last box" expected (sum (map wireCrossings (afterBox (diagramParts diagram))))
+        sequence_
+          [ checkWeights wiring expected
+          | (wiring, expected) <- [(frobenius, 0), (layered frobenius, 0), (custom, 1), (layered custom, 1)]
+          ]
+    , testProperty "state contraction routing removes crossings" do
+        let graph :: Either String ((Wires '[] :: OPENHG SVG String) ~> Wires '[A, A])
+            graph =
+              openHypergraph
+                (replicate 3 (Some @A))
+                []
+                [0, 1]
+                [Box "A" [] [2, 0, 1], Box "B" [] [0, 1, 2], Box "C" [] [0, 2, 0]]
+            state :: String -> SomeArrow SVG
+            state title = someArrow @'[] @'[A, A, A] (Str (node @'[Svg.I] @'[Wire "A", Wire "A", Wire "A"] title))
+        case graph >>= readBack frobenius state of
+          Left err -> testFailed err
+          Right (Str (Svg _ diagram)) -> do
+            -- The previous boundary orders needed ten crossings in the same ((A,B),C) tree.
+            expect "crossings" 8 (wireCrossings diagram)
+            expect "tensor order" ["A", "B", "C"] (boxNames diagram)
     , testGroup
         "the Frobenius laws"
         [ testProperty "matrix multiplication in index notation is composition" $

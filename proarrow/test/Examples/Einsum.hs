@@ -3,6 +3,7 @@
 module Examples.Einsum where
 
 import Data.List (isInfixOf)
+import Test.Falsify (Property, testFailed)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding ((**))
@@ -12,6 +13,7 @@ import Proarrow.Category.Instance.OpenHypergraph
   , SomeArrow
   , SomeSort
   , Wires
+  , Wiring
   , frobenius
   , frobeniusWith
   , openHypergraph
@@ -25,6 +27,7 @@ import Proarrow.Core (CategoryOf (..))
 import Proarrow.Object (SomeOf (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (Options (..), SVG (..), Svg, W (..), defaultOptions, node, renderWith)
+import Proarrow.Tools.Diagrams.Svg qualified as Svg
 import Proarrow.Tools.Einsum (Tensor, einsum)
 
 -- | The wire of an index.
@@ -107,6 +110,9 @@ ringArrow x = case x of
 drawRead :: Either String (Strictified '[] '[X "l", X "i"]) -> String
 drawRead = either error (draw . unStr)
 
+ringGraph :: Wires '[] ~> (Wires '[X "l", X "i"] :: OPENHG SVG String)
+ringGraph = ring [OH.Box "V" [] [3, 4], OH.Box "U" [] [1, 3, 3], OH.Box "T" [] [0, 1, 2], OH.Box "W" [] [4, 0]]
+
 -- | The ring as einsum reads it back with the sizes of the matrices.
 ringSized :: String
 ringSized =
@@ -114,7 +120,7 @@ ringSized =
     ( readBack
         (frobeniusWith matSize)
         ringArrow
-        (ring [OH.Box "V" [] [3, 4], OH.Box "U" [] [1, 3, 3], OH.Box "T" [] [0, 1, 2], OH.Box "W" [] [4, 0]])
+        ringGraph
     )
 
 -- | The ring with everything tensored first: one box that is all four tensors side by side, whose
@@ -126,10 +132,32 @@ ringNaive = drawRead (readBack frobenius ringArrow (ring [OH.Box "VUTW" [] [3, 4
 ringPictures :: [(FilePath, String)]
 ringPictures = [("ring-naive.svg", ringNaive), ("ring-einsum.svg", ringEinsum), ("ring-sized.svg", ringSized)]
 
+-- Retain the grouping of tensor boxes while ignoring the routing between them.
+contractionTree :: Svg.Diagram -> String
+contractionTree = \case
+  Svg.Node _ title _ _ -> title
+  Svg.Seq a b -> join (contractionTree a) (contractionTree b)
+  Svg.Beside a b -> join (contractionTree a) (contractionTree b)
+  Svg.Trace _ d -> contractionTree d
+  _ -> ""
+  where
+    join "" b = b
+    join a "" = a
+    join a b = "(" ++ a ++ "," ++ b ++ ")"
+
+checkTree :: Wiring SVG -> String -> Property ()
+checkTree wiring expected = case readBack wiring ringArrow ringGraph of
+  Left err -> testFailed err
+  Right (Str (Svg.Svg _ diagram)) -> check "contraction tree changed" (contractionTree diagram == expected)
+
 test :: TestTree
 test =
   testGroup
     "Einsum pictures"
-    [ testProperty ("draws " ++ file) (check "not an SVG document" ("<svg" `isInfixOf` svg))
-    | (file, svg) <- gallery ++ ringPictures
-    ]
+    ( [ testProperty ("draws " ++ file) (check "not an SVG document" ("<svg" `isInfixOf` svg))
+      | (file, svg) <- gallery ++ ringPictures
+      ]
+        ++ [ testProperty "uniform sizes preserve the contraction tree" (checkTree frobenius "(((V,U),T),W)")
+           , testProperty "matrix sizes preserve the contraction tree" (checkTree (frobeniusWith matSize) "((V,(U,T)),W)")
+           ]
+    )

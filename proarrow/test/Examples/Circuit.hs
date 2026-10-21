@@ -138,10 +138,10 @@ expandedCounterPicture =
     delay :: Control ~> Control
     delay = node "D (0)"
 
--- | The expanded counter read back from an open hypergraph using traced copy/discard wiring.
+-- | The expanded counter read back in parallel layers using traced copy/discard wiring.
 simplifiedCounterPicture :: Either String String
 simplifiedCounterPicture = do
-  Str diagram <- HG.simplify (HG.tracedWith HG.copyDiscard) expandedCounterGraph
+  Str diagram <- HG.simplify (HG.layered (HG.tracedWith HG.copyDiscard)) expandedCounterGraph
   pure (render diagram)
 
 type GraphBit :: HG.SIMPLIFY SVG

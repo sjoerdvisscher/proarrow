@@ -3,6 +3,7 @@
 ## Unreleased
 
 * SVG diagrams declare UTF-8 encoding for standalone viewers.
+* `OpenHypergraph` read-back reduces swap cost, including within contraction trees; `layered` exposes parallel tensor layers.
 * Decorated cospans, including open hypergraphs, now support traced SMC notation.
 * `Proarrow.Category.Instance.Circuit` and `Simulator`: typed digital circuits with clocked
   simulation and Verilog generation, plus an SMC counter demo.

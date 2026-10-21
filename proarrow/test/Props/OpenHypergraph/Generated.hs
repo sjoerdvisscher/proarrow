@@ -32,6 +32,7 @@ import Proarrow.Category.Instance.OpenHypergraph
   , Wiring
   , copyDiscard
   , frobenius
+  , layered
   , permutations
   , prim
   , simplify
@@ -273,7 +274,7 @@ compareReadBack readers diagram@(SomeDiagram a b f) = do
         Left err -> testFailed (name ++ ": " ++ err ++ "\n" ++ show diagram) :: Property ()
         Right (Str actual) -> expect (name ++ ": " ++ show diagram) expected (TNet.entries actual)
     )
-    readers
+    (readers ++ [("layered " ++ name, layered wiring) | (name, wiring) <- readers])
 
 test :: TestTree
 test =
