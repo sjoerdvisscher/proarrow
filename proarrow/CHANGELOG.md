@@ -2,49 +2,51 @@
 
 ## Unreleased
 
-* SVG diagrams declare UTF-8 encoding for standalone viewers.
-* `OpenHypergraph` read-back reduces swap cost, including within contraction trees; `layered` exposes parallel tensor layers.
+* `Proarrow.Tools.SMC`:
+  * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
+  * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`;
+    `Term` is `TermP (~>)`.
+  * Tuple patterns, binds and tuples of five and six; `liftF` applies a morphism to a term or
+    tuple of terms and embeds its result by `F`, allowing the result object to be inferred.
+    Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror
+    Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`.
+  * Arrow application and tuple construction reuse variables across binds without explicit depth casts;
+    `TupleDepth` is removed.
+  * `ifThenElse`, an alias for `caseOf`, supports sum elimination with `RebindableSyntax`
+    in SMC and CCC: `if x then \l -> ... else \r -> ...`.
+  * `(!)` also accepts embedded function objects, including results of `(-<)`, in SMC and CCC.
+  * Computation binds accept embedded dual objects as continuation results, allowing `(-<)` there.
+  * Scalar multiplication accepts `F Unit`, including results of `(-<)`.
+  * A Yampa feedback-echo example and `smc-audio` executable render dry and echoed WAV files
+    and a string diagram from the same SMC network. The GitHub Pages documentation build
+    includes the audio files for listening from the wiki.
+* `Proarrow.Profunctor.Instance.Star`: `Costrong Tensor (Star (Prelude m))` for `MonadFix m`,
+  supporting feedback through SMC's `loop` and recursive `do`.
 * Decorated cospans, including open hypergraphs, now support traced SMC notation.
-* `Proarrow.Category.Instance.Circuit` and `Simulator`: typed digital circuits with clocked
-  simulation and Verilog generation, plus an SMC counter demo.
 * `Proarrow.Category.Instance.OpenHypergraph`: graph substitution with optional wire-sort expansion.
   `readBack` and `simplify` now take a `Wiring`, supporting symmetric monoidal, copy/discard
   and Frobenius structure, with optional tracing via `tracedWith`.
   `frobeniusWith` replaces `readBackWith` and `simplifyWith`; `simplifyHypergraph` provides
   total read-back for primitive graphs in hypergraph targets.
-* `Proarrow.Tools.Optic`: compile SMC programs of optics to forward/backward computations
-  through graph substitution, requiring only symmetric monoidal structure in the target.
-* `Proarrow.Optic.Action`: `runMonoidalOptic` connects a tensor-action optic's forward and
-  backward passes into one computation.
-* `Proarrow.Tools.SMC`: 
-  * `(!)` also accepts embedded function objects, including results of `(-<)`, in SMC and CCC.
-  * Computation binds accept embedded dual objects as continuation results, allowing `(-<)` there.
-  * Scalar multiplication accepts `F Unit`, including results of `(-<)`.
-  * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
-  * Tuple patterns, binds and tuples of five and six; `liftF` applies a morphism to a term or 
-    tuple of terms and embeds its result by `F`, allowing the result object to be inferred. 
-    Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror
-    Haskell's arrow notation. All three are also available in `Proarrow.Tools.CCC`. 
-  * `ifThenElse`, an alias for `caseOf`, supports sum elimination with `RebindableSyntax`
-    in SMC and CCC: `if x then \l -> ... else \r -> ...`.
-  * A Yampa feedback-echo example and `smc-audio` executable render dry and echoed WAV files
-    and a string diagram from the same SMC network. The GitHub Pages documentation build
-    includes the audio files for listening from the wiki.
-  * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`; 
-    `Term` is `TermP (~>)`.
-* `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
-* `Proarrow.Category.Instance.TensorNetwork`: `matMul`, a product of matrices given as vectors,
-  through BLAS when the `blas` flag is on; the dagger copies no entries, and complex ones are
-  conjugated once, when first needed.
+* `OpenHypergraph` read-back reduces swap cost, including within contraction trees; `layered` exposes parallel tensor layers.
 * `Proarrow.Tools.ContractionOrder`: `planContraction`, the order to contract a network of factors
   in, the cheaper of numpy's greedy order and a min-fill elimination order (`minFillOrder`). The
   read-back of open hypergraphs, and with it einsum, and tensor networks contract along it.
   `Proarrow.Category.Instance.OpenHypergraph`: `simplifyFlat`, which bends every box into a state
   first, so the whole network is contracted in that order.
-* `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
-* `Proarrow.Profunctor.Instance.Star`: `Costrong Tensor (Star (Prelude m))` for `MonadFix m`,
-  supporting feedback through SMC's `loop` and recursive `do`.
+* `Proarrow.Category.Instance.TensorNetwork`: `matMul`, a product of matrices given as vectors,
+  through BLAS when the `blas` flag is on; the dagger copies no entries, and complex ones are
+  conjugated once, when first needed.
+* `Proarrow.Tools.Optic`: compile SMC programs of optics to forward/backward computations
+  through graph substitution, requiring only symmetric monoidal structure in the target.
+* `Proarrow.Optic.Action`: `runMonoidalOptic` connects a tensor-action optic's forward and
+  backward passes into one computation.
+* `Proarrow.Category.Instance.Circuit` and `Simulator`: typed digital circuits with clocked
+  simulation and Verilog generation, plus an SMC counter demo.
+* `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
+* SVG diagrams declare UTF-8 encoding for standalone viewers.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
+* `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
 
 ## 0.3.0.0 -- 2026-10-10
 

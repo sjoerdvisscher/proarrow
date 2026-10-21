@@ -126,6 +126,13 @@ test =
           ( logOf (addT (tell "read x" >> pure 1) (tell "read y" >> pure 2) tell) (("return " ++) . show)
               == ["read x", "read y", "sum 3", "return 3"]
           )
+    , testProperty "ret assembles values reused across computation binds" $ do
+        let program = toSMC @I @(Up (V W Int :** V W Int)) \() -> SMC.do
+              x <- act (tell "read x" >> pure 5)
+              () <- effect (tell . show) x
+              y <- act (tell "read y" >> pure 8)
+              ret (x, y)
+        expect "values and effects" ["read x", "5", "read y", "(5,8)"] (logOf program show)
     , testProperty "computations are values: made in one order, run in the other" $
         check "wrong effects" (logOf (reversedT (tell "a") (tell "b")) (const "done") == ["b", "a", "done"])
     , testProperty "a stored computation is bound without running, and runs at each force" $

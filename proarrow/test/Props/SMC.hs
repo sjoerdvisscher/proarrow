@@ -73,6 +73,19 @@ choiceT select left right = unArr $ SMC.proc @((F (Either Int Bool) :** F Int) :
     then \x -> Arr left -< (x, n)
     else \b -> Arr right -< (b, m)
 
+-- Reuse both the input and a bound value across later binds, then mix all their depths.
+reuseAcrossBindsT
+  :: (A.Arrow arr)
+  => arr Int Int
+  -> arr Int Int
+  -> arr (Int, Int) Int
+  -> arr Int ((Int, Int), (Int, Int))
+reuseAcrossBindsT first second combine = unArr $ SMC.proc @(F Int) @(F ((Int, Int), (Int, Int))) \n -> SMC.do
+  x <- Arr first -< n
+  y <- Arr second -< x
+  z <- Arr combine -< (x, n)
+  returnA -< ((n, x), (y, z))
+
 injectLeftT :: (A.Arrow arr) => arr Int Int -> arr Int (Either Int Bool)
 injectLeftT f = unArr $ SMC.proc @(F Int) @(F Int :|| F Bool) \x -> SMC.inl (Arr f -< x)
 
@@ -156,7 +169,15 @@ test :: TestTree
 test =
   testGroup
     "SMC"
-    [ testGroup
+    [ testProperty "reuse across binds preserves variable identities and runs each effect once" $ do
+        n <- genNamed @Int "input"
+        let first = A.Kleisli (\x -> (["first"], x + 1))
+            second = A.Kleisli (\x -> (["second"], x * 2))
+            combine = A.Kleisli (\(x, input) -> (["combine"], x - input))
+            run :: Int -> ([String], ((Int, Int), (Int, Int)))
+            run = A.runKleisli (reuseAcrossBindsT first second combine)
+        expect "values and effects" (["first", "second", "combine"], ((n, n + 1), (2 * (n + 1), 1))) (run n)
+    , testGroup
         "ArrowChoice"
         [ testProperty "only the selected branch runs with its captured variable" $ do
             let select = A.Kleisli (["select"],)

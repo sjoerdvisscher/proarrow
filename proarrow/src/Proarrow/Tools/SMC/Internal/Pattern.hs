@@ -43,9 +43,9 @@ proc k = withSynOb @a (lmap (leftUnitorInv @k @(Interp a)) (bound @p @0 @'[] @a 
 -- The result object is inferred from the arrow. Use 'lift' for composite result syntax.
 {-# INLINE liftF #-}
 liftF
-  :: forall {k} (a :: SYN k) b t (p :: CAT k)
+  :: forall {k} (a :: SYN k) b t (p :: CAT k) d
    . (Promonad p, Tuple p t a)
-  => p (Interp a) b -> t -> TermP p (TupleDepth t) (TupleCtx k t) (F b)
+  => p (Interp a) b -> t -> TermP p d (TupleCtx k t) (F b)
 liftF f t = lift @a @(F b) f (tuple @p t)
 
 infixr 0 -<
@@ -55,9 +55,9 @@ infixr 0 -<
 -- The @Arrows@ extension must be disabled, since it reserves this symbol.
 {-# INLINE (-<) #-}
 (-<)
-  :: forall {k} (a :: SYN k) b t (p :: CAT k)
+  :: forall {k} (a :: SYN k) b t (p :: CAT k) d
    . (Promonad p, Tuple p t a)
-  => p (Interp a) b -> t -> TermP p (TupleDepth t) (TupleCtx k t) (F b)
+  => p (Interp a) b -> t -> TermP p d (TupleCtx k t) (F b)
 (-<) = liftF @a @b
 
 -- | The identity morphism, named as in Haskell's arrow notation.
@@ -100,18 +100,19 @@ runUp (MkTerm m) body =
 -- consumer of @'Not' a@. The value can be given as a 'Tuple' of terms, built by the type expected.
 {-# INLINE ret #-}
 ret
-  :: forall {k} {p} (a :: SYN k) t
+  :: forall {k} {p} (a :: SYN k) t d
    . (Dialogue k, Profunctor p, KnownObj a, Tuple p t a)
-  => t -> TermP p (TupleDepth t) (TupleCtx k t) (Up a)
+  => t -> TermP p d (TupleCtx k t) (Up a)
 ret t = withSynOb @a (rmapT (doubleNegInv @k @(Interp a)) (tuple @p @t @a t))
 
 -- | A term built from a tuple of terms, by the type it is expected to have: a term is itself, a
 -- pair at a tensor is the tensor of its parts, and a pair at a computation @'Up' a@ is the
 -- computation of the pair at @a@. A tuple of three to six stands for pairs nested to the left, as in
--- patterns. The parts must be at the same depth, and their contexts are merged.
+-- patterns. The parts may come from different binding depths; the result adopts the depth
+-- where it is used, and their contexts are merged.
 type Tuple :: forall {k}. CAT k -> Type -> SYN k -> Constraint
 class Tuple (p :: CAT k) t a where
-  tuple :: t -> TermP p (TupleDepth t) (TupleCtx k t) a
+  tuple :: t -> TermP p d (TupleCtx k t) a
 
 -- | The context of a tuple of terms: the union of the contexts of its parts.
 type TupleCtx :: forall k -> Type -> Ctx k
@@ -123,23 +124,14 @@ type family TupleCtx k t where
   TupleCtx k (u, v, w, x, y, z) = TupleCtx k ((u, v, w, x, y), z)
   TupleCtx k t = CtxOf @k t
 
--- | The depth of a tuple of terms: that of its first part.
-type TupleDepth :: Type -> Nat
-type family TupleDepth t where
-  TupleDepth (x, y) = TupleDepth x
-  TupleDepth (x, y, z) = TupleDepth x
-  TupleDepth (w, x, y, z) = TupleDepth w
-  TupleDepth (v, w, x, y, z) = TupleDepth v
-  TupleDepth (u, v, w, x, y, z) = TupleDepth u
-  TupleDepth t = DepthOf t
-
 -- The generic instances are incoherent, as for patterns: a term's type is often still unknown when
 -- the instance is chosen, and a pair defaults to a tensor until its type is known to be an 'Up'.
 
--- | A term is itself.
+-- | A term keeps its context and type, adapting to the depth where it is used.
+-- Variable ids in the context are unchanged.
 instance {-# INCOHERENT #-} (t ~ TermP p d g a) => Tuple p t a where
   {-# INLINE tuple #-}
-  tuple t = t
+  tuple t = recast t
 
 -- | A pair at a tensor is the tensor of its parts.
 instance
@@ -148,7 +140,6 @@ instance
   , a ~ (a1 :** a2)
   , Tuple p x a1
   , Tuple p y a2
-  , TupleDepth y ~ TupleDepth x
   , Merge (TupleCtx k x) (TupleCtx k y)
   )
   => Tuple p (x, y) (a :: SYN k)

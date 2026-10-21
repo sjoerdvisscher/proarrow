@@ -63,6 +63,18 @@ arrowResultNested = toCCC @(F Int) @(F ((Int, Int), Int)) \z -> CCC.do
   (x, y, t) <- (\n -> ((n + 1, n + 2), n + 3)) -< z
   returnA -< (t, x, y)
 
+reuseAcrossBinds :: Int -> ((Int, Int), (Int, Int))
+reuseAcrossBinds = toCCC @(F Int) @(F ((Int, Int), (Int, Int))) \n -> CCC.do
+  x <- (+ 1) -< n
+  y <- (* 2) -< x
+  z <- uncurry (-) -< (x, n)
+  returnA -< ((n, x), (y, z))
+
+captureApplied :: Int -> (Int -> (Int, Int), Int)
+captureApplied = toCCC @(F Int) @(F (Int -> (Int, Int), Int)) \x -> CCC.do
+  f <- CCC.lam @_ @_ @(F Int) (\y -> returnA -< (x, y))
+  returnA -< (f, x)
+
 embeddedSum :: Either Int Bool -> Int
 embeddedSum = toCCC @(F (Either Int Bool)) @(F Int) \s ->
   CCC.caseOf s ((+ 1) -<) ((\v -> if v then 10 else 20) -<)
@@ -84,6 +96,11 @@ test =
     , testProperty "arrow application binds tensor results" $ do
         expect "pair result" (12, 11) (arrowResultPair 10)
         expect "nested result" ((13, 11), 12) (arrowResultNested 10)
+    , testProperty "arrow application reuses variables across binds and nested scopes" $ do
+        let n = 3
+        expect "mixed depths" ((n, n + 1), (2 * (n + 1), 1)) (reuseAcrossBinds n)
+        let (f, original) = captureApplied n
+        expect "captured variable" ((n, 7), n) (f 7, original)
     , testProperty "case analysis on a sum embedded by F" $ do
         expect "left payload" 4 (embeddedSum (Left 3))
         expect "right payload" 10 (embeddedSum (Right True))

@@ -36,7 +36,6 @@ module Proarrow.Tools.CCC
   , split
   , Tuple
   , TupleCtx
-  , TupleDepth
   , recast
   , with
   , exl
@@ -120,9 +119,9 @@ lift f = SMC.lift @a @b (Prod f)
 -- The result object is inferred from the arrow. Use 'lift' for composite result syntax.
 {-# INLINE liftF #-}
 liftF
-  :: forall {k} (a :: SYN (PROD k)) b t
+  :: forall {k} (a :: SYN (PROD k)) b t d
    . (CategoryOf k, Is PR (SMC.Interp a), Tuple (Hom (PROD k)) t a)
-  => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx (PROD k) t) (F b)
+  => (Interp a ~> b) -> t -> Term d (TupleCtx (PROD k) t) (F b)
 liftF f = SMC.liftF @a @(PR b) (Prod f)
 
 infixr 0 -<
@@ -132,9 +131,9 @@ infixr 0 -<
 -- The @Arrows@ extension must be disabled, since it reserves this symbol.
 {-# INLINE (-<) #-}
 (-<)
-  :: forall {k} (a :: SYN (PROD k)) b t
+  :: forall {k} (a :: SYN (PROD k)) b t d
    . (CategoryOf k, Is PR (SMC.Interp a), Tuple (Hom (PROD k)) t a)
-  => (Interp a ~> b) -> t -> Term (TupleDepth t) (TupleCtx (PROD k) t) (F b)
+  => (Interp a ~> b) -> t -> Term d (TupleCtx (PROD k) t) (F b)
 (-<) = liftF @a @b
 
 -- | Inject as the right element of a sum.

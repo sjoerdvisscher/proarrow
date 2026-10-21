@@ -11,8 +11,11 @@
 -- twice uses the term it is given twice, so in a category where copying is not natural, a term to
 -- be shared should be bound to a variable first, with a bind in @do@ notation.
 --
--- A variable's type records the binding depth at which it is used, so a variable used both outside
--- and inside a binder needs 'recast' at the inner use: @x ** lam (\\z -> recast x ** z)@.
+-- Arrow application and tuple construction adapt terms from earlier binding depths automatically.
+-- Other operations on raw terms may need 'recast' when a variable is used both outside and inside
+-- a binder: @x ** lam (\\z -> recast x ** z)@.
+-- A binder's depth still determines its fresh variable ids. If that depth cannot be inferred
+-- for a lambda passed to '(-<)', bind the lambda in @do@ first.
 --
 -- Types are 'SYN' expressions, interpreted in the target category by 'Interp'. Their tensor is a
 -- constructor, so patterns can determine its shape without inverting the target's @**@ type family.
@@ -82,7 +85,6 @@ module Proarrow.Tools.SMC
   , split
   , Tuple
   , TupleCtx
-  , TupleDepth
   , recast
 
     -- ** Closed categories
