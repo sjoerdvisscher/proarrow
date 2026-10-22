@@ -31,6 +31,7 @@
   total read-back for primitive graphs in hypergraph targets.
   `prim0` through `prim3` lift ordinary arrows as boxes with zero to three inputs and one output.
 * `OpenHypergraph` read-back reduces swap cost, including within contraction trees; `layered` exposes parallel tensor layers.
+* An SMC build pipeline demonstrates automatic parallel scheduling, with executable builds and measured timelines.
 * `Proarrow.Tools.ContractionOrder`: `planContraction`, the order to contract a network of factors
   in, the cheaper of numpy's greedy order and a min-fill elimination order (`minFillOrder`). The
   read-back of open hypergraphs, and with it einsum, and tensor networks contract along it.

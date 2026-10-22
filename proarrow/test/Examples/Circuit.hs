@@ -44,8 +44,8 @@ import Props.Hask ()
 
 -- In GHCi, from the repository root:
 --
--- cabal repl test:test
--- :module *Examples.Circuit
+-- cabal repl test
+-- import Examples.Circuit
 -- demoOutputs
 -- writeFile "/tmp/counter.svg" counterPicture
 -- writeFile "/tmp/counter-expanded.svg" expandedCounterPicture

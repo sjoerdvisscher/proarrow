@@ -18,6 +18,7 @@ import Examples.IntComposition qualified as IntComposition
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
 import Examples.OpticDiagrams qualified as OpticDiagrams
+import Examples.Parallel qualified as Parallel
 import Examples.Probabilistic qualified as Probabilistic
 import Examples.Sessions qualified as Sessions
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
@@ -123,6 +124,7 @@ main =
           , Learning.test
           , Probabilistic.test
           , OpticDiagrams.test
+          , Parallel.test
           , Sessions.test
           , Cbpv.test
           , Circuit.test
