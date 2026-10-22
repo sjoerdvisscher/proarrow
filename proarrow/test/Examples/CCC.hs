@@ -17,7 +17,7 @@ import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD, type (&&))
 import Proarrow.Testing (expect)
 import Proarrow.Testing.Laws (testClosed)
-import Proarrow.Tools.CCC (SYN (..), liftF, returnA, toCCC, (!), (**), (-<), type F)
+import Proarrow.Tools.CCC (SYN (..), liftF, returnA, toCCC, toCCC1, (!), (**), (-<), type F)
 import Proarrow.Tools.CCC qualified as CCC
 import Props.Hask ()
 
@@ -54,29 +54,29 @@ liftedNested = toCCC @((F Int :** F Int) :** F Int) @(F ((Int, Int), Int)) \((x,
   liftF returnA ((z, y), x)
 
 arrowResultPair :: Int -> (Int, Int)
-arrowResultPair = toCCC @(F Int) @(F (Int, Int)) \z -> CCC.do
+arrowResultPair = toCCC1 \z -> CCC.do
   (x, y) <- (\n -> (n + 1, n + 2)) -< z
   returnA -< (y, x)
 
 arrowResultNested :: Int -> ((Int, Int), Int)
-arrowResultNested = toCCC @(F Int) @(F ((Int, Int), Int)) \z -> CCC.do
+arrowResultNested = toCCC1 \z -> CCC.do
   (x, y, t) <- (\n -> ((n + 1, n + 2), n + 3)) -< z
   returnA -< (t, x, y)
 
 reuseAcrossBinds :: Int -> ((Int, Int), (Int, Int))
-reuseAcrossBinds = toCCC @(F Int) @(F ((Int, Int), (Int, Int))) \n -> CCC.do
+reuseAcrossBinds = toCCC1 \n -> CCC.do
   x <- (+ 1) -< n
   y <- (* 2) -< x
   z <- uncurry (-) -< (x, n)
   returnA -< ((n, x), (y, z))
 
 captureApplied :: Int -> (Int -> (Int, Int), Int)
-captureApplied = toCCC @(F Int) @(F (Int -> (Int, Int), Int)) \x -> CCC.do
+captureApplied = toCCC1 \x -> CCC.do
   f <- CCC.lam @_ @_ @(F Int) (\y -> returnA -< (x, y))
   returnA -< (f, x)
 
 embeddedSum :: Either Int Bool -> Int
-embeddedSum = toCCC @(F (Either Int Bool)) @(F Int) \s ->
+embeddedSum = toCCC1 \s ->
   CCC.caseOf s ((+ 1) -<) ((\v -> if v then 10 else 20) -<)
 
 embeddedFunction :: (Int -> Int, Int) -> Int

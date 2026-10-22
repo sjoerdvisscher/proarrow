@@ -75,6 +75,7 @@ module Proarrow.Tools.SMC
   , Term
   , TermP
   , toSMC
+  , toSMC1
   , proc
   , lift
   , liftF

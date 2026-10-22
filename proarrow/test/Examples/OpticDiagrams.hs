@@ -61,7 +61,7 @@ import Proarrow.Profunctor.Representable (Rep (..))
 import Proarrow.Testing (check, expect, genNamed)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), Svg (..), W (Wire), node, render)
 import Proarrow.Tools.Optic (OPTICS, optic, opticLegs, runOptics)
-import Proarrow.Tools.SMC (SYN (F, Not, (:**)), annihilate, lift, produce, toSMC, (**), (-<))
+import Proarrow.Tools.SMC (SYN (F, Not, (:**)), annihilate, lift, produce, toSMC, toSMC1, (**), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 import Props.Mat ()
 
@@ -220,7 +220,7 @@ type Logged = KLEISLI (Star (Functor.Prelude ((,) [String])))
 type LoggedWire = Wires '[ '(KL Double, KL Double)] :: OPTICS Logged
 
 loggedProgram :: LoggedWire ~> LoggedWire
-loggedProgram = toSMC @(F LoggedWire) \x -> SMC.do
+loggedProgram = toSMC1 \x -> SMC.do
   y <- f -< x
   g -< y
   where
@@ -231,7 +231,7 @@ loggedProgram = toSMC @(F LoggedWire) \x -> SMC.do
     g = opticLegs @(KL Double) (logged "sin" (\x -> (cos x, sin x))) (logged "sin backward" (uncurry (*)))
 
 derivativeProgram :: Number ~> Number
-derivativeProgram = toSMC @(F Number) \x -> SMC.do
+derivativeProgram = toSMC1 \x -> SMC.do
   z <- square -< x
   sine -< z
 

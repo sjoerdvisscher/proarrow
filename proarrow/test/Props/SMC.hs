@@ -35,7 +35,7 @@ import Proarrow.Profunctor.Instance.Star (unStar, pattern Star)
 import Proarrow.Testing (check, expect, genNamed)
 import Proarrow.Testing.Laws (defaultTestOptions)
 import Proarrow.Tools.Einsum (EinsumType, Tensor, einsum)
-import Proarrow.Tools.SMC (SYN (..), delta, ifThenElse, liftF, returnA, sumOver, toSMC, unit, (*^), (-<), (^*))
+import Proarrow.Tools.SMC (SYN (..), delta, ifThenElse, liftF, returnA, sumOver, toSMC, toSMC1, unit, (*^), (-<), (^*))
 import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Tools.SMC.Examples (hadamardT, matMulT, traceIdxT)
 import Props.FinRel ()
@@ -50,7 +50,7 @@ type M3 = M Nat3 :: MatK Int
 
 -- | The transpose in index notation: the entry at @j@ and @i@ is the entry of @f@ at @i@ and @j@.
 transposeT :: Mat M2 M3 -> Mat M3 M2
-transposeT f = toSMC @(F M3) \j -> sumOver @(F M2) \i -> delta (f -< i) j *^ i
+transposeT f = toSMC1 \j -> sumOver @(F M2) \i -> delta (f -< i) j *^ i
 
 -- | A morphism as a tensor with an index for its input and one for its output.
 name :: forall {k} (a :: k) b. (Hypergraph k) => a ~> b -> Tensor '[a, b]
@@ -255,8 +255,8 @@ test =
             let actual = toSMC @(F F2 :** F F3) @(F (F3 ** F4)) \(x, y) ->
                   (f ** g) -< (x, y)
             expect "tensor application" (f ** g) actual
-            expect "term application" f (toSMC @(F F2) @(F F3) (\x -> f -< x))
-            let pipeline = toSMC @(F F2) @(F F4) \x -> SMC.do
+            expect "term application" f (toSMC1 (\x -> f -< x))
+            let pipeline = toSMC1 \x -> SMC.do
                   y <- f -< x
                   z <- liftF g y
                   returnA -< z
@@ -265,7 +265,7 @@ test =
             f <- genNamed @(F2 ~> (F2 ** F3)) "f"
             g <- genNamed @(F2 ~> F4) "g"
             h <- genNamed @(F3 ~> F2) "h"
-            let actual = toSMC @(F F2) @(F (F4 ** F2)) \z -> SMC.do
+            let actual = toSMC1 \z -> SMC.do
                   (x, y) <- f -< z
                   u <- g -< x
                   v <- h -< y
@@ -296,8 +296,8 @@ test =
         [ testProperty "embedded unit results act as scalars on either side" $ do
             s <- genNamed @((Unit :: MatK Int) ~> Unit) "scalar"
             f <- genNamed @(M2 ~> M3) "f"
-            let left = toSMC @(F M2) @(F M3) \x -> (s -< unit) *^ (f -< x)
-                right = toSMC @(F M2) @(F M3) \x -> (f -< x) ^* (s -< unit)
+            let left = toSMC1 \x -> (s -< unit) *^ (f -< x)
+                right = toSMC1 \x -> (f -< x) ^* (s -< unit)
             expect "left scalar" (unMat (leftUnitor . (s ** f) . leftUnitorInv)) (unMat left)
             expect "right scalar" (unMat (rightUnitor . (f ** s) . rightUnitorInv)) (unMat right)
         , testProperty "matrix multiplication is composition (2, 3, 2)" $ do

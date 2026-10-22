@@ -40,7 +40,7 @@ import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Promonad.Cont (Cont (..))
 import Proarrow.Testing (check, genNamed)
 import Proarrow.Tools.Diagrams.Svg qualified as Svg
-import Proarrow.Tools.SMC (SYN (F, Not, (:&&), (:**)), annihilate, cont, ret, toSMC, (-<), (|>), type (:##))
+import Proarrow.Tools.SMC (SYN (F, Not, (:&&), (:**)), annihilate, cont, ret, toSMC, toSMC1, (-<), (|>), type (:##))
 import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Tools.SMC.Examples
   ( bothWaysT
@@ -120,7 +120,7 @@ recCopyT = toSMC @(F Int) @(F [Int] :** F [Int]) \a -> SMC.do
 
 -- | A @rec@ block with a variable that nothing uses, which is discarded.
 recDropT :: Int -> [Int]
-recDropT = toSMC @(F Int) @(F [Int]) \a -> SMC.do
+recDropT = toSMC1 \a -> SMC.do
   rec (_b, u) <- (\(x, us) -> (take 3 us, x : us)) -< (a, u)
   u
 

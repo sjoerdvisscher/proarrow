@@ -32,7 +32,7 @@ import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (SYN (..), Term, toSMC, unit, (*^), (-<))
+import Proarrow.Tools.SMC (SYN (..), Term, toSMC, toSMC1, unit, (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * Programs
@@ -71,7 +71,7 @@ coin p q = call (flipP p q)
 -- | The test of the paper's running example on a patient: positive with probability 0.99 when the
 -- patient has the disease, and with probability 0.02 when not. Each call flips its own coins.
 diseaseTest :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> b ~> b
-diseaseTest p = toSMC @(F b) @(F b) \z -> orT p (andT p z (coin p 0.99)) (andT p (notT p z) (coin p 0.02))
+diseaseTest p = toSMC1 \z -> orT p (andT p z (coin p 0.99)) (andT p (notT p z) (coin p 0.02))
 
 -- | Whether a patient has the disease, which one in ten thousand have, given one positive and one
 -- negative test.

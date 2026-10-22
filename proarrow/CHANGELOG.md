@@ -6,6 +6,7 @@
   * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
   * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`;
     `Term` is `TermP (~>)`.
+  * `toSMC1` and `toCCC1` infer embedded input and output objects from the surrounding morphism type.
   * Tuple patterns, binds and tuples of five and six; `liftF` applies a morphism to a term or
     tuple of terms and embeds its result by `F`, allowing the result object to be inferred.
     Its infix form `(-<)` and `returnA`, an alias for the identity morphism, mirror

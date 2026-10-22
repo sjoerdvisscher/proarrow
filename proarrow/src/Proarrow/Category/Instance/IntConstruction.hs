@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (\\))
-import Proarrow.Tools.SMC (SYN (F, (:**)), lift, toSMC, (**), (-<))
+import Proarrow.Tools.SMC (SYN (F, (:**)), lift, toSMC, toSMC1, (**), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 data INT k = I k k
@@ -39,7 +39,7 @@ isoToInt :: forall {k} (a :: k) b. (TracedMonoidal k) => (a ~> b) -> (b ~> a) ->
 isoToInt f g = Int (swap @k @b @a . (f M.** g)) \\ f \\ g
 
 fromInt :: forall {k} (a :: k) b m. (TracedMonoidal k) => (I a m ~> I b m) -> a ~> b
-fromInt (Int f) = toSMC @(F a) \a -> SMC.do
+fromInt (Int f) = toSMC1 \a -> SMC.do
   let f' = lift @(F a :** F m) @(F m :** F b) f
   rec (m, b) <- f' (a ** m)
   b

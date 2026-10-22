@@ -83,7 +83,7 @@ rotT = toSMC @(F a :** F b :** F c) \(a, b, c) -> b ** c ** a
 -- >>> traceT @Int @[Int] @[Int] (\(a, u) -> (take 3 u, a : u)) 1
 -- [1,1,1]
 traceT :: forall {k} (a :: k) b u. (TracedMonoidal k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
-traceT h = toSMC @(F a) \a -> SMC.do
+traceT h = toSMC1 \a -> SMC.do
   rec (b, u) <- lift @(F a :** F u) @(F b :** F u) h (a ** u)
   b
 
@@ -93,12 +93,12 @@ traceT h = toSMC @(F a) \a -> SMC.do
 -- >>> loopT @Int @[Int] @[Int] (\(a, u) -> (take 3 u, a : u)) 1
 -- [1,1,1]
 loopT :: forall {k} (a :: k) b u. (TracedMonoidal k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
-loopT h = toSMC @(F a) \a -> loop @(F u) @(F b) \u -> recast (h -< (a, u))
+loopT h = toSMC1 \a -> loop @(F u) @(F b) \u -> recast (h -< (a, u))
 
 -- | A trace from the duality alone, so for any compact closed category: feed @u@ in along one
 -- end of a new pair and join its new value with the other end.
 loopCC :: forall {k} (a :: k) b u. (CompactClosed k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
-loopCC h = toSMC @(F a) \a -> SMC.do
+loopCC h = toSMC1 \a -> SMC.do
   (u, u') <- produce
   (b, v) <- lift @(F a :** F u) @(F b :** F u) h (a ** u)
   () <- annihilate u' v
@@ -108,7 +108,7 @@ loopCC h = toSMC @(F a) \a -> SMC.do
 -- zigzag law it is the identity. The input is older than the pair, so it sits to the left of it,
 -- and the join needs a swap.
 snakeT :: forall {k} (a :: k). (CompactClosed k, Ob a) => a ~> a
-snakeT = toSMC @(F a) \x -> SMC.do
+snakeT = toSMC1 \x -> SMC.do
   (a, a') <- produce
   () <- annihilate a' x
   a
@@ -191,7 +191,7 @@ weakDistT = toSMC @(F a :** (F b :## F c)) @((F a :** F b) :## F c) \(a, bc) ->
 -- | Composition in index notation, as matrix multiplication: the entry at @i@ and @k@ is the sum over
 -- @j@ of the entries of @f@ and @g@. It is @g . f@.
 matMulT :: forall {k} (a :: k) b c. (SymMonoidal k, Frobenius b, Frobenius c, Ob a) => (a ~> b) -> (b ~> c) -> a ~> c
-matMulT f g = toSMC @(F a) \i -> sumOver @(F c) \k -> sumOver @(F b) \j ->
+matMulT f g = toSMC1 \i -> sumOver @(F c) \k -> sumOver @(F b) \j ->
   delta (f -< i) j *^ delta (g -< j) k *^ k
 
 -- | The trace in index notation: the sum of the diagonal entries.
@@ -200,7 +200,7 @@ traceIdxT f = toSMC @I \() -> sumOver @(F a) \i -> delta (f -< i) i
 
 -- | The entrywise product of two morphisms: two boxes that produce the same index.
 hadamardT :: forall {k} (a :: k) b. (SymMonoidal k, Frobenius a, Frobenius b) => (a ~> b) -> (a ~> b) -> a ~> b
-hadamardT f g = toSMC @(F a) \i -> sumOver @(F b) \j ->
+hadamardT f g = toSMC1 \i -> sumOver @(F b) \j ->
   delta (f -< i) j *^ delta (g -< i) j *^ j
 
 -- | The snake on the dual: join the input with the first end of a new pair, and continue with the

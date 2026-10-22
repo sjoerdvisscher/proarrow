@@ -27,6 +27,7 @@ module Proarrow.Tools.CCC
     -- ** Products
   , Term
   , toCCC
+  , toCCC1
   , lift
   , liftF
   , (-<)
@@ -105,6 +106,16 @@ toCCC
    . (HasProducts k, Binds (~>) 0 '[] a b t cont)
   => (t -> cont) -> Interp a ~> Interp b
 toCCC f = case SMC.toSMC @a @b f of Prod g -> g
+
+-- | 'toCCC' with both boundary objects embedded by 'F'. The surrounding morphism type
+-- determines the input and output objects, so their type applications can be omitted.
+-- Use 'toCCC' when a boundary needs other syntax, such as a product or function type.
+{-# INLINE toCCC1 #-}
+toCCC1
+  :: forall {k} (a :: k) b t cont
+   . (HasProducts k, Binds (~>) 0 '[] (F a) (F b) t cont)
+  => (t -> cont) -> a ~> b
+toCCC1 = toCCC @(F a) @(F b)
 
 -- | Lift a base-category arrow onto terms. The type expressions can be composite, as in SMC's
 -- 'Proarrow.Tools.SMC.lift'; use type applications when their interpretations do not determine them.

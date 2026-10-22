@@ -26,6 +26,16 @@ toSMC
   -> Interp a ~> Interp b
 toSMC = proc @a @b
 
+-- | 'toSMC' with both boundary objects embedded by 'F'. The surrounding morphism type
+-- determines the input and output objects, so their type applications can be omitted.
+-- Use 'toSMC' when a boundary needs other syntax, such as a function or computation type.
+{-# INLINE toSMC1 #-}
+toSMC1
+  :: forall {k} (a :: k) b t cont
+   . (Monoidal k, Binds (~>) 0 '[] (F a) (F b) t cont)
+  => (t -> cont) -> a ~> b
+toSMC1 = toSMC @(F a) @(F b)
+
 -- | Compile a function on terms to an arrow of the promonad @p@, as 'toSMC' does for the morphisms
 -- of the category, which are the case @p = ('~>')@. The terms' computations are arrows of @p@,
 -- lifted with '(-<)' or 'lift', and run in the order they are written; variables are values,
