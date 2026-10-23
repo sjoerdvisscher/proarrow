@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Differentiable maps, compared at random points: arbitrary arrows are dense layers with a

@@ -132,6 +132,7 @@ test =
         let rebuilt :: Crossing
             rebuilt = mkSquare (runSquare constructorCrossing)
             values = [Nothing, Just False, Just True]
+            payload :: (Star Maybe :.: Star []) (Maybe Bool) Bool
             payload = Star (fmap not) :.: Star (: xs)
         case (constructorCrossing, rebuilt) of
           (Sq original, Sq restored) ->

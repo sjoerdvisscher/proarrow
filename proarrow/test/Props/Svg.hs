@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The SVG diagrams mean what the Dot diagrams they carry mean, so their laws are checked with

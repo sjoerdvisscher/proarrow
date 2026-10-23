@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Tensor networks with integer entries, compared by their entries.

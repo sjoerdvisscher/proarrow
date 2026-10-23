@@ -15,6 +15,11 @@ and string diagrams. Choose a starting point:
 - [Programming with monoidal categories](https://github.com/sjoerdvisscher/proarrow/wiki/Programming-with-monoidal-categories):
   build quantum circuits and audio feedback with `Proarrow.Tools.SMC`, then explore traces,
   functions, copying, and duals.
+- [A clocked digital circuit](https://github.com/sjoerdvisscher/proarrow/wiki/A-clocked-digital-circuit):
+  follow a four-bit counter from named wires to gates, simulated waveforms, and Verilog.
+- [From a build pipeline to a parallel schedule](https://github.com/sjoerdvisscher/proarrow/wiki/From-a-build-pipeline-to-a-parallel-schedule):
+  describe a build once, expose independent jobs through graph read-back, and run and measure
+  the resulting concurrent schedule.
 - [Producers, consumers and sessions](https://github.com/sjoerdvisscher/proarrow/wiki/Producers-consumers-and-sessions):
   compare categorical morphisms, session processes, the μμ̃-calculus, and SMC terms on the same
   examples, then connect them to call by push value.

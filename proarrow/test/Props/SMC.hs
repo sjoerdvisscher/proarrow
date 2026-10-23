@@ -15,7 +15,6 @@ import Data.Foldable (toList)
 import Data.Map.Strict qualified as M
 import Data.Type.Nat (Nat (..), Nat2, Nat3)
 import Data.Vec.Lazy (Vec (..))
-import GHC.Exts (fromList, fromListN)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (TestOptions (..), testProperty, testPropertyWith)
 import Prelude hiding (id, mappend, mempty, (**), (.))

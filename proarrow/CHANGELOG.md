@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.0.0 -- 2026-10-23
+
 * `Proarrow.Tools.SMC`:
   * `Proarrow.Tools.CCC` now uses SMC syntax, contexts, patterns and binders in `PROD k`.
   * `TermP p`, terms whose computations are arrows of a promonad `p`, compiled by `proc`;
@@ -46,6 +48,7 @@
   backward passes into one computation.
 * `Proarrow.Category.Instance.Circuit` and `Simulator`: typed digital circuits with clocked
   simulation and Verilog generation, plus an SMC counter demo.
+* Wiki walkthroughs of the digital counter and parallel build examples, linked from the README.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
 * SVG diagrams declare UTF-8 encoding for standalone viewers.
 * `Proarrow.Squares`: orient data flow rightward, add matching horizontal/vertical helpers and pointwise evaluation,

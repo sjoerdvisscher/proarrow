@@ -443,24 +443,24 @@ counit =
 -- | A square introducing an effect @r@ between representable data shapes @f@ and @g@,
 -- with no incoming effect. Optics consume and produce squares of this same shape.
 --
--- > +-----------+
+-- > X-----------X
 -- > |           |
 -- > f>----@---->g
 -- > |     |     |
--- > +-----r-----+
-type InputSquare :: (j +-> k) -> (x +-> k) -> (x +-> j) -> Type
+-- > J-----r-----K
+type InputSquare :: (k +-> j) -> (x +-> j) -> (x +-> k) -> Type
 type InputSquare r f g = Sq Nil (r ::: Nil) (f ::: Nil) (g ::: Nil)
 
 -- | Absorb a general witness pair around an effect with 'proact'. All three incoming
 -- profunctors are vertical or diagonal wires. No representability is required of @p@ or @q@.
 --
--- > +-p-+-r-+-q-+
--- > |  \  |  /  |
--- > |   @@@@@   |
+-- > J--p--r--q--K
+-- > |   \ | /   |
+-- > |    @@@    |
 -- > |     |     |
--- > +-----r-----+
+-- > J-----r-----K
 proSquare
-  :: forall w r p q
+  :: forall {j} {k} w (r :: k +-> j) (p :: j +-> j) (q :: k +-> k)
    . (Prostrong w r, w p q, Profunctor p, Profunctor q)
   => Sq (q ::: r ::: p ::: Nil) (r ::: Nil) Nil Nil
 proSquare =
@@ -478,7 +478,7 @@ proSquare =
 -- lower square absorbs their three outgoing effects. Residual profunctors stay
 -- vertical or diagonal; only representable data wires run horizontally:
 --
--- > +-----+-----+-----+
+-- > X-----+-----+-----X
 -- > |     |     |     |
 -- > s>-@->a>-@->b>-@->t
 -- > |  |  |  |  |  |  |
@@ -486,12 +486,12 @@ proSquare =
 -- > |   \    |    /   |
 -- > |    @@@@@@@@@    |
 -- > |        |        |
--- > +--------r--------+
+-- > J--------r--------K
 --
 -- The outer boundary is another input-shaped square, now with data legs @s@ and @t@,
 -- so it can be used as the input to another optic.
 opticSquare
-  :: forall w r p q s t a b
+  :: forall {j} {k} {x} w (r :: k +-> j) (p :: j +-> j) (q :: k +-> k) (s :: x +-> j) (t :: x +-> k) (a :: x +-> j) (b :: x +-> k)
    . (Prostrong w r, w p q, Profunctor p, Profunctor q)
   => InputSquare p s a -> InputSquare q b t -> InputSquare r a b -> InputSquare r s t
 opticSquare unpack rebuild input =

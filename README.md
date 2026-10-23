@@ -13,3 +13,7 @@ The [wiki](https://github.com/sjoerdvisscher/proarrow/wiki) has worked examples 
 guides to monoidal terms, sessions, optics, and tensor networks. Start with
 [Einsum and hypergraph categories](https://github.com/sjoerdvisscher/proarrow/wiki/Einsum-and-hypergraph-categories)
 for a tour from matrix operations to string diagrams and tensor contraction.
+
+For executable examples, follow [a clocked digital circuit](https://github.com/sjoerdvisscher/proarrow/wiki/A-clocked-digital-circuit)
+from gates to simulation and Verilog, or turn [a build pipeline into a parallel schedule](https://github.com/sjoerdvisscher/proarrow/wiki/From-a-build-pipeline-to-a-parallel-schedule)
+with diagrams and a measured execution timeline.

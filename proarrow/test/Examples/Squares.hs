@@ -148,9 +148,9 @@ rebuildBoth =
 -- 'unpackBoth' and 'rebuildBoth' compose the surrounding legs with squares as well.
 -- Agreement with 'entries' is the composition law for 'Prostrong'.
 --
--- > +-p-+-r-+-q-+
--- > |  \  |  /  |
--- > |   @@@@@   |
+-- > +--p--r--q--+
+-- > |   \ | /   |
+-- > |    @@@    |
 -- > |     |     |
 -- > +-----r-----+
 fused :: forall r a b. (Prostrong TravFl r) => Cell r a b -> Cell r [Entry a] [Entry b]

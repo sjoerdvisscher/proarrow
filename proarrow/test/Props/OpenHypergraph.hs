@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Open hypergraphs with wires sorted by objects of 'Mat'. Equality is 'isomorphic', so the laws

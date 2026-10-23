@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedLists #-}
+
 -- | Contraction plans: each factor is used once, each contraction joins two parts that share a node
 -- that may be contracted, and no two results share such a node.
 module Props.ContractionOrder (test) where
