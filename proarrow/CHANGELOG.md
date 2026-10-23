@@ -48,6 +48,9 @@
   simulation and Verilog generation, plus an SMC counter demo.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
 * SVG diagrams declare UTF-8 encoding for standalone viewers.
+* `Proarrow.Squares`: orient data flow rightward, add matching horizontal/vertical helpers and pointwise evaluation,
+  and explore optics as square programs.
+* Applicative `Star (Prelude f)` effects now support `Prostrong TravFl`.
 * `Proarrow.Object`: `withKnownAppend` and `withKnownAssoc`, the `KnownListOf` evidence of appended lists.
 * `Proarrow.Testing`: `TestableType` and `TestingEqShow` for `Corep`.
 

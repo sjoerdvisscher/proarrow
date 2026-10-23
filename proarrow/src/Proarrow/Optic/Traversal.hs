@@ -124,6 +124,10 @@ instance (MonTravFl f g, MonTravFl f' g') => MonTravFl (f :.: f') (g' :.: g) whe
 type Traversal (s :: k) (t :: k) a b = Optic (Prostrong TravFl) s t a b
 type Traversal' s a = Traversal s s a a
 
+-- | An applicative Haskell effect absorbs traversal witnesses through 'travP'.
+instance (P.Applicative f) => Prostrong TravFl (Star (Prelude f)) where
+  proact (p :.: r :.: q) = travP p q r
+
 -- | Distribute any 'StrongDistributiveProfunctor' (not only a @Star f@, the van-Laarhoven shape)
 -- through any optic that is at least a 'Traversal', by handing it to 'travP'.
 --

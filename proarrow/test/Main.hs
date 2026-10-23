@@ -22,6 +22,7 @@ import Examples.Parallel qualified as Parallel
 import Examples.Probabilistic qualified as Probabilistic
 import Examples.Sessions qualified as Sessions
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
+import Examples.Squares qualified as SquarePrograms
 import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
@@ -59,6 +60,7 @@ import Props.Sheaf.Collage qualified as SheafCollage
 import Props.Simplex qualified as Simplex
 import Props.Simulator qualified as Simulator
 import Props.Span qualified as Span
+import Props.Squares qualified as Squares
 import Props.Svg qualified as Svg
 import Props.TensorNetwork qualified as TensorNetwork
 import Props.ZX qualified as ZX
@@ -101,6 +103,7 @@ main =
           , Simplex.test
           , Simulator.test
           , SMC.test
+          , Squares.test
           , Span.test
           , Svg.test
           , TensorNetwork.test
@@ -126,6 +129,7 @@ main =
           , OpticDiagrams.test
           , Parallel.test
           , Sessions.test
+          , SquarePrograms.test
           , Cbpv.test
           , Circuit.test
           , Toffoli.test

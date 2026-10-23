@@ -69,7 +69,7 @@ type instance Fold (p ::: Nil) = p
 type instance Fold (p ::: (q ::: ps)) = Fold (q ::: ps) :.: p
 
 -- | Which per-element property a 'SPath' witnesses. @Tight@ plays the role of the tight
--- (vertical, 'Representable') legs of the @Prof@ equipment; a later @Cotight@ would do
+-- ('Representable') legs of the @Prof@ equipment; a later @Cotight@ would do
 -- the same for 'Proarrow.Profunctor.Corepresentable.Corepresentable' legs.
 data Tag = Prof | Tight
 
@@ -122,10 +122,10 @@ appendPath (SCons ps) qs = SCons (appendPath ps qs)
 withAssoc :: forall ps qs rs t r. (IsOb t ps) => ((Assoc ps qs rs) => r) -> r
 withAssoc r = r
 
--- | A well-formed (horizontal) path: every element is a plain 'Profunctor'.
+-- | A well-formed profunctor path: every element is a plain 'Profunctor'.
 type IsPath = IsOb Prof
 
--- | A tight (vertical) path: every element is 'Representable'.
+-- | A tight path: every element is 'Representable'.
 type IsTight = IsOb Tight
 
 -- | A tight path is, in particular, a well-formed path ('Representable' implies
