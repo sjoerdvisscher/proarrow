@@ -71,6 +71,8 @@ type Word4S b = F b :** F b :** F b :** F b
 increment :: Word4 ~> Word4
 increment = incrementWith @Bit (constant True) xorGate andGate
 
+-- Inlining these SMC builders at each target makes GHC 9.12 spend excessive time simplifying.
+{-# NOINLINE incrementWith #-}
 incrementWith
   :: forall {k} (b :: k)
    . (CocommutativeComonoid b)
@@ -88,6 +90,8 @@ incrementWith high xorG andG = toSMC @(Word4S b) @(Word4S b) \(a, b, c, d) -> SM
 mux4 :: Bit ** Word4 ** Word4 ~> Word4
 mux4 = mux4With @Bit mux
 
+-- Keep the SMC expansion shared, as for incrementWith.
+{-# NOINLINE mux4With #-}
 mux4With
   :: forall {k} (b :: k)
    . (CocommutativeComonoid b)
