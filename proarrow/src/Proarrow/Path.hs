@@ -71,7 +71,7 @@ type instance Fold (p ::: (q ::: ps)) = Fold (q ::: ps) :.: p
 -- | Which per-element property a 'SPath' witnesses. @Tight@ plays the role of the tight
 -- ('Representable') legs of the @Prof@ equipment; a later @Cotight@ would do
 -- the same for 'Proarrow.Profunctor.Corepresentable.Corepresentable' legs.
-data Tag = Prof | Tight
+data Tag = Loose | Tight
 
 -- | The per-element constraint a 'Tag' stands for. @c@ is applied homogeneously at every
 -- element of a path, each of a (potentially) different @i +-> j@ kind. That is an
@@ -80,7 +80,7 @@ data Tag = Prof | Tight
 -- "Proarrow.Bicategory.Sub"'s @IsOb@\/@SUBCAT@ tag mechanism.
 type family Sat (t :: Tag) (p :: i +-> j) :: Constraint
 
-type instance Sat Prof p = Profunctor p
+type instance Sat Loose p = Profunctor p
 type instance Sat Tight p = Representable p
 
 -- | Runtime witness that every element of a 'Path' satisfies @'Sat' t@. One witness type serves
@@ -123,7 +123,7 @@ withAssoc :: forall ps qs rs t r. (IsOb t ps) => ((Assoc ps qs rs) => r) -> r
 withAssoc r = r
 
 -- | A well-formed profunctor path: every element is a plain 'Profunctor'.
-type IsPath = IsOb Prof
+type IsPath = IsOb Loose
 
 -- | A tight path: every element is 'Representable'.
 type IsTight = IsOb Tight
@@ -131,7 +131,7 @@ type IsTight = IsOb Tight
 -- | A tight path is, in particular, a well-formed path ('Representable' implies
 -- 'Profunctor'). Needed explicitly because different 'Tag's don't otherwise know
 -- anything about each other.
-weakenTight :: SPath Tight ps -> SPath Prof ps
+weakenTight :: SPath Tight ps -> SPath Loose ps
 weakenTight SNil = SNil
 weakenTight (SCons ps) = SCons (weakenTight ps)
 
@@ -141,7 +141,7 @@ withObAppend SNil r = r
 withObAppend (SCons ps) r = withObAppend @t @_ @qs ps r
 
 -- | Extract 'Profunctor' evidence for @'Fold' ps@ from a runtime witness.
-withFoldOb :: SPath Prof ps -> ((Profunctor (Fold ps)) => r) -> r
+withFoldOb :: SPath Loose ps -> ((Profunctor (Fold ps)) => r) -> r
 withFoldOb SNil r = r
 withFoldOb (SCons SNil) r = r
 withFoldOb (SCons cs@(SCons _)) r = withFoldOb cs r
@@ -157,7 +157,7 @@ withFoldRep (SCons cs@(SCons _)) r = withFoldRep cs r
 
 -- | Combine the composites of two adjacent paths into the composite of their
 -- concatenation.
-concatFold :: SPath Prof as -> SPath Prof bs -> Fold bs :.: Fold as :~> Fold (as +++ bs)
+concatFold :: SPath Loose as -> SPath Loose bs -> Fold bs :.: Fold as :~> Fold (as +++ bs)
 concatFold SNil bs = withFoldOb bs rightUnitor
 concatFold (SCons SNil) bs = case bs of
   SNil -> leftUnitor
@@ -165,7 +165,7 @@ concatFold (SCons SNil) bs = case bs of
 concatFold (SCons cs@(SCons _)) bs = (concatFold cs bs `o` idN) . associatorInv
 
 -- | The inverse of 'concatFold'.
-splitFold :: SPath Prof as -> SPath Prof bs -> Fold (as +++ bs) :~> Fold bs :.: Fold as
+splitFold :: SPath Loose as -> SPath Loose bs -> Fold (as +++ bs) :~> Fold bs :.: Fold as
 splitFold SNil bs = withFoldOb bs rightUnitorInv
 splitFold (SCons SNil) bs = case bs of
   SNil -> leftUnitorInv
@@ -174,10 +174,10 @@ splitFold (SCons cs@(SCons _)) bs = associator . (splitFold cs bs `o` idN)
 
 -- | Apply a 2-cell inside a concatenation, on the right.
 whiskerL
-  :: SPath Prof xs -> SPath Prof ys -> SPath Prof zs -> Fold ys :~> Fold zs -> Fold (xs +++ ys) :~> Fold (xs +++ zs)
+  :: SPath Loose xs -> SPath Loose ys -> SPath Loose zs -> Fold ys :~> Fold zs -> Fold (xs +++ ys) :~> Fold (xs +++ zs)
 whiskerL xs ys zs f = concatFold xs zs . (f `o` idN) . splitFold xs ys
 
 -- | Apply a 2-cell inside a concatenation, on the left.
 whiskerR
-  :: SPath Prof xs -> SPath Prof ys -> SPath Prof zs -> Fold xs :~> Fold ys -> Fold (xs +++ zs) :~> Fold (ys +++ zs)
+  :: SPath Loose xs -> SPath Loose ys -> SPath Loose zs -> Fold xs :~> Fold ys -> Fold (xs +++ zs) :~> Fold (ys +++ zs)
 whiskerR xs ys zs f = concatFold ys zs . (idN `o` f) . splitFold xs zs

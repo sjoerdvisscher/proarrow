@@ -160,6 +160,24 @@ instance (Corepresentable p, DecidableProfunctor (Hom k)) => DecidableProfunctor
 mapRepCostar :: (Representable p, Representable q) => p ~> q -> RepCostar q ~> RepCostar p
 mapRepCostar (Prof n) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (repUniv @_ @a)))
 
+-- | Re-encode a representable profunctor using 'RepCostar' followed by 'CorepStar'.
+-- Inverse to 'unwrapRepresentable', by the representability laws.
+wrapRepresentable :: (Representable p) => p :~> CorepStar (RepCostar p)
+wrapRepresentable p = tabulate (index p) \\ p
+
+-- | Cancel 'CorepStar' after 'RepCostar', recovering the original profunctor.
+unwrapRepresentable :: (Representable p) => CorepStar (RepCostar p) :~> p
+unwrapRepresentable p = tabulate (index p) \\ p
+
+-- | Re-encode a corepresentable profunctor using 'CorepStar' followed by 'RepCostar'.
+-- Inverse to 'unwrapCorepresentable', by the corepresentability laws.
+wrapCorepresentable :: (Corepresentable p) => p :~> RepCostar (CorepStar p)
+wrapCorepresentable p = cotabulate (coindex p) \\ p
+
+-- | Cancel 'RepCostar' after 'CorepStar', recovering the original profunctor.
+unwrapCorepresentable :: (Corepresentable p) => RepCostar (CorepStar p) :~> p
+unwrapCorepresentable p = cotabulate (coindex p) \\ p
+
 flipRep :: forall p. (Representable p) => (~>) :~> p -> RepCostar p :~> (~>)
 flipRep n p = coindex p . index (n (src p))
 

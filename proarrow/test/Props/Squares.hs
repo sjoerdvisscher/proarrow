@@ -6,7 +6,10 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude
 
+import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Instance.Bool (BOOL, Booleans (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT)
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core ((:~>), type (+->))
 import Proarrow.Functor qualified as F
@@ -14,19 +17,34 @@ import Proarrow.Limit.BinaryProduct (Product)
 import Proarrow.Optic (ExOptic (..), Flip)
 import Proarrow.Optic.Getter (GetterFl (..))
 import Proarrow.Optic.Lens (LensFl)
-import Proarrow.Path (Path (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Path (Path (..), leftUnitor, rightUnitor)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (coindex))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Costar (Costar, unCostar, pattern Costar)
+import Proarrow.Profunctor.Instance.HaskValue (HaskValue)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Ran qualified as Ran
+import Proarrow.Profunctor.Instance.Rift qualified as Rift
 import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
+import Proarrow.Profunctor.Representable
+  ( CorepStar (..)
+  , Rep (..)
+  , RepCostar (..)
+  , Representable (..)
+  , mapCorepStar
+  , unwrapCorepresentable
+  , unwrapRepresentable
+  , wrapCorepresentable
+  , wrapRepresentable
+  )
 import Proarrow.Squares
   ( InputSquare
   , Sq (..)
   , fromTop
   , hArr
+  , mapSq
   , mkSquare
   , opticSquare
   , proSquare
@@ -36,6 +54,8 @@ import Proarrow.Squares
   , (===)
   , (|||)
   )
+import Proarrow.Squares.Kan qualified as K
+import Proarrow.Squares.Limit qualified as L
 import Proarrow.Testing (expect, genNamed)
 import Props.Hask ()
 
@@ -89,6 +109,25 @@ mixedInput = mkSquare (\(Id f) -> Star (\xs -> F.Prelude (Nothing : map (Just . 
 type BoolShape :: () +-> Type
 type BoolShape = Rep (Constant Bool)
 
+-- Constant terminal weights recover binary products and coproducts.
+type BinaryWeight :: COPRODUCT () () +-> ()
+type BinaryWeight = TerminalProfunctor
+
+type BinaryDiagram :: COPRODUCT () () +-> Type
+type BinaryDiagram = Rep (Constant Bool)
+
+type Reader :: Type +-> Type
+type Reader = Star ((->) Bool)
+
+type BinaryCoWeight :: () +-> COPRODUCT () ()
+type BinaryCoWeight = TerminalProfunctor
+
+type BinaryCoDiagram :: Type +-> COPRODUCT () ()
+type BinaryCoDiagram = Corep (Constant Bool)
+
+type ProductLeft :: Type +-> Type
+type ProductLeft = Costar ((,) Bool)
+
 identityLeg :: InputSquare Id BoolShape BoolShape
 identityLeg = mkSquare \_ -> Id id
 
@@ -127,6 +166,21 @@ test =
             run sq = map (unStar (runSquare sq (Star f))) values
         expect "traverse" (map (traverse f) values) (run crossing)
         expect "constructor" (run constructorCrossing) (run crossing)
+    , testProperty "mapSq transforms a square with four nontrivial boundaries" $ do
+        xs <- genNamed @[Bool] "xs"
+        let transformed :: Crossing
+            transformed =
+              mapSq
+                ( \(Prof n) -> Prof \p -> case n p of
+                    Star effects :.: g -> Star (reverse . effects) :.: g
+                )
+                crossing
+            f b = b : xs
+            values = [Nothing, Just False, Just True]
+        expect
+          "reversed traversal results"
+          (map (reverse . traverse f) values)
+          (map (unStar (runSquare transformed (Star f))) values)
     , testProperty "mkSquare . runSquare preserves the constructor payload" $ do
         xs <- genNamed @[Bool] "xs"
         let rebuilt :: Crossing
@@ -178,4 +232,133 @@ test =
             program = opticSquare @(Flip GetterFl) forgetLeg identityLeg focus
         in case runSquare program (Id Unit) of
              ExOptic @p @q _ right -> expect "review" True (getP @q @p right False)
+    , testProperty "Ran square factorization satisfies evaluation and uniqueness" $ do
+        xs <- genNamed @[Bool] "xs"
+        let cone :: Sq (Id ::: Star [] ::: Nil) (Star [] ::: Nil) Nil Nil
+            cone = Sq rightUnitor
+            factored = K.ranUniv cone
+            rebuilt = K.ranUniv (K.ran @Id @(Star []))
+            value :: Star [] Bool Bool
+            value = Star (const xs)
+        case (factored, rebuilt, K.ran @Id @(Star [])) of
+          (Sq u, Sq v, Sq ev) -> do
+            expect "evaluation" (map not xs) (unStar (ev (u value :.: Id not)) False)
+            expect "uniqueness" (map not xs) (unStar (Ran.runRan (Id not) (v (u value))) False)
+    , testProperty "Rift square factorization satisfies evaluation and uniqueness" $ do
+        xs <- genNamed @[Bool] "xs"
+        let cone :: Sq (Star [] ::: Id ::: Nil) (Star [] ::: Nil) Nil Nil
+            cone = Sq leftUnitor
+            value :: Star [] Bool Bool
+            value = Star (: xs)
+        case (K.riftUniv cone, K.riftUniv (K.rift @Id @(Star [])), K.rift @Id @(Star [])) of
+          (Sq u, Sq v, Sq ev) -> do
+            expect "evaluation" (True : xs) (unStar (ev (Id not :.: u value)) False)
+            expect "uniqueness" (True : xs) (unStar (Rift.runRift (Id not) (v (u value))) False)
+    , testProperty "pointwise Ran agrees with limits and factors cones" $ do
+        xs <- genNamed @[Bool] "xs"
+        let cone :: Sq (Id ::: Nil) Nil (Star [] ::: Nil) (Star [] ::: Nil)
+            cone = Sq rightUnitor
+            value :: Star [] Bool Bool
+            value = Star (const xs)
+            kanCone :: Sq Nil Nil (Id ::: Star [] ::: Nil) (Star [] ::: Nil)
+            kanCone = Sq rightUnitor
+        case (K.pwRanUniv kanCone, L.limitUniv @Id @Type cone) of
+          (Sq u, Sq v) -> do
+            expect "factorization" (map not xs) (unStar (Ran.runRan (Id not) (u value)) False)
+            expect "limit factorization" xs (unStar (v value) False)
+            expect "pointwise evaluation" (map not xs) (unId (runSquare (K.pwRan @Id @(Star [])) (Id not)) xs)
+            expect "limit evaluation" (map not xs) (unId (runSquare (L.limit @Id @Type @(Star [])) (Id not)) xs)
+    , testProperty "pointwise Lan agrees with colimits and factors cocones" $ do
+        xs <- genNamed @[Bool] "xs"
+        let cocone :: Sq (Id ::: Nil) Nil (CorepStar (Costar []) ::: Nil) (CorepStar (Costar []) ::: Nil)
+            cocone = K.corepSquare leftUnitor
+            kanCocone
+              :: Sq Nil Nil (CorepStar (Costar []) ::: Nil) (CorepStar Id ::: CorepStar (Costar []) ::: Nil)
+            kanCocone = Sq (\g -> g :.: CorepStar id)
+        expect
+          "mate roundtrip"
+          (any not xs)
+          (unCostar (K.corepSquareInv cocone (Id not :.: Costar or)) xs)
+        expect
+          "horizontal mate roundtrip"
+          (any not xs)
+          (unCostar (K.corepComposeSquareInv kanCocone (Id not :.: Costar or)) xs)
+        expect "factorization" xs (unId (runSquare (K.pwLanUniv kanCocone) (Id id)) xs)
+        expect "colimit factorization" xs (unId (runSquare (L.colimitUniv @Id @Type cocone) (Id id)) xs)
+        expect "pointwise evaluation" (map not xs) (unId (runSquare (K.pwLan @Id @(Costar [])) (Id not)) xs)
+        expect "colimit evaluation" (map not xs) (unId (runSquare (L.colimit @Id @Type @(Costar [])) (Id not)) xs)
+    , testProperty "right adjoint preservation of products agrees with the profunctor proof and is invertible" $ do
+        fFalse <- genNamed @Bool "f False"
+        fTrue <- genNamed @Bool "f True"
+        gFalse <- genNamed @Bool "g False"
+        gTrue <- genNamed @Bool "g True"
+        let f b = if b then fTrue else fFalse
+            g b = if b then gTrue else gFalse
+            points = [False, True]
+            preserve = L.rightAdjointPreservesLimits @BinaryWeight @Reader @BinaryDiagram
+            inverse = L.rightAdjointPreservesLimitsInv @BinaryWeight @Reader @BinaryDiagram
+            forward = unId (runSquare preserve (Id Unit))
+            reference = unId (runSquare (hArr (Adj.rightAdjointPreservesLimits @BinaryWeight @Reader @BinaryDiagram)) (Id Unit))
+            (restoredF, restoredG) = unId (runSquare (preserve ||| inverse) (Id Unit)) (f, g)
+            h b = (g b, f (not b))
+        expect "product comparison" (map (\b -> (f b, g b)) points) (map (forward (f, g)) points)
+        expect "profunctor proof" (map (reference (f, g)) points) (map (forward (f, g)) points)
+        expect "left roundtrip" (map f points, map g points) (map restoredF points, map restoredG points)
+        expect "right roundtrip" (map h points) (map (unId (runSquare (inverse ||| preserve) (Id Unit)) h) points)
+    , testProperty "the canonical limit comparison also works for a functor that does not preserve products" $ do
+        rows <- genNamed @[(Bool, Bool)] "rows"
+        let comparison = L.rightAdjointPreservesLimitsInv @BinaryWeight @(Star []) @BinaryDiagram
+        expect "list of pairs to pair of lists" (unzip rows) (unId (runSquare comparison (Id Unit)) rows)
+    , testProperty "left adjoint preservation of coproducts agrees with the profunctor proof and is invertible" $ do
+        flag <- genNamed @Bool "flag"
+        value <- genNamed @(Either Bool Bool) "value"
+        let preserve = L.leftAdjointPreservesColimits @BinaryCoWeight @ProductLeft @BinaryCoDiagram
+            inverse = L.leftAdjointPreservesColimitsInv @BinaryCoWeight @ProductLeft @BinaryCoDiagram
+            forward = unId (runSquare preserve (Id Unit))
+            reference =
+              unId
+                ( runSquare
+                    (hArr (unProf (mapCorepStar (Prof (Adj.leftAdjointPreservesColimits @ProductLeft @BinaryCoDiagram @BinaryCoWeight)))))
+                    (Id Unit)
+                )
+            distribute (b, Left x) = Left (b, x)
+            distribute (b, Right x) = Right (b, x)
+            inputValue = (flag, value)
+            outputValue = distribute inputValue
+        expect "coproduct comparison" outputValue (forward inputValue)
+        expect "profunctor proof" (reference inputValue) (forward inputValue)
+        expect "left roundtrip" inputValue (unId (runSquare (preserve ||| inverse) (Id Unit)) inputValue)
+        expect "right roundtrip" outputValue (unId (runSquare (inverse ||| preserve) (Id Unit)) outputValue)
+    , testProperty "the canonical colimit comparison also works for a functor that does not preserve coproducts" $ do
+        value <- genNamed @(Either [Bool] [Bool]) "value"
+        let comparison = L.leftAdjointPreservesColimitsInv @BinaryCoWeight @(Costar []) @BinaryCoDiagram
+        expect
+          "sum of lists to list of sums"
+          (either (map Left) (map Right) value)
+          (unId (runSquare comparison (Id Unit)) value)
+    , testProperty "left adjoints preserve copowers with a non-corepresentable weight" $ do
+        flag <- genNamed @Bool "functor parameter"
+        weight <- genNamed @Bool "weight parameter"
+        value <- genNamed @Bool "value"
+        let preserve = L.leftAdjointPreservesColimits @(HaskValue Bool :: () +-> ()) @ProductLeft @(Corep (Constant Bool))
+            inverse = L.leftAdjointPreservesColimitsInv @(HaskValue Bool :: () +-> ()) @ProductLeft @(Corep (Constant Bool))
+            inputValue = (flag, (weight, value))
+        expect "copower comparison" (weight, (flag, value)) (unId (runSquare preserve (Id Unit)) inputValue)
+        expect "roundtrip" inputValue (unId (runSquare (preserve ||| inverse) (Id Unit)) inputValue)
+    , testProperty "representable wrapper cancellations are inverse in both directions" $ do
+        xs <- genNamed @[Bool] "xs"
+        let value :: Star [] Bool Bool
+            value = Star (: xs)
+            wrapped :: CorepStar (RepCostar (Star [])) Bool Bool
+            wrapped = CorepStar (: xs)
+        expect "original encoding" (True : xs) (unStar (unwrapRepresentable (wrapRepresentable value)) True)
+        expect "double encoding" (True : xs) (index (wrapRepresentable (unwrapRepresentable wrapped)) True)
+    , testProperty "corepresentable wrapper cancellations are inverse in both directions" $ do
+        xs <- genNamed @[Bool] "xs"
+        let value :: Costar [] Bool Bool
+            value = Costar or
+            wrapped :: RepCostar (CorepStar (Costar [])) Bool Bool
+            wrapped = RepCostar or
+        expect "original encoding" (or xs) (unCostar (unwrapCorepresentable (wrapCorepresentable value)) xs)
+        expect "double encoding" (or xs) (coindex (wrapCorepresentable (unwrapCorepresentable wrapped)) xs)
     ]

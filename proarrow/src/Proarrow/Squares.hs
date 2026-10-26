@@ -19,6 +19,7 @@ import Prelude (($))
 
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), (\\), type (+->))
 import Proarrow.Optic (Prostrong (..))
 import Proarrow.Path
@@ -42,9 +43,10 @@ import Proarrow.Path
   , withObAppend
   , type (+++)
   )
+import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Representable (CorepStar, Representable (..))
 
 infixl 6 |||
 infixl 5 ===
@@ -62,6 +64,23 @@ data Sq p q f g where
     :: (IsPath p, IsPath q, IsTight f, IsTight g)
     => Fold (p +++ f) :~> Fold (g +++ q)
     -> Sq p q f g
+
+-- | Transform a square's underlying natural transformation through 'Prof'.
+-- All four boundaries may change, as in a universal-property construction.
+mapSq
+  :: ( Profunctor (Fold (ps +++ fs))
+     , Profunctor (Fold (gs +++ qs))
+     , IsPath ps'
+     , IsPath qs'
+     , IsTight fs'
+     , IsTight gs'
+     )
+  => ( Fold (ps +++ fs) ~> Fold (gs +++ qs)
+       -> Fold (ps' +++ fs') ~> Fold (gs' +++ qs')
+     )
+  -> Sq ps qs fs gs
+  -> Sq ps' qs' fs' gs'
+mapSq f (Sq n) = Sq (unProf (f (Prof n)))
 
 -- | Construct a square from its pointwise action. The representable legs act on the
 -- input objects through '%'; composition and identity wrappers on those legs are handled
@@ -90,9 +109,9 @@ mkSquare n =
           Sq \pf -> case splitFold sps sfs pf of
             f :.: p -> p // concatFold sgs sqs (lmap (index f) (n p) :.: repUniv @(Fold gs))
   where
-    sps :: SPath Prof ps
+    sps :: SPath Loose ps
     sps = singPath
-    sqs :: SPath Prof qs
+    sqs :: SPath Loose qs
     sqs = singPath
     tfs :: SPath Tight fs
     tfs = singPath
@@ -116,9 +135,9 @@ runSquare (Sq n) p =
           p // case splitFold sgs sqs (n (concatFold sps sfs (repUniv @(Fold fs) :.: p))) of
             q :.: g -> rmap (index g) q
   where
-    sps :: SPath Prof ps
+    sps :: SPath Loose ps
     sps = singPath
-    sqs :: SPath Prof qs
+    sqs :: SPath Loose qs
     sqs = singPath
     tfs :: SPath Tight fs
     tfs = singPath
@@ -187,28 +206,28 @@ hId = hArr idN
 -- > I--q--J--s--K       I--s+q--K
 (|||) :: forall ps qs fs gs rs ss es. Sq ps qs fs gs -> Sq rs ss gs es -> Sq (rs +++ ps) (ss +++ qs) fs es
 Sq l ||| Sq r =
-  withObAppend @Prof @rs @ps srs $
-    withObAppend @Prof @ss @qs sss $
+  withObAppend @Loose @rs @ps srs $
+    withObAppend @Loose @ss @qs sss $
       withAssoc @es @ss @qs @Tight $
-        withAssoc @rs @ps @fs @Prof $
-          withAssoc @rs @gs @qs @Prof $
+        withAssoc @rs @ps @fs @Loose $
+          withAssoc @rs @gs @qs @Loose $
             Sq $
               whiskerR (appendPath srs sgs) (appendPath ses sss) sqs r
                 . whiskerL srs (appendPath sps sfs) (appendPath sgs sqs) l
   where
-    srs :: SPath Prof rs
+    srs :: SPath Loose rs
     srs = singPath
-    sss :: SPath Prof ss
+    sss :: SPath Loose ss
     sss = singPath
-    sps :: SPath Prof ps
+    sps :: SPath Loose ps
     sps = singPath
-    sqs :: SPath Prof qs
+    sqs :: SPath Loose qs
     sqs = singPath
-    sfs :: SPath Prof fs
+    sfs :: SPath Loose fs
     sfs = weakenTight singPath
-    sgs :: SPath Prof gs
+    sgs :: SPath Loose gs
     sgs = weakenTight singPath
-    ses :: SPath Prof es
+    ses :: SPath Loose es
     ses = weakenTight singPath
 
 -- | Vertical composition, with the top square first.
@@ -226,7 +245,7 @@ Sq l ||| Sq r =
 Sq top === Sq bot =
   withObAppend @Tight @ds @fs tds $
     withObAppend @Tight @es @gs tes $
-      withAssoc @ps @ds @fs @Prof $
+      withAssoc @ps @ds @fs @Loose $
         withAssoc @es @qs @fs @Tight $
           withAssoc @es @gs @rs @Tight $
             Sq $
@@ -237,19 +256,19 @@ Sq top === Sq bot =
     tds = singPath
     tes :: SPath Tight es
     tes = singPath
-    sps :: SPath Prof ps
+    sps :: SPath Loose ps
     sps = singPath
-    sqs :: SPath Prof qs
+    sqs :: SPath Loose qs
     sqs = singPath
-    srs :: SPath Prof rs
+    srs :: SPath Loose rs
     srs = singPath
-    sds :: SPath Prof ds
+    sds :: SPath Loose ds
     sds = weakenTight tds
-    ses :: SPath Prof es
+    ses :: SPath Loose es
     ses = weakenTight tes
-    sfs :: SPath Prof fs
+    sfs :: SPath Loose fs
     sfs = weakenTight singPath
-    sgs :: SPath Prof gs
+    sgs :: SPath Loose gs
     sgs = weakenTight singPath
 
 -- | Bend a representable profunctor from the left edge to its companion on the bottom edge.
@@ -330,6 +349,19 @@ hCombine = hCombineAll @(f ::: g ::: Nil)
 hSplit :: forall f g. (Representable f, Representable g) => Sq Nil Nil (g :.: f ::: Nil) (f ::: g ::: Nil)
 hSplit = hSplitAll @(f ::: g ::: Nil)
 
+-- | Combine the corepresenting functors of two profunctors into the
+-- corepresenting functor of their composite. 'CorepStar' reverses composition.
+hCombineCorep
+  :: (Corepresentable p, Corepresentable q)
+  => Sq Nil Nil (CorepStar p ::: CorepStar q ::: Nil) (CorepStar (p :.: q) ::: Nil)
+hCombineCorep = Sq (\f -> f // tabulate (index f))
+
+-- | Split the corepresenting functor of a composite. Inverse to 'hCombineCorep'.
+hSplitCorep
+  :: (Corepresentable p, Corepresentable q)
+  => Sq Nil Nil (CorepStar (p :.: q) ::: Nil) (CorepStar p ::: CorepStar q ::: Nil)
+hSplitCorep = Sq (\f -> f // tabulate (index f))
+
 -- | Combine a path of representable profunctors into one composed representable profunctor.
 --
 -- > J---------J
@@ -398,7 +430,7 @@ vSplit = vSplitAll @(p ::: q ::: Nil)
 vCombineAll :: forall ps. (IsPath ps) => Sq ps (Fold ps ::: Nil) Nil Nil
 vCombineAll = withFoldOb sp (Sq idN)
   where
-    sp :: SPath Prof ps
+    sp :: SPath Loose ps
     sp = singPath
 
 -- | Split one composed profunctor into a path of profunctors.
@@ -411,7 +443,7 @@ vCombineAll = withFoldOb sp (Sq idN)
 vSplitAll :: forall ps. (IsPath ps) => Sq (Fold ps ::: Nil) ps Nil Nil
 vSplitAll = withFoldOb sp (Sq idN)
   where
-    sp :: SPath Prof ps
+    sp :: SPath Loose ps
     sp = singPath
 
 -- | The unit of an adjunction.

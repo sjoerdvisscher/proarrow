@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+* `Proarrow.Profunctor.Representable`: canonical wrapper isomorphisms `wrapRepresentable` /
+  `unwrapRepresentable` and `wrapCorepresentable` / `unwrapCorepresentable`, cancelling the
+  double encodings through `CorepStar` and `RepCostar`.
+* `Proarrow.Squares`: `mapSq` lifts transformations of profunctor maps to squares with new boundaries;
+  `hCombineCorep` and `hSplitCorep` compose and split corepresenting functor paths.
+* `Proarrow.Squares.Kan`: evaluation and universal-property squares for profunctor Ran and Rift,
+  and pointwise Ran, Lan, Rift and Lift with entirely horizontal functor boundaries.
+* `Proarrow.Squares.Limit`: weighted limit and colimit squares with arbitrary vertical
+  profunctor weights, sharing the corepresentable mating operations with pointwise Kan extensions.
+  Right adjoint preservation of weighted limits, left adjoint preservation of weighted colimits,
+  and their inverses are derived by composing squares.
+
 ## 0.4.0.0 -- 2026-10-23
 
 * `Proarrow.Tools.SMC`:
