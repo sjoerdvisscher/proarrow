@@ -23,6 +23,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
@@ -68,6 +70,13 @@ instance (HasTerminalObject k, CategoryOf j) => Representable (TerminalProfuncto
   index TerminalProfunctor = terminate
   tabulate f = TerminalProfunctor \\ f
   repMap _ = id
+
+-- | The right adjoint of the unique functor to the terminal category.
+instance (HasTerminalObject k) => Representable (Corep (Constant '()) :: () +-> k) where
+  type Corep (Constant '()) % a = TerminalObject
+  index (Corep U.Unit) = terminate
+  tabulate f = Corep U.Unit \\ f
+  repMap U.Unit = id
 
 class ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k
 instance ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k

@@ -1,10 +1,13 @@
--- | The pointwise coproduct of two profunctors: a @(p ':+:' q) a b@ is either a @p a b@ or a @q a b@.
+-- | Coproduct constructions for profunctors. A @(p ':+:' q) a b@ is either a
+-- @p a b@ or a @q a b@; 'Sum' instead takes the coproduct of represented objects.
 module Proarrow.Profunctor.Instance.Coproduct where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (Profunctor (..), type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Profunctor.Instance.Product ((:*:))
+import Proarrow.Profunctor.Representable (CorepStar, RepCostar)
 
 type (:+:) :: (j +-> k) -> (j +-> k) -> (j +-> k)
 data (p :+: q) a b where
@@ -29,3 +32,14 @@ instance (Profunctor p) => Functor ((:+:) p) where
   map (Prof n) = Prof \case
     InjL p -> InjL p
     InjR q -> InjR (n q)
+
+-- | The pointwise coproduct of represented functors, with object action
+-- @Sum f g % b = (f % b) || (g % b)@. It is representable when @f@ and @g@
+-- are representable and their target category has binary coproducts; the
+-- required instance is supplied by "Proarrow.Colimit.BinaryCoproduct".
+--
+-- Whereas @(f :+: g) a b@ chooses between arrows into the two summands,
+-- @Sum f g a b@ represents an arrow into their coproduct. In @Type@ these
+-- are @Either (a -> f % b) (a -> g % b)@ and @a -> Either (f % b) (g % b)@.
+type Sum :: (j +-> k) -> (j +-> k) -> (j +-> k)
+type Sum f g = CorepStar (RepCostar f :*: RepCostar g)

@@ -8,6 +8,7 @@
 module Proarrow.Profunctor.Representable where
 
 import Data.Kind (Constraint)
+import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Thin, ThinProfunctor (..), mapDecision)
 import Proarrow.Category.Instance.Bool (Booleans (..))
@@ -37,6 +38,20 @@ class (Profunctor p) => Representable (p :: j +-> k) where
   repUniv :: (Ob a) => p (p % a) a
   repUniv @a = tabulate (repObj @p @a)
   {-# MINIMAL index, ((tabulate, repMap) | repUniv) #-}
+
+-- | Equality of the representing objects at one index, quantified by 'SameRep'.
+type SameRepAt :: forall {j} {k}. (j +-> k) -> (j +-> k) -> j -> Constraint
+class SameRepAt p q a where
+  withSameRepAt :: ((p % a ~ q % a) => r) -> r
+
+instance (p % a ~ q % a) => SameRepAt p q a where
+  withSameRepAt r = r
+
+-- | Equality of the object actions of two representable profunctors.
+type SameRep :: forall {j} {k}. (j +-> k) -> (j +-> k) -> Constraint
+class (forall a. (Ob a) => SameRepAt p q a) => SameRep p q
+
+instance (forall a. (Ob a) => SameRepAt p q a) => SameRep p q
 
 instance Representable (->) where
   type (->) % a = a

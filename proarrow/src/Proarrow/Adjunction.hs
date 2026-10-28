@@ -12,7 +12,7 @@ import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Product (Fst, Snd, interchange, interchangeInv, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Rep (COREP, COREPK, REP, REPK)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -204,10 +204,8 @@ instance (Proadjunction l1 r1, Proadjunction l2 r2) => Proadjunction (l1 :.: l2)
 
 -- | Adjunctions pair up over the product category.
 instance (Proadjunction p1 q1, Proadjunction p2 q2) => Proadjunction (p1 :**: p2) (q1 :**: q2) where
-  unit @a = case unit @p1 @q1 @(Fst @ a) of
-    u1 :.: v1 -> case unit @p2 @q2 @(Snd @ a) of
-      u2 :.: v2 -> (u1 :**: u2) :.: (v1 :**: v2)
-  counit ((l1 :**: l2) :.: (r1 :**: r2)) = counit (l1 :.: r1) :**: counit (l2 :.: r2)
+  unit @a = interchangeInv (unit @p1 @q1 @(Fst @ a) :**: unit @p2 @q2 @(Snd @ a))
+  counit pq = case interchange pq of p :**: q -> counit p :**: counit q
 
 instance (CategoryOf k) => Proadjunction (Id :: CAT k) Id where
   unit = Id id :.: Id id

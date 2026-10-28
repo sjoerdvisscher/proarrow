@@ -22,12 +22,12 @@ module Proarrow.Limit
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Instance.Coproduct (COPRODUCT, IsLR (..), L, R)
+import Proarrow.Category.Instance.Coproduct (COPRODUCT, Codiag, IsLR (..), L, Lft, R, Rgt, (:++:) (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Instance.Zero (VOID)
+import Proarrow.Category.Instance.Zero (Absurd, Bottom (..), VOID)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Copresheaf, Functor (..), FunctorForRep (..), Presheaf)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), fst, snd)
@@ -38,6 +38,7 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv, withObRep)
@@ -63,6 +64,12 @@ instance (HasTerminalObject k) => HasLimits (Unweighted :: Copresheaf VOID) k wh
   limit (_ :.: t) = case t of {}
   limitUniv _ p = p // Rep terminate
 
+-- | Limits weighted by the empty functor are pointwise terminal objects.
+instance (CategoryOf a, HasTerminalObject k) => HasLimits (Rep (Absurd :: VOID +-> a)) k where
+  type Limit (Rep Absurd) d = TerminalProfunctor
+  limit (_ :.: Rep _) = no
+  limitUniv _ p = p // TerminalProfunctor
+
 type O1 = L '()
 type O2 = R '()
 type At1 d = d % O1
@@ -82,6 +89,15 @@ instance (HasBinaryProducts k) => HasLimits (Unweighted :: Copresheaf (COPRODUCT
           (tabulate (fst @_ @(At1 d) @(At2 d) . f))
           (tabulate (snd @_ @(At1 d) @(At2 d) . f))
   limitUniv n p = p // Rep (index (n (p :.: TerminalProfunctor @'() @O1)) &&& index (n (p :.: TerminalProfunctor @'() @O2)))
+
+-- | Limits weighted by the codiagonal are pointwise binary products.
+instance (CategoryOf a, HasBinaryProducts k) => HasLimits (Rep (Codiag :: COPRODUCT a a +-> a)) k where
+  type Limit (Rep Codiag) d = (d :.: Rep Lft) :*: (d :.: Rep Rgt)
+  limit ((l :*: r) :.: Rep @o f) =
+    lrCase @o
+      (case l of d :.: Rep g -> rmap (InjL f . g) d)
+      (case r of d :.: Rep g -> rmap (InjR f . g) d)
+  limitUniv n p = p // (n (p :.: Rep id) :.: Rep id) :*: (n (p :.: Rep id) :.: Rep id)
 
 data family PowerLimit :: v -> Presheaf k -> Presheaf k
 instance (Representable d, Powered v k, Ob n) => FunctorForRep (PowerLimit (n :: v) d :: Presheaf k) where

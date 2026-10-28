@@ -21,12 +21,12 @@ module Proarrow.Colimit
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), IsLR (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), Codiag, IsLR (..), Lft, Rgt, (:++:) (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Instance.Zero (VOID)
+import Proarrow.Category.Instance.Zero (Absurd, Bottom (..), VOID)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Colimit.Copower (Copowered (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..), initiate)
@@ -38,6 +38,7 @@ import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
@@ -63,6 +64,12 @@ instance (HasInitialObject k) => HasColimits (Unweighted :: Presheaf VOID) k whe
   colimit (t :.: _) = case t of {}
   colimitUniv _ p = p // Corep initiate
 
+-- | Colimits weighted by the empty functor are pointwise initial objects.
+instance (CategoryOf a, HasInitialObject k) => HasColimits (Corep (Absurd :: VOID +-> a)) k where
+  type Colimit (Corep Absurd) d = TerminalProfunctor
+  colimit (Corep _ :.: _) = no
+  colimitUniv _ p = p // TerminalProfunctor
+
 type O1 = L '()
 type O2 = R '()
 type At1 d = d %% O1
@@ -86,6 +93,15 @@ instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: Presheaf (COPRODU
       let l = n (TerminalProfunctor @O1 :.: p)
           r = n (TerminalProfunctor @O2 :.: p)
       in Corep $ coindex l ||| coindex r
+
+-- | Colimits weighted by the codiagonal are pointwise binary coproducts.
+instance (CategoryOf a, HasBinaryCoproducts k) => HasColimits (Corep (Codiag :: COPRODUCT a a +-> a)) k where
+  type Colimit (Corep Codiag) d = (Corep Lft :.: d) :*: (Corep Rgt :.: d)
+  colimit (Corep @o f :.: (l :*: r)) =
+    lrCase @o
+      (case l of Corep g :.: d -> lmap (g . InjL f) d)
+      (case r of Corep g :.: d -> lmap (g . InjR f) d)
+  colimitUniv n p = p // (Corep id :.: n (Corep id :.: p)) :*: (Corep id :.: n (Corep id :.: p))
 
 data family CopowerLimit :: Type -> Copresheaf k -> Presheaf k
 instance (Corepresentable d, Copowered Type k) => FunctorForRep (CopowerLimit n d :: Presheaf k) where

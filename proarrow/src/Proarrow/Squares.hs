@@ -19,6 +19,7 @@ import Prelude (($))
 
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
+import Proarrow.Category.Instance.Product (interchange, interchangeInv, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), (\\), type (+->))
 import Proarrow.Optic (Prostrong (..))
@@ -46,7 +47,7 @@ import Proarrow.Path
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-import Proarrow.Profunctor.Representable (CorepStar, Representable (..))
+import Proarrow.Profunctor.Representable (CorepStar, Representable (..), SameRep, SameRepAt (..))
 
 infixl 6 |||
 infixl 5 ===
@@ -146,6 +147,31 @@ runSquare (Sq n) p =
     sfs = weakenTight tfs
     sgs = weakenTight tgs
 
+-- | Run two squares with singleton boundaries independently over product categories.
+parallel
+  :: ( Profunctor p
+     , Profunctor q
+     , Representable f
+     , Representable g
+     , Profunctor p'
+     , Profunctor q'
+     , Representable f'
+     , Representable g'
+     )
+  => Sq (p ::: Nil) (q ::: Nil) (f ::: Nil) (g ::: Nil)
+  -> Sq (p' ::: Nil) (q' ::: Nil) (f' ::: Nil) (g' ::: Nil)
+  -> Sq (p :**: p' ::: Nil) (q :**: q' ::: Nil) (f :**: f' ::: Nil) (g :**: g' ::: Nil)
+parallel (Sq n) (Sq m) = Sq \pq -> case interchange pq of
+  p :**: q -> interchangeInv (n p :**: m q)
+
+-- | Run two natural-transformation squares independently, retaining empty loose boundaries.
+hParallel
+  :: (Representable f, Representable g, Representable h, Representable i)
+  => Sq Nil Nil (f ::: Nil) (g ::: Nil)
+  -> Sq Nil Nil (h ::: Nil) (i ::: Nil)
+  -> Sq Nil Nil (f :**: h ::: Nil) (g :**: i ::: Nil)
+hParallel (Sq n) (Sq m) = Sq (\(p :**: q) -> n p :**: m q)
+
 -- | The empty square for an object.
 --
 -- > K-------K
@@ -195,6 +221,18 @@ hArr = Sq
 -- > K-------K
 hId :: (Representable f) => Sq Nil Nil (f ::: Nil) (f ::: Nil)
 hId = hArr idN
+
+-- | Re-encode equivalent horizontal functor paths with the same object action.
+-- Naturality requires the represented functors to agree on arrows as well.
+-- The reverse re-encoding is its inverse, by the representability laws.
+hReencode
+  :: forall {j} {k} (fs :: Path j k) (gs :: Path j k)
+   . (IsTight fs, IsTight gs, SameRep (Fold fs) (Fold gs))
+  => Sq Nil Nil fs gs
+hReencode =
+  withFoldRep (singPath :: SPath Tight fs) $
+    withFoldRep (singPath :: SPath Tight gs) $
+      Sq (\(p :: Fold fs a b) -> p // withSameRepAt @(Fold fs) @(Fold gs) @b (tabulate (index p)))
 
 -- | Horizontal composition, with the left square first. Profunctor paths concatenate
 -- from right to left, matching the order of profunctor composition.
@@ -354,13 +392,13 @@ hSplit = hSplitAll @(f ::: g ::: Nil)
 hCombineCorep
   :: (Corepresentable p, Corepresentable q)
   => Sq Nil Nil (CorepStar p ::: CorepStar q ::: Nil) (CorepStar (p :.: q) ::: Nil)
-hCombineCorep = Sq (\f -> f // tabulate (index f))
+hCombineCorep = hReencode
 
 -- | Split the corepresenting functor of a composite. Inverse to 'hCombineCorep'.
 hSplitCorep
   :: (Corepresentable p, Corepresentable q)
   => Sq Nil Nil (CorepStar (p :.: q) ::: Nil) (CorepStar p ::: CorepStar q ::: Nil)
-hSplitCorep = Sq (\f -> f // tabulate (index f))
+hSplitCorep = hReencode
 
 -- | Combine a path of representable profunctors into one composed representable profunctor.
 --
@@ -454,10 +492,7 @@ vSplitAll = withFoldOb sp (Sq idN)
 -- > | |   | |
 -- > J-q---p-J
 unit :: forall p q. (Proadjunction p q) => Sq Nil (p ::: q ::: Nil) Nil Nil
-unit =
-  vCombineAll @Nil
-    === vArr (unitNat @p @q)
-    === vSplitAll @(p ::: q ::: Nil)
+unit = Sq (unitNat @p @q)
 
 -- | The counit of an adjunction.
 --
@@ -467,10 +502,7 @@ unit =
 -- > |       |
 -- > K-------K
 counit :: forall p q. (Proadjunction p q) => Sq (q ::: p ::: Nil) Nil Nil Nil
-counit =
-  vCombineAll @(q ::: p ::: Nil)
-    === vArr (counitNat @p @q)
-    === vSplitAll @Nil
+counit = Sq (counitNat @p @q)
 
 -- | A square introducing an effect @r@ between representable data shapes @f@ and @g@,
 -- with no incoming effect. Optics consume and produce squares of this same shape.

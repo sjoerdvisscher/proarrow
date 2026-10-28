@@ -48,7 +48,7 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit :: j +-> k) where
   dimap l r (DayUnit f g) = DayUnit (f . l) (r . g)
   r \\ DayUnit f g = r \\ f \\ g
 
-type Day :: (j +-> k) -> (j +-> k) -> j +-> k
+type Day :: (j +-> k) -> (j +-> k) -> (j +-> k)
 
 -- | The Day convolution on profunctors.
 data Day p q a b where
