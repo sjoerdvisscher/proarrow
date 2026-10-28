@@ -2,15 +2,32 @@
 
 ## Unreleased
 
+* `Proarrow.Profunctor.Instance.Coproduct`: `Sum` is the pointwise coproduct of
+  represented functors, distinct from the value-level profunctor coproduct `(:+:)`.
 * `Proarrow.Profunctor.Representable`: canonical wrapper isomorphisms `wrapRepresentable` /
   `unwrapRepresentable` and `wrapCorepresentable` / `unwrapCorepresentable`, cancelling the
   double encodings through `CorepStar` and `RepCostar`.
+* `Proarrow.Category.Instance.Product`: `interchange` and `interchangeInv` distribute composition
+  over componentwise products.
 * `Proarrow.Squares`: `mapSq` lifts transformations of profunctor maps to squares with new boundaries;
   `hCombineCorep` and `hSplitCorep` compose and split corepresenting functor paths.
+  `hReencode` converts equivalent functor paths with equal object actions, using `SameRep`.
+  `parallel` combines singleton boundaries over product categories, while `hParallel` combines
+  natural-transformation squares with empty loose boundaries.
+* `Proarrow.Squares.BinaryProduct` and `Proarrow.Squares.BinaryCoproduct`: projection cones
+  and injection cocones with universal pairing and copairing, as direct specializations of
+  codiagonal-weighted (co)limits. `fst`/`snd` and `lft`/`rgt` restrict those cones and cocones
+  along the indexing functors `Lft` and `Rgt`; encoding conversions stay internal.
+* `Proarrow.Squares.Initial` and `Proarrow.Squares.Terminal`: empty cocones and cones with
+  their universal factorizations, specializing empty-functor-weighted (co)limits.
+  The companion of `Constant '()` is corepresentable when the domain has an initial object,
+  and its conjoint is representable when the domain has a terminal object.
 * `Proarrow.Squares.Kan`: evaluation and universal-property squares for profunctor Ran and Rift,
   and pointwise Ran, Lan, Rift and Lift with entirely horizontal functor boundaries.
 * `Proarrow.Squares.Limit`: weighted limit and colimit squares with arbitrary vertical
   profunctor weights, sharing the corepresentable mating operations with pointwise Kan extensions.
+  `coneAt` and `coconeAt` extract components along sections of a weight, including from
+  cones and cocones without a universal property.
   Right adjoint preservation of weighted limits, left adjoint preservation of weighted colimits,
   and their inverses are derived by composing squares.
 

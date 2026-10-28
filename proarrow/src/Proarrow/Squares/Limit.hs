@@ -4,19 +4,25 @@
 -- diagrams and their limits or colimits are horizontal functors.
 module Proarrow.Squares.Limit where
 
+import Data.Kind (Type)
+
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Colimit qualified as C
-import Proarrow.Core (type (+->))
+import Proarrow.Core (type (+->), type (~>))
 import Proarrow.Limit qualified as L
 import Proarrow.Path (Path (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable
   ( CorepStar
-  , Representable
+  , Representable (..)
+  , SameRep
+  , SameRepAt (..)
   , mapCorepStar
   , unwrapRepresentable
+  , withObRep
   , wrapRepresentable
   )
 import Proarrow.Squares
@@ -30,12 +36,19 @@ import Proarrow.Squares
   , hSplit
   , hSplitCorep
   , mapSq
+  , mkSquare
+  , runSquare
   , toBottom
   , toTop
   , (===)
   , (|||)
   )
 import Proarrow.Squares.Kan (corepMateInv, corepSquare)
+
+-- | A @j@-weighted cone from an apex functor @p@ to a diagram @d@.
+-- No universal property or chosen limit object is required.
+type Cone :: (i +-> a) -> (a +-> k) -> (i +-> k) -> Type
+type Cone j p d = Sq (j ::: Nil) Nil (p ::: Nil) (d ::: Nil)
 
 -- | The limiting cone, with the weight vertical and the limit and diagram horizontal.
 --
@@ -47,7 +60,7 @@ import Proarrow.Squares.Kan (corepMateInv, corepSquare)
 limit
   :: forall {i} {a} (j :: i +-> a) k (d :: i +-> k)
    . (L.HasLimits j k, Representable d)
-  => Sq (j ::: Nil) Nil (L.Limit j d ::: Nil) (d ::: Nil)
+  => Cone j (L.Limit j d) d
 limit = Sq (L.limit @j @k @d)
 
 -- | Factor a cone through the limit.
@@ -66,7 +79,7 @@ limit = Sq (L.limit @j @k @d)
 limitUniv
   :: forall {i} {a} (j :: i +-> a) k (d :: i +-> k) (p :: a +-> k)
    . (L.HasLimits j k, Representable d, Representable p)
-  => Sq (j ::: Nil) Nil (p ::: Nil) (d ::: Nil)
+  => Cone j p d
   -> Sq Nil Nil (p ::: Nil) (L.Limit j d ::: Nil)
 limitUniv = mapSq (\(Prof n) -> Prof (L.limitUniv @j @k @d n))
 
@@ -290,3 +303,32 @@ leftAdjointPreservesColimitsInv =
         ||| hCombineCorep
     )
     ||| hSplitCorep
+
+-- | Restrict a weighted cone along a section @i@ of its representable weight @j@.
+-- The composite @j . i@ must be the identity functor, on objects and arrows.
+-- The result is @p => d . i@. For the codiagonal weight, @i = Rep Lft@
+-- or @i = Rep Rgt@ selects the corresponding projection.
+-- This picks a component without exposing the identity-weight cancellation.
+-- No universal property of the cone is required.
+coneAt
+  :: forall i j p d
+   . (Representable i, Representable j, Representable p, Representable d, SameRep (j :.: i) Id)
+  => Cone j p d
+  -> Sq Nil Nil (p ::: Nil) (i ::: d ::: Nil)
+coneAt cone = mkSquare \(Id (h :: a ~> b)) ->
+  withObRep @i @b
+    (withSameRepAt @(j :.: i) @Id @b (runSquare cone (tabulate @j @(i % b) h)))
+
+-- | Restrict a weighted cocone along a section @i@ of its corepresenting weight.
+-- The composite @CorepStar j . i@ must be the identity functor, on objects and arrows.
+-- The result is @d . i => p@. For the codiagonal weight, @i = Rep Lft@
+-- or @i = Rep Rgt@ selects the corresponding injection.
+-- This is the cocone counterpart of 'coneAt'.
+coconeAt
+  :: forall i j d p
+   . (Representable i, Corepresentable j, Representable d, Representable p, SameRep (CorepStar j :.: i) Id)
+  => Sq (j ::: Nil) Nil (d ::: Nil) (p ::: Nil)
+  -> Sq Nil Nil (i ::: d ::: Nil) (p ::: Nil)
+coconeAt cocone = mkSquare \(Id (h :: a ~> b)) ->
+  withObRep @i @a
+    (withSameRepAt @(CorepStar j :.: i) @Id @a (runSquare cocone (cotabulate @j @(i % a) h)))

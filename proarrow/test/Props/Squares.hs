@@ -7,10 +7,12 @@ import Test.Tasty.Falsify (testProperty)
 import Prelude
 
 import Proarrow.Adjunction qualified as Adj
-import Proarrow.Category.Instance.Bool (BOOL, Booleans (..))
-import Proarrow.Category.Instance.Coproduct (COPRODUCT)
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), Codiag, IsLR (..), Lft, Rgt)
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
+import Proarrow.Category.Instance.Zero (Absurd, Bottom (..), VOID)
 import Proarrow.Core ((:~>), type (+->))
 import Proarrow.Functor qualified as F
 import Proarrow.Limit.BinaryProduct (Product)
@@ -44,9 +46,11 @@ import Proarrow.Squares
   , Sq (..)
   , fromTop
   , hArr
+  , hParallel
   , mapSq
   , mkSquare
   , opticSquare
+  , parallel
   , proSquare
   , runSquare
   , toBottom
@@ -54,8 +58,12 @@ import Proarrow.Squares
   , (===)
   , (|||)
   )
+import Proarrow.Squares.BinaryCoproduct qualified as BC
+import Proarrow.Squares.BinaryProduct qualified as BP
+import Proarrow.Squares.Initial qualified as I
 import Proarrow.Squares.Kan qualified as K
 import Proarrow.Squares.Limit qualified as L
+import Proarrow.Squares.Terminal qualified as T
 import Proarrow.Testing (expect, genNamed)
 import Props.Hask ()
 
@@ -108,6 +116,9 @@ mixedInput = mkSquare (\(Id f) -> Star (\xs -> F.Prelude (Nothing : map (Just . 
 
 type BoolShape :: () +-> Type
 type BoolShape = Rep (Constant Bool)
+
+pairIdentity :: Id '(Bool, Bool) '(Bool, Bool)
+pairIdentity = Id (id :**: id)
 
 -- Constant terminal weights recover binary products and coproducts.
 type BinaryWeight :: COPRODUCT () () +-> ()
@@ -361,4 +372,123 @@ test =
             wrapped = RepCostar or
         expect "original encoding" (or xs) (unCostar (unwrapCorepresentable (wrapCorepresentable value)) xs)
         expect "double encoding" (or xs) (coindex (wrapCorepresentable (unwrapCorepresentable wrapped)) xs)
+    , testProperty "parallel squares combine independent effects" $ do
+        xs <- genNamed @[Bool] "xs"
+        flag <- genNamed @Bool "flag"
+        let f b = [b, not b]
+        case runSquare (parallel crossing constructorCrossing) (Star f :**: Star (const xs)) of
+          l :**: r -> do
+            expect "first effect" (map Just (f flag)) (unStar l (Just flag))
+            expect "second effect" (map Just xs) (unStar r (Just (not flag)))
+            expect "first absent input" [Nothing] (unStar l Nothing)
+            expect "second absent input" [Nothing] (unStar r Nothing)
+    , testProperty "horizontal parallel squares retain empty loose boundaries" $ do
+        xs <- genNamed @[Bool] "xs"
+        ys <- genNamed @[Bool] "ys"
+        case runSquare (hParallel (hArr reverseList) (hArr dropFirst)) pairIdentity of
+          Id (f :**: g) -> expect "independent functors" (reverse xs, drop 1 ys) (f xs, g ys)
+    , testProperty "product cones satisfy projection and uniqueness laws" $ do
+        xs <- genNamed @[Bool] "xs"
+        ys <- genNamed @[Bool] "ys"
+        let cone = BP.product @(Star []) @(Star [])
+            inputCone
+              :: Sq (Rep (Codiag :: COPRODUCT Type Type +-> Type) ::: Nil) Nil (Star [] ::: Nil) (BP.Diagram (Star []) (Star []) ::: Nil)
+            inputCone = mkSquare (\(Rep @o f) -> lrCase @o (Id (reverse . map f)) (Id (drop 1 . map f)))
+            factor = BP.pair @(Star []) @(Star []) inputCone
+            recovered = factor ||| cone
+            identity = BP.pair @(Star []) @(Star []) cone
+        expect "first projection" xs (unId (runSquare cone (Rep @(L Bool) id)) (xs, ys))
+        expect "second projection" ys (unId (runSquare cone (Rep @(R Bool) id)) (xs, ys))
+        expect "parameter map" (map not xs) (unId (runSquare cone (Rep @(L Bool) not)) (xs, ys))
+        expect "pairing" (reverse xs, drop 1 xs) (unId (runSquare factor (Id id)) xs)
+        expect
+          "restrict arbitrary cone left"
+          (reverse (map not xs))
+          (unId (runSquare (L.coneAt @(Rep Lft) inputCone) (Id not)) xs)
+        expect
+          "restrict arbitrary cone right"
+          (drop 1 (map not xs))
+          (unId (runSquare (L.coneAt @(Rep Rgt) inputCone) (Id not)) xs)
+        expect
+          "factor then fst"
+          (reverse xs)
+          (unId (runSquare (factor ||| BP.fst @(Star []) @(Star [])) (Id id)) xs)
+        expect
+          "factor then snd"
+          (drop 1 xs)
+          (unId (runSquare (factor ||| BP.snd @(Star []) @(Star [])) (Id id)) xs)
+        expect "cone recovery first" (reverse xs) (unId (runSquare recovered (Rep @(L Bool) id)) xs)
+        expect "cone recovery second" (drop 1 xs) (unId (runSquare recovered (Rep @(R Bool) id)) xs)
+        expect "uniqueness" (xs, ys) (unId (runSquare identity (Id id)) (xs, ys))
+    , testProperty "coproduct cocones satisfy injection and uniqueness laws" $ do
+        xs <- genNamed @[Bool] "xs"
+        value <- genNamed @(Either [Bool] [Bool]) "value"
+        let cocone = BC.coproduct @(Star []) @(Star [])
+            inputCocone
+              :: Sq
+                   (Corep (Codiag :: COPRODUCT Type Type +-> Type) ::: Nil)
+                   Nil
+                   (CorepStar (BC.Diagram (Star []) (Star [])) ::: Nil)
+                   (Star [] ::: Nil)
+            inputCocone = mkSquare (\(Corep @o f) -> lrCase @o (Id (map f . reverse)) (Id (map f . drop 1)))
+            factor = BC.copair @(Star []) @(Star []) inputCocone
+            recovered = cocone ||| factor
+            identity = BC.copair @(Star []) @(Star []) cocone
+        expect "left injection" (Left xs) (unId (runSquare cocone (Corep @(L Bool) id)) xs)
+        expect "right injection" (Right xs) (unId (runSquare cocone (Corep @(R Bool) id)) xs)
+        expect "parameter map" (Right (map not xs)) (unId (runSquare cocone (Corep @(R Bool) not)) xs)
+        expect "copairing" (either reverse (drop 1) value) (unId (runSquare factor (Id id)) value)
+        expect
+          "restrict arbitrary cocone left"
+          (map not (reverse xs))
+          (unId (runSquare (L.coconeAt @(Rep Lft) inputCocone) (Id not)) xs)
+        expect
+          "restrict arbitrary cocone right"
+          (map not (drop 1 xs))
+          (unId (runSquare (L.coconeAt @(Rep Rgt) inputCocone) (Id not)) xs)
+        expect
+          "lft then factor"
+          (reverse xs)
+          (unId (runSquare (BC.lft @(Star []) @(Star []) ||| factor) (Id id)) xs)
+        expect
+          "rgt then factor"
+          (drop 1 xs)
+          (unId (runSquare (BC.rgt @(Star []) @(Star []) ||| factor) (Id id)) xs)
+        expect "cocone recovery left" (reverse xs) (unId (runSquare recovered (Corep @(L Bool) id)) xs)
+        expect "cocone recovery right" (drop 1 xs) (unId (runSquare recovered (Corep @(R Bool) id)) xs)
+        expect "uniqueness" value (unId (runSquare identity (Id id)) value)
+    , testProperty "derived projections select different functor shapes naturally" $ do
+        xs <- genNamed @[Bool] "xs"
+        flag <- genNamed @(Maybe Bool) "flag"
+        let first = BP.fst @(Star []) @(Star Maybe)
+            second = BP.snd @(Star []) @(Star Maybe)
+        expect "first" (map not xs) (unId (runSquare first (Id not)) (xs, flag))
+        expect "second" (fmap not flag) (unId (runSquare second (Id not)) (xs, flag))
+    , testProperty "derived injections select different functor shapes naturally" $ do
+        xs <- genNamed @[Bool] "xs"
+        flag <- genNamed @(Maybe Bool) "flag"
+        let left = BC.lft @(Star []) @(Star Maybe)
+            right = BC.rgt @(Star []) @(Star Maybe)
+        expect "left" (Left (map not xs)) (unId (runSquare left (Id not)) xs)
+        expect "right" (Right (fmap not flag)) (unId (runSquare right (Id not)) flag)
+    , testProperty "empty cones factor uniquely through the terminal functor" $ do
+        xs <- genNamed @[Bool] "xs"
+        let empty :: Sq (Rep (Absurd :: VOID +-> Type) ::: Nil) Nil (Star [] ::: Nil) (T.Diagram ::: Nil)
+            empty = mkSquare (\(Rep _) -> no)
+            factor = T.terminate empty
+            identity = T.terminate (T.terminal @Type @Type)
+        expect "terminal map" () (unId (runSquare factor (Id id)) xs)
+        expect "uniqueness" () (unId (runSquare identity (Id id)) ())
+    , testProperty "empty cocones factor uniquely through the initial functor" $ do
+        let empty
+              :: Sq
+                   (Corep (Absurd :: VOID +-> ()) ::: Nil)
+                   Nil
+                   (CorepStar (I.Diagram :: BOOL +-> VOID) ::: Nil)
+                   (Rep (Constant TRU) ::: Nil)
+            empty = mkSquare (\(Corep _) -> no)
+            factor = I.initiate empty
+            identity = I.initiate (I.initial @() @BOOL)
+        expect "initial map" F2T (unId (runSquare factor (Id Unit)))
+        expect "uniqueness" Fls (unId (runSquare identity (Id Unit)))
     ]

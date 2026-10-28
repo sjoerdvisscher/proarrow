@@ -26,8 +26,10 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 import Proarrow.Tools.Laws (Law (..), Laws (..), (===))
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
@@ -68,6 +70,13 @@ instance (HasInitialObject j, CategoryOf k) => Corepresentable (TerminalProfunct
   coindex TerminalProfunctor = initiate
   cotabulate f = TerminalProfunctor \\ f
   corepMap _ = id
+
+-- | The left adjoint of the unique functor to the terminal category.
+instance (HasInitialObject k) => Corepresentable (Rep (Constant '()) :: k +-> ()) where
+  type Rep (Constant '()) %% a = InitialObject
+  coindex (Rep Unit) = initiate
+  cotabulate f = Rep Unit \\ f
+  corepMap Unit = id
 
 class (HasInitialObject k, HasTerminalObject k, (InitialObject :: k) ~ TerminalObject) => HasZeroObject k where
   zero :: (Ob (a :: k), Ob b) => a ~> b

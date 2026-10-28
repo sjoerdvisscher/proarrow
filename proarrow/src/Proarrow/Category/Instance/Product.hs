@@ -17,12 +17,22 @@ import Proarrow.Category.Enriched.Thin
   , ThinProfunctor (..)
   )
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
 data (c :**: d) a b where
   (:**:) :: {fstK :: c a1 b1, sndK :: d a2 b2} -> (c :**: d) '(a1, a2) '(b1, b2)
+
+-- | Distribute composition over the componentwise product of profunctors.
+-- Inverse to 'interchangeInv', up to the coend identifications of composition.
+interchange :: (p :**: q) :.: (r :**: s) :~> (p :.: r) :**: (q :.: s)
+interchange ((p :**: q) :.: (r :**: s)) = (p :.: r) :**: (q :.: s)
+
+-- | Combine two independent composites into a composite over product categories.
+interchangeInv :: (p :.: r) :**: (q :.: s) :~> (p :**: q) :.: (r :**: s)
+interchangeInv ((p :.: r) :**: (q :.: s)) = (p :**: q) :.: (r :**: s)
 
 -- | The product of two categories.
 instance (CategoryOf k1, CategoryOf k2) => CategoryOf (k1, k2) where
