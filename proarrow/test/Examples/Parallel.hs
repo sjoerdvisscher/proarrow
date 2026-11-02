@@ -334,7 +334,7 @@ timeline sequential parallel =
 
 picture :: HG.Wiring SVG -> Either String (Svg (S '[Wire "dir"]) (S '[Wire "pkg"]))
 picture wiring = do
-  Str diagram <-
+  result <-
     HG.simplify wiring $
       buildGraph
         (node @'[Wire "dir"] @'[Wire "src"] "prepare sources")
@@ -344,7 +344,7 @@ picture wiring = do
         (node @'[Wire "app"] @'[Wire "exe"] "link")
         (node @'[Wire "src"] @'[Wire "doc"] "generate docs")
         (node @'[Wire "exe", Wire "doc"] @'[Wire "pkg"] "package")
-  pure diagram
+  pure (unStr result)
 
 sequentialPicture, parallelPicture :: Either String String
 sequentialPicture = render <$> picture HG.copyDiscard

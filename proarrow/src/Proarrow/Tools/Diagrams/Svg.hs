@@ -46,7 +46,7 @@ import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), ap
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified
   ( IsList (..)
-  , Strictified (..)
+  , Strictified (Str, unStr)
   , obj1
   , singleton
   , swap2

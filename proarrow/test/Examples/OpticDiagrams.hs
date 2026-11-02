@@ -265,8 +265,8 @@ compositionPicture = running >>= drawGraph interpret
 
 drawGraph :: (Leg -> SomeArrow SVG) -> (a :: Target) ~> b -> Either String String
 drawGraph draw graph = do
-  Str picture@Svg{} <- readBack frobenius draw graph
-  pure (render picture)
+  result <- readBack frobenius draw graph
+  case result of Str picture@Svg{} -> pure (render picture)
 
 test :: TestTree
 test =

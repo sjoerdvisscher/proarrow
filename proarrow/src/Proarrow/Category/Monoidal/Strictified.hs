@@ -17,7 +17,7 @@ module Proarrow.Category.Monoidal.Strictified
   , withObFold
 
     -- * The strictified category
-  , Strictified (..)
+  , Strictified (Identity, Str, unStr)
   , (==)
   , singleton
   , obj1
@@ -164,8 +164,23 @@ withIsListOf Nil r = r
 withIsListOf (Cons @x @rest rest) r = withIsListOf rest (withIsList2 @'[x] @rest r)
 
 type Strictified :: CAT [k]
+-- | Recorded identities avoid redundant composition and tensoring with the
+-- empty identity. 'Str' remains a total view of the underlying morphism.
 data Strictified as bs where
-  Str :: (Ob as, Ob bs) => {unStr :: Fold as ~> Fold bs} -> Strictified as bs
+  Identity :: forall {k} (as :: [k]). (Monoidal k, Ob as) => Strictified as as
+  Morphism :: (Ob as, Ob bs) => (Fold as ~> Fold bs) -> Strictified as bs
+
+-- | Compatibility view: matching 'Str' also exposes a recorded identity as the
+-- underlying identity. Constructing 'Str' keeps an arbitrary arrow opaque.
+pattern Str :: forall {k} (as :: [k]) bs. () => (Ob as, Ob bs) => (Fold as ~> Fold bs) -> Strictified as bs
+pattern Str {unStr} <- (materialize -> Morphism unStr)
+  where
+    Str f = Morphism f
+{-# COMPLETE Str #-}
+
+materialize :: forall {k} (as :: [k]) bs. Strictified as bs -> Strictified as bs
+materialize Identity = withObFold @as (Morphism id)
+materialize f@Morphism{} = f
 
 singleton :: (CategoryOf k) => (a :: k) ~> b -> '[a] ~> '[b]
 singleton a = Str a \\ a
@@ -181,11 +196,14 @@ splitMany = withObFold @as (Str id)
 
 instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   dimap = dimapDefault
-  r \\ Str{} = r
+  r \\ Identity = r
+  r \\ Morphism{} = r
 
 instance (Monoidal k) => Promonad (Strictified :: CAT [k]) where
-  id @as = withObFold @as (Str id)
-  Str f . Str g = Str (f . g)
+  id = Identity
+  Identity . g = g
+  f . Identity = f
+  Morphism f . Morphism g = Morphism (f . g)
 
 -- | The strictified monoidal category, making the unitors and associators identities.
 instance (Monoidal k) => CategoryOf [k] where
@@ -194,10 +212,16 @@ instance (Monoidal k) => CategoryOf [k] where
 
 instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
   one = id
-  Str @as @bs f ** Str @cs @ds g =
-    withOb2 @[k] @as @cs $
-      withOb2 @[k] @bs @ds $
-        Str (thenConcat @bs @ds (splitThen @as @cs (f ** g)))
+  Identity @as ** Identity @cs = withIsList2 @as @cs Identity
+  i@(Identity @as) ** g@Morphism{} = listCase @as g (tensor i g) (tensor i g)
+  f@Morphism{} ** i@(Identity @cs) = listCase @cs f (tensor f i) (tensor f i)
+  f@Morphism{} ** g@Morphism{} = tensor f g
+
+tensor :: forall {k} (as :: [k]) bs cs ds. (Monoidal k) => Strictified as bs -> Strictified cs ds -> Strictified (as ++ cs) (bs ++ ds)
+tensor (Str f) (Str g) =
+  withOb2 @[k] @as @cs $
+    withOb2 @[k] @bs @ds $
+      Str (thenConcat @bs @ds (splitThen @as @cs (f ** g)))
 
 -- | List concatenation as monoidal tensor.
 instance (Monoidal k) => Monoidal [k] where

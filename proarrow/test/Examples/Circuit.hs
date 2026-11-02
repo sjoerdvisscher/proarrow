@@ -145,8 +145,8 @@ expandedCounterPicture =
 -- | The expanded counter read back in parallel layers using traced copy/discard wiring.
 simplifiedCounterPicture :: Either String String
 simplifiedCounterPicture = do
-  Str diagram <- HG.simplify (HG.layered (HG.tracedWith HG.copyDiscard)) expandedCounterGraph
-  pure (render diagram)
+  diagram <- HG.simplify (HG.layered (HG.tracedWith HG.copyDiscard)) expandedCounterGraph
+  pure (render (unStr diagram))
 
 type GraphBit :: HG.SIMPLIFY SVG
 type GraphBit = HG.Wires '[Control]

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* `Proarrow.Category.Monoidal.Strictified`: records `Identity` arrows, eliminating
+  identity compositions and tensors with the empty identity. `Str` remains a total
+  construction/matching pattern, and `unStr` exposes the underlying arrow.
 * `Proarrow.Profunctor.Instance.Coproduct`: `Sum` is the pointwise coproduct of
   represented functors, distinct from the value-level profunctor coproduct `(:+:)`.
 * `Proarrow.Profunctor.Representable`: canonical wrapper isomorphisms `wrapRepresentable` /
