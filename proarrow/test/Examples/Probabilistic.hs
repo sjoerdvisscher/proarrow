@@ -32,7 +32,7 @@ import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (SYN (..), Term, toSMC, toSMC1, unit, (*^), (-<))
+import Proarrow.Tools.SMC (SYN (..), Term, toSMC, toSMC1, (*^), (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * Programs
@@ -60,13 +60,9 @@ orT p x y = orP p -< (x, y)
 notT :: forall {k} (b :: k) d g. (Monoidal k, Ob b) => Prims b -> Term d g (F b) -> Term d g (F b)
 notT p x = notP p -< x
 
--- | A program without inputs as a term: a call of it.
-call :: forall {k} (b :: k) d. (Monoidal k, Ob b) => (Unit ~> b) -> Term d '[] (F b)
-call f = f -< unit
-
 -- | A coin that is true with the given probability.
 coin :: (Monoidal k, Ob (b :: k)) => Prims b -> Double -> Term d '[] (F b)
-coin p q = call (flipP p q)
+coin p q = flipP p q -< ()
 
 -- | The test of the paper's running example on a patient: positive with probability 0.99 when the
 -- patient has the disease, and with probability 0.02 when not. Each call flips its own coins.
@@ -86,7 +82,7 @@ hasDisease p = toSMC @I @(F b) \() -> SMC.do
 -- function of its own, compiled once and called twice.
 family :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> Int -> Unit ~> b
 family p 0 = toSMC @I @(F b) \() -> andT p (coin p 0.5) (coin p 0.5)
-family p n = let f = family p (n - 1) in toSMC @I @(F b) \() -> andT p (call f) (call f)
+family p n = let f = family p (n - 1) in toSMC @I @(F b) \() -> andT p (f -< ()) (f -< ())
 
 -- * Inference
 

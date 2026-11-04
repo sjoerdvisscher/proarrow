@@ -203,7 +203,7 @@ computeByHand = Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)
 
 -- | A message, from nothing.
 put :: forall a d. a -> SMC.Term d '[] (F (L (Ur a)))
-put x = (Linear \() -> Ur x) -< unit
+put x = (Linear \() -> Ur x) -< ()
 
 compute :: SMC.Term d g (F Name :** F Credit) -> SMC.Term d g (F Receipt)
 compute p = (Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)) -< p

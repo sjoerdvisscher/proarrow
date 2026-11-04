@@ -78,7 +78,7 @@ incrementWith
    . (CocommutativeComonoid b)
   => (Unit ~> b) -> (b ** b ~> b) -> (b ** b ~> b) -> b ** b ** b ** b ~> b ** b ** b ** b
 incrementWith high xorG andG = toSMC @(Word4S b) @(Word4S b) \(a, b, c, d) -> SMC.do
-  (a', carry1) <- SMC.recast @_ @(F b :** F b) (halfAdder -< (a, high -< unit))
+  (a', carry1) <- SMC.recast @_ @(F b :** F b) (halfAdder -< (a, high -< ()))
   (b', carry2) <- SMC.recast @_ @(F b :** F b) (halfAdder -< (b, carry1))
   (c', carry3) <- SMC.recast @_ @(F b :** F b) (halfAdder -< (c, carry2))
   a' SMC.** b' SMC.** c' SMC.** (xorG -< (d, carry3))
@@ -109,7 +109,7 @@ zero4 = zero4With @Bit (constant False)
 
 zero4With :: forall {k} (b :: k). (CocommutativeComonoid b) => (Unit ~> b) -> Unit ~> b ** b ** b ** b
 zero4With low = toSMC @I @(Word4S b) \() -> SMC.do
-  z <- low -< unit
+  z <- low -< ()
   z SMC.** z SMC.** z SMC.** z
 
 -- | Enable holds or increments the count. Synchronous reset has priority over enable.
@@ -122,7 +122,7 @@ counterWith
    . (TracedMonoidal k, CocommutativeComonoid w, Ob b)
   => (Unit ~> w) -> (b ** w ** w ~> w) -> (w ~> w) -> (w ~> w) -> b ** b ~> w
 counterWith zero select inc delay = toSMC @(F b :** F b) @(F w) \(enable, reset) -> SMC.do
-  rec count <- delay -< (select -< (reset, zero -< unit, select -< (enable, inc -< count, count)))
+  rec count <- delay -< (select -< (reset, zero -< (), select -< (enable, inc -< count, count)))
   returnA -< count
 
 -- | The same counter with word-sized components, rather than their expanded bit-level gates.
@@ -325,14 +325,14 @@ test =
     , testProperty "multiplexer validation checks both data inputs" do
         let selectedConstant :: Empty ~> Bit
             selectedConstant = toSMC @I @(F Bit) \() -> SMC.do
-              x <- badLoop -< unit
-              mux -< (constant True -< unit, constant False -< unit, x)
+              x <- badLoop -< ()
+              mux -< (constant True -< (), constant False -< (), x)
         check
           "cycle in unselected input accepted"
           (case simulate selectedConstant [] of Left (CombinationalCycle _) -> True; _ -> False)
     , testProperty "unobservable feedback is omitted from the netlist" do
         let dead = toSMC @I @I \() -> SMC.do
-              _unused <- badLoop -< unit
+              _unused <- badLoop -< ()
               unit
         expect "discarded loop" (Right [(), ()]) (simulate dead [(), ()])
     , testProperty "preparing composition and tensor agrees with composing prepared circuits" do

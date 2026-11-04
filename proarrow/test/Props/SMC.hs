@@ -260,6 +260,15 @@ test =
                   z <- liftF g y
                   returnA -< z
             expect "inferred intermediate result" (g . f) pipeline
+        , testProperty "arrow application accepts the empty tuple as the unit" $ do
+            f <- genNamed @(Unit @FINREL ~> F2) "f"
+            scalar <- genNamed @(Unit @FINREL ~> Unit @FINREL) "scalar"
+            expect "empty tuple input" f (toSMC @I @(F F2) (\() -> f -< ()))
+            expect "scalar input" scalar (toSMC @I @(F (Unit @FINREL)) (\() -> scalar -< ()))
+        , testProperty "arrow application accepts empty tuples nested with variables" $ do
+            f <- genNamed @(((Unit @FINREL ** F2) ** Unit @FINREL) ~> F3) "f"
+            let actual = toSMC @(F F2) @(F F3) \x -> f -< (((), x), ())
+            expect "nested unit inputs" (f . rightUnitorInv . leftUnitorInv) actual
         , testProperty "arrow application binds tensor results" $ do
             f <- genNamed @(F2 ~> (F2 ** F3)) "f"
             g <- genNamed @(F2 ~> F4) "g"
@@ -295,8 +304,8 @@ test =
         [ testProperty "embedded unit results act as scalars on either side" $ do
             s <- genNamed @((Unit :: MatK Int) ~> Unit) "scalar"
             f <- genNamed @(M2 ~> M3) "f"
-            let left = toSMC1 \x -> (s -< unit) *^ (f -< x)
-                right = toSMC1 \x -> (f -< x) ^* (s -< unit)
+            let left = toSMC1 \x -> (s -< ()) *^ (f -< x)
+                right = toSMC1 \x -> (f -< x) ^* (s -< ())
             expect "left scalar" (unMat (leftUnitor . (s ** f) . leftUnitorInv)) (unMat left)
             expect "right scalar" (unMat (rightUnitor . (f ** s) . rightUnitorInv)) (unMat right)
         , testProperty "matrix multiplication is composition (2, 3, 2)" $ do

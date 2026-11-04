@@ -47,7 +47,7 @@ effect f = lift @(V m a) @(Eff m) (Cps \a k -> f a >>= k)
 
 -- | A constant.
 val :: forall m a d. a -> SMC.Term d '[] (V m a)
-val a = Cps (const a) -< unit
+val a = Cps (const a) -< ()
 
 -- | Run a closed computation: give its result to a final continuation.
 run :: (Unit ~> Dual (Dual (C a :: K m))) -> (a -> m ()) -> m ()

@@ -185,7 +185,9 @@ import Proarrow.Tools.SMC.Internal.Term
 --
 -- Tuples build terms as well, the mirror image of taking them apart: 'ret' of a tuple makes a pair
 -- at a tensor into '(**)' of its parts and a pair at a computation into the computation of the
--- pair.
+-- pair. The empty tuple @()@ stands for 'unit', including inside larger tuples:
+-- @f -< ()@ applies a morphism without input wires, and @g -< (x, ())@
+-- supplies a variable alongside a unit.
 --
 -- '(-<)' mirrors arrow application in Haskell's arrow notation. The wiring of
 --

@@ -115,9 +115,9 @@ ret
   => t -> TermP p d (TupleCtx k t) (Up a)
 ret t = withSynOb @a (rmapT (doubleNegInv @k @(Interp a)) (tuple @p @t @a t))
 
--- | A term built from a tuple of terms, by the type it is expected to have: a term is itself, a
--- pair at a tensor is the tensor of its parts, and a pair at a computation @'Up' a@ is the
--- computation of the pair at @a@. A tuple of three to six stands for pairs nested to the left, as in
+-- | A term built from a tuple of terms, by the type it is expected to have: a term is itself,
+-- @()@ is the monoidal unit, a pair at a tensor is the tensor of its parts, and a pair at a
+-- computation @'Up' a@ is the computation of the pair at @a@. A tuple of three to six stands for pairs nested to the left, as in
 -- patterns. The parts may come from different binding depths; the result adopts the depth
 -- where it is used, and their contexts are merged.
 type Tuple :: forall {k}. CAT k -> Type -> SYN k -> Constraint
@@ -127,6 +127,7 @@ class Tuple (p :: CAT k) t a where
 -- | The context of a tuple of terms: the union of the contexts of its parts.
 type TupleCtx :: forall k -> Type -> Ctx k
 type family TupleCtx k t where
+  TupleCtx k () = '[]
   TupleCtx k (x, y) = Union (TupleCtx k x) (TupleCtx k y)
   TupleCtx k (x, y, z) = TupleCtx k ((x, y), z)
   TupleCtx k (w, x, y, z) = TupleCtx k ((w, x, y), z)
@@ -142,6 +143,11 @@ type family TupleCtx k t where
 instance {-# INCOHERENT #-} (t ~ TermP p d g a) => Tuple p t a where
   {-# INLINE tuple #-}
   tuple t = recast t
+
+-- | The empty tuple is the monoidal unit and uses no variables.
+instance (MonoidalProfunctor p, a ~ I) => Tuple p () a where
+  {-# INLINE tuple #-}
+  tuple () = unit
 
 -- | A pair at a tensor is the tensor of its parts.
 instance
