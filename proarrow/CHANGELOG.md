@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* `Proarrow.Promonad.Free` now contains `FreePromonad`.
 * `Proarrow.Tools.SMC`: arrow application accepts `()` as the monoidal unit.
 * `Proarrow.Category.Monoidal.Strictified`: records `Identity` arrows, eliminating
   identity compositions and tensors with the empty identity. `Str` remains a total

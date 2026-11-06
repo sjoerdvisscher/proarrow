@@ -24,7 +24,6 @@ import Proarrow.Category.Instance.OpenHypergraph
   , prim1
   , simplify
   )
-import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Forget, On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
@@ -43,13 +42,8 @@ import Proarrow.Core
   , Profunctor (..)
   , Promonad (..)
   , UN
-  , arr
-  , lmap
   , obj
-  , rmap
-  , tgt
   , (//)
-  , (:~>)
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts)
@@ -57,7 +51,6 @@ import Proarrow.Limit.Terminal (HasTerminalObject)
 import Proarrow.Monoid (Monoid)
 import Proarrow.Monoid qualified as M
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id)
 import Proarrow.Profunctor.Instance.List (LIST (..), List (..))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
@@ -145,39 +138,6 @@ instance (Monoidal k) => HasFree (Applicative :: OB (k -> Type)) where
   type Free Applicative f = Ap f
   lift = Nat Eff
   foldMap f@Nat{} = Nat retractAp . map f
-
--- | The free 'Promonad' on a profunctor @p@: a chain of @p@s ending in a hom arrow, folded into any
--- promonad by 'foldFreePromonad'.
-data FreePromonad p a b where
-  Unit :: (a ~> b) -> FreePromonad p a b
-  Comp :: p a b -> FreePromonad p b c -> FreePromonad p a c
-
-freePromonadAlg :: p :.: FreePromonad p :~> FreePromonad p
-freePromonadAlg (p :.: pp) = Comp p pp
-
-foldFreePromonad :: (Promonad q) => p :~> q -> FreePromonad p :~> q
-foldFreePromonad _ (Unit f) = arr f
-foldFreePromonad n (Comp p pp) = foldFreePromonad n pp . n p
-
-instance (Profunctor p) => Profunctor (FreePromonad p) where
-  dimap l r (Unit f) = Unit (r . f . l)
-  dimap l r (Comp p q) = Comp (lmap l p) (rmap r q)
-  r \\ (Unit f) = r \\ f
-  r \\ Comp p q = r \\ p \\ q
-
-instance (Profunctor p) => Promonad (FreePromonad p) where
-  id = Unit id
-  p . Unit f = lmap f p
-  p . Comp r q = Comp r (p . q)
-instance Functor FreePromonad where
-  map = freeMap @Promonad
-instance Promonad (Star FreePromonad) where
-  id = Star (lift @Promonad)
-  Star l . Star r = Star (freeComp @Promonad l r)
-instance HasFree Promonad where
-  type Free Promonad p = FreePromonad p
-  lift = Prof \p -> p `Comp` Unit (tgt p)
-  foldMap (Prof n) = Prof (foldFreePromonad n)
 
 -- | The free @c@-structured kind over a @b@-structured kind @k@. A standalone family (rather than
 -- an associated type of 'HasFreeK') because the kinds of 'Lift' and 'Retract' mention it.
