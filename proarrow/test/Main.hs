@@ -53,8 +53,8 @@ import Props.Optic.Linear qualified as OpticLinear
 import Props.Ordinal qualified as Ordinal
 import Props.Paths qualified as Paths
 import Props.PointedHask qualified as PointedHask
+import Props.Pure qualified as Pure
 import Props.SMC qualified as SMC
-import Props.Strictified qualified as Strictified
 import Props.Sheaf qualified as Sheaf
 import Props.Sheaf.Chain qualified as SheafChain
 import Props.Sheaf.Collage qualified as SheafCollage
@@ -62,6 +62,7 @@ import Props.Simplex qualified as Simplex
 import Props.Simulator qualified as Simulator
 import Props.Span qualified as Span
 import Props.Squares qualified as Squares
+import Props.Strictified qualified as Strictified
 import Props.Svg qualified as Svg
 import Props.TensorNetwork qualified as TensorNetwork
 import Props.ZX qualified as ZX
@@ -89,6 +90,7 @@ main =
           , FinitaryGraph.test
           , Free.test
           , Hask.test
+          , Pure.test
           , Kleisli.test
           , Cps.test
           , Mat.test

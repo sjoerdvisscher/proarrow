@@ -41,6 +41,8 @@ pattern Star f = Star' f
 
 instance (Functor f) => Profunctor (Star f) where
   dimap = dimapRep
+  lmap f (Star g) = Star (g . f)
+  rmap f (Star g) = Star (map f . g) \\ f
   r \\ Star f = r \\ f
 
 instance (CategoryOf j, CategoryOf k) => Functor (Star' :: (j .-> k) -> j +-> k) where

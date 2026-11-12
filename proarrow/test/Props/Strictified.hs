@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE QualifiedDo #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 module Props.Strictified (test) where
+
+-- Recorded identity composition is exercised explicitly below.
+{- HLINT ignore "Redundant id" -}
 
 import Data.Kind (Type)
 import Data.Type.Equality ((:~:) (..), testEquality)
@@ -15,6 +19,8 @@ import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), rightUnito
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), IsList (..), Fold, singleton, withObFold)
 import Proarrow.Core (Promonad (..), Ob, Ob')
 import Proarrow.Object (ListOf (..))
+import Proarrow.Tools.SMC (SYN (..), toSMC, (-<))
+import Proarrow.Tools.SMC qualified as SMC
 import Proarrow.Testing
   (check, Testable (..), TestableType (..), TestingEqShow (..), TestableProfunctor,
    genSomeDef, invmap, oneElem, oneOfTotal)
@@ -88,6 +94,11 @@ test = testGroup "Strictified"
   , testProperty "empty tensor identities introduce no unitors" $ do
       check "right identity" (show (unStr (f ** id @Strictified @'[])) == "f")
       check "left identity" (show (unStr (id @Strictified @'[] ** f)) == "f")
+  , testProperty "linear SMC binds introduce no base structural arrows" $
+      let arrow = unStr $ toSMC @(F '[A]) \x -> SMC.do
+            y <- f -< x
+            f -< y
+      in check "SMC did not lower to composition" (show arrow == show (unStr f . unStr f))
   , testProperty "nonempty identity carries its wire" $
       check "wire lost" (show (unStr (f ** id @Strictified @'[A])) == "f ** id")
   , testProperty "Str view exposes recorded identities" $

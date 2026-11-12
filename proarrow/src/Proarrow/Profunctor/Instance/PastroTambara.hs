@@ -10,7 +10,7 @@ import Prelude (($))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), src, tgt, (//), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), lmap, rmap, src, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Optic (ExOptic (..), FLAVOR, Flavor, Prostrong (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)
@@ -39,7 +39,9 @@ unpastro :: forall {j} {k} (w :: FLAVOR j k) (p :: j +-> k). (Prostrong w p) => 
 unpastro (Pastro fpg) = proact @w fpg
 
 instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (Pastro t p :: j +-> k) where
-  dimap l r (Pastro fpg) = Pastro (dimap l r fpg)
+  dimap l r (Pastro (f :.: p :.: g)) = Pastro (lmap l f :.: p :.: rmap r g)
+  lmap l (Pastro (f :.: p :.: g)) = Pastro (lmap l f :.: p :.: g)
+  rmap r (Pastro (f :.: p :.: g)) = Pastro (f :.: p :.: rmap r g)
   r \\ Pastro fpg = r \\ fpg
 instance (Flavor w, Profunctor p) => Prostrong w (Pastro w p :: j +-> k) where
   proact (p :.: Pastro (p' :.: r :.: q') :.: q) = Pastro ((p :.: p') :.: r :.: (q' :.: q))

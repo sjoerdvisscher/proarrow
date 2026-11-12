@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* `Proarrow.Promonad.Pure`: `WithPure p` separates base morphisms from effects,
+  combining pure maps before interpretation. Supports monoidal tensor and
+  profunctor strength, with `liftWithPure` and `lowerWithPure` for conversion.
 * `Proarrow.Promonad.Free` now contains `FreePromonad`.
 * `Proarrow.Tools.SMC`: arrow application accepts `()` as the monoidal unit.
 * `Proarrow.Category.Monoidal.Strictified`: records `Identity` arrows, eliminating
