@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+* `Proarrow.Category.Instance.OpenGame`: open games over a copy/discard category,
+  with monoidal-lens play, finite strategy catalogues, sequential composition,
+  parallel tensor, and context-dependent best-response diagnostics. Deterministic
+  and Bayesian examples include mixed strategies, private signals, and cached auctions.
 * `Proarrow.Promonad.Pure`: `WithPure p` separates base morphisms from effects,
   combining pure maps before interpretation. Supports monoidal tensor and
   profunctor strength, with `liftWithPure` and `lowerWithPure` for conversion.

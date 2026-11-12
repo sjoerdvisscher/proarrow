@@ -17,6 +17,8 @@ import Examples.Graph qualified as Graph
 import Examples.IntComposition qualified as IntComposition
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
+import Examples.OpenGames qualified as OpenGames
+import Examples.OpenGames.Auction qualified as Auctions
 import Examples.OpticDiagrams qualified as OpticDiagrams
 import Examples.Parallel qualified as Parallel
 import Examples.Probabilistic qualified as Probabilistic
@@ -46,6 +48,7 @@ import Props.Hask qualified as Hask
 import Props.IntConstruction qualified as IntConstruction
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
+import Props.OpenGame qualified as OpenGameLaws
 import Props.OpenHypergraph qualified as OpenHypergraph
 import Props.Optic.FinRel qualified as OpticFinRel
 import Props.Optic.Hask qualified as Optic
@@ -53,6 +56,7 @@ import Props.Optic.Linear qualified as OpticLinear
 import Props.Ordinal qualified as Ordinal
 import Props.Paths qualified as Paths
 import Props.PointedHask qualified as PointedHask
+import Props.Probability qualified as Probability
 import Props.Pure qualified as Pure
 import Props.SMC qualified as SMC
 import Props.Sheaf qualified as Sheaf
@@ -75,10 +79,12 @@ main =
       [ testGroup
           "Proarrow"
           [ Bool.test
+          , Probability.test
           , CircuitLaws.test
           , Discrete.test
           , Cospan.test
           , OpenHypergraph.test
+          , OpenGameLaws.test
           , Cost.test
           , DPO.test
           , Dot.test
@@ -117,7 +123,8 @@ main =
           ]
       , testGroup
           "Examples"
-          [ CustomLaws.test
+          [ Auctions.test
+          , CustomLaws.test
           , CCC.test
           , Database.test
           , Einsum.test
@@ -131,6 +138,7 @@ main =
           , Learning.test
           , Probabilistic.test
           , OpticDiagrams.test
+          , OpenGames.test
           , Parallel.test
           , Sessions.test
           , SquarePrograms.test
