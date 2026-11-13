@@ -10,7 +10,12 @@
   combining pure maps before interpretation. Supports monoidal tensor and
   profunctor strength, with `liftWithPure` and `lowerWithPure` for conversion.
 * `Proarrow.Promonad.Free` now contains `FreePromonad`.
-* `Proarrow.Tools.SMC`: arrow application accepts `()` as the monoidal unit.
+* `Proarrow.Tools.SMC`: constant arrows from the monoidal unit can be used directly
+  in arrow arguments, tuple components, function arguments, scalar multiplication, binds and binder results.
+  Unit and tuple values convert recursively to terms, including binder results, inputs to `lift`,
+  and bind right-hand sides in ordinary and recursive `do` blocks. SMC and CCC export `toTerm`
+  for explicit conversion. Base-category constants lift into promonad terms through `arr`;
+  use `toTerm c` when binding one into another promonad.
 * `Proarrow.Category.Monoidal.Strictified`: records `Identity` arrows, eliminating
   identity compositions and tensors with the empty identity. `Str` remains a total
   construction/matching pattern, and `unStr` exposes the underlying arrow.

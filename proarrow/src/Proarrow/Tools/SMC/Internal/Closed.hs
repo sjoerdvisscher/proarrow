@@ -49,15 +49,18 @@ loop k =
 type Apply :: forall {k}. CAT k -> Type -> Type -> Type -> Constraint
 class Apply (p :: CAT k) f x r | f -> p where
   (!)
-    :: (Closed k, M.MonoidalProfunctor p, KnownObj (TyOf @k x), KnownObj (TyOf @k r), Merge (CtxOf @k f) (CtxOf @k x))
+    :: (Closed k, M.MonoidalProfunctor p)
     => f -> x -> r
 
-instance (x ~ TermP p d g2 a, r ~ TermP p d (Union g1 g2) b) => Apply p (TermP p d g1 (a :-> b :: SYN k)) x r where
+instance
+  (KnownObj a, KnownObj b, Merge g1 g2, ToTerm p x d g2 a, r ~ TermP p d (Union g1 g2) b)
+  => Apply p (TermP p d g1 (a :-> b :: SYN k)) x r
+  where
   {-# INLINE (!) #-}
   (!) = applyTerm @a @b
 
 instance
-  (f ~ (Interp a ~~> Interp b), x ~ TermP p d g2 a, r ~ TermP p d (Union g1 g2) b)
+  (KnownObj a, KnownObj b, Merge g1 g2, f ~ (Interp a ~~> Interp b), ToTerm p x d g2 a, r ~ TermP p d (Union g1 g2) b)
   => Apply p (TermP p d g1 (F f :: SYN k)) x r
   where
   {-# INLINE (!) #-}
@@ -65,13 +68,21 @@ instance
 
 {-# INLINE applyTerm #-}
 applyTerm
-  :: forall {k} (a :: SYN k) b p d g1 g2 f
-   . (Closed k, M.MonoidalProfunctor p, KnownObj a, KnownObj b, Merge g1 g2, Interp f ~ (Interp a ~~> Interp b))
+  :: forall {k} (a :: SYN k) b p d g1 g2 f x
+   . ( Closed k
+     , M.MonoidalProfunctor p
+     , KnownObj a
+     , KnownObj b
+     , Merge g1 g2
+     , Interp f ~ (Interp a ~~> Interp b)
+     , ToTerm p x d g2 a
+     )
   => TermP p d g1 f
-  -> TermP p d g2 a
+  -> x
   -> TermP p d (Union g1 g2) b
-applyTerm (MkTerm f) (MkTerm x) =
-  withSynOb @a
-    ( withSynOb @b
-        (MkTerm (dimap (merge @g1 @g2) (apply @k @(Interp a) @(Interp b)) (f M.** x)))
-    )
+applyTerm (MkTerm f) x = case toTerm @p @x @d @g2 @a x of
+  MkTerm arg ->
+    withSynOb @a
+      ( withSynOb @b
+          (MkTerm (dimap (merge @g1 @g2) (apply @k @(Interp a) @(Interp b)) (f M.** arg)))
+      )

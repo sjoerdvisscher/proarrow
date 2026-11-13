@@ -39,7 +39,7 @@ import Proarrow.Core (CategoryOf (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Testing (check)
 import Proarrow.Tools.Diagrams.Svg (SVG (..), W (Wire), node, render)
-import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, toSMC, (**), (-<))
+import Proarrow.Tools.SMC (Merge, SYN (..), Term, Union, toSMC, (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 -- * The circuit
@@ -61,7 +61,7 @@ toffoliWith (Gates h t t' controlledNot) = toSMC @(F q :** F q :** F q) @(F q :*
   (b2, x4) <- cnot b1 (t' -< x3)
   (b3, a3) <- cnot b2 (t -< a2)
   (b4, a4) <- cnot (t -< b3) (t' -< a3)
-  a4 ** b4 ** (h -< t -< x4)
+  (a4, b4, h -< t -< x4)
   where
     cnot :: (Merge g1 g2) => Term d g1 (F q) -> Term d g2 (F q) -> Term d (Union g1 g2) (F (q ** q))
     cnot c x = controlledNot -< (c, x)

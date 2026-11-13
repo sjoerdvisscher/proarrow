@@ -39,30 +39,30 @@ data Action = Cooperate | Defect deriving (Eq, Ord, Show)
 prisonersDilemma
   :: Game (G () ()) (G (Action, Action) ())
 prisonersDilemma = toSMC @I \() -> SMC.do
-  a <- choose "Alice" [Cooperate, Defect] -< ()
-  b <- choose "Bob" [Cooperate, Defect] -< ()
+  a <- choose "Alice" [Cooperate, Defect]
+  b <- choose "Bob" [Cooperate, Defect]
   payoffs pdPayoff -< (a, b)
 
 -- The same empty boundary as the upstream [opengame| ... |] example.
 prisonersDilemmaClosed :: Game (G () ()) (G () ())
 prisonersDilemmaClosed = toSMC @I \() -> SMC.do
-  a <- choose "Alice" [Cooperate, Defect] -< ()
-  b <- choose "Bob" [Cooperate, Defect] -< ()
+  a <- choose "Alice" [Cooperate, Defect]
+  b <- choose "Bob" [Cooperate, Defect]
   finish pdPayoff -< (a, b)
 
 -- Replacing just the ordinary payoff function changes the strategic game.
 simultaneous :: ((Bool, Bool) -> (Payoff, Payoff)) -> Game (G () ()) (G () ())
 simultaneous returns = toSMC @I \() -> SMC.do
-  a <- choose "Alice" [False, True] -< ()
-  b <- choose "Bob" [False, True] -< ()
+  a <- choose "Alice" [False, True]
+  b <- choose "Bob" [False, True]
   finish returns -< (a, b)
 
 -- Observe an older variable after another decision has introduced a binder.
 -- This exercises SMC's depth adaptation as well as independent payoff wires.
 delayedObservation :: Game (G () ()) (G ((Bool, Bool), Bool) ())
 delayedObservation = toSMC @I \() -> SMC.do
-  a <- choose "Leader" [False, True] -< ()
-  b <- choose "Independent" [False, True] -< ()
+  a <- choose "Leader" [False, True]
+  b <- choose "Independent" [False, True]
   (retained, seen) <- observe a
   c <- decide "Follower" [False, True] [False, True] -< seen
   payoffs delayedReturns -< (retained, b, c)
@@ -90,7 +90,7 @@ pdPayoff (Defect, Defect) = (1, 1)
 sequentialGame
   :: Game (G () ()) (G (Bool, Bool) Payoff)
 sequentialGame = toSMC @I \() -> SMC.do
-  a <- choose "Leader" [False, True] -< ()
+  a <- choose "Leader" [False, True]
   (retained, seen) <- observe a
   b <- decide "Follower" [False, True] [False, True] -< seen
   sharedPayoff -< (retained, b)
@@ -271,15 +271,15 @@ coin = uniform [False, True]
 -- Both the fair mixture and its pure deviations are explicit candidates.
 matchingPennies :: B.Game (B.G () ()) (B.G (Bool, Bool) ())
 matchingPennies = toSMC @I \() -> SMC.do
-  a <- B.chooseMixed "Alice" [False, True] [pure False, pure True, coin] -< ()
-  b <- B.chooseMixed "Bob" [False, True] [pure False, pure True, coin] -< ()
+  a <- B.chooseMixed "Alice" [False, True] [pure False, pure True, coin]
+  b <- B.chooseMixed "Bob" [False, True] [pure False, pure True, coin]
   B.payoffs (\(alice, bob) -> if alice == bob then (1, 0) else (0, 1)) -< (a, b)
 
 -- A chance variable is retained for settlement, while the player sees only
 -- a noisy signal. Correct inference earns 3/4, rather than clairvoyant B.payoff 1.
 privateSignal :: B.Game (B.G () ()) (B.G (Bool, Bool) ())
 privateSignal = toSMC @I \() -> SMC.do
-  truth <- B.nature coin -< ()
+  truth <- B.nature coin
   (retained, unseen) <- B.observe truth
   signal <- B.liftStochastic noisy -< unseen
   guess <- B.decide "Guesser" [False, True] [False, True] -< signal
@@ -292,21 +292,21 @@ sharedReturn (a, b) = if a == b then (if a then 2 else 1) else 0
 
 sequentialResponses :: B.Game (B.G () ()) (B.G (Bool, Bool) ())
 sequentialResponses = toSMC @I \() -> SMC.do
-  a <- B.choose "Leader" [False, True] -< ()
+  a <- B.choose "Leader" [False, True]
   (retained, seen) <- B.observe a
   b <- B.decideMixed "Follower" [False, True] [False, True] [pure False, pure True, coin] -< seen
   B.payoffs (\ab -> (sharedReturn ab, sharedReturn ab)) -< (retained, b)
 
 purePD :: B.Game (B.G () ()) (B.G (Bool, Bool) ())
 purePD = toSMC @I \() -> SMC.do
-  a <- B.choose "Alice" [False, True] -< ()
-  b <- B.choose "Bob" [False, True] -< ()
+  a <- B.choose "Alice" [False, True]
+  b <- B.choose "Bob" [False, True]
   B.payoffs pdReturns -< (a, b)
 
 deterministicPD :: Game (G () ()) (G (Bool, Bool) ())
 deterministicPD = toSMC @I \() -> SMC.do
-  a <- choose "Alice" [False, True] -< ()
-  b <- choose "Bob" [False, True] -< ()
+  a <- choose "Alice" [False, True]
+  b <- choose "Bob" [False, True]
   payoffs pdReturns -< (a, b)
 
 pdReturns :: (Bool, Bool) -> (B.Payoff, B.Payoff)
@@ -396,9 +396,10 @@ bayesianTest =
           [B.runStrategy s c | s <- B.strategies cached, c <- contexts]
     , testProperty "cached play retains pure backward arrows and residual correlations" $ do
         let optic :: MonoidalLens (KL Bool :: B.Stochastic) (KL Bool) (KL Bool) (KL Bool)
-            optic = monLens @(KL Bool)
-              (B.Stochastic (\x -> Prelude ((\m -> (m, x /= m)) <$> coin)))
-              (arr (uncurry (/=)))
+            optic =
+              monLens @(KL Bool)
+                (B.Stochastic (\x -> Prelude ((\m -> (m, x /= m)) <$> coin)))
+                (arr (uncurry (/=)))
             cachedOptic = B.cacheLens [False] [False, True] optic
             game = B.Game (B.fromMonoidalLens optic)
             cached = B.Game (B.fromMonoidalLens cachedOptic)
@@ -480,7 +481,7 @@ bayesianTest =
     , testProperty "finish closes a mixed game and preserves diagnostics" $ do
         let g :: B.Game (B.G () ()) (B.G () ())
             g = toSMC @I \() -> SMC.do
-              a <- B.chooseMixed "Player" [False, True] [coin] -< ()
+              a <- B.chooseMixed "Player" [False, True] [coin]
               B.finish (const 4) -< a
             c = B.context () (const ())
         expect "closed payoff" [[4]] [map B.payoff (B.evaluateStrategy s c) | s <- B.equilibria g c]

@@ -23,8 +23,8 @@
 --
 -- @
 -- game = toSMC \@I \\() -> SMC.do
---   a <- choose "Alice" [Cooperate, Defect] -< ()
---   b <- choose "Bob" [Cooperate, Defect] -< ()
+--   a <- choose "Alice" [Cooperate, Defect]
+--   b <- choose "Bob" [Cooperate, Defect]
 --   finish (\\(a, b) -> (alicePayoff a b, bobPayoff a b)) -< (a, b)
 -- @
 --

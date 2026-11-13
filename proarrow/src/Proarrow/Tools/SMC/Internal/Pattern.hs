@@ -53,10 +53,10 @@ proc k = withSynOb @a (lmap (leftUnitorInv @k @(Interp a)) (bound @p @0 @'[] @a 
 -- The result object is inferred from the arrow. Use 'lift' for composite result syntax.
 {-# INLINE liftF #-}
 liftF
-  :: forall {k} (a :: SYN k) b t (p :: CAT k) d
-   . (Promonad p, Tuple p t a)
-  => p (Interp a) b -> t -> TermP p d (TupleCtx k t) (F b)
-liftF f t = lift @a @(F b) f (tuple @p t)
+  :: forall {k} (a :: SYN k) b t (p :: CAT k) d g
+   . (Promonad p, BuildTuple p t g a)
+  => p (Interp a) b -> t -> TermP p d g (F b)
+liftF f t = lift @a @(F b) f (tuple @p @t @g @a t)
 
 infixr 0 -<
 
@@ -65,9 +65,9 @@ infixr 0 -<
 -- The @Arrows@ extension must be disabled, since it reserves this symbol.
 {-# INLINE (-<) #-}
 (-<)
-  :: forall {k} (a :: SYN k) b t (p :: CAT k) d
-   . (Promonad p, Tuple p t a)
-  => p (Interp a) b -> t -> TermP p d (TupleCtx k t) (F b)
+  :: forall {k} (a :: SYN k) b t (p :: CAT k) d g
+   . (Promonad p, BuildTuple p t g a)
+  => p (Interp a) b -> t -> TermP p d g (F b)
 (-<) = liftF @a @b
 
 -- | The identity morphism, named as in Haskell's arrow notation.
@@ -110,10 +110,10 @@ runUp (MkTerm m) body =
 -- consumer of @'Not' a@. The value can be given as a 'Tuple' of terms, built by the type expected.
 {-# INLINE ret #-}
 ret
-  :: forall {k} {p} (a :: SYN k) t d
-   . (Dialogue k, Profunctor p, KnownObj a, Tuple p t a)
-  => t -> TermP p d (TupleCtx k t) (Up a)
-ret t = withSynOb @a (rmapT (doubleNegInv @k @(Interp a)) (tuple @p @t @a t))
+  :: forall {k} {p} (a :: SYN k) t d g
+   . (Dialogue k, Profunctor p, KnownObj a, BuildTuple p t g a)
+  => t -> TermP p d g (Up a)
+ret t = withSynOb @a (rmapT (doubleNegInv @k @(Interp a)) (tuple @p @t @g @a t))
 
 -- | A term built from a tuple of terms, by the type it is expected to have: a term is itself,
 -- @()@ is the monoidal unit, a pair at a tensor is the tensor of its parts, and a pair at a
@@ -121,31 +121,25 @@ ret t = withSynOb @a (rmapT (doubleNegInv @k @(Interp a)) (tuple @p @t @a t))
 -- patterns. The parts may come from different binding depths; the result adopts the depth
 -- where it is used, and their contexts are merged.
 type Tuple :: forall {k}. CAT k -> Type -> SYN k -> Constraint
-class Tuple (p :: CAT k) t a where
-  tuple :: t -> TermP p d (TupleCtx k t) a
+type Tuple (p :: CAT k) t a = BuildTuple p t (CtxOf @k t) a
 
--- | The context of a tuple of terms: the union of the contexts of its parts.
-type TupleCtx :: forall k -> Type -> Ctx k
-type family TupleCtx k t where
-  TupleCtx k () = '[]
-  TupleCtx k (x, y) = Union (TupleCtx k x) (TupleCtx k y)
-  TupleCtx k (x, y, z) = TupleCtx k ((x, y), z)
-  TupleCtx k (w, x, y, z) = TupleCtx k ((w, x, y), z)
-  TupleCtx k (v, w, x, y, z) = TupleCtx k ((v, w, x, y), z)
-  TupleCtx k (u, v, w, x, y, z) = TupleCtx k ((u, v, w, x, y), z)
-  TupleCtx k t = CtxOf @k t
+-- | Build a tuple with its context inferred alongside its type. Keeping the context a
+-- parameter allows constant arrows of an abstract category to use the empty context.
+type BuildTuple :: forall {k}. CAT k -> Type -> Ctx k -> SYN k -> Constraint
+class BuildTuple (p :: CAT k) t g a where
+  tuple :: t -> TermP p d g a
 
 -- The generic instances are incoherent, as for patterns: a term's type is often still unknown when
 -- the instance is chosen, and a pair defaults to a tensor until its type is known to be an 'Up'.
 
 -- | A term keeps its context and type, adapting to the depth where it is used.
 -- Variable ids in the context are unchanged.
-instance {-# INCOHERENT #-} (t ~ TermP p d g a) => Tuple p t a where
+instance {-# INCOHERENT #-} (ToTerm p t (DepthOf t) g a) => BuildTuple p t g a where
   {-# INLINE tuple #-}
-  tuple t = recast t
+  tuple t = recast (toTerm @p @t @(DepthOf t) @g @a t)
 
 -- | The empty tuple is the monoidal unit and uses no variables.
-instance (MonoidalProfunctor p, a ~ I) => Tuple p () a where
+instance (MonoidalProfunctor p, a ~ I, g ~ '[]) => BuildTuple p () g a where
   {-# INLINE tuple #-}
   tuple () = unit
 
@@ -154,35 +148,36 @@ instance
   {-# INCOHERENT #-}
   ( MonoidalProfunctor p
   , a ~ (a1 :** a2)
-  , Tuple p x a1
-  , Tuple p y a2
-  , Merge (TupleCtx k x) (TupleCtx k y)
+  , BuildTuple p x g1 a1
+  , BuildTuple p y g2 a2
+  , Merge g1 g2
+  , g ~ Union g1 g2
   )
-  => Tuple p (x, y) (a :: SYN k)
+  => BuildTuple p (x, y) g (a :: SYN k)
   where
   {-# INLINE tuple #-}
-  tuple (x, y) = tuple @p @x @a1 x ** tuple @p @y @a2 y
+  tuple (x, y) = tuple @p @x @g1 @a1 x ** tuple @p @y @g2 @a2 y
 
 -- | A pair at a computation is the computation of the pair at the value.
-instance (Dialogue k, Profunctor p, KnownObj a, Tuple p (x, y) a) => Tuple p (x, y) (Not (Not a) :: SYN k) where
+instance (Dialogue k, Profunctor p, KnownObj a, BuildTuple p (x, y) g a) => BuildTuple p (x, y) g (Not (Not a) :: SYN k) where
   {-# INLINE tuple #-}
   tuple p = ret @a p
 
-instance (Tuple p ((x, y), z) a) => Tuple p (x, y, z) a where
+instance (BuildTuple p ((x, y), z) g a) => BuildTuple p (x, y, z) g a where
   {-# INLINE tuple #-}
-  tuple (x, y, z) = tuple @p @((x, y), z) @a ((x, y), z)
+  tuple (x, y, z) = tuple @p @((x, y), z) @g @a ((x, y), z)
 
-instance (Tuple p ((w, x, y), z) a) => Tuple p (w, x, y, z) a where
+instance (BuildTuple p ((w, x, y), z) g a) => BuildTuple p (w, x, y, z) g a where
   {-# INLINE tuple #-}
-  tuple (w, x, y, z) = tuple @p @((w, x, y), z) @a ((w, x, y), z)
+  tuple (w, x, y, z) = tuple @p @((w, x, y), z) @g @a ((w, x, y), z)
 
-instance (Tuple p ((v, w, x, y), z) a) => Tuple p (v, w, x, y, z) a where
+instance (BuildTuple p ((v, w, x, y), z) g a) => BuildTuple p (v, w, x, y, z) g a where
   {-# INLINE tuple #-}
-  tuple (v, w, x, y, z) = tuple @p @((v, w, x, y), z) @a ((v, w, x, y), z)
+  tuple (v, w, x, y, z) = tuple @p @((v, w, x, y), z) @g @a ((v, w, x, y), z)
 
-instance (Tuple p ((u, v, w, x, y), z) a) => Tuple p (u, v, w, x, y, z) a where
+instance (BuildTuple p ((u, v, w, x, y), z) g a) => BuildTuple p (u, v, w, x, y, z) g a where
   {-# INLINE tuple #-}
-  tuple (u, v, w, x, y, z) = tuple @p @((u, v, w, x, y), z) @a ((u, v, w, x, y), z)
+  tuple (u, v, w, x, y, z) = tuple @p @((u, v, w, x, y), z) @g @a ((u, v, w, x, y), z)
 
 -- | The pattern @t@ of a binder: it takes apart the variable @(n, a)@, and the binder's body
 -- @cont@ then gives a term at depth @n + 1@ with type @b@, whose context is @g@ and possibly that
@@ -218,14 +213,14 @@ class BindPat p m t cont r | m -> p where
   bindPat :: m -> (t -> cont) -> r
 
 instance
-  ( cont ~ TermP p (d + PSize t) (CtxOf @k cont) (TyOf @k cont)
-  , r ~ TermP p d gr (TyOf @k cont)
-  , Pat p t d g a (CtxOf @k cont) (TyOf @k cont) gr
+  ( ToTerm p cont (d + PSize t) gc b
+  , r ~ TermP p d gr b
+  , Pat p t d g a gc b gr
   )
   => BindPat p (TermP p d g (a :: SYN k)) t cont r
   where
   {-# INLINE bindPat #-}
-  bindPat = pat @p @t @d @g @a @(CtxOf @k cont) @(TyOf @k cont) @gr
+  bindPat m k = pat @p @t @d @g @a @gc @b @gr m (\t -> toTerm (k t))
 
 -- | A pattern: a variable, @()@, or a pair of patterns. A tuple of three to six stands for pairs
 -- nested to the left, as @a ':**' b ':**' c@ is: @(x, y, z)@ is @((x, y), z)@. Binding it at depth
@@ -303,7 +298,7 @@ instance
   => Pat p (x, y) d g (F (a :: k)) g' c gr
   where
   {-# INLINE pat #-}
-  pat (MkTerm f) k = pat @p @(x, y) @d @g @(F a1 :** F a2) (MkTerm f) k
+  pat s k = pat @p @(x, y) @d @g @(F a1 :** F a2) (recast s) k
 
 instance
   {-# INCOHERENT #-}

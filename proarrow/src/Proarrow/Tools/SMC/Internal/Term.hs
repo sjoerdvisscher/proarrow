@@ -4,11 +4,11 @@
 -- exports everything, also what the public module keeps hidden.
 module Proarrow.Tools.SMC.Internal.Term where
 
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import GHC.TypeNats (Nat, type (+))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (one), associatorInv')
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj)
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), arr, obj)
 import Proarrow.Monoid (Comonoid (..))
 import Prelude (type (~))
 
@@ -29,6 +29,82 @@ data TermP p d g a where
 type Term :: forall {k}. Nat -> Ctx k -> SYN k -> Type
 type Term d g a = TermP (~>) d g a
 
+-- | A term, a constant arrow from the monoidal unit, or a tuple of these.
+-- Constants and the empty tuple use no variables; pairs merge their components' contexts.
+-- Base-category constants enter a promonad through 'arr'; arrows already in it are kept.
+-- Converting a term here keeps its binding depth, unlike tuple construction.
+type ToTerm :: forall {k}. CAT k -> Type -> Nat -> Ctx k -> SYN k -> Constraint
+class ToTerm p t d g a | p t -> g a where
+  -- | Explicit conversion for helpers whose result must be a concrete term.
+  toTerm :: t -> TermP p d g a
+
+instance {-# INCOHERENT #-} (t ~ TermP p d g a) => ToTerm p t d g a where
+  {-# INLINE toTerm #-}
+  toTerm t = t
+
+-- This instance distinguishes terms from the applied-arrow form even before their kinds are known.
+instance (TermP q d' g' a' ~ TermP p d g a) => ToTerm p (TermP q d' g' a') d g a where
+  {-# INLINE toTerm #-}
+  toTerm t = t
+
+-- Native arrows are already in the target promonad. Base-category arrows enter through arr.
+-- The native instance is incoherent so an abstract target can still use the pure instance.
+type LiftArrow :: forall {k}. CAT k -> CAT k -> Constraint
+class LiftArrow p q where
+  liftArrow :: q a b -> p a b
+
+instance {-# INCOHERENT #-} LiftArrow p p where
+  {-# INLINE liftArrow #-}
+  liftArrow f = f
+
+instance {-# OVERLAPPABLE #-} (Promonad p, q ~ Hom k) => LiftArrow (p :: CAT k) q where
+  {-# INLINE liftArrow #-}
+  liftArrow = arr
+
+instance
+  {-# OVERLAPPABLE #-}
+  (q x y ~ r Unit b, LiftArrow p r, g ~ '[], a ~ F b)
+  => ToTerm p (q x y) d (g :: Ctx k) a
+  where
+  {-# INLINE toTerm #-}
+  toTerm f = MkTerm (liftArrow @p @r f) :: TermP p d '[] (F b)
+
+-- | The empty tuple is the monoidal unit.
+instance {-# INCOHERENT #-} (MonoidalProfunctor p, g ~ '[], a ~ I) => ToTerm p () d g a where
+  {-# INLINE toTerm #-}
+  toTerm () = unit
+
+-- | A pair combines its components as a tensor, merging their contexts.
+instance
+  {-# INCOHERENT #-}
+  ( MonoidalProfunctor p
+  , ToTerm p x d g1 a1
+  , ToTerm p y d g2 a2
+  , Merge g1 g2
+  , g ~ Union g1 g2
+  , a ~ (a1 :** a2)
+  )
+  => ToTerm p (x, y) d g a
+  where
+  {-# INLINE toTerm #-}
+  toTerm (x, y) = toTerm @p @x @d @g1 @a1 x ** toTerm @p @y @d @g2 @a2 y
+
+instance {-# INCOHERENT #-} (ToTerm p ((x, y), z) d g a) => ToTerm p (x, y, z) d g a where
+  {-# INLINE toTerm #-}
+  toTerm (x, y, z) = toTerm @p @((x, y), z) @d @g @a ((x, y), z)
+
+instance {-# INCOHERENT #-} (ToTerm p ((w, x, y), z) d g a) => ToTerm p (w, x, y, z) d g a where
+  {-# INLINE toTerm #-}
+  toTerm (w, x, y, z) = toTerm @p @((w, x, y), z) @d @g @a ((w, x, y), z)
+
+instance {-# INCOHERENT #-} (ToTerm p ((v, w, x, y), z) d g a) => ToTerm p (v, w, x, y, z) d g a where
+  {-# INLINE toTerm #-}
+  toTerm (v, w, x, y, z) = toTerm @p @((v, w, x, y), z) @d @g @a ((v, w, x, y), z)
+
+instance {-# INCOHERENT #-} (ToTerm p ((u, v, w, x, y), z) d g a) => ToTerm p (u, v, w, x, y, z) d g a where
+  {-# INLINE toTerm #-}
+  toTerm (u, v, w, x, y, z) = toTerm @p @((u, v, w, x, y), z) @d @g @a ((u, v, w, x, y), z)
+
 -- | The variable with id @n@: the identity on its type.
 {-# INLINE var #-}
 var :: forall {k} n (a :: SYN k) d (p :: CAT k). (Promonad p, KnownObj a) => TermP p d '[ '(n, a)] a
@@ -47,12 +123,13 @@ dup = rmapT @s @(s :** s) comult
 drop :: forall {k} (s :: SYN k) d g p. (Profunctor p, Comonoid (Interp s)) => TermP p d g s -> TermP p d g I
 drop = rmapT @s @I counit
 
--- | Lift an arrow of the promonad to a function on terms: it runs after the term.
+-- | Lift an arrow of the promonad to a function on terms, constants or tuples: it runs after the input.
 {-# INLINE lift #-}
 lift
-  :: forall {k} (a :: SYN k) b d g (p :: CAT k)
-   . (Promonad p) => p (Interp a) (Interp b) -> TermP p d g a -> TermP p d g b
-lift f (MkTerm t) = MkTerm (f . t)
+  :: forall {k} (a :: SYN k) b d g (p :: CAT k) t
+   . (Promonad p, ToTerm p t d g a) => p (Interp a) (Interp b) -> t -> TermP p d g b
+lift f t = case toTerm @p @t @d @g @a t of
+  MkTerm g -> MkTerm (f . g)
 
 -- | Lift a morphism of the category to a function on terms, with 'rmap'. For @p = ('~>')@ this is
 -- 'lift'; for other promonads it is how the structure of @k@ acts on terms.
@@ -62,8 +139,8 @@ rmapT
    . (Profunctor p) => (Interp a ~> Interp b) -> TermP p d g a -> TermP p d g b
 rmapT f (MkTerm t) = MkTerm (rmap f t)
 
--- | Two terms side by side. A variable both use is copied. With effects, the left term's run
--- first.
+-- | Two concrete terms side by side. A variable both use is copied. With effects, the left
+-- term runs first. Use tuples to combine components through 'ToTerm'.
 {-# INLINE (**) #-}
 (**)
   :: forall {k} d g1 g2 (a :: SYN k) b (p :: CAT k)
@@ -123,7 +200,21 @@ type family DepthOf t where
 type CtxOf :: forall k. Type -> Ctx k
 type family CtxOf t where
   CtxOf (TermP p d g a) = g
+  CtxOf () = '[]
+  CtxOf (x, y) = Union (CtxOf x) (CtxOf y)
+  CtxOf (x, y, z) = CtxOf ((x, y), z)
+  CtxOf (w, x, y, z) = CtxOf ((w, x, y), z)
+  CtxOf (v, w, x, y, z) = CtxOf ((v, w, x, y), z)
+  CtxOf (u, v, w, x, y, z) = CtxOf ((u, v, w, x, y), z)
+  CtxOf (p (x :: k) (y :: k)) = '[]
 
 type TyOf :: forall k. Type -> SYN k
 type family TyOf t where
   TyOf (TermP p d g a) = a
+  TyOf () = I
+  TyOf (x, y) = TyOf x :** TyOf y
+  TyOf (x, y, z) = TyOf ((x, y), z)
+  TyOf (w, x, y, z) = TyOf ((w, x, y), z)
+  TyOf (v, w, x, y, z) = TyOf ((v, w, x, y), z)
+  TyOf (u, v, w, x, y, z) = TyOf ((u, v, w, x, y), z)
+  TyOf (p (x :: k) (y :: k)) = F y

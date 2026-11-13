@@ -42,8 +42,8 @@
 -- >     let g' = lift @(F ap :** F bm) @(F am :** F bp) g
 -- >         f' = lift @(F bp :** F cm) @(F bm :** F cp) f
 -- >     (ap, cm) <- x
--- >     rec ((am, bp), (bm, cp)) <- g' (ap ** bm) ** f' (bp ** cm)
--- >     am ** cp
+-- >     rec ((am, bp), (bm, cp)) <- (g' (ap, bm), f' (bp, cm))
+-- >     (am, cp)
 --
 -- A bind takes its right hand side apart with a pattern, see /Patterns/ below. In a @rec@ block,
 -- the variables that the block itself uses, @bm@ and @bp@ above, are fed back, and the ones the
@@ -74,6 +74,8 @@ module Proarrow.Tools.SMC
     -- ** Symmetric monoidal categories
   , Term
   , TermP
+  , ToTerm
+  , toTerm
   , toSMC
   , toSMC1
   , proc
@@ -85,7 +87,7 @@ module Proarrow.Tools.SMC
   , (**)
   , split
   , Tuple
-  , TupleCtx
+  , BuildTuple
   , recast
 
     -- ** Closed categories
@@ -186,8 +188,23 @@ import Proarrow.Tools.SMC.Internal.Term
 -- Tuples build terms as well, the mirror image of taking them apart: 'ret' of a tuple makes a pair
 -- at a tensor into '(**)' of its parts and a pair at a computation into the computation of the
 -- pair. The empty tuple @()@ stands for 'unit', including inside larger tuples:
--- @f -< ()@ applies a morphism without input wires, and @g -< (x, ())@
--- supplies a variable alongside a unit.
+-- @g -< (x, ())@ supplies a variable alongside a unit.
+-- A tuple can also be returned directly from a binder: @toSMC \(x, y) -> (y, x)@.
+-- A tuple can also be the right hand side of a bind, including inside @rec@; it is converted
+-- before binding. At least one component must be a term or arrow to identify the promonad.
+-- Its components may themselves be tuples, variables, constants, or @()@; tuples of three
+-- to six stand for pairs nested to the left, just as in patterns.
+-- A constant arrow @c :: Unit ~> a@ can be used directly alongside variables:
+-- @f -< (x, c)@, @ret c@, or as a component of a tuple returned by a binder. It uses no variables
+-- and has the embedded type @'F' a@. In @do@ notation, @y <- c@ computes the constant
+-- once and binds its result. Each unbound occurrence computes it independently.
+-- At 'TermP' @p@, a constant of the base category is lifted into the promonad through
+-- 'Proarrow.Core.arr'; a constant already in @p@ is used directly. The surrounding term
+-- determines the target promonad. To bind a base-category constant in another promonad,
+-- write @x <- toTerm c@: a bare @x <- c@ determines its promonad from @c@ itself.
+-- A tuple bind takes its promonad from its first typed component.
+-- @c -< ()@ remains an explicit way to construct a term in the constant's own promonad.
+-- The operator '(**)' takes concrete terms, giving their types directly when inference needs help.
 --
 -- '(-<)' mirrors arrow application in Haskell's arrow notation. The wiring of
 --

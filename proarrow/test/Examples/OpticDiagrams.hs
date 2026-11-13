@@ -168,7 +168,7 @@ composePasses forward1@Objs forward2@Objs backward1@Objs backward2@Objs =
     (c, n) <- lift @(F b) @(F c :** F n) forward2 b
     db <- backward2 -< (n, dc)
     da <- backward1 -< (m, db)
-    c ** da
+    (c, da)
 
 -- | The source function of the derivative example: @x ↦ sin (x²)@.
 derivativeSourcePicture :: String
@@ -211,18 +211,13 @@ sine :: Number ~> Number
 sine = opticLegs @Double (\x -> (cos x, sin x)) (uncurry (*))
 
 parallel :: Number ** Number ~> Number ** Number
-parallel = toSMC @(F Number :** F Number) \(x, y) -> SMC.do
-  x' <- square -< x
-  y' <- sine -< y
-  x' ** y'
+parallel = toSMC @(F Number :** F Number) \(x, y) -> (square -< x, sine -< y)
 
 type Logged = KLEISLI (Star (Functor.Prelude ((,) [String])))
 type LoggedWire = Wires '[ '(KL Double, KL Double)] :: OPTICS Logged
 
 loggedProgram :: LoggedWire ~> LoggedWire
-loggedProgram = toSMC1 \x -> SMC.do
-  y <- f -< x
-  g -< y
+loggedProgram = toSMC1 \x -> g -< f -< x
   where
     logged :: String -> (a -> b) -> (KL a :: Logged) ~> KL b
     logged name f' = Kleisli (Star (\a -> Functor.Prelude ([name], f' a)))
@@ -231,9 +226,7 @@ loggedProgram = toSMC1 \x -> SMC.do
     g = opticLegs @(KL Double) (logged "sin" (\x -> (cos x, sin x))) (logged "sin backward" (uncurry (*)))
 
 derivativeProgram :: Number ~> Number
-derivativeProgram = toSMC1 \x -> SMC.do
-  z <- square -< x
-  sine -< z
+derivativeProgram = toSMC1 \x -> sine -< square -< x
 
 reference :: Diff.Diff (Diff.DF '[1]) (Diff.DF '[1])
 reference = Diff.pointwise @1 sin cos . Diff.pointwise @1 (\x -> x * x) (2 *)

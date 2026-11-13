@@ -51,7 +51,7 @@ import Proarrow.Tools.SMC qualified as SMC
 -- >>> swapT @Bool @Bool (True, False)
 -- (False,True)
 swapT :: forall {k} (a :: k) b. (SymMonoidal k, Ob a, Ob b) => a ** b ~> b ** a
-swapT = toSMC @(F a :** F b) \(a, b) -> b ** a
+swapT = toSMC @(F a :** F b) \(a, b) -> (b, a)
 
 -- | Apply a function to an argument, both in a tensor.
 --
@@ -67,7 +67,7 @@ applyT = toSMC @((F a :-> F b) :** F a) (\p -> split p (\f x -> f ! x))
 -- >>> curryT @Bool @Bool True False
 -- (True,False)
 curryT :: forall {k} (a :: k) b. (Closed k, SymMonoidal k, Ob a, Ob b) => a ~> b ~~> a ** b
-curryT = toSMC @(F a) @(F b :-> F a :** F b) (\x -> lam (\y -> x ** y))
+curryT = toSMC @(F a) @(F b :-> F a :** F b) (\x -> lam (x,))
 
 -- | Rotate a triple, with a triple pattern.
 --
@@ -75,7 +75,7 @@ curryT = toSMC @(F a) @(F b :-> F a :** F b) (\x -> lam (\y -> x ** y))
 -- >>> rotT @Int @Bool @Int ((1, True), 2)
 -- ((True,2),1)
 rotT :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => a ** b ** c ~> b ** c ** a
-rotT = toSMC @(F a :** F b :** F c) \(a, b, c) -> b ** c ** a
+rotT = toSMC @(F a :** F b :** F c) \(a, b, c) -> (b, c, a)
 
 -- | Trace out @u@ with a @rec@ block. In 'Data.Kind.Type' the trace is a lazy fixed point.
 --
@@ -84,7 +84,7 @@ rotT = toSMC @(F a :** F b :** F c) \(a, b, c) -> b ** c ** a
 -- [1,1,1]
 traceT :: forall {k} (a :: k) b u. (TracedMonoidal k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
 traceT h = toSMC1 \a -> SMC.do
-  rec (b, u) <- lift @(F a :** F u) @(F b :** F u) h (a ** u)
+  rec (b, u) <- lift @(F a :** F u) @(F b :** F u) h (a, u)
   b
 
 -- | Trace out @u@ with 'loop'.
@@ -100,7 +100,7 @@ loopT h = toSMC1 \a -> loop @(F u) @(F b) \u -> recast (h -< (a, u))
 loopCC :: forall {k} (a :: k) b u. (CompactClosed k, Ob a, Ob b, Ob u) => (a ** u ~> b ** u) -> a ~> b
 loopCC h = toSMC1 \a -> SMC.do
   (u, u') <- produce
-  (b, v) <- lift @(F a :** F u) @(F b :** F u) h (a ** u)
+  (b, v) <- lift @(F a :** F u) @(F b :** F u) h (a, u)
   () <- annihilate u' v
   b
 

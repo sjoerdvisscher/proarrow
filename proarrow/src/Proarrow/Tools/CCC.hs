@@ -14,7 +14,7 @@
 -- > import Prelude hiding ((**))
 -- > import Proarrow.Tools.CCC (SYN (..), type F, toCCC, (**))
 -- >
--- > swapProduct = toCCC @(F a :** F b) @(F b :** F a) (\(a, b) -> b ** a)
+-- > swapProduct = toCCC @(F a :** F b) @(F b :** F a) (\(a, b) -> (b, a))
 module Proarrow.Tools.CCC
   ( -- * Types
     SYN (I, (:**), (:->), (:&&), Top, (:||), Zero)
@@ -26,6 +26,8 @@ module Proarrow.Tools.CCC
 
     -- ** Products
   , Term
+  , ToTerm
+  , toTerm
   , toCCC
   , toCCC1
   , lift
@@ -36,7 +38,7 @@ module Proarrow.Tools.CCC
   , (**)
   , split
   , Tuple
-  , TupleCtx
+  , BuildTuple
   , recast
   , with
   , exl
@@ -121,18 +123,18 @@ toCCC1 = toCCC @(F a) @(F b)
 -- 'Proarrow.Tools.SMC.lift'; use type applications when their interpretations do not determine them.
 {-# INLINE lift #-}
 lift
-  :: forall {k} (a :: SYN (PROD k)) b d g
-   . (CategoryOf k, Is PR (SMC.Interp a), Is PR (SMC.Interp b))
-  => Interp a ~> Interp b -> Term d g a -> Term d g b
+  :: forall {k} (a :: SYN (PROD k)) b d g t
+   . (CategoryOf k, Is PR (SMC.Interp a), Is PR (SMC.Interp b), ToTerm (Hom (PROD k)) t d g a)
+  => Interp a ~> Interp b -> t -> Term d g b
 lift f = SMC.lift @a @b (Prod f)
 
 -- | Lift a base-category arrow onto a term or tuple of terms, embedding its result by 'F'.
 -- The result object is inferred from the arrow. Use 'lift' for composite result syntax.
 {-# INLINE liftF #-}
 liftF
-  :: forall {k} (a :: SYN (PROD k)) b t d
-   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (Hom (PROD k)) t a)
-  => (Interp a ~> b) -> t -> Term d (TupleCtx (PROD k) t) (F b)
+  :: forall {k} (a :: SYN (PROD k)) b t d g
+   . (CategoryOf k, Is PR (SMC.Interp a), BuildTuple (Hom (PROD k)) t g a)
+  => (Interp a ~> b) -> t -> Term d g (F b)
 liftF f = SMC.liftF @a @(PR b) (Prod f)
 
 infixr 0 -<
@@ -142,9 +144,9 @@ infixr 0 -<
 -- The @Arrows@ extension must be disabled, since it reserves this symbol.
 {-# INLINE (-<) #-}
 (-<)
-  :: forall {k} (a :: SYN (PROD k)) b t d
-   . (CategoryOf k, Is PR (SMC.Interp a), Tuple (Hom (PROD k)) t a)
-  => (Interp a ~> b) -> t -> Term d (TupleCtx (PROD k) t) (F b)
+  :: forall {k} (a :: SYN (PROD k)) b t d g
+   . (CategoryOf k, Is PR (SMC.Interp a), BuildTuple (Hom (PROD k)) t g a)
+  => (Interp a ~> b) -> t -> Term d g (F b)
 (-<) = liftF @a @b
 
 -- | Inject as the right element of a sum.
@@ -185,7 +187,7 @@ curryPair
   :: forall {k} (a :: k) b
    . (HasProducts k, Closed (PROD k), Ob a, Ob b)
   => a ~> Interp (F b :-> (F a :** F b))
-curryPair = toCCC @(F a) @(F b :-> (F a :** F b)) (\x -> lam (\y -> x ** y))
+curryPair = toCCC @(F a) @(F b :-> (F a :** F b)) (\x -> lam (x,))
 
 -- | Flip the first two arguments of a curried function, supplying its third argument from the
 -- second as well. Nested binders and a repeated variable use SMC's contexts.

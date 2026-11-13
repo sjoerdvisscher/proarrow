@@ -78,7 +78,6 @@ import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representable (..), repUniv)
 import Proarrow.Tools.SMC (SYN (..), lam, toSMC, (!), (-<))
-import Proarrow.Tools.SMC qualified as SMC
 
 -- * Carriers
 
@@ -178,7 +177,7 @@ instance (Closed k, SymMonoidal k, CocommutativeComonoid (m :: k)) => MonoidalPr
     withOb2 @k @x2 @y2 (Rep both)
     where
       both = toSMC @(F x1 :** F y1) @(F m :-> F x2 :** F y2) \(x, y) ->
-        lam \i -> (l -< x) ! i SMC.** (r -< y) ! i
+        lam \i -> ((l -< x) ! i, (r -< y) ! i)
 
 instance (Closed k, HasCoproducts k, Ob (m :: k)) => MonoidalProfunctor (Coprod (Rep (Exp m)) :: COPROD k +-> COPROD k) where
   one = withObExp @k @m @InitialObject (Coprod (Rep initiate))
@@ -189,7 +188,7 @@ instance (Closed k, SymMonoidal k, Ob (m :: k)) => Strong Tensor (Rep (Exp m) ::
     withOb2 @k @a @y (Rep strong)
     where
       strong = toSMC @(F a :** F x) @(F m :-> F a :** F y) \(a, x) ->
-        lam \i -> a SMC.** (p -< x) ! i
+        lam \i -> (a, (p -< x) ! i)
 instance (Closed k, HasCoproducts k, Comonoid (m :: k)) => Strong CoprodAction (Rep (Exp m) :: k +-> k) where
   act @(COPR a) (Rep @y p) =
     p //

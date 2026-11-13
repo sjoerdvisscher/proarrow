@@ -39,6 +39,7 @@ import Proarrow.Tools.SMC
   , lift
   , ret
   , toSMC
+  , toTerm
   , unit
   , (**)
   , (-<)
@@ -94,7 +95,7 @@ type Sell = Not Buy
 -- | @x[u].(put-name_u | x[v].(put-credit_v | x ↔ r))@: send the name on @u@ and the card on @v@,
 -- and forward the rest of @x@, where the receipt arrives, to @r@.
 buyer :: (KnownCtx g) => SMC.Term d g (Not (F Receipt)) -> SMC.Term d g Buy
-buyer r = put "tea" ** put 1234 ** r
+buyer r = toTerm (put "tea", put 1234, r)
 
 -- | @x(u).x(v).compute_{u,v,x}@: receive the name and the card, and send the receipt where it
 -- should go.
@@ -117,7 +118,7 @@ type Quote = Not Shop
 
 -- | @x[u].(put-name_u | x ↔ r)@.
 shopper :: (KnownCtx g) => SMC.Term d g (Not (F Price)) -> SMC.Term d g Shop
-shopper r = put "tea" ** r
+shopper r = toTerm (put "tea", r)
 
 -- | @x(u).lookup_{u,x}@.
 quoter :: SMC.Term d '[] Quote
@@ -202,8 +203,8 @@ computeByHand = Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)
 -- * Helpers
 
 -- | A message, from nothing.
-put :: forall a d. a -> SMC.Term d '[] (F (L (Ur a)))
-put x = (Linear \() -> Ur x) -< ()
+put :: a -> Unit ~> L (Ur a)
+put x = Linear \() -> Ur x
 
 compute :: SMC.Term d g (F Name :** F Credit) -> SMC.Term d g (F Receipt)
 compute p = (Linear \(Ur n, Ur c) -> Ur (n ++ ", paid with " ++ show c)) -< p

@@ -46,8 +46,8 @@ effect :: forall m a d g. (Monad m) => (a -> m ()) -> SMC.Term d g (V m a) -> SM
 effect f = lift @(V m a) @(Eff m) (Cps \a k -> f a >>= k)
 
 -- | A constant.
-val :: forall m a d. a -> SMC.Term d '[] (V m a)
-val a = Cps (const a) -< ()
+val :: forall m a. a -> Unit ~> (C a :: K m)
+val a = Cps (const a)
 
 -- | Run a closed computation: give its result to a final continuation.
 run :: (Unit ~> Dual (Dual (C a :: K m))) -> (a -> m ()) -> m ()
@@ -73,7 +73,7 @@ plus p = Cps (uncurry (+)) -< p
 -- written.
 reversedT :: forall m. (Monad m) => m () -> m () -> Unit ~> Dual (Dual (C () :: K m))
 reversedT a b = toSMC @I @(Eff m) \() -> SMC.do
-  (first, second) <- act_ a ** act_ b
+  (first, second) <- (act_ a, act_ b)
   () <- second
   () <- first
   ret unit

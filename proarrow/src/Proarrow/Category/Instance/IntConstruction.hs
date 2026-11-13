@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal.IsoMix (IsoMix (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (\\))
-import Proarrow.Tools.SMC (SYN (F, (:**)), lift, toSMC, toSMC1, (**), (-<))
+import Proarrow.Tools.SMC (SYN (F, (:**)), lift, toSMC, toSMC1, (-<))
 import Proarrow.Tools.SMC qualified as SMC
 
 data INT k = I k k
@@ -41,7 +41,7 @@ isoToInt f g = Int (swap @k @b @a . (f M.** g)) \\ f \\ g
 fromInt :: forall {k} (a :: k) b m. (TracedMonoidal k) => (I a m ~> I b m) -> a ~> b
 fromInt (Int f) = toSMC1 \a -> SMC.do
   let f' = lift @(F a :** F m) @(F m :** F b) f
-  rec (m, b) <- f' (a ** m)
+  rec (m, b) <- f' (a, m)
   b
 
 instance (TracedMonoidal k) => Profunctor (IntConstruction :: CAT (INT k)) where
@@ -54,8 +54,8 @@ instance (TracedMonoidal k) => Promonad (IntConstruction :: CAT (INT k)) where
       let g' = lift @(F ap :** F bm) @(F am :** F bp) g
           f' = lift @(F bp :** F cm) @(F bm :** F cp) f
       (ap, cm) <- x
-      rec ((am, bp), (bm, cp)) <- g' (ap ** bm) ** f' (bp ** cm)
-      am ** cp
+      rec ((am, bp), (bm, cp)) <- (g' (ap, bm), f' (bp, cm))
+      (am, cp)
 
 -- | The Int construction, a.k.a. the geometry of interaction,
 -- the free compact closed category on a traced monoidal category.
@@ -72,7 +72,7 @@ instance (TracedMonoidal k) => MonoidalProfunctor (IntConstruction :: CAT (INT k
           ((ap, cp), (bm, dm)) <- x
           (am, bp) <- f -< (ap, bm)
           (cm, dp) <- g -< (cp, dm)
-          (am ** cm) ** (bp ** dp)
+          ((am, cm), (bp, dp))
 
 -- | The monoidal tensor is pointwise, tensoring of the plus and minus parts.
 instance (TracedMonoidal k) => Monoidal (INT k) where

@@ -78,7 +78,7 @@ resources =
   testGroup
     "Copying and discarding"
     [ testProperty "a variable used twice is copied (FinRel 2)" $
-        check "differs from comult" (toSMC @(F F2) @(F F2 :** F F2) (\x -> x SMC.** x) == comult)
+        check "differs from comult" (toSMC @(F F2) @(F F2 :** F F2) (\x -> (x, x)) == comult)
     , testProperty "an unused variable is discarded (FinRel 2, 3)" $
         check
           "differs from the counit"
@@ -90,7 +90,7 @@ resources =
           ( toSMC @(F F2) @(F F3 :** F F3)
               ( \x -> SMC.do
                   y <- h -< x
-                  y SMC.** y
+                  (y, y)
               )
               == comult . h
           )
@@ -98,7 +98,7 @@ resources =
         h <- genNamed @(F2 ~> F3) "h"
         check
           "differs from (h ** h) . comult"
-          ( toSMC @(F F2) @(F F3 :** F F3) (\x -> (h -< x) SMC.** (h -< x))
+          ( toSMC @(F F2) @(F F3 :** F F3) (\x -> (h -< x, h -< x))
               == (h ** h) . comult
           )
     , testProperty "a fed back variable of a rec block that is also used after it is copied" $
@@ -116,7 +116,7 @@ resources =
 recCopyT :: Int -> ([Int], [Int])
 recCopyT = toSMC @(F Int) @(F [Int] :** F [Int]) \a -> SMC.do
   rec (b, u) <- (\(x, us) -> (take 3 us, x : us)) -< (a, u)
-  b SMC.** u
+  (b, u)
 
 -- | A @rec@ block with a variable that nothing uses, which is discarded.
 recDropT :: Int -> [Int]
@@ -141,20 +141,20 @@ duality =
     , testProperty "a triple pattern is the left-nested pairs (FinRel 2, 1, 3)" $
         check
           "differs"
-          ( toSMC @(F F2 :** F F1 :** F F3) (\(x, y, z) -> z SMC.** x SMC.** y)
-              == toSMC @(F F2 :** F F1 :** F F3) (\((x, y), z) -> z SMC.** x SMC.** y)
+          ( toSMC @(F F2 :** F F1 :** F F3) (\(x, y, z) -> (z, x, y))
+              == toSMC @(F F2 :** F F1 :** F F3) (\((x, y), z) -> (z, x, y))
           )
     , testProperty "a quadruple pattern is the left-nested pairs (FinRel 2, 1, 3, 2)" $
         check
           "differs"
-          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(w, x, y, z) -> z SMC.** x SMC.** w SMC.** y)
-              == toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(((w, x), y), z) -> z SMC.** x SMC.** w SMC.** y)
+          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(w, x, y, z) -> (z, x, w, y))
+              == toSMC @(F F2 :** F F1 :** F F3 :** F F2) (\(((w, x), y), z) -> (z, x, w, y))
           )
     , testProperty "a quintuple pattern is the left-nested pairs (FinRel 2, 1, 3, 2, 1)" $
         check
           "differs"
-          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1) (\(v, w, x, y, z) -> z SMC.** x SMC.** v SMC.** y SMC.** w)
-              == toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1) (\((((v, w), x), y), z) -> z SMC.** x SMC.** v SMC.** y SMC.** w)
+          ( toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1) (\(v, w, x, y, z) -> (z, x, v, y, w))
+              == toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1) (\((((v, w), x), y), z) -> (z, x, v, y, w))
           )
     , testProperty "a sextuple bind is the left-nested pairs (FinRel 2, 1, 3, 2, 1, 2)" $
         check
@@ -162,10 +162,10 @@ duality =
           ( toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1 :** F F2)
               ( \t -> SMC.do
                   (u, v, w, x, y, z) <- t
-                  z SMC.** x SMC.** u SMC.** y SMC.** w SMC.** v
+                  (z, x, u, y, w, v)
               )
               == toSMC @(F F2 :** F F1 :** F F3 :** F F2 :** F F1 :** F F2)
-                (\(((((u, v), w), x), y), z) -> z SMC.** x SMC.** u SMC.** y SMC.** w SMC.** v)
+                (\(((((u, v), w), x), y), z) -> (z, x, u, y, w, v))
           )
     , testProperty "combineDual (FinRel 2, 3)" $
         check "differs from combineDual" (combineDualT @F2 @F3 == combineDual @F2 @F3)

@@ -64,15 +64,15 @@ delta x y = rmapT (cap @(Interp a)) (x ** y)
 -- including both 'I' and @'F' Unit@. At 'I' it is the product of two scalars.
 {-# INLINE (*^) #-}
 (*^)
-  :: forall {k} {p} d g1 g2 (a :: SYN k) s
-   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2, Interp s ~ Unit)
-  => TermP p d g1 s -> TermP p d g2 a -> TermP p d (Union g1 g2) a
-s *^ x = withSynOb @a (rmapT (leftUnitor @k @(Interp a)) (s ** x))
+  :: forall {k} {p} d g1 g2 (a :: SYN k) s t
+   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2, Interp s ~ Unit, ToTerm p t d g1 s)
+  => t -> TermP p d g2 a -> TermP p d (Union g1 g2) a
+s *^ x = withSynOb @a (rmapT (leftUnitor @k @(Interp a)) (toTerm @p @t @d @g1 @s s ** x))
 
 -- | A term multiplied by a scalar on its right.
 {-# INLINE (^*) #-}
 (^*)
-  :: forall {k} {p} d g1 g2 (a :: SYN k) s
-   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2, Interp s ~ Unit)
-  => TermP p d g1 a -> TermP p d g2 s -> TermP p d (Union g1 g2) a
-x ^* s = withSynOb @a (rmapT (rightUnitor @k @(Interp a)) (x ** s))
+  :: forall {k} {p} d g1 g2 (a :: SYN k) s t
+   . (MonoidalProfunctor p, KnownObj a, Merge g1 g2, Interp s ~ Unit, ToTerm p t d g2 s)
+  => TermP p d g1 a -> t -> TermP p d (Union g1 g2) a
+x ^* s = withSynOb @a (rmapT (rightUnitor @k @(Interp a)) (x ** toTerm @p @t @d @g2 @s s))

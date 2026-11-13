@@ -125,7 +125,7 @@ runStrategy s@Strategy{} (Context @z prior continuation) =
         (residual, output) <- lift @_ @(F m :** F (Observation b)) forward input
         returned <- continuation -< (hidden, output)
         result <- backward -< (residual, returned)
-        output SMC.** result
+        (output, result)
     )
       . prior
 
@@ -180,7 +180,7 @@ andThen g@OpenGame{} h@OpenGame{} =
               downstream =
                 ( toSMC @(F z :** F (Observation a)) \(hidden, input) -> SMC.do
                     output <- view (play g s) -< input
-                    hidden SMC.** output
+                    (hidden, output)
                 )
                   . prior
           in evaluate g s (Context @z prior upstream)
@@ -205,12 +205,12 @@ parallel g@OpenGame{} h@OpenGame{} =
                        ( toSMC @(F (Observation a) :** F (Observation c)) \(x, x') -> SMC.do
                            (m, y) <- lift @_ @(F m :** F (Observation b)) v x
                            (n, y') <- lift @_ @(F n :** F (Observation d)) w x'
-                           (m SMC.** n) SMC.** (y SMC.** y')
+                           ((m, n), (y, y'))
                        )
                        ( toSMC @((F m :** F n) :** (F (Coutility b) :** F (Coutility d))) \((m, n), (r, r')) -> SMC.do
                            returned <- u -< (m, r)
                            returned' <- z -< (n, r')
-                           returned SMC.** returned'
+                           (returned, returned')
                        )
           )
           ( \st (Context @z prior continuation) ->
@@ -219,21 +219,21 @@ parallel g@OpenGame{} h@OpenGame{} =
                   w = view (play h t)
                   leftPrior =
                     ( toSMC @(F z :** (F (Observation a) :** F (Observation c))) \(hidden, (x, x')) ->
-                        (hidden SMC.** x') SMC.** x
+                        (hidden, x', x)
                     )
                       . prior
                   rightPrior =
                     ( toSMC @(F z :** (F (Observation a) :** F (Observation c))) \(hidden, (x, x')) ->
-                        (hidden SMC.** x) SMC.** x'
+                        (hidden, x, x')
                     )
                       . prior
                   leftK = toSMC @((F z :** F (Observation c)) :** F (Observation b)) \((hidden, x'), y) -> SMC.do
                     y' <- w -< x'
-                    (r, _) <- lift @_ @(F (Coutility b) :** F (Coutility d)) continuation (hidden SMC.** (y SMC.** y'))
+                    (r, _) <- lift @_ @(F (Coutility b) :** F (Coutility d)) continuation (hidden, (y, y'))
                     r
                   rightK = toSMC @((F z :** F (Observation a)) :** F (Observation d)) \((hidden, x), y') -> SMC.do
                     y <- v -< x
-                    (_, r') <- lift @_ @(F (Coutility b) :** F (Coutility d)) continuation (hidden SMC.** (y SMC.** y'))
+                    (_, r') <- lift @_ @(F (Coutility b) :** F (Coutility d)) continuation (hidden, (y, y'))
                     r'
               in withOb2 @k @z @(Observation c) $
                    withOb2 @k @z @(Observation a) $

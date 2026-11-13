@@ -51,29 +51,25 @@ data Prims b = Prims
 -- | The connectives as terms.
 andT
   , orT
-    :: forall {k} (b :: k) d g1 g2
-     . (Monoidal k, Ob b, SMC.Merge g1 g2)
-    => Prims b -> Term d g1 (F b) -> Term d g2 (F b) -> Term d (SMC.Union g1 g2) (F b)
-andT p x y = andP p -< (x, y)
-orT p x y = orP p -< (x, y)
+    :: forall {k} (b :: k) d g x y
+     . (Monoidal k, Ob b, SMC.BuildTuple (~>) (x, y) g (F b :** F b))
+    => Prims b -> x -> y -> Term d g (F b)
+andT p x y = SMC.liftF @(F b :** F b) (andP p) (x, y)
+orT p x y = SMC.liftF @(F b :** F b) (orP p) (x, y)
 
 notT :: forall {k} (b :: k) d g. (Monoidal k, Ob b) => Prims b -> Term d g (F b) -> Term d g (F b)
 notT p x = notP p -< x
 
--- | A coin that is true with the given probability.
-coin :: (Monoidal k, Ob (b :: k)) => Prims b -> Double -> Term d '[] (F b)
-coin p q = flipP p q -< ()
-
 -- | The test of the paper's running example on a patient: positive with probability 0.99 when the
 -- patient has the disease, and with probability 0.02 when not. Each call flips its own coins.
 diseaseTest :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> b ~> b
-diseaseTest p = toSMC1 \z -> orT p (andT p z (coin p 0.99)) (andT p (notT p z) (coin p 0.02))
+diseaseTest p = toSMC1 \z -> orT p (andT p z (flipP p 0.99)) (andT p (notT p z) (flipP p 0.02))
 
 -- | Whether a patient has the disease, which one in ten thousand have, given one positive and one
 -- negative test.
 hasDisease :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> Unit ~> b
 hasDisease p = toSMC @I @(F b) \() -> SMC.do
-  x <- coin p 1e-4
+  x <- flipP p 1e-4
   let t y = diseaseTest p -< y
   (observeP p -< andT p (t x) (notT p (t x))) *^ x
 
@@ -81,8 +77,8 @@ hasDisease p = toSMC @I @(F b) \() -> SMC.do
 -- conjunction of two calls of @f n@, so it is true with probability @2^-2^(n+1)@. Each @f n@ is a
 -- function of its own, compiled once and called twice.
 family :: forall {k} (b :: k). (CopyDiscard k, Ob b) => Prims b -> Int -> Unit ~> b
-family p 0 = toSMC @I @(F b) \() -> andT p (coin p 0.5) (coin p 0.5)
-family p n = let f = family p (n - 1) in toSMC @I @(F b) \() -> andT p (f -< ()) (f -< ())
+family p 0 = toSMC @I @(F b) \() -> andT p (flipP p 0.5) (flipP p 0.5)
+family p n = let f = family p (n - 1) in toSMC @I @(F b) \() -> andT p f f
 
 -- * Inference
 

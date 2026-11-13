@@ -17,7 +17,7 @@ import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD, type (&&))
 import Proarrow.Testing (expect)
 import Proarrow.Testing.Laws (testClosed)
-import Proarrow.Tools.CCC (SYN (..), liftF, returnA, toCCC, toCCC1, (!), (**), (-<), type F)
+import Proarrow.Tools.CCC (SYN (..), caseOf, curryPair, lam, liftF, recast, returnA, toCCC, toCCC1, (!), (-<), type F)
 import Proarrow.Tools.CCC qualified as CCC
 import Props.Hask ()
 
@@ -26,7 +26,7 @@ import Props.Hask ()
 duplicate :: forall {k} (a :: k). (HasProducts k, Ob a) => a ~> (a && a)
 duplicate = toCCC @(F a) @(F a :** F a) \x -> CCC.do
   y <- id -< x
-  y ** y
+  (y, y)
 
 {- HLINT ignore first "Use fst" -}
 first :: forall {k} (a :: k) b. (HasProducts k, Ob a, Ob b) => (a && b) ~> a
@@ -35,14 +35,14 @@ first = toCCC @(F a :** F b) @(F a) \(a, _) -> a
 -- Endofunctors have composition as their tensor. This arrow instead curries with respect
 -- to their pointwise products, using Closed (PROD (Type -> Type)).
 pairIdentities :: Nat Identity (Identity :~>: Product Identity Identity)
-pairIdentities = CCC.curryPair @Identity @Identity
+pairIdentities = curryPair @Identity @Identity
 
 -- The outer variable is used at two binding depths.
 captureTwice :: Bool -> Bool -> ((Bool, Bool), Bool)
 captureTwice =
   toCCC @(F Bool) @(F Bool :-> ((F Bool :** F Bool) :** F Bool)) \x ->
-    let f = CCC.lam (\y -> CCC.recast x ** y)
-    in CCC.lam (\z -> (f CCC.! z) ** x)
+    let f = lam (recast x,)
+    in lam (\z -> (f ! z, x))
 
 arrowPair :: (Bool, Bool) -> (Bool, Bool)
 arrowPair = toCCC @(F Bool :** F Bool) @(F (Bool, Bool)) \(x, y) -> CCC.do
@@ -72,12 +72,12 @@ reuseAcrossBinds = toCCC1 \n -> CCC.do
 
 captureApplied :: Int -> (Int -> (Int, Int), Int)
 captureApplied = toCCC1 \x -> CCC.do
-  f <- CCC.lam @_ @_ @(F Int) (\y -> returnA -< (x, y))
+  f <- lam @_ @_ @(F Int) (\y -> returnA -< (x, y))
   returnA -< (f, x)
 
 embeddedSum :: Either Int Bool -> Int
 embeddedSum = toCCC1 \s ->
-  CCC.caseOf s ((+ 1) -<) ((\v -> if v then 10 else 20) -<)
+  caseOf s ((+ 1) -<) ((\v -> if v then 10 else 20) -<)
 
 embeddedFunction :: (Int -> Int, Int) -> Int
 embeddedFunction = toCCC @(F (Int -> Int) :** F Int) @(F Int) (uncurry (!))

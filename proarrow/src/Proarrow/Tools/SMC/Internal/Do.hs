@@ -6,7 +6,7 @@ module Proarrow.Tools.SMC.Internal.Do where
 
 import Data.Kind (Constraint, Type)
 import GHC.TypeNats (Nat, type (+))
-import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor, SymMonoidal, Tensor)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor, SymMonoidal, Tensor)
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
@@ -21,7 +21,8 @@ import Proarrow.Tools.SMC.Internal.Term
 
 -- Do notation
 
--- | A bind in a @do@ block: a term taken apart by a pattern, or the variables of a @rec@ block.
+-- | A bind in a @do@ block: a term, constant or tuple taken apart by a pattern, or the variables
+-- of a @rec@ block.
 type Bind :: forall {k}. CAT k -> Type -> Type -> Type -> Type -> Constraint
 class Bind p m t cont r | m -> p where
   -- | Bind the right hand side to the pattern of the continuation.
@@ -32,6 +33,54 @@ class Bind p m t cont r | m -> p where
 instance {-# INCOHERENT #-} (BindTerm p t (TermP p d g a) cont r) => Bind p (TermP p d g (a :: SYN k)) t cont r where
   {-# INLINE (>>=) #-}
   (>>=) = bindTerm @p @t
+
+-- | Bind a constant arrow, computing it once before the continuation.
+instance
+  {-# OVERLAPPABLE #-}
+  (p ~ q, a ~ Unit, Bind p (TermP p d '[] (F b)) t cont r)
+  => Bind p (q a b) t cont r
+  where
+  {-# INLINE (>>=) #-}
+  f >>= k = (toTerm f :: TermP p d '[] (F b)) >>= k
+
+-- A tuple's first term or arrow identifies its promonad. Unit components are skipped;
+-- nested tuples are visited from left to right, with the remaining components kept in the list.
+type TupleProfunctor :: [Type] -> CAT k -> Constraint
+class TupleProfunctor ts p | ts -> p
+
+instance TupleProfunctor (TermP p d g a ': ts) p
+instance {-# OVERLAPPABLE #-} (p ~ q) => TupleProfunctor (q a b ': ts) p
+instance {-# INCOHERENT #-} (TupleProfunctor ts p) => TupleProfunctor (() ': ts) p
+instance {-# INCOHERENT #-} (TupleProfunctor (x ': y ': ts) p) => TupleProfunctor ((x, y) ': ts) p
+instance {-# INCOHERENT #-} (TupleProfunctor (((x, y), z) ': ts) p) => TupleProfunctor ((x, y, z) ': ts) p
+instance {-# INCOHERENT #-} (TupleProfunctor (((w, x, y), z) ': ts) p) => TupleProfunctor ((w, x, y, z) ': ts) p
+instance {-# INCOHERENT #-} (TupleProfunctor (((v, w, x, y), z) ': ts) p) => TupleProfunctor ((v, w, x, y, z) ': ts) p
+instance {-# INCOHERENT #-} (TupleProfunctor (((u, v, w, x, y), z) ': ts) p) => TupleProfunctor ((u, v, w, x, y, z) ': ts) p
+
+-- | Convert a tuple before binding it. At least one component must identify the promonad.
+instance
+  {-# INCOHERENT #-}
+  (TupleProfunctor '[x, y] p, ToTerm p (x, y) d g a, Bind p (TermP p d g a) t cont r)
+  => Bind p (x, y) t cont r
+  where
+  {-# INLINE (>>=) #-}
+  xy >>= k = (>>=) @p (toTerm @p @(x, y) @d @g @a xy) k
+
+instance {-# INCOHERENT #-} (Bind p ((x, y), z) t cont r) => Bind p (x, y, z) t cont r where
+  {-# INLINE (>>=) #-}
+  (x, y, z) >>= k = (>>=) @p ((x, y), z) k
+
+instance {-# INCOHERENT #-} (Bind p ((w, x, y), z) t cont r) => Bind p (w, x, y, z) t cont r where
+  {-# INLINE (>>=) #-}
+  (w, x, y, z) >>= k = (>>=) @p ((w, x, y), z) k
+
+instance {-# INCOHERENT #-} (Bind p ((v, w, x, y), z) t cont r) => Bind p (v, w, x, y, z) t cont r where
+  {-# INLINE (>>=) #-}
+  (v, w, x, y, z) >>= k = (>>=) @p ((v, w, x, y), z) k
+
+instance {-# INCOHERENT #-} (Bind p ((u, v, w, x, y), z) t cont r) => Bind p (u, v, w, x, y, z) t cont r where
+  {-# INLINE (>>=) #-}
+  (u, v, w, x, y, z) >>= k = (>>=) @p ((u, v, w, x, y), z) k
 
 -- | A bind of a term, by its pattern. A variable pattern binds a new variable, so that the right
 -- hand side is computed once however often the variable is used. The other patterns take the
@@ -255,41 +304,41 @@ instance
   , AnyDepth t t'
   , AnyDepth t' t
   , RecVars k t'
-  , cont ~ TermP p (RecDepth d (Vars k t)) (CtxOf @k cont) (TyOf @k cont)
-  , r ~ TermP p d (Union (Minus (CtxOf @k cont) (Vars k t)) (Minus g (Vars k t))) (TyOf @k cont)
+  , ToTerm p cont (RecDepth d (Vars k t)) gc c
+  , r ~ TermP p d (Union (Minus gc (Vars k t)) (Minus g (Vars k t))) c
   , Unmerge (Inter g (Vars k t)) (Minus g (Vars k t))
   , Union (Inter g (Vars k t)) (Minus g (Vars k t)) ~ g
-  , Thin (Vars k t) (Union (Inter g (Vars k t)) (Inter (CtxOf @k cont) (Vars k t)))
-  , Merge (Inter g (Vars k t)) (Inter (CtxOf @k cont) (Vars k t))
-  , Merge (Minus (CtxOf @k cont) (Vars k t)) (Minus g (Vars k t))
-  , Unmerge (Minus (CtxOf @k cont) (Vars k t)) (Inter (CtxOf @k cont) (Vars k t))
-  , Union (Minus (CtxOf @k cont) (Vars k t)) (Inter (CtxOf @k cont) (Vars k t)) ~ CtxOf @k cont
+  , Thin (Vars k t) (Union (Inter g (Vars k t)) (Inter gc (Vars k t)))
+  , Merge (Inter g (Vars k t)) (Inter gc (Vars k t))
+  , Merge (Minus gc (Vars k t)) (Minus g (Vars k t))
+  , Unmerge (Minus gc (Vars k t)) (Inter gc (Vars k t))
+  , Union (Minus gc (Vars k t)) (Inter gc (Vars k t)) ~ gc
   )
   => Bind p (Rec p d t (g :: Ctx k)) t' cont r
   where
   {-# INLINE (>>=) #-}
-  Rec body >>= k = case k (recVars @k @t') of
+  Rec body >>= k = case toTerm @p @cont @(RecDepth d (Vars k t)) @gc @c (k (recVars @k @t')) of
     MkTerm rest ->
-      withCtxOb @(Minus (CtxOf @k cont) (Vars k t))
+      withCtxOb @(Minus gc (Vars k t))
         ( withCtxOb @(Inter g (Vars k t))
             ( withCtxOb @(Minus g (Vars k t))
-                ( withCtxOb @(Inter (CtxOf @k cont) (Vars k t))
+                ( withCtxOb @(Inter gc (Vars k t))
                     ( MkTerm
                         ( rest
                             . dimap
-                              (merge @(Minus (CtxOf @k cont) (Vars k t)) @(Minus g (Vars k t)))
-                              (unmerge @(Minus (CtxOf @k cont) (Vars k t)) @(Inter (CtxOf @k cont) (Vars k t)))
-                              ( id @p @(Interp (Mul (Minus (CtxOf @k cont) (Vars k t))))
+                              (merge @(Minus gc (Vars k t)) @(Minus g (Vars k t)))
+                              (unmerge @(Minus gc (Vars k t)) @(Inter gc (Vars k t)))
+                              ( id @p @(Interp (Mul (Minus gc (Vars k t))))
                                   M.** coact
                                     @Tensor
                                     @p
                                     @(Interp (Mul (Inter g (Vars k t))))
                                     @(Interp (Mul (Minus g (Vars k t))))
-                                    @(Interp (Mul (Inter (CtxOf @k cont) (Vars k t))))
+                                    @(Interp (Mul (Inter gc (Vars k t))))
                                     ( dimap
                                         (unmerge @(Inter g (Vars k t)) @(Minus g (Vars k t)))
-                                        ( merge @(Inter g (Vars k t)) @(Inter (CtxOf @k cont) (Vars k t))
-                                            . thin @(Vars k t) @(Union (Inter g (Vars k t)) (Inter (CtxOf @k cont) (Vars k t)))
+                                        ( merge @(Inter g (Vars k t)) @(Inter gc (Vars k t))
+                                            . thin @(Vars k t) @(Union (Inter g (Vars k t)) (Inter gc (Vars k t)))
                                         )
                                         body
                                     )

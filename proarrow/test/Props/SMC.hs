@@ -26,7 +26,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Closed qualified as Closed
 import Proarrow.Category.Monoidal.Hypergraph (Hypergraph, cap, cup)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..))
-import Proarrow.Core (CategoryOf (..), Promonad (..), obj, (\\))
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), obj, (\\))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Instance.Arrow (Arr (..))
@@ -58,6 +58,19 @@ name f = Str ((obj @a ** f) . cup @a) \\ f
 -- | Matrix multiplication at the type 'EinsumType' computes, which is checked by compiling it.
 matMulE :: EinsumType "ij,jk" '[ '[M2, M3], '[M3, M2]]
 matMulE = einsum @"ij,jk"
+
+-- Constants need no copying structure, even when used more than once.
+constantPairT :: forall {k} (b :: k). (Monoidal k, Ob b) => (Unit ~> b) -> Unit ~> b ** b
+constantPairT c = toSMC @I @(F b :** F b) \() -> (c, c)
+
+constantResultT :: forall {k} (b :: k). (Monoidal k, Ob b) => (Unit ~> b) -> Unit ~> b
+constantResultT c = toSMC @I @(F b) \() -> c
+
+-- The target promonad can remain abstract when lifting a base-category constant.
+pureConstantT
+  :: forall {k} (p :: CAT k) (b :: k) d
+   . (Promonad p) => (Unit ~> b) -> SMC.TermP p d '[] (F b)
+pureConstantT = SMC.toTerm
 
 -- The signature checks that case analysis needs ArrowChoice without ArrowApply.
 choiceT
@@ -176,6 +189,104 @@ test =
             run :: Int -> ([String], ((Int, Int), (Int, Int)))
             run = A.runKleisli (reuseAcrossBindsT first second combine)
         expect "values and effects" (["first", "second", "combine"], ((n, n + 1), (2 * (n + 1), 1))) (run n)
+    , testProperty "constant occurrences run independently and a bound constant runs once" $ do
+        let c = Arr (A.Kleisli (\() -> (["constant"], 7 :: Int)))
+            lastConstant = Arr (A.Kleisli (\() -> (["last"], 9 :: Int)))
+            pair = Arr (A.arr (\(x, y) -> (x, y)))
+            independent :: () -> ([String], (Int, Int))
+            independent = A.runKleisli $ unArr $ SMC.proc @I @(F (Int, Int)) \() -> pair -< (c, c)
+            ordered :: Int -> ([String], ((Int, Int), Int))
+            ordered = A.runKleisli $ unArr $ SMC.proc @(F Int) @(F ((Int, Int), Int)) \x ->
+              returnA -< ((c, x), lastConstant)
+            tupleBody :: Int -> ([String], (((Int, (Int, Int)), ()), Int))
+            tupleBody = A.runKleisli $
+              unArr $
+                SMC.proc @(F Int) @(((F Int :** (F Int :** F Int)) :** I) :** F Int) \input -> SMC.do
+                  next <- Arr (A.arr (+ 1)) -< input
+                  ((c, (input, next)), (), lastConstant)
+            tensor :: () -> ([String], (Int, Int))
+            tensor = A.runKleisli $ unArr $ SMC.proc @I @(F Int :** F Int) \() -> SMC.do
+              x <- c
+              y <- c
+              x SMC.** y
+            recursive :: () -> ([String], (Int, Int))
+            recursive = A.runKleisli $ unArr $ SMC.proc @I @(F (Int, Int)) \() -> SMC.do
+              rec x <- c
+              pair -< (x, x)
+            shared :: () -> ([String], (Int, Int))
+            shared = A.runKleisli $ unArr $ SMC.proc @I @(F (Int, Int)) \() -> SMC.do
+              x <- c
+              pair -< (x, x)
+            final :: () -> ([String], Int)
+            final = A.runKleisli $ unArr $ SMC.proc @I @(F Int) \() -> SMC.do
+              _ <- c
+              lastConstant
+        expect "independent occurrences" (["constant", "constant"], (7, 7)) (independent ())
+        expect "nested constants run left to right" (["constant", "last"], ((7, 3), 9)) (ordered 3)
+        expect
+          "tuple body combines constants, variables and units"
+          (["constant", "last"], (((7, (3, 4)), ()), 9))
+          (tupleBody 3)
+        expect "independent tensor" (["constant", "constant"], (7, 7)) (tensor ())
+        expect "recursive constant bind" (["constant"], (7, 7)) (recursive ())
+        expect "shared value" (["constant"], (7, 7)) (shared ())
+        expect "constant final statement" (["constant", "last"], 9) (final ())
+    , testProperty "pure constants lift into promonad terms without adding effects" $ do
+        let pureConstant :: () -> Int
+            pureConstant () = 7
+            effect = Arr (A.Kleisli (\() -> (["effect"], 9 :: Int)))
+            before = Arr (A.Kleisli (\n -> (["before"], n + 1 :: Int)))
+            pureBody :: () -> ([String], Int)
+            pureBody = A.runKleisli $ unArr $ SMC.proc @I @(F Int) \() -> pureConstant
+            abstractBody :: () -> ([String], Int)
+            abstractBody = A.runKleisli $ unArr $ SMC.proc @I @(F Int) \() -> pureConstantT pureConstant
+            starBody :: () -> ([String], Int)
+            starBody = unPrelude . unStar (SMC.proc @I @(F Int) (\() -> pureConstant))
+            mixed :: Int -> ([String], ((Int, Int), (Int, Int)))
+            mixed = A.runKleisli $ unArr $ SMC.proc @(F Int) @(F ((Int, Int), (Int, Int))) \input -> SMC.do
+              x <- before -< input
+              y <- SMC.toTerm pureConstant
+              returnA -< ((x, y), (pureConstant, effect))
+            tupleBind :: () -> ([String], (Int, Int))
+            tupleBind = A.runKleisli $ unArr $ SMC.proc @I @(F (Int, Int)) \() -> SMC.do
+              (x, y) <- (effect, pureConstant)
+              returnA -< (x, y)
+        expect "pure result" ([], 7) (pureBody ())
+        expect "abstract target" ([], 7) (abstractBody ())
+        expect "Star target" ([], 7) (starBody ())
+        expect "pure and effectful tuple components" (["before", "effect"], ((4, 7), (7, 9))) (mixed 3)
+        expect "pure component in a tuple bind" (["effect"], (9, 7)) (tupleBind ())
+    , testProperty "tuple binds run components left to right and share the bound values" $ do
+        let first = Arr (A.Kleisli (\n -> (["first"], n + 1 :: Int)))
+            second = Arr (A.Kleisli (\n -> (["second"], n * 2 :: Int)))
+            constant = Arr (A.Kleisli (\() -> (["constant"], 7 :: Int)))
+            run :: Int -> ([String], ((Int, Int), (Int, Int)))
+            run = A.runKleisli $ unArr $ SMC.proc @(F Int) @(F ((Int, Int), (Int, Int))) \n -> SMC.do
+              ((x, ()), (y, z)) <- ((first -< n, ()), (second -< n, constant))
+              returnA -< ((x, x), (y, z))
+            afterUnits :: () -> ([String], (Int, Int))
+            afterUnits = A.runKleisli $ unArr $ SMC.proc @I @(F (Int, Int)) \() -> SMC.do
+              (((), ()), (x, y)) <- (((), ()), (constant, constant))
+              returnA -< (x, y)
+            six :: () -> ([String], (((((Int, Int), ()), Int), Int), Int))
+            six = A.runKleisli $ unArr $ SMC.proc @I @(F (((((Int, Int), ()), Int), Int), Int)) \() -> SMC.do
+              values <- (constant, constant, (), constant, constant, constant)
+              returnA -< values
+        expect "effects and shared input" (["first", "second", "constant"], ((4, 4), (6, 7))) (run 3)
+        expect "nested units before the arrows" (["constant", "constant"], (7, 7)) (afterUnits ())
+        expect "six components" (replicate 5 "constant", (((((7, 7), ()), 7), 7), 7)) (six ())
+    , testProperty "recursive tuple binds preserve mutual feedback and effect order" $ do
+        n <- genNamed @Int "input"
+        let left = Arr (A.Kleisli (\(x, v) -> (["left"], (take 3 v, x : v))))
+            right = Arr (A.Kleisli (\(x, u) -> (["right"], (take 3 u, (x + 1) : u))))
+            run :: Int -> ([String], ([Int], [Int]))
+            run = A.runKleisli $ unArr $ SMC.proc @(F Int) @(F [Int] :** F [Int]) \input -> SMC.do
+              rec ((a, u), (b, v)) <-
+                    ( SMC.lift @(F Int :** F [Int]) @(F [Int] :** F [Int]) left (input, v)
+                    , SMC.lift @(F Int :** F [Int]) @(F [Int] :** F [Int]) right (input, u)
+                    )
+              (a, b)
+        expect "feedback values and effects" (["left", "right"], ([n + 1, n, n + 1], [n, n + 1, n])) (run n)
     , testGroup
         "ArrowChoice"
         [ testProperty "only the selected branch runs with its captured variable" $ do
@@ -265,6 +376,26 @@ test =
             scalar <- genNamed @(Unit @FINREL ~> Unit @FINREL) "scalar"
             expect "empty tuple input" f (toSMC @I @(F F2) (\() -> f -< ()))
             expect "scalar input" scalar (toSMC @I @(F (Unit @FINREL)) (\() -> scalar -< ()))
+        , testProperty "tuple bodies recursively convert their components" $ do
+            c <- genNamed @(Unit @FINREL ~> F3) "c"
+            expect "empty tuple body" (obj @(Unit @FINREL)) (toSMC @I @I (\() -> ()))
+            expect
+              "nested tuple body"
+              ((obj @F2 ** (rightUnitorInv . c)) . rightUnitorInv)
+              (toSMC @(F F2) @(F F2 :** (F F3 :** I)) (,(c, ())))
+        , testProperty "constant arrows mix with variables without unit applications" $ do
+            c <- genNamed @(Unit @FINREL ~> F3) "c"
+            f <- genNamed @((F2 ** F3) ~> F4) "f"
+            expect
+              "constant argument"
+              (f . (obj @F2 ** c) . rightUnitorInv)
+              (toSMC1 @F2 @F4 (\x -> f -< (x, c)))
+            expect "constant body" c (constantResultT c)
+            expect "independent constant tensor" ((c ** c) . leftUnitorInv) (constantPairT c)
+            expect
+              "tuple with constant"
+              ((obj @F2 ** c) . rightUnitorInv)
+              (toSMC @(F F2) @(F F2 :** F F3) (,c))
         , testProperty "arrow application accepts empty tuples nested with variables" $ do
             f <- genNamed @(((Unit @FINREL ** F2) ** Unit @FINREL) ~> F3) "f"
             let actual = toSMC @(F F2) @(F F3) \x -> f -< (((), x), ())
@@ -304,8 +435,8 @@ test =
         [ testProperty "embedded unit results act as scalars on either side" $ do
             s <- genNamed @((Unit :: MatK Int) ~> Unit) "scalar"
             f <- genNamed @(M2 ~> M3) "f"
-            let left = toSMC1 \x -> (s -< ()) *^ (f -< x)
-                right = toSMC1 \x -> (f -< x) ^* (s -< ())
+            let left = toSMC1 \x -> s *^ (f -< x)
+                right = toSMC1 \x -> (f -< x) ^* s
             expect "left scalar" (unMat (leftUnitor . (s ** f) . leftUnitorInv)) (unMat left)
             expect "right scalar" (unMat (rightUnitor . (f ** s) . rightUnitorInv)) (unMat right)
         , testProperty "matrix multiplication is composition (2, 3, 2)" $ do
