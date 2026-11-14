@@ -17,7 +17,6 @@
 -- Play is a 'MonoidalLens' in the distribution Kleisli category. Use
 -- 'behaviour' to supply stochastic legs and 'fromMonoidalLens' for a nonstrategic
 -- component; the game backend handles their Kleisli wrapping.
---
 module Examples.OpenGames.Bayesian
   ( Stochastic
   , pattern Stochastic
@@ -36,11 +35,13 @@ module Examples.OpenGames.Bayesian
   , OpenGame
   , pattern OpenGame
   , profiles
+  , strategy
   , play
   , evaluate
   , Game
   , pattern Game
   , Strategy
+  , pattern Strategy
   , playStrategy
   , evaluateStrategy
   , runStrategy
@@ -53,7 +54,6 @@ module Examples.OpenGames.Bayesian
   , fromFunctions
   , cachePlay
   , cacheLens
-  , andThen
   , parallel
   , reindex
   , decision
@@ -76,19 +76,19 @@ import Data.List.NonEmpty qualified as NE
 import Data.Map.Lazy qualified as M
 import Data.Maybe (fromMaybe)
 import Prelude hiding (id, (**), (.))
-import Prelude qualified as P
 
 import Examples.OpenGames.Probability (Distribution, collect, condition, expectation, probabilities, weightedValues)
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..), arr)
 import Proarrow.Category.Instance.OpenGame
   ( Diagnostic (..)
   , Payoff
-  , andThen
   , equilibria
+  , evaluate
   , evaluateStrategy
   , fromMonoidalLens
   , isEquilibrium
   , parallel
+  , play
   , playStrategy
   , reindex
   , strategies
@@ -96,7 +96,7 @@ import Proarrow.Category.Instance.OpenGame
   )
 import Proarrow.Category.Instance.OpenGame qualified as Generic
 import Proarrow.Category.Monoidal.Strictified (Fold)
-import Proarrow.Core (CAT, CategoryOf (..), UN)
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN)
 import Proarrow.Functor qualified as F
 import Proarrow.Optic.Lens (Lens, lens, withLens)
 import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, withMonLens)
@@ -109,7 +109,8 @@ type Stochastic = KLEISLI (WithPure (Star (F.Prelude Distribution)))
 -- Interpret only where a distribution function is required for execution.
 pattern Stochastic :: (x -> F.Prelude Distribution y) -> Kleisli (KL x :: Stochastic) (KL y)
 pattern Stochastic f <- Kleisli (lowerWithPure -> Star f)
-  where Stochastic f = Kleisli (liftWithPure (Star f))
+  where
+    Stochastic f = Kleisli (liftWithPure (Star f))
 {-# COMPLETE Stochastic #-}
 
 type BAYESIAN = Generic.GAME Stochastic
@@ -124,7 +125,7 @@ type Coutility :: BAYESIAN -> Type
 type Coutility a = UN KL (Generic.Coutility a)
 
 type Context :: BAYESIAN -> BAYESIAN -> Type
-type Context = Generic.Context @Stochastic
+type Context a b = Generic.Context @Stochastic a b
 
 type OpenGame :: [Type] -> BAYESIAN -> BAYESIAN -> Type
 type OpenGame = Generic.OpenGame @Stochastic
@@ -133,11 +134,8 @@ pattern OpenGame
   :: forall ss a b
    . ()
   => (Ob ss, Ob a, Ob b)
-  => [Fold ss]
-  -> (Fold ss -> MonoidalLens (Generic.Observation a) (Generic.Coutility a) (Generic.Observation b) (Generic.Coutility b))
-  -> (Fold ss -> Context a b -> [Diagnostic])
-  -> OpenGame ss a b
-pattern OpenGame{profiles, play, evaluate} = Generic.OpenGame profiles play evaluate
+  => [Fold ss] -> (Fold ss -> Strategy a b) -> OpenGame ss a b
+pattern OpenGame{profiles, strategy} = Generic.OpenGame profiles strategy
 {-# COMPLETE OpenGame #-}
 
 type Game :: CAT BAYESIAN
@@ -150,6 +148,16 @@ pattern Game g = Generic.Game g
 type Strategy :: BAYESIAN -> BAYESIAN -> Type
 type Strategy = Generic.Strategy @Stochastic
 
+pattern Strategy
+  :: forall a b
+   . ()
+  => (Ob a, Ob b)
+  => MonoidalLens (Generic.Observation a) (Generic.Coutility a) (Generic.Observation b) (Generic.Coutility b)
+  -> (Context a b -> [Diagnostic])
+  -> Strategy a b
+pattern Strategy optic check = Generic.Strategy optic check
+{-# COMPLETE Strategy #-}
+
 -- | Construct behaviour from stochastic forward and backward legs sharing a
 -- residual. The wrapping into Kleisli arrows is local to the game backend.
 behaviour
@@ -157,20 +165,26 @@ behaviour
    . (x -> Distribution (m, y)) -> ((m, r) -> Distribution s) -> MonoidalLens (KL x :: Stochastic) (KL s) (KL y) (KL r)
 behaviour forward backward =
   monLens @(KL m)
-    (Stochastic (F.Prelude P.. forward))
-    (Stochastic (F.Prelude P.. backward))
+    (Stochastic (F.Prelude . forward))
+    (Stochastic (F.Prelude . backward))
+
+data ContextParts x y r where
+  ContextParts :: Distribution (z, x) -> (z -> y -> Distribution r) -> ContextParts x y r
+
+unpackContext :: MonoidalLens (KL () :: Stochastic) (KL r) (KL x) (KL y) -> ContextParts x y r
+unpackContext optic = withMonLens optic \_ (Stochastic forward) (Stochastic backward) ->
+  ContextParts (unState forward) (unContinuation backward)
 
 pattern Context
-  :: forall a b
-   . (Ob a, Ob b)
+  :: forall x y r
+   . ()
   => forall z
-   . Distribution (z, Observation a) -> (z -> Observation b -> Distribution (Coutility b)) -> Context a b
-pattern Context prior k <-
-  Generic.Context
-    (Stochastic (unState -> prior))
-    (Stochastic (unContinuation -> k))
+   . Distribution (z, x)
+  -> (z -> y -> Distribution r)
+  -> MonoidalLens (KL () :: Stochastic) (KL r) (KL x) (KL y)
+pattern Context prior k <- (unpackContext -> ContextParts prior k)
   where
-    Context prior k = Generic.Context (Stochastic (\() -> F.Prelude prior)) (Stochastic (\(z, y) -> F.Prelude (k z y)))
+    Context prior k = behaviour (\() -> prior) (\(z, y) -> k z y)
 {-# COMPLETE Context #-}
 
 unState :: (() -> F.Prelude Distribution a) -> Distribution a
@@ -180,13 +194,13 @@ unContinuation :: ((z, y) -> F.Prelude Distribution r) -> z -> y -> Distribution
 unContinuation f z y = F.unPrelude (f (z, y))
 
 -- | A deterministic observation and deterministic continuation.
-context :: (Ob a, Ob b) => Observation a -> (Observation b -> Coutility b) -> Context a b
-context x k = stochasticContext (pure x) (pure P.. k)
+context :: x -> (y -> r) -> MonoidalLens (KL () :: Stochastic) (KL r) (KL x) (KL y)
+context x k = stochasticContext (pure x) (pure . k)
 
 -- | A stochastic context with no additional hidden state. Use 'Context' itself
 -- when observations and the continuation share a latent variable.
 stochasticContext
-  :: (Ob a, Ob b) => Distribution (Observation a) -> (Observation b -> Distribution (Coutility b)) -> Context a b
+  :: Distribution x -> (y -> Distribution r) -> MonoidalLens (KL () :: Stochastic) (KL r) (KL x) (KL y)
 stochasticContext prior k = Context (((),) <$> prior) (\() -> k)
 
 -- | Execute a fixed strategy in its full context, retaining the joint output
@@ -197,11 +211,11 @@ runStrategy s@Generic.Strategy{} c = case Generic.runStrategy s c of
 
 outputs :: Strategy a b -> Distribution (Observation a) -> Distribution (Observation b)
 outputs s@Generic.Strategy{} prior = case Generic.outputs s of
-  Stochastic forward -> prior >>= (F.unPrelude P.. forward)
+  Stochastic forward -> prior >>= (F.unPrelude . forward)
 
 fromLens :: Lens x s y r -> OpenGame '[] (G x s) (G y r)
 fromLens optic = withLens optic \v u ->
-  fromMonoidalLens (behaviour (\x -> pure (x, v x)) (pure P.. u))
+  fromMonoidalLens (behaviour (\x -> pure (x, v x)) (pure . u))
 
 fromFunctions :: (x -> y) -> (r -> s) -> OpenGame '[] (G x s) (G y r)
 fromFunctions f g = Generic.fromArrows (arr f) (arr g)
@@ -217,12 +231,16 @@ cachePlay
    . (Ord x, Ord s, Ord y, Ord r)
   => NonEmpty x -> NonEmpty r -> Game (G x s) (G y r) -> Game (G x s) (G y r)
 cachePlay xs rs (Generic.Game (g@Generic.OpenGame{} :: OpenGame ss (G x s) (G y r))) =
-  Generic.memoisePlay (Generic.Game (Generic.OpenGame @ss (profiles g) (cacheLens xs rs P.. play g) (evaluate g)))
+  Generic.memoisePlay (Generic.Game (Generic.OpenGame @ss (profiles g) cachedStrategy))
+  where
+    cachedStrategy s = case strategy g s of
+      Strategy optic check -> Strategy (cacheLens xs rs optic) check
 
 -- | Tabulate a finite stochastic lens while retaining joint residual/output
 -- probabilities. The return domain must cover every supplied coutility.
 cacheLens
-  :: forall x s y r. (Ord x, Ord s, Ord y, Ord r)
+  :: forall x s y r
+   . (Ord x, Ord s, Ord y, Ord r)
   => NonEmpty x
   -> NonEmpty r
   -> MonoidalLens (KL x :: Stochastic) (KL s) (KL y) (KL r)
@@ -236,7 +254,7 @@ cacheLens xs rs optic = withMonLens optic \_ (Stochastic forward) backwardArrow 
                 <$> F.unPrelude (forward x)
           table = M.fromList [(x, kernel x) | x <- NE.toList xs]
       in monLens @(KL (M.Map r s))
-           (Stochastic (F.Prelude P.. (\x -> M.findWithDefault (kernel x) x table)))
+           (Stochastic (F.Prelude . (\x -> M.findWithDefault (kernel x) x table)))
            (arr (uncurry (M.!)))
     Stochastic backward ->
       let kernel x =
@@ -263,7 +281,7 @@ mixedDecision
   -> NonEmpty y
   -> NonEmpty (Distribution y)
   -> OpenGame '[x -> Distribution y] (G x ()) (G y Payoff)
-mixedDecision name xs ys candidates = OpenGame policies policyBehaviour check
+mixedDecision name xs ys candidates = OpenGame policies (\policy -> Strategy (policyBehaviour policy) (check policy))
   where
     observations = nubOrd (NE.toList xs)
     actions = nubOrd (NE.toList ys)
@@ -274,11 +292,11 @@ mixedDecision name xs ys candidates = OpenGame policies policyBehaviour check
       ]
     policyBehaviour policy =
       behaviour
-        (fmap ((),) P.. policy)
+        (fmap ((),) . policy)
         (\((), _) -> pure ())
     check policy (Context prior k) =
-      [ let utilities = M.fromList [(y, expectation (\(z, _) -> expectation P.id (k z y)) posterior) | y <- actions]
-            utility y = M.findWithDefault (expectation (\(z, _) -> expectation P.id (k z y)) posterior) y utilities
+      [ let utilities = M.fromList [(y, expectation (\(z, _) -> expectation id (k z y)) posterior) | y <- actions]
+            utility y = M.findWithDefault (expectation (\(z, _) -> expectation id (k z y)) posterior) y utilities
             chosen = policy x
             value = expectation utility chosen
             best = maximum (map utility actions)
@@ -295,14 +313,14 @@ mixedDecision name xs ys candidates = OpenGame policies policyBehaviour check
              best
              (legal && value >= best)
       | x <- nubOrd [x | ((_, x), _) <- weightedValues prior]
-      , Just posterior <- [condition ((== x) P.. snd) prior]
+      , Just posterior <- [condition ((== x) . snd) prior]
       ]
 
 nature :: Distribution x -> Game (G () ()) (G x ())
 nature p = liftStochastic (const p)
 
 liftStochastic :: (x -> Distribution y) -> Game (G x ()) (G y ())
-liftStochastic f = Game (fromMonoidalLens (behaviour (fmap ((),) P.. f) (\((), ()) -> pure ())))
+liftStochastic f = Game (fromMonoidalLens (behaviour (fmap ((),) . f) (\((), ()) -> pure ())))
 
 choose :: (Ord y, Show y) => String -> NonEmpty y -> Game (G () ()) (G y Payoff)
 choose name = decide name [()]
@@ -319,7 +337,7 @@ decideMixed
 decideMixed name xs ys ps = Game (mixedDecision name xs ys ps)
 
 payoffs :: (x -> s) -> Game (G x s) (G x ())
-payoffs f = Game (fromLens (lens P.id (\(x, ()) -> f x)))
+payoffs f = Game (fromLens (lens id (\(x, ()) -> f x)))
 
 finish :: (x -> s) -> Game (G x s) (G () ())
 finish f = Game (fromLens (lens (const ()) (\(x, ()) -> f x)))

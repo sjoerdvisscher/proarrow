@@ -68,10 +68,9 @@ deterministicTest =
               Game
                 ( OpenGame @'[]
                     [()]
-                    (const (monLens ((),) snd))
-                    (\_ _ -> [Diagnostic "Player" "False" "False" 0 ["True"] 1 False])
+                    (const (Strategy (monLens ((),) snd) (\_ -> [Diagnostic "Player" "False" "False" 0 ["True"] 1 False])))
                 )
-            duplicated = Game (OpenGame @'[] [(), ()] (const (monLens ((),) snd)) (\_ _ -> []))
+            duplicated = Game (OpenGame @'[] [(), ()] (const (Strategy (monLens ((),) snd) (\_ -> []))))
         different <- traverse @[] (eqP base) [forwardChanged, backwardChanged, diagnosticsChanged, duplicated]
         check "semantic equality lost part of the game" (not (or different))
     ]
@@ -156,8 +155,7 @@ instance (TestOb a, TestOb b) => TestableType (Game a b) where
         Game $
           OpenGame @'[Bool]
             [False, True]
-            (\s -> monLens (\x -> (x, view s x)) (update s))
-            ( \s (Context x k) ->
+            ( \s -> Strategy (monLens (\x -> (x, view s x)) (update s)) $ \(Context x k) ->
                 let score t = utility (k (view t x))
                     best = max (score False) (score True)
                 in [ Diagnostic
@@ -224,9 +222,9 @@ bayesianTest =
         (MonoidalW (\r -> r) :& SymMonoidalW :& WNil)
     , testProperty "diagnostic-free composition leaves unused play and context arrows lazy" $ do
         let noChecks :: B.OpenGame '[] (B.G Bool Bool) (B.G Bool Bool)
-            noChecks = Generic.OpenGame [()] (\_ -> error "unused play was forced") (\_ _ -> [])
-            game = Generic.Game (Generic.andThen (Generic.andThen noChecks noChecks) noChecks)
-            ctx = Generic.Context @(KL ()) (error "unused prior was forced") (error "unused continuation was forced")
+            noChecks = Generic.OpenGame [()] (const (Generic.Strategy (error "unused play was forced") (\_ -> [])))
+            game = Generic.Game noChecks . Generic.Game noChecks . Generic.Game noChecks
+            ctx = monLens @(KL ()) (error "unused prior was forced") (error "unused continuation was forced")
         expect "empty diagnostics" [[]] [B.evaluateStrategy s ctx | s <- B.strategies game]
     , testProperty "shared strategy closures preserve play, context dependence and profiles" $ do
         game <- genNamed @(B.Game (B.G Bool Bool) (B.G Bool Bool)) "game"
@@ -289,8 +287,7 @@ instance (TestOb a, TestOb b) => TestableType (B.Game a b) where
         B.Game $
           B.OpenGame @'[Bool]
             [False, True]
-            (\s -> B.behaviour (view s) (update s))
-            ( \s (B.Context prior k) ->
+            ( \s -> B.Strategy (B.behaviour (view s) (update s)) $ \(B.Context prior k) ->
                 -- Share each expected utility across all diagnostic fields.
                 [ let score False = falseScore
                       score True = trueScore

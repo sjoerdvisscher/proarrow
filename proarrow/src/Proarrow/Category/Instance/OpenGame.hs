@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE QualifiedDo #-}
 
 -- | Open games in a copy/discard category. Strategies are finite catalogues of
 -- monoidal lenses; contexts retain the joint state of the environment.
@@ -20,15 +19,15 @@ import Proarrow.Category.Monoidal
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
   )
-import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard, fst, snd)
 import Proarrow.Category.Monoidal.Strictified (Fold, IsList (withIsList2), Strictified (..), concatFold, splitFold)
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Object (pattern Objs, type (++))
 import Proarrow.Optic (iso)
 import Proarrow.Optic.Getter (view)
-import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, withMonLens)
-import Proarrow.Tools.SMC (SYN (..), lift, toSMC, (-<))
-import Proarrow.Tools.SMC qualified as SMC
+import Proarrow.Optic.MonoidalLens (MonLensFl, MonoidalLens, monLens)
+import Proarrow.Optic.Setter (over)
+import Proarrow.Optic.TensorOps (mapContinuation, retainView, tensorOptic)
 
 type data GAME k = G k k
 
@@ -40,13 +39,9 @@ type Coutility :: GAME k -> k
 type family Coutility a where
   Coutility (G x s) = s
 
--- | A joint state and a continuation sharing a hidden environment object.
--- A player's policy only sees the observation, never the hidden object. Arrows
--- remain lazy so components without checks need not build transported diagrams.
-data Context (a :: GAME k) (b :: GAME k) where
-  Context
-    :: forall {k} {a :: GAME k} {b} z
-     . (Ob z) => ~(Unit ~> z ** Observation a) -> ~(z ** Observation b ~> Coutility b) -> Context a b
+-- | A joint state and continuation represented directly as an optic.
+type Context (a :: GAME k) (b :: GAME k) =
+  MonoidalLens Unit (Coutility b) (Observation a) (Observation b)
 
 -- | Exact utilities used by the finite decision primitives.
 type Payoff = Rational
@@ -74,8 +69,7 @@ data OpenGame (ss :: [Type]) (a :: GAME k) (b :: GAME k) where
   OpenGame
     :: (Ob ss, Ob a, Ob b)
     => { profiles :: [Fold ss]
-       , play :: Fold ss -> MonoidalLens (Observation a) (Coutility a) (Observation b) (Coutility b)
-       , evaluate :: Fold ss -> Context a b -> [Diagnostic]
+       , strategy :: Fold ss -> Strategy a b
        }
     -> OpenGame ss a b
 
@@ -97,14 +91,24 @@ data Strategy (a :: GAME k) (b :: GAME k) where
 
 -- | Enumerate profiles with their play and evaluator closed over the game.
 strategies :: Game a b -> [Strategy a b]
-strategies (Game g@OpenGame{}) = [Strategy (play g s) (evaluate g s) | s <- profiles g]
+strategies (Game g@OpenGame{}) = P.map (strategy g) (profiles g)
+
+-- | Play the selected profile's bundled strategy.
+play :: OpenGame ss a b -> Fold ss -> MonoidalLens (Observation a) (Coutility a) (Observation b) (Coutility b)
+play g s = playStrategy (strategy g s)
+{-# INLINE play #-}
+
+-- | Evaluate the selected profile's bundled strategy in a context.
+evaluate :: OpenGame ss a b -> Fold ss -> Context a b -> [Diagnostic]
+evaluate g s = evaluateStrategy (strategy g s)
+{-# INLINE evaluate #-}
 
 -- | Share each profile's play and evaluator closures across repeated uses.
 -- The lazy catalogue retains its order and multiplicity; its hidden profile
 -- representation becomes the corresponding first-class 'Strategy'.
 memoisePlay :: forall k (a :: GAME k) b. Game a b -> Game a b
 memoisePlay game@(Game OpenGame{}) =
-  Game (OpenGame @'[Strategy a b] (strategies game) playStrategy evaluateStrategy)
+  Game (OpenGame @'[Strategy a b] (strategies game) id)
 
 -- | Equilibria within the supplied finite strategy catalogue.
 equilibria :: Game a b -> Context a b -> [Strategy a b]
@@ -119,15 +123,7 @@ outputs s = view (playStrategy s)
 -- | Execute both passes with the same residual, retaining joint outcomes.
 runStrategy
   :: forall k (a :: GAME k) b. (CopyDiscard k) => Strategy a b -> Context a b -> Unit ~> Observation b ** Coutility a
-runStrategy s@Strategy{} (Context @z prior continuation) =
-  withMonLens (playStrategy s) \ @m _ forward backward ->
-    ( toSMC @(F z :** F (Observation a)) \(hidden, input) -> SMC.do
-        (residual, output) <- lift @_ @(F m :** F (Observation b)) forward input
-        returned <- continuation -< (hidden, output)
-        result <- backward -< (residual, returned)
-        (output, result)
-    )
-      . prior
+runStrategy s@Strategy{} ctx = over (mapContinuation (retainView @MonLensFl (playStrategy s)) ctx) id
 
 instance (CopyDiscard k) => CategoryOf (GAME k) where
   type (~>) = Game
@@ -139,53 +135,32 @@ instance (CopyDiscard k) => Profunctor (Game :: CAT (GAME k)) where
 
 instance (CopyDiscard k) => Promonad (Game :: CAT (GAME k)) where
   id = Game (fromArrows id id)
-  Game h . Game g = Game (andThen g h)
+
+  -- Sequential play transports upstream deviations through the downstream lens.
+  Game (h@OpenGame{} :: OpenGame ts b c) . Game (g@OpenGame{} :: OpenGame ss a b) =
+    withIsList2 @ss @ts $
+      Game $
+        OpenGame @(ss ++ ts)
+          [concatFold @ss @ts (s, t) | s <- profiles g, t <- profiles h]
+          ( \st ->
+              let (s, t) = splitFold @ss @ts st
+                  gs = strategy g s
+                  hs = strategy h t
+              in Strategy
+                   (playStrategy gs . playStrategy hs)
+                   ( \ctx ->
+                       evaluateStrategy gs (mapContinuation (playStrategy hs) ctx)
+                         P.++ evaluateStrategy hs (ctx . iso (view (playStrategy gs)) id)
+                   )
+          )
 
 -- | A nonstrategic component with one empty profile and no decision checks.
 fromMonoidalLens
   :: (CopyDiscard k) => MonoidalLens (x :: k) s y r -> OpenGame '[] (G x s) (G y r)
-fromMonoidalLens optic@Objs = OpenGame [()] (P.const optic) (\_ _ -> [])
+fromMonoidalLens optic@Objs = OpenGame [()] (P.const (Strategy optic (\_ -> [])))
 
 fromArrows :: (CopyDiscard k) => (x :: k) ~> y -> r ~> s -> OpenGame '[] (G x s) (G y r)
 fromArrows f g = fromMonoidalLens (iso f g)
-
--- | Transport a continuation through a downstream lens's forward and backward
--- legs. The residual from the forward pass is shared with the backward pass.
-upstreamContinuation
-  :: forall k (z :: k) m x y r s
-   . (CopyDiscard k, Ob z, Ob m, Ob x, Ob y, Ob r, Ob s)
-  => (x ~> m ** y) -> (z ** y ~> r) -> (m ** r ~> s) -> z ** x ~> s
-upstreamContinuation forward continuation backward =
-  toSMC @(F z :** F x) \(hidden, input) -> SMC.do
-    (residual, output) <- lift @_ @(F m :** F y) forward input
-    returned <- continuation -< (hidden, output)
-    backward -< (residual, returned)
-
--- | Sequential play, transporting upstream deviations through the downstream lens.
-andThen
-  :: forall k ss ts (a :: GAME k) b c. (CopyDiscard k) => OpenGame ss a b -> OpenGame ts b c -> OpenGame (ss ++ ts) a c
-andThen g@OpenGame{} h@OpenGame{} =
-  withIsList2 @ss @ts $
-    OpenGame
-      [concatFold @ss @ts (s, t) | s <- profiles g, t <- profiles h]
-      (\st -> let (s, t) = splitFold @ss @ts st in play g s . play h t)
-      ( \st (Context @z prior continuation) ->
-          let (s, t) = splitFold @ss @ts st
-              upstream =
-                withMonLens (play h t) \ @m _ forward backward ->
-                  upstreamContinuation @k @z @m @(Observation b) @(Observation c) @(Coutility c) @(Coutility b)
-                    forward
-                    continuation
-                    backward
-              downstream =
-                ( toSMC @(F z :** F (Observation a)) \(hidden, input) -> SMC.do
-                    output <- view (play g s) -< input
-                    (hidden, output)
-                )
-                  . prior
-          in evaluate g s (Context @z prior upstream)
-               P.++ evaluate h t (Context @z downstream continuation)
-      )
 
 -- | Independent parallel play; each deviation holds the other strategy fixed.
 parallel
@@ -199,50 +174,29 @@ parallel g@OpenGame{} h@OpenGame{} =
           [concatFold @ss @ts (s, t) | s <- profiles g, t <- profiles h]
           ( \st ->
               let (s, t) = splitFold @ss @ts st
-              in withMonLens (play g s) \ @m _ v u -> withMonLens (play h t) \ @n _ w z ->
-                   withOb2 @k @m @n $
-                     monLens @(m ** n)
-                       ( toSMC @(F (Observation a) :** F (Observation c)) \(x, x') -> SMC.do
-                           (m, y) <- lift @_ @(F m :** F (Observation b)) v x
-                           (n, y') <- lift @_ @(F n :** F (Observation d)) w x'
-                           ((m, n), (y, y'))
-                       )
-                       ( toSMC @((F m :** F n) :** (F (Coutility b) :** F (Coutility d))) \((m, n), (r, r')) -> SMC.do
-                           returned <- u -< (m, r)
-                           returned' <- z -< (n, r')
-                           (returned, returned')
-                       )
-          )
-          ( \st (Context @z prior continuation) ->
-              let (s, t) = splitFold @ss @ts st
-                  v = view (play g s)
-                  w = view (play h t)
-                  leftPrior =
-                    ( toSMC @(F z :** (F (Observation a) :** F (Observation c))) \(hidden, (x, x')) ->
-                        (hidden, x', x)
-                    )
-                      . prior
-                  rightPrior =
-                    ( toSMC @(F z :** (F (Observation a) :** F (Observation c))) \(hidden, (x, x')) ->
-                        (hidden, x, x')
-                    )
-                      . prior
-                  leftK = toSMC @((F z :** F (Observation c)) :** F (Observation b)) \((hidden, x'), y) -> SMC.do
-                    y' <- w -< x'
-                    (r, _) <- lift @_ @(F (Coutility b) :** F (Coutility d)) continuation (hidden, (y, y'))
-                    r
-                  rightK = toSMC @((F z :** F (Observation a)) :** F (Observation d)) \((hidden, x), y') -> SMC.do
-                    y <- v -< x
-                    (_, r') <- lift @_ @(F (Coutility b) :** F (Coutility d)) continuation (hidden, (y, y'))
-                    r'
-              in withOb2 @k @z @(Observation c) $
-                   withOb2 @k @z @(Observation a) $
-                     evaluate g s (Context @(z ** Observation c) leftPrior leftK)
-                       P.++ evaluate h t (Context @(z ** Observation a) rightPrior rightK)
+                  gs = strategy g s
+                  hs = strategy h t
+                  v = playStrategy gs
+                  w = playStrategy hs
+              in Strategy
+                   (tensorOptic v w)
+                   ( \ctx ->
+                       let left =
+                             iso id (fst @(Coutility b) @(Coutility d))
+                               . ctx
+                               . monLens @(Observation c)
+                                 (swap @k @(Observation a) @(Observation c))
+                                 (swap @k @(Observation d) @(Observation b) . (view w ** obj @(Observation b)))
+                           right =
+                             iso id (snd @(Coutility b) @(Coutility d))
+                               . ctx
+                               . monLens @(Observation a) id (view v ** obj @(Observation d))
+                       in evaluateStrategy gs left P.++ evaluateStrategy hs right
+                   )
           )
 
 reindex :: [Fold ss] -> Strictified ss ts -> OpenGame ts a b -> OpenGame ss a b
-reindex ss (Str f) g@OpenGame{} = OpenGame ss (play g P.. f) (evaluate g P.. f)
+reindex ss (Str f) g@OpenGame{} = OpenGame ss (strategy g . f)
 
 instance (CopyDiscard k) => MonoidalProfunctor (Game :: CAT (GAME k)) where
   one = id

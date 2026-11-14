@@ -46,11 +46,13 @@ module Examples.OpenGames.Deterministic
   , OpenGame
   , pattern OpenGame
   , profiles
+  , strategy
   , play
   , evaluate
   , Game
   , pattern Game
   , Strategy
+  , pattern Strategy
   , playStrategy
   , evaluateStrategy
   , runStrategy
@@ -61,7 +63,6 @@ module Examples.OpenGames.Deterministic
   , fromMonoidalLens
   , fromLens
   , fromFunctions
-  , andThen
   , parallel
   , reindex
   , decision
@@ -85,12 +86,13 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.OpenGame
   ( Diagnostic (..)
   , Payoff
-  , andThen
   , equilibria
+  , evaluate
   , evaluateStrategy
   , fromMonoidalLens
   , isEquilibrium
   , parallel
+  , play
   , playStrategy
   , reindex
   , strategies
@@ -100,7 +102,7 @@ import Proarrow.Category.Instance.OpenGame qualified as Generic
 import Proarrow.Category.Monoidal.Strictified (Fold)
 import Proarrow.Core (CAT, CategoryOf (..))
 import Proarrow.Optic.Lens (Lens, lens, withLens)
-import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
+import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, withMonLens)
 import Proarrow.Tools.SMC (SYN (..), Term, lift, recast)
 
 type GAME = Generic.GAME Type
@@ -115,7 +117,7 @@ type Coutility :: GAME -> Type
 type Coutility a = Generic.Coutility a
 
 type Context :: GAME -> GAME -> Type
-type Context = Generic.Context @Type
+type Context a b = Generic.Context @Type a b
 
 type OpenGame :: [Type] -> GAME -> GAME -> Type
 type OpenGame = Generic.OpenGame @Type
@@ -124,11 +126,8 @@ pattern OpenGame
   :: forall ss a b
    . ()
   => (Ob ss, Ob a, Ob b)
-  => [Fold ss]
-  -> (Fold ss -> MonoidalLens (Generic.Observation a) (Generic.Coutility a) (Generic.Observation b) (Generic.Coutility b))
-  -> (Fold ss -> Context a b -> [Diagnostic])
-  -> OpenGame ss a b
-pattern OpenGame{profiles, play, evaluate} = Generic.OpenGame profiles play evaluate
+  => [Fold ss] -> (Fold ss -> Strategy a b) -> OpenGame ss a b
+pattern OpenGame{profiles, strategy} = Generic.OpenGame profiles strategy
 {-# COMPLETE OpenGame #-}
 
 type Game :: CAT GAME
@@ -141,14 +140,24 @@ pattern Game g = Generic.Game g
 type Strategy :: GAME -> GAME -> Type
 type Strategy = Generic.Strategy @Type
 
-pattern Context :: Observation a -> (Observation b -> Coutility b) -> Context a b
+pattern Strategy
+  :: forall a b
+   . ()
+  => (Ob a, Ob b)
+  => MonoidalLens (Generic.Observation a) (Generic.Coutility a) (Generic.Observation b) (Generic.Coutility b)
+  -> (Context a b -> [Diagnostic])
+  -> Strategy a b
+pattern Strategy optic check = Generic.Strategy optic check
+{-# COMPLETE Strategy #-}
+
+pattern Context :: x -> (y -> r) -> MonoidalLens () r x y
 pattern Context x k <- (unpackContext -> (x, k))
   where
-    Context x k = Generic.Context (\() -> ((), x)) (\((), y) -> k y)
+    Context x k = monLens (\() -> ((), x)) (\((), y) -> k y)
 {-# COMPLETE Context #-}
 
-unpackContext :: Context a b -> (Observation a, Observation b -> Coutility b)
-unpackContext (Generic.Context prior k) = let (z, x) = prior () in (x, \y -> k (z, y))
+unpackContext :: MonoidalLens () r x y -> (x, y -> r)
+unpackContext optic = withMonLens optic \_ prior k -> let (z, x) = prior () in (x, \y -> k (z, y))
 
 -- | Run a fixed strategy with the same forward residual on the backward pass.
 runStrategy :: Strategy a b -> Context a b -> (Observation b, Coutility a)
@@ -173,7 +182,7 @@ fromFunctions = Generic.fromArrows
 decision
   :: (Ord x, Show x, Ord y, Show y)
   => String -> NonEmpty x -> NonEmpty y -> OpenGame '[x -> y] (G x ()) (G y Payoff)
-decision name xs actions@(fallback :| _) = OpenGame policies policyBehaviour check
+decision name xs actions@(fallback :| _) = OpenGame policies (\policy -> Strategy (policyBehaviour policy) (check policy))
   where
     observations = nubOrd (NE.toList xs)
     choices = nubOrd (NE.toList actions)

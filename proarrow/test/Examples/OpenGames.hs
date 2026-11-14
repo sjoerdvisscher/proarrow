@@ -114,8 +114,11 @@ roundGame :: String -> OpenGame '[Bool -> Bool] B B
 roundGame name =
   OpenGame
     (profiles choice)
-    (\policy -> monLens (\x -> (x, policy x)) (\(x, r) -> if x then r + 1 else r - 1))
-    (\policy (Context x k) -> evaluate choice policy (Context x k))
+    ( \policy ->
+        Strategy
+          (monLens (\x -> (x, policy x)) (\(x, r) -> if x then r + 1 else r - 1))
+          (evaluate choice policy)
+    )
   where
     choice = decision name [False, True] [False, True]
 

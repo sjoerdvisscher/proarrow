@@ -42,6 +42,7 @@ import Proarrow.Category.Instance.OpenGame qualified as OG
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (Promonad (..))
 import Proarrow.Functor qualified as PF
+import Proarrow.Optic.Getter (view)
 import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
 import Proarrow.Testing (check, expect)
 import Proarrow.Tools.SMC (SYN (..), lift, toSMC, (-<))
@@ -135,8 +136,7 @@ cacheSelectedBidding optic checkBidders game@(OG.Game (g@OG.OpenGame{} :: OG.Ope
         ( OG.Game
             ( OG.OpenGame @ss
                 (OG.profiles g)
-                (const optic)
-                (\_ ctx -> checkBidders ctx)
+                (const (OG.Strategy optic checkBidders))
             )
         )
     _ -> game
@@ -244,8 +244,8 @@ cachedBidding rule prior alice bob = cacheSelectedBidding seller $ \ctx ->
                 (Context ownPrior (\value bid -> pure (scores M.! (value, bid))))
 
 reservePrior :: Context (G Amount Payoff) (G Outcome ()) -> Distribution Amount
-reservePrior (OG.Context prior _) = case prior of
-  Stochastic forward -> collect (snd <$> PF.unPrelude (forward ()))
+reservePrior optic = case view optic of
+  Stochastic forward -> collect (PF.unPrelude (forward ()))
 
 -- | One sampled settlement is the forward output and the backward return to
 -- both bidders. The seller receives its revenue from that same outcome.
@@ -343,8 +343,7 @@ test =
                 Game
                   ( OpenGame @'[() -> Distribution Amount]
                       [const (uniform [A0, A60])]
-                      (play choice)
-                      (evaluate choice)
+                      (strategy choice)
                   )
               original = cachePlay amounts [()] (composedBidding rule correlated mixed shaded)
               cached = bidding rule correlated mixed shaded
