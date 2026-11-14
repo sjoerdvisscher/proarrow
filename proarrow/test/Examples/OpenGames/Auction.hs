@@ -22,9 +22,6 @@ module Examples.OpenGames.Auction
   , bidding
   , reports
   , outcomes
-  , Components (..)
-  , auctionWith
-  , rawComponents
   , test
   ) where
 
@@ -98,53 +95,30 @@ sellerRevenue (Sold _ payment) = amount payment
 selected :: forall policy {k} (a :: OG.GAME k) b. policy -> OG.OpenGame '[policy] a b -> OG.Game a b
 selected policy g = OG.Game (OG.reindex [policy] (id :: Strictified '[policy] '[policy]) g)
 
--- Components keep the cache boundary replaceable for comparison with the
--- original composed evaluator. A cache hook replaces both play and diagnostics.
-data Components = Components
-  { sellerChoice :: Amount -> Game (G () ()) (G Amount Payoff)
-  , bidderChoice :: String -> Policy -> Game (G Amount ()) (G Amount Payoff)
-  , bidderReturn :: Bidder -> Game (G (Amount, Amount) ((), Payoff)) (G Amount Outcome)
-  , valuePrior :: Game (G () ()) (G (Amount, Amount) ((), ()))
-  , settleGame :: Game (G ((Amount, Amount), Amount) ((Payoff, Outcome), Outcome)) (G Outcome ())
-  , cacheBidder :: Game (G Amount ()) (G Amount Outcome) -> Game (G Amount ()) (G Amount Outcome)
-  , cacheBidding :: Policy -> Policy -> Game (G Amount Payoff) (G Outcome ()) -> Game (G Amount Payoff) (G Outcome ())
-  }
+sellerChoice :: Amount -> Game (G () ()) (G Amount Payoff)
+sellerChoice reserve = selected (const (pure reserve)) (decision "Seller" [()] amounts)
 
-bidderWith :: Components -> Bidder -> Policy -> Game (G Amount ()) (G Amount Outcome)
-bidderWith c who policy = cacheBidder c $ toSMC @(F (G Amount ())) \value -> SMC.do
+bidder :: Bidder -> Policy -> Game (G Amount ()) (G Amount Outcome)
+bidder who policy = cachePlay amounts returns $ toSMC @(F (G Amount ())) \value -> SMC.do
   (retained, seen) <-
     lift @(F (G Amount ())) @(F (G Amount ()) :** F (G Amount ()))
       (Game (fromFunctions (\x -> (x, x)) (const ())))
       value
-  bid <- bidderChoice c (show who) policy -< seen
-  bidderReturn c who -< (retained, bid)
+  bid <- selected policy (decision (show who) amounts amounts) -< seen
+  Game (fromMonoidalLens (behaviour pure (\(v, outcome) -> pure ((), bidderUtility who v outcome)))) -< (retained, bid)
 
-biddingWith :: Components -> Policy -> Policy -> Game (G Amount Payoff) (G Outcome ())
-biddingWith c alice bob = cacheBidding c alice bob $ toSMC @(F (G Amount Payoff)) \reserve -> SMC.do
-  (va, vb) <- lift @I @(F (G Amount ()) :** F (G Amount ())) (valuePrior c) SMC.unit
-  a <- bidderWith c Alice alice -< va
-  b <- bidderWith c Bob bob -< vb
-  settleGame c -< (reserve, a, b)
-
-auctionWith :: Components -> Amount -> Policy -> Policy -> Game (G () ()) (G Outcome ())
-auctionWith c reserve alice bob = unStr $ toSMC @I \() -> SMC.do
-  r <- Str @'[] @'[G Amount Payoff] (sellerChoice c reserve)
-  Str @'[G Amount Payoff] @'[G Outcome ()] (biddingWith c alice bob) -< r
+composedBidding :: Rule -> Distribution (Amount, Amount) -> Policy -> Policy -> Game (G Amount Payoff) (G Outcome ())
+composedBidding rule prior alice bob = toSMC @(F (G Amount Payoff)) \reserve -> SMC.do
+  (va, vb) <-
+    lift @I @(F (G Amount ()) :** F (G Amount ()))
+      (Game (fromFunctions id (const ())) . nature prior)
+      SMC.unit
+  a <- bidder Alice alice -< va
+  b <- bidder Bob bob -< vb
+  settlement rule -< (reserve, a, b)
 
 returns :: NonEmpty Outcome
 returns = [NoSale] <> (Sold Alice <$> amounts) <> (Sold Bob <$> amounts)
-
-rawComponents :: Rule -> Distribution (Amount, Amount) -> Components
-rawComponents rule prior =
-  Components
-    { sellerChoice = \reserve -> selected (const (pure reserve)) (decision "Seller" [()] amounts)
-    , bidderChoice = \name policy -> selected policy (decision name amounts amounts)
-    , bidderReturn = \who -> Game (fromMonoidalLens (behaviour pure (\(v, outcome) -> pure ((), bidderUtility who v outcome))))
-    , valuePrior = Game (fromFunctions id (const ())) . nature prior
-    , settleGame = settlement rule
-    , cacheBidder = cachePlay amounts returns
-    , cacheBidding = cachedBidding rule prior
-    }
 
 -- The finite cache replaces play and diagnostics for a selected profile.
 -- Multiple-profile catalogues retain the original bidding body.
@@ -283,11 +257,11 @@ settlement rule = Game (fromMonoidalLens (behaviour forward backward))
 
 bidding
   :: Rule -> Distribution (Amount, Amount) -> Policy -> Policy -> Game (G Amount Payoff) (G Outcome ())
-bidding rule prior = biddingWith (rawComponents rule prior)
+bidding rule prior alice bob = cachedBidding rule prior alice bob (composedBidding rule prior alice bob)
 
 -- | Check selected bidder policies and a reserve against all local deviations.
 auction :: Rule -> Distribution (Amount, Amount) -> Amount -> Policy -> Policy -> Game (G () ()) (G Outcome ())
-auction rule prior = auctionWith (rawComponents rule prior)
+auction rule prior reserve alice bob = bidding rule prior alice bob . sellerChoice reserve
 
 reports :: Rule -> Distribution (Amount, Amount) -> Amount -> Policy -> Policy -> [Diagnostic]
 reports rule prior reserve alice bob = gameReports (auction rule prior reserve alice bob)
@@ -311,9 +285,8 @@ correlated :: Distribution (Amount, Amount)
 correlated = either (error . show) id (weighted [((A20, A100), 1), ((A100, A20), 2)])
 
 originalAuction :: Rule -> Distribution (Amount, Amount) -> Amount -> Policy -> Policy -> Game (G () ()) (G Outcome ())
-originalAuction rule prior =
-  auctionWith
-    ((rawComponents rule prior){cacheBidding = \_ _ game -> cachePlay amounts [()] game})
+originalAuction rule prior reserve alice bob =
+  cachePlay amounts [()] (composedBidding rule prior alice bob) . sellerChoice reserve
 
 diagnostics :: Game (G () ()) (G Outcome ()) -> [Diagnostic]
 diagnostics = sortOn (\d -> (player d, observation d)) . gameReports
@@ -366,17 +339,17 @@ test =
     , testProperty "bidder marginal caches average an unobserved stochastic reserve" $ do
         for_ @[] [FirstPrice, SecondPrice] $ \rule -> do
           let choice = decision "Seller" [()] amounts
-              seller =
+              mixedSeller =
                 Game
                   ( OpenGame @'[() -> Distribution Amount]
                       [const (uniform [A0, A60])]
                       (play choice)
                       (evaluate choice)
                   )
-              components = (rawComponents rule correlated){sellerChoice = const seller}
-              original = components{cacheBidding = \_ _ game -> cachePlay amounts [()] game}
-              ds c = diagnostics (auctionWith c A40 mixed shaded)
-          expect "all diagnostics under a mixed reserve" (ds original) (ds components)
+              original = cachePlay amounts [()] (composedBidding rule correlated mixed shaded)
+              cached = bidding rule correlated mixed shaded
+              ds g = diagnostics (g . mixedSeller)
+          expect "all diagnostics under a mixed reserve" (ds original) (ds cached)
     , testProperty "marginal caches preserve every counterfactual payoff" $ do
         for_ @[] [FirstPrice, SecondPrice] $ \rule ->
           for_ @[] [Alice, Bob] $ \who -> do

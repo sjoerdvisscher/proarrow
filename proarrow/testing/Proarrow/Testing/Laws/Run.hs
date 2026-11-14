@@ -30,6 +30,7 @@
 module Proarrow.Testing.Laws.Run
   ( testLaws
   , testLawsWith
+  , testLawsWithOptions
   , testProLaws
 
     -- * Witnesses
@@ -63,11 +64,12 @@ module Proarrow.Testing.Laws.Run
   , infixrDoc
   ) where
 
+import Data.Default (def)
 import Data.Kind (Constraint, Type)
 import Test.Falsify (Property)
 import Test.Falsify.Generator (Gen)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (TestOptions, testProperty, testPropertyWith)
+import Test.Tasty.Falsify (TestOptions, testPropertyWith)
 import Prelude hiding (fst, id, snd, (.))
 
 import Proarrow.Adjunction qualified as Adj
@@ -129,8 +131,15 @@ testLawsWith
   :: forall cs k
    . (Laws.Laws cs, Testable k, Free.All cs (TESTED cs k))
   => Property (Some k) -> String -> Witnesses cs k -> TestTree
-testLawsWith genObject name witnesses =
-  testGroup name [testProperty (Laws.lawName law) (checkLaw law) | law <- Laws.laws @cs]
+testLawsWith = testLawsWithOptions @cs def
+
+-- | 'testLawsWith' with falsify options applied to each law.
+testLawsWithOptions
+  :: forall cs k
+   . (Laws.Laws cs, Testable k, Free.All cs (TESTED cs k))
+  => TestOptions -> Property (Some k) -> String -> Witnesses cs k -> TestTree
+testLawsWithOptions opts genObject name witnesses =
+  testGroup name [testPropertyWith opts (Laws.lawName law) (checkLaw law) | law <- Laws.laws @cs]
   where
     checkLaw :: Laws.Law cs -> Property ()
     checkLaw (Laws.Law lawName body) = do

@@ -11,7 +11,7 @@ import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
 import Data.Maybe (fromMaybe)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (testProperty)
+import Test.Tasty.Falsify (TestOptions (..), testProperty)
 import Prelude hiding (id, (**), (.))
 
 import Examples.OpenGames.Bayesian qualified as B
@@ -19,6 +19,7 @@ import Examples.OpenGames.Deterministic
 import Examples.OpenGames.Probability
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..))
 import Proarrow.Category.Instance.OpenGame qualified as Generic
+import Proarrow.Category.Monoidal qualified as Monoidal
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Optic.Lens (lens)
 import Proarrow.Optic.MonoidalLens (monLens)
@@ -31,11 +32,20 @@ import Proarrow.Testing
   , check
   , expect
   , genNamed
+  , genOb
   , genSomeDef
   , oneOfTotal
   , optGen
   )
-import Proarrow.Testing.Laws (testCategory, testMonoidal, testProfunctor, testSymMonoidal)
+import Proarrow.Testing.Laws
+  ( defaultTestOptions
+  , testCategory
+  , testMonoidal
+  , testProfunctor
+  , testProfunctorWith
+  , testSymMonoidal
+  )
+import Proarrow.Testing.Laws.Run (Witness (..), Witnesses (..), testLawsWithOptions)
 import Props.Hask ()
 
 test :: TestTree
@@ -200,10 +210,18 @@ bayesianTest :: TestTree
 bayesianTest =
   testGroup
     "Bayesian"
-    [ testCategory @B.BAYESIAN
-    , testProfunctor @B.Game
-    , testMonoidal @B.BAYESIAN (\r -> r)
-    , testSymMonoidal @B.BAYESIAN (\r -> r)
+    [ testLawsWithOptions @'[CategoryOf] fewer (genOb @B.BAYESIAN) "Category" (CategoryW :& WNil)
+    , testProfunctorWith @B.Game fewer
+    , testLawsWithOptions @'[Monoidal.Monoidal]
+        fewer
+        (genOb @B.BAYESIAN)
+        "Monoidal"
+        (MonoidalW (\r -> r) :& WNil)
+    , testLawsWithOptions @Monoidal.SymMonoidalStructures
+        fewer
+        (genOb @B.BAYESIAN)
+        "Symmetric monoidal"
+        (MonoidalW (\r -> r) :& SymMonoidalW :& WNil)
     , testProperty "diagnostic-free composition leaves unused play and context arrows lazy" $ do
         let noChecks :: B.OpenGame '[] (B.G Bool Bool) (B.G Bool Bool)
             noChecks = Generic.OpenGame [()] (\_ -> error "unused play was forced") (\_ _ -> [])
@@ -229,12 +247,18 @@ bayesianTest =
         same <- eqP correlated independent
         check "comparator compared only marginals" (not same)
     ]
+  where
+    -- Exact stochastic composition branches rapidly, even on the small palette.
+    fewer = defaultTestOptions{overrideNumTests = Just 10}
 
 instance Testable B.BAYESIAN where
   type TestOb a = (Ob a, Values (B.Observation a), Values (B.Coutility a))
   obFromTestOb r = r
   showOb @a = "G " ++ valueName @(B.Observation a) ++ " " ++ valueName @(B.Coutility a)
-  genSome = genSomeDef @'[B.G () (), B.G Bool B.Payoff, B.G Bool Bool]
+
+  -- Keep each leaf's observation or coutility trivial; tensor laws build products.
+  -- Rational payoffs and larger interfaces are exercised by the worked examples.
+  genSome = genSomeDef @'[B.G () (), B.G Bool (), B.G () Bool]
 
 instance (TestOb a, TestOb b) => TestableType (B.Game a b) where
   gen =
@@ -267,7 +291,12 @@ instance (TestOb a, TestOb b) => TestableType (B.Game a b) where
             [False, True]
             (\s -> B.behaviour (view s) (update s))
             ( \s (B.Context prior k) ->
-                [ let score t =
+                -- Share each expected utility across all diagnostic fields.
+                [ let score False = falseScore
+                      score True = trueScore
+                      falseScore = expectedUtility False
+                      trueScore = expectedUtility True
+                      expectedUtility t =
                         expectation
                           ( \(z, _) ->
                               expectation
