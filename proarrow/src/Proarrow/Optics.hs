@@ -1,6 +1,6 @@
 -- | The user-facing optics vocabulary, in one import.
 --
--- * /Build/ optics with 'iso', 'lens', 'monLens', 'prism', 'affineTraversal', 'grate', 'glass',
+-- * /Build/ optics with 'iso', 'lens', 'monLens', 'monoidalOptic', 'prism', 'affineTraversal', 'grate', 'glass',
 --   'powerGrate', 'cotraversal', 'kaleidoscope', 'algebraicLens', 'classifyingLens', 'tracer',
 --   'traversed', 'traversal' (from a rank-2 function on profunctors, not the van-Laarhoven form),
 --   'to' and 'unto'. The results support subtyping: an optic can be used wherever a weaker flavor
@@ -35,6 +35,7 @@ module Proarrow.Optics
   , Iso'
   , Lens
   , Lens'
+  , MonoidalOptic
   , MonoidalLens
   , MonoidalLens'
   , Prism
@@ -73,6 +74,7 @@ module Proarrow.Optics
   , iso
   , lens
   , monLens
+  , monoidalOptic
   , prism
   , affineTraversal
   , grate
@@ -141,9 +143,11 @@ import Proarrow.Optic.Action
   ( Algebra (..)
   , AlgebraicLens
   , ClassifyingLens
+  , MonoidalOptic
   , algebraicLens
   , classifyOf
   , classifyingLens
+  , monoidalOptic
   , runMonoidalOptic
   , (.?)
   )

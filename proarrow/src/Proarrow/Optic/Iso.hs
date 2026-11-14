@@ -15,7 +15,9 @@ import Data.Type.Equality ((:~:) (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Prelude (Maybe, fmap)
 
-import Proarrow.Core (CategoryOf (..), Kind, Promonad (..), type (+->))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( FLAVOR
   , Flip
@@ -32,6 +34,7 @@ import Proarrow.Optic.Lens (LensFl)
 import Proarrow.Optic.MonoidalLens (MonLensFl)
 import Proarrow.Optic.PowerGrate (PowerGrateFl)
 import Proarrow.Optic.Prism (PrismFl)
+import Proarrow.Optic.TensorOps (Backward (..), Continuation (..), TensorRight (..))
 import Proarrow.Optic.Tracer (TracerFl)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
@@ -85,3 +88,15 @@ fromPIso = convert
 -- | The other direction of the equivalence, by eliminating to legs and rebuilding.
 toPIso :: forall {k} (s :: k) (t :: k) a b. (CategoryOf k) => Iso s t a b -> PIso s t a b
 toPIso o = withIso o iso
+
+instance (Monoidal k, Profunctor p, Ob u, Ob v) => Prostrong IsoFl (TensorRight (p :: k +-> k) u v) where
+  proact ((f@Objs :: f s a) :.: TensorRight p :.: (g@Objs :: g b t)) =
+    TensorRight (dimap (getP @f @g f ** obj @u) (getP @g @f g ** obj @v) p)
+
+instance (Monoidal k, Profunctor p, Ob m) => Prostrong IsoFl (Backward (p :: k +-> k) m) where
+  proact ((f@Objs :: f s a) :.: Backward p :.: (g@Objs :: g b t)) =
+    Backward (dimap (getP @f @g f) (obj @m ** getP @g @f g) p)
+
+instance (CategoryOf k, Ob s, Ob x) => Prostrong IsoFl (Continuation output (s :: k) x) where
+  proact ((f@Objs :: f y z) :.: Continuation context :.: (g@Objs :: g t r)) =
+    Continuation (iso id (getP @g @f g) . context . iso id (getP @f @g f))

@@ -43,6 +43,7 @@ import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, withMonLens)
 import Proarrow.Optic.PowerGrate (PowerGrate, powerGrate, powerGrateOf, zipWithOf)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterFl (..), over, set, (%~))
+import Proarrow.Optic.TensorOps qualified as T
 import Proarrow.Optic.Tracer (Tracer, fromPTracer, toPTracer, tracer, tracerOf, withTracer)
 
 import Proarrow.Optic.MonoidalTraversal
@@ -246,6 +247,10 @@ _Just = prism Just (maybe (Left Nothing) Right)
 _2mon :: MonoidalLens (Bool, Bool) (Bool, Bool) Bool Bool
 _2mon = monLens @Bool id id
 
+-- Returns both the saved observation and the supplied backward value.
+remembering :: MonoidalLens Bool (Bool, Bool) Bool Bool
+remembering = monLens @Bool (\x -> (x, not x)) id
+
 notIso :: Iso Bool Bool Bool Bool
 notIso = O.iso not not
 
@@ -334,6 +339,80 @@ test =
     , propFnEq @Bool "iso as kaleidoscope" (powerGrateOf notIso not) not
     , propFnEq @Bool "iso as monoidal lens (view)" (view (O.convert notIso :: MonoidalLens Bool Bool Bool Bool)) not
     , propFnEq @Bool "iso as monoidal lens (over)" (over (O.convert notIso :: MonoidalLens Bool Bool Bool Bool) not) not
+    , propFnEq @(Bool, Bool)
+        "tensorOptic preserves the iso flavor"
+        ( let paired :: Iso (Bool, Bool) (Bool, Bool) (Bool, Bool) (Bool, Bool)
+              paired = T.tensorOptic notIso notIso
+          in withIso paired (\forward backward -> backward . first not . forward)
+        )
+        (first not)
+    , propFnEq @((Bool, Bool), Bool)
+        "tensorOptic combines different flavors without converting either input"
+        ( let paired :: Lens ((Bool, Bool), Bool) ((Bool, Bool), Bool) (Bool, Bool) (Bool, Bool)
+              paired = T.tensorOptic _1 notIso
+          in over paired (\(a, b) -> (not a, b))
+        )
+        (\((a, b), c) -> ((not a, b), c))
+    , propFnEq @(Bool, Bool)
+        "strengthBackward preserves the cartesian lens flavor"
+        ( let carried :: Lens (Bool, Bool) (Bool, (Bool, Bool)) Bool (Bool, Bool)
+              carried = T.strengthBackward @Bool _1
+          in over carried (\a -> (not a, a))
+        )
+        (\(x, y) -> (not x, (x, y)))
+    , propFnEq @Bool
+        "mapContinuation transports an ordinary lens through another lens"
+        ( let context :: Lens Bool Bool Bool Bool
+              context = lens id (not . snd)
+              transported :: Lens Bool (Bool, Bool) Bool (Bool, Bool)
+              transported = T.mapContinuation _1 context
+          in over transported (\a -> (a, not a))
+        )
+        (\x -> (not x, not x))
+    , propFnEq @Bool
+        "retainView weakens an iso to a lens when it retains a focus"
+        ( let retained :: Lens Bool (Bool, Bool) Bool Bool
+              retained = T.retainView notIso
+          in over retained not
+        )
+        (\x -> (not x, not x))
+    , propFnEq @(Bool, Bool)
+        "firstOptic also preserves getters"
+        ( let lifted :: Getter (Bool, Bool) (Bool, Bool) (Bool, Bool) (Bool, Bool)
+              lifted = T.firstOptic @Bool @Bool (O.convert notIso :: Getter Bool Bool Bool Bool)
+          in view lifted
+        )
+        (first not)
+    , propFnEq @(Bool, Bool)
+        "tensorOptic keeps the two residuals and permits different return types"
+        ( let paired :: MonoidalLens (Bool, Bool) ((Bool, Bool), (Bool, Bool)) (Bool, Bool) (Bool, Bool)
+              paired = T.tensorOptic remembering remembering
+          in over paired (\(a, b) -> (not a, b))
+        )
+        (\(x, y) -> ((x, x), (y, not y)))
+    , propFnEq @Bool
+        "strengthBackward carries an extra return through a lens"
+        ( let carried :: MonoidalLens Bool (Bool, (Bool, Bool)) Bool (Bool, Bool)
+              carried = T.strengthBackward @Bool remembering
+          in over carried (\a -> (a, not a))
+        )
+        (\x -> (not x, (x, x)))
+    , propFnEq @Bool
+        "retainView returns the same forward focus used by the backward pass"
+        ( let retained :: MonoidalLens Bool (Bool, (Bool, Bool)) Bool Bool
+              retained = T.retainView remembering
+          in over retained not
+        )
+        (\x -> (not x, (x, x)))
+    , propFnEq @(Bool, Bool)
+        "mapContinuation preserves the observation and shares the downstream residual"
+        ( \(x, y) ->
+            let context = monLens @Bool (const (x, not x)) (\(saved, returned) -> saved /= returned)
+                transported :: MonoidalLens () (Bool, Bool) Bool Bool
+                transported = T.mapContinuation remembering context
+            in (view transported (), over transported (const y) ())
+        )
+        (\(x, y) -> (not x, (y, x /= not y)))
     , propFnEq @(Bool, Bool)
         "withMonLens recovers the legs and the comonoid of the residual"
         ( \s -> withMonLens _2mon \co h i ->

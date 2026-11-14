@@ -8,20 +8,25 @@
 module Proarrow.Optic.Getter where
 
 import Data.Kind (Type)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Prelude (($))
 
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, rgt)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
+import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
   , FLAVOR
   , Flip
   , Optic
+  , Optic_ (..)
   , Prostrong (..)
   , legs2prof
   , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldFl)
+import Proarrow.Optic.TensorOps (Backward (..), Continuation (..), TensorRight (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -79,3 +84,17 @@ infixr 8 #
 
 unto :: forall {k} {j} (s :: k) (t :: j) a b. (CategoryOf k, CategoryOf j, Ob s, Ob a) => (b ~> t) -> Review s t a b
 unto bt = legs2prof @(Flip GetterFl) TerminalProfunctor (Id bt) \\ bt
+
+instance (Monoidal k, Prostrong GetterFl p, Ob u, Ob v) => Prostrong GetterFl (TensorRight (p :: k +-> k) u v) where
+  proact ((f@Objs :: f s a) :.: TensorRight p@Objs :.: (_g@Objs :: g b t)) =
+    withOb2 @k @s @u $
+      withOb2 @k @t @v $
+        TensorRight (unOptic (to @(s ** u) @(t ** v) @(a ** u) @(b ** v) (getP @f @g f ** obj @u)) p)
+
+instance (Monoidal k, Prostrong GetterFl p, Ob m) => Prostrong GetterFl (Backward (p :: k +-> k) m) where
+  proact ((f@Objs :: f s a) :.: Backward p@Objs :.: (_g@Objs :: g b t)) =
+    withOb2 @k @m @t $
+      Backward (unOptic (to @s @(m ** t) @a @(m ** b) (getP @f @g f)) p)
+
+instance (CategoryOf k, Ob s, Ob x) => Prostrong GetterFl (Continuation (Prostrong GetterFl) (s :: k) x) where
+  proact (_f@Objs :.: Continuation context :.: _g@Objs) = Continuation (to (view context))

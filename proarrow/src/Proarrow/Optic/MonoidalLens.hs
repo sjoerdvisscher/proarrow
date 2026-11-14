@@ -18,8 +18,9 @@
 -- be projected out.
 module Proarrow.Optic.MonoidalLens where
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt)
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (lft, rgt)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), first)
@@ -31,15 +32,21 @@ import Proarrow.Optic
   ( ExOptic
   , FLAVOR
   , Optic
+  , Optic_ (..)
   , Prostrong (..)
+  , iso
   , legs2prof
   , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldFl (..))
 import Proarrow.Optic.AffineTraversal (AffineTravFl (..))
+import Proarrow.Optic.Fold (FoldFl (..))
 import Proarrow.Optic.Getter (GetterFl (..))
 import Proarrow.Optic.Glass (GlassFl (..), Mod, applySel, withObSel)
-import Proarrow.Optic.Traversal (MonTravFl)
+import Proarrow.Optic.Setter (SetterFl (..))
+import Proarrow.Optic.TensorOps (Backward (..), Continuation (..), TensorRight (..))
+import Proarrow.Optic.TensorOps qualified as Tensor
+import Proarrow.Optic.Traversal (MonTravFl (..), TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -116,6 +123,57 @@ monLens
    . (Comonoid m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalLens s t a b
 monLens h i = legs2prof @MonLensFl (Rep @a @(ActionAt Tensor m) h) (Corep @b @(ActionAt Tensor m) i)
 
+-- | Build from an explicitly supplied residual comonoid. Carrier liftings use
+-- this to preserve the comonoid of composite residuals without requiring a
+-- canonical 'Comonoid' instance for every object of the category.
+monLensWith
+  :: forall {k} (m :: k) s t a b
+   . (Monoidal k, Ob m, Ob a, Ob b)
+  => ComonoidOn m -> (s ~> m ** a) -> (m ** b ~> t) -> MonoidalLens s t a b
+monLensWith co forward backward = legs2prof @MonLensFl (MonLensRep co forward) (MonLensCorep @m backward)
+
+data MonLensRep (m :: k) s a where
+  MonLensRep :: forall m s a. (Ob a) => ComonoidOn m -> (s ~> m ** a) -> MonLensRep m s a
+
+data MonLensCorep (m :: k) b t where
+  MonLensCorep :: forall m b t. (Ob b) => (m ** b ~> t) -> MonLensCorep m b t
+
+instance (Monoidal k, Ob m) => Profunctor (MonLensRep (m :: k)) where
+  dimap l r (MonLensRep co h) = MonLensRep co ((obj @m ** r) . h . l) \\ r
+  r \\ MonLensRep _ h = r \\ h
+
+instance (Monoidal k, Ob m) => Profunctor (MonLensCorep (m :: k)) where
+  dimap l r (MonLensCorep i) = MonLensCorep (r . i . (obj @m ** l)) \\ l
+  r \\ MonLensCorep i = r \\ i
+
+instance (Monoidal k, Ob m) => SetterFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  overP (MonLensRep _ h) (MonLensCorep i) f = i . (obj @m ** f) . h
+
+instance (Monoidal k, Ob m) => FoldFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  foldMapP (MonLensRep co h) f = leftUnitor . (Mon.counitOn co ** f) . h
+
+instance (Monoidal k, Ob m) => AffineFoldFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  previewP @_ @a (MonLensRep co h) = lft @k @a @TerminalObject . leftUnitor . (Mon.counitOn co ** obj @a) . h
+
+instance (Monoidal k, Ob m) => GetterFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  getP @_ @a (MonLensRep co h) = leftUnitor . (Mon.counitOn co ** obj @a) . h
+
+instance (Monoidal k, Ob m) => TravFl (MonLensRep (m :: k)) (MonLensCorep m)
+instance (Monoidal k, Ob m) => MonTravFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  monTravP (MonLensRep _ h) (MonLensCorep i) r = dimap h i (act @Tensor @_ @m r)
+
+instance (Monoidal k, Ob m) => AffineTravFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  affineMatch @_ @a @_ @t (MonLensRep co h) (MonLensCorep _i@Objs) = rgt @k @t @a . leftUnitor . (Mon.counitOn co ** obj @a) . h
+  affineSet @_ @a @b (MonLensRep _ h) (MonLensCorep i) = i . first @b (fst @k @m @a . h)
+
+instance (Monoidal k, Ob m) => GlassFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  glassP @s @a @b (MonLensRep _ h@Objs) (MonLensCorep i) =
+    withObSel @s @a @b $
+      i . ((fst @k @m @a . h . fst @k @s @(Mod s a b)) &&& (applySel @s @a @b (snd @k @m @a . h) . snd @k @s @(Mod s a b)))
+
+instance (Monoidal k, Ob m) => MonLensFl (MonLensRep (m :: k)) (MonLensCorep m) where
+  withMonLensP (MonLensRep co h) (MonLensCorep i) k = k @m co h i
+
 -- | Eliminate any optic that is at least an iso and at most a monoidal lens to its two legs,
 -- recovering the existential residual @m@ together with its comonoid structure: run it at its
 -- witness pair ('ExOptic' 'MonLensFl', via 'withLegs') and read the legs off with 'withMonLensP'.
@@ -124,3 +182,42 @@ withMonLens
    . (SymMonoidal k, (Ob a, Ob b) => c (ExOptic MonLensFl a b))
   => Optic c s t a b -> (forall m. (Ob m) => ComonoidOn m -> (s ~> m ** a) -> (m ** b ~> t) -> r) -> r
 withMonLens o k = withLegs @MonLensFl o \ @p @q p q -> withMonLensP @p @q p q \ @m co h i -> k @m co h i
+
+instance (SymMonoidal k, Prostrong MonLensFl p, Ob c, Ob d) => Prostrong MonLensFl (TensorRight (p :: k +-> k) c d) where
+  proact ((f@Objs :: f s a) :.: TensorRight p@Objs :.: (g@Objs :: g b t)) =
+    withMonLensP @f @g f g \ @m co forward backward ->
+      TensorRight
+        ( unOptic
+            ( monLensWith @m @(s ** c) @(t ** d) @(a ** c) @(b ** d)
+                co
+                (associator @k @m @a @c . (forward ** obj @c))
+                ((backward ** obj @d) . associatorInv @k @m @b @d)
+            )
+            p
+        )
+
+instance (SymMonoidal k, Prostrong MonLensFl p, Ob m) => Prostrong MonLensFl (Backward (p :: k +-> k) m) where
+  proact ((f@Objs :: f s a) :.: Backward p@Objs :.: (g@Objs :: g b t)) =
+    withMonLensP @f @g f g \ @n co forward backward ->
+      withOb2 @k @m @t $
+        Backward
+          ( unOptic
+              ( monLensWith @n @s @(m ** t) @a @(m ** b)
+                  co
+                  forward
+                  ((obj @m ** backward) . associator @k @m @n @b . (swap @k @n @m ** obj @b) . associatorInv @k @n @m @b)
+              )
+              p
+          )
+
+instance
+  ( SymMonoidal k
+  , Ob s
+  , Ob x
+  , forall m p. (Ob m, output p, Profunctor p) => output (Backward p m)
+  )
+  => Prostrong MonLensFl (Continuation output (s :: k) x)
+  where
+  proact (f@Objs :.: Continuation context :.: g@Objs) =
+    withMonLensP f g \ @m _ forward backward ->
+      Continuation (iso id backward . Tensor.strengthBackward @m context . iso id forward)

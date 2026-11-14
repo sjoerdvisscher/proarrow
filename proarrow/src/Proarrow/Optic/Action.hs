@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Optics for an arbitrary 'Proarrow.Category.Monoidal.Action.MonoidalAction': the 'ActFl' flavor,
 -- whose witness pair is a matched pair of arrows into\/out of the action at some residual; its
@@ -28,9 +29,11 @@ import Proarrow.Functor (Functor)
 import Proarrow.Monoid (Comonoid, Monoid)
 import Proarrow.Monoid qualified as Mon
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), legs2prof, withLegs)
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Optic_ (..), Prostrong (..), iso, legs2prof, withLegs)
 import Proarrow.Optic.Kaleidoscope (KaleidoFl)
 import Proarrow.Optic.MonoidalLens (MonLensFl)
+import Proarrow.Optic.TensorOps (Backward (..), Continuation (..), TensorRight (..))
+import Proarrow.Optic.TensorOps qualified as OpticTensor
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -204,3 +207,49 @@ instance (OplaxMonoidalRep (m :: k +-> k)) => Prostrong (AlgLensFl m) (RepCostar
   proact (f :.: RepCostar @afoc g :.: g') =
     withAlgP @m f g' \ @x alg h i ->
       RepCostar (i . (alg ** g) . unparRep @m @x @afoc . repMap @m h) \\ g \\ f
+
+-- | Tensor-action optics without a copying/discarding requirement on the residual.
+type MonoidalOptic (s :: k) t a b = Optic (Prostrong (ActFl Tensor)) s t a b
+
+monoidalOptic
+  :: forall {k} (m :: k) s t a b
+   . (Monoidal k, Ob m, Ob a, Ob b)
+  => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalOptic s t a b
+monoidalOptic forward backward = legs2prof @(ActFl Tensor) (Rep @a @(ActionAt Tensor m) forward) (Corep @b @(ActionAt Tensor m) backward)
+
+instance (Monoidal k, Prostrong (ActFl Tensor) p, Ob u, Ob v) => Prostrong (ActFl Tensor) (TensorRight (p :: k +-> k) u v) where
+  proact ((f@Objs :: f s a) :.: TensorRight p@Objs :.: (g@Objs :: g b t)) =
+    withActP @Tensor f g \ @m forward backward ->
+      TensorRight
+        ( unOptic
+            ( monoidalOptic @m @(s ** u) @(t ** v) @(a ** u) @(b ** v)
+                (associator @k @m @a @u . (forward ** obj @u))
+                ((backward ** obj @v) . associatorInv @k @m @b @v)
+            )
+            p
+        )
+
+instance (SymMonoidal k, Prostrong (ActFl Tensor) p, Ob m) => Prostrong (ActFl Tensor) (Backward (p :: k +-> k) m) where
+  proact ((f@Objs :: f s a) :.: Backward p@Objs :.: (g@Objs :: g b t)) =
+    withActP @Tensor f g \ @n forward backward ->
+      withOb2 @k @m @t $
+        Backward
+          ( unOptic
+              ( monoidalOptic @n @s @(m ** t) @a @(m ** b)
+                  forward
+                  ((obj @m ** backward) . associator @k @m @n @b . (swap @k @n @m ** obj @b) . associatorInv @k @n @m @b)
+              )
+              p
+          )
+
+instance
+  ( Monoidal k
+  , Ob s
+  , Ob x
+  , forall m p. (Ob m, output p, Profunctor p) => output (Backward p m)
+  )
+  => Prostrong (ActFl Tensor) (Continuation output (s :: k) x)
+  where
+  proact (f@Objs :.: Continuation context :.: g@Objs) =
+    withActP @Tensor f g \ @m forward backward ->
+      Continuation (iso id backward . OpticTensor.strengthBackward @m context . iso id forward)
