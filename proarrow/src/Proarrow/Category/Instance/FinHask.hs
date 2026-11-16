@@ -17,6 +17,8 @@ import Data.List (genericLength)
 import Data.List qualified as P
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as M
+import Data.Union qualified as Union
+import Data.Union.ST qualified as UnionST
 import Data.Universe.Class (Finite (..), Universe (..))
 import Data.Universe.Helpers (Tagged (..), retag)
 import Data.Void (Void)
@@ -238,19 +240,35 @@ instance HasPullbacks FINHASK where
     in
       reifyList groups \e -> k (FinHask (P.fst P.<$> e)) (FinHask (P.snd P.<$> e))
 
--- | The representative of each element after joining the given pairs: union-find, on a map of
--- parent pointers.
-unionFind :: (P.Ord a) => [(a, a)] -> a -> a
-unionFind pairs = find (P.foldl union M.empty pairs)
+-- | The representative of each element after joining the given pairs. Uses array-backed
+-- union-find with union by rank and path compression, then constant-time queries.
+-- Elements not joined to another element represent themselves; the choice of representative
+-- within a joined class is unspecified.
+--
+-- The 'P.Enum' instance must round-trip through 'P.fromEnum' and 'P.toEnum'. Array space is
+-- proportional to the span of the pair endpoints' indices, so use compact enumerations.
+unionFind :: (P.Enum a) => [(a, a)] -> a -> a
+unionFind [] = P.id
+unionFind pairs = \x ->
+  let i = P.fromEnum x
+  in if i P.< lo P.|| i P.> hi
+       then x
+       else P.toEnum (lo P.+ Union.fromNode (P.fst (Union.lookupFlattened forest (Union.Node (i P.- lo)))))
   where
-    find m i = P.maybe i (find m) (M.lookup i m)
-    union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else M.insert ri rj m
+    endpoints = [(P.fromEnum a, P.fromEnum b) | (a, b) <- pairs]
+    (lo, hi) = P.foldl' (\(!l, !h) (a, b) -> (P.min l (P.min a b), P.max h (P.max a b))) (P.maxBound, P.minBound) endpoints
+    forest = UnionST.runUnionST do
+      u <- UnionST.new (hi P.- lo P.+ 1) ()
+      P.mapM_ (\(a, b) -> UnionST.merge u (\() () -> ((), ())) (a P.- lo) (b P.- lo)) endpoints
+      UnionST.flatten u
+      P.pure u
 
 instance HasCoequalizers FINHASK where
   coequalize (FinHask @_ @b f) (FinHask g) k =
     let
-      rep = unionFind (P.zip (M.elems f) (M.elems g))
-      step m x = M.insertWith (P.++) (rep x) [x] m
+      indices = M.fromList (P.zip (universeF @b) [0 :: P.Int ..])
+      rep = unionFind (P.zip (P.map (indices M.!) (M.elems f)) (P.map (indices M.!) (M.elems g)))
+      step m x = M.insertWith (P.++) (rep (indices M.! x)) [x] m
       groups = M.elems $ P.foldl step M.empty (universeF @b)
     in
       reifyList groups \ce ->
@@ -264,7 +282,7 @@ instance HasCoequalizers FINHASK where
 -- >>> let l :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,0), (1,0), (2,1), (3,2)]
 -- >>> let r :: FinHask (FH (Fin 4)) (FH (Fin 5)) = fromList [(0,0), (1,2), (2,4), (3,4)]
 -- >>> (pushout l r \l' r' -> P.show (l', r')) :: P.String
--- "(fromList [(0,1),(1,3),(2,3)],fromList [(0,1),(1,0),(2,1),(3,2),(4,3)])"
+-- "(fromList [(0,0),(1,3),(2,3)],fromList [(0,0),(1,1),(2,0),(3,2),(4,3)])"
 instance HasPushouts FINHASK
 
 -- | >>> import Proarrow.Colimit.Pushout (isEpi)

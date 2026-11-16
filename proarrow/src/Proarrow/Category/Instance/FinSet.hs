@@ -307,7 +307,7 @@ instance HasCoequalizers FINSET where
 -- >>> let l :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil
 -- >>> let r :: FinSet (FS Nat4) (FS Nat5) = FinSet $ fin0 ::: fin2 ::: fin4 ::: fin4 ::: VNil
 -- >>> (pushout l r \(FinSet l') (FinSet r') -> P.show (l', r')) :: P.String
--- "(1 ::: 3 ::: 3 ::: VNil,1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil)"
+-- "(0 ::: 3 ::: 3 ::: VNil,0 ::: 1 ::: 0 ::: 2 ::: 3 ::: VNil)"
 instance HasPushouts FINSET
 
 findIndex :: (a -> P.Bool) -> Vec n a -> Fin n

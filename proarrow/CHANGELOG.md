@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* `FinHask.unionFind` now uses `union-find-array` and requires `Enum` instead of `Ord`.
+  Use compact indices; representatives may change. `FINHASK` objects still need no `Enum`.
 * `Proarrow.Category.Instance.OpenGame`: open games over a copy/discard category,
   with monoidal-lens play, finite strategy catalogues, sequential composition,
   parallel tensor, and context-dependent best-response diagnostics. Deterministic

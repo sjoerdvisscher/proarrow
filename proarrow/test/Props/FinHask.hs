@@ -6,7 +6,10 @@
 
 module Props.FinHask where
 
+import Control.Monad (replicateM)
+import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map.Strict qualified as M
+import Data.Set qualified as S
 import Data.Type.Equality ((:~:) (..))
 import Data.Universe.Class (Finite (..))
 import Data.Universe.Helpers (Tagged (..))
@@ -19,7 +22,7 @@ import Prelude (pure, ($))
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Finitary (elements)
-import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..), fromList)
+import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..), fromList, unionFind)
 import Proarrow.Core (CategoryOf (..), UN)
 
 import Proarrow.Testing
@@ -29,6 +32,7 @@ import Proarrow.Testing
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
   , expect
   , genOb
   , genSomeDef
@@ -40,7 +44,9 @@ import Proarrow.Testing.Laws
 import Proarrow.Tools.DPO (pushoutComplement)
 import Props.Hask ()
 import Test.Falsify (testFailed)
+import Test.Falsify qualified as Falsify
 import Test.Falsify.Generator (minimalValue)
+import Test.Falsify.Generator qualified as Gen
 import Test.Tasty.Falsify (testProperty)
 
 test :: TestTree
@@ -65,6 +71,26 @@ test =
     , testPullbacks @FINHASK withTestObFinHaskViaFin
     , testPushouts @FINHASK withTestObFinHaskViaFin
     , testFinitary @FinHask "FinHask"
+    , testProperty "union-find agrees with undirected reachability" $ do
+        count <- Falsify.gen (Gen.elem (0 :| [1 .. 20]))
+        pairs <- replicateM count $ do
+          a <- Falsify.gen (Gen.elem ((-4) :| [-3 .. 4 :: P.Int]))
+          b <- Falsify.gen (Gen.elem ((-4) :| [-3 .. 4]))
+          pure (a, b)
+        let root = unionFind pairs
+            edges = pairs P.++ [(b, a) | (a, b) <- pairs]
+            connected x = close (S.singleton x)
+            close seen =
+              let next = S.union seen (S.fromList [b | (a, b) <- edges, S.member a seen])
+              in if next P.== seen then seen else close next
+        check "roots give exactly the connected components" $
+          P.and [(root x P.== root y) P.== S.member y (connected x) | x <- [-6 .. 6], y <- [-6 .. 6]]
+        check "representatives belong to their class and are fixed points" $
+          P.all (\x -> S.member (root x) (connected x) P.&& root (root x) P.== root x) ([-6 .. 6] :: [P.Int])
+    , testProperty "union-find handles an empty relation and non-integer enumerations" $ do
+        expect "empty relation" [P.False, P.True] (P.map (unionFind []) [P.False, P.True])
+        let root = unionFind [(P.False, P.True)]
+        expect "joined booleans" (root P.False) (root P.True)
     , testProperty "a pushout complement deletes what the rule does not keep" $
         -- a : Fin 1 -> l : Fin 2 keeps one of two elements; the match is the identity on Fin 2, so
         -- the complement is the one kept element
