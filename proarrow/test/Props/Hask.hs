@@ -125,9 +125,14 @@ instance (TestableType a) => TestableType [a] where
     GenEmpty _ -> GenNonEmpty (pure [])
     GenNonEmpty g -> GenNonEmpty (list (inclusive (0, 4)) g)
 
--- Hard to write and also unused instances.
-instance Function (a -> b) where
-  function = error "Should not be used"
+-- Generate a higher-order function by observing its argument at a sampled input.
+-- This distinguishes functions extensionally without needing Eq on functions.
+instance (TestableType a, Function b) => Function (a -> b) where
+  function g = case gen @a of
+    GenEmpty absurd -> ConcreteFun.map (const ()) (\() -> absurd) <$> function g
+    GenNonEmpty ga -> do
+      a <- ga
+      ConcreteFun.map (\f -> f a) const <$> function g
 
 instance TestableProfunctor (Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
 

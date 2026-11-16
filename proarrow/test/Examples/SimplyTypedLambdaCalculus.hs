@@ -342,8 +342,7 @@ evalSub (Comp f g) x = evalSub f (evalSub g x)
 -- 'eqHask' compares interpreted terms by sampling arguments, which needs falsify 'Function'
 -- instances at every arrow's /left/ argument. These families thread that requirement through
 -- 'TestOb', as @KnownFree@ does in Props.Free. The palettes below only ever put 'K'
--- on the left of an arrow (and only 'K' entries in contexts), so the vacuous
--- @Function (a -> b)@ instance is never exercised.
+-- on the left of an arrow (and only 'K' entries in contexts).
 
 type family TyTestOb (a :: TY) :: Constraint where
   TyTestOb K = ()
@@ -376,7 +375,7 @@ withTestObExpArg
   :: forall (d :: CON) a r. (TestOb d, Ob a, TyTestOb a, Function (EvalTy a)) => ((TestOb (Exp d a)) => r) -> r
 withTestObExpArg r = case sing @d of
   SE -> r
-  SC @d' -> withTestObExpArg @d' @a r
+  SC @d' -> withEvalTy @a (withTestObExpArg @d' @a r)
 
 withTestObExpCON :: forall (g :: CON) d r. (TestOb g, TestOb d) => ((TestOb (g ~~> d)) => r) -> r
 withTestObExpCON r = case sing @g of

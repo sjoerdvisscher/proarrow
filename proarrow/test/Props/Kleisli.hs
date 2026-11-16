@@ -14,8 +14,11 @@ import Proarrow.Category.Enriched.Thin (Holds, Objects)
 import Proarrow.Category.Enriched.Thin.Composition (Closure)
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans)
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE)
+import Proarrow.Category.Monoidal.Coclosed ()
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
+import Proarrow.Limit.BinaryProduct (PROD)
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Star (Star)
 import Proarrow.Promonad.Cont (Cont (..))
@@ -56,10 +59,15 @@ test =
           testInitialObject @(KLEISLI (Cont Void))
         , testBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
         , testClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
-        , -- This group is close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
+        , testGroup
+            "Bool continuation laws"
+            [ testRepresentable @(Cont Bool) (\r -> r)
+            , testClosed @(PROD (OPPOSITE (KLEISLI (Cont Bool)))) (\r -> r) (\r -> r)
+            ]
+        , -- The Void tests are close to vacuous: @Cont Void a b@ is @(b -> Void) -> (a -> Void)@,
           -- and every object in the palette is inhabited, so every hom-set here is a singleton and
-          -- every law holds trivially. A non-empty answer type would make it meaningful, but the
-          -- generator for @(b -> r) -> (a -> r)@ does not currently support one.
+          -- every law holds trivially. The Bool group above checks representation and the
+          -- coproduct-based coclosed structure with a non-empty answer type.
           testMonoidal @(KLEISLI (Cont Void)) (\r -> r)
         ]
     , testGroup
@@ -113,6 +121,13 @@ instance (TestOb a, TestOb b) => TestingEqShow (Cont Void a b) where
   eqP (Cont l) (Cont r) = eqP l r
   showP (Cont f) = "Cont (" ++ showP f ++ ")"
 instance TestableProfunctor (Cont Void)
+
+instance (TestOb a, TestOb b) => TestableType (Cont Bool a b) where
+  gen = invmap Cont runCont gen
+instance (TestOb a, TestOb b) => TestingEqShow (Cont Bool a b) where
+  eqP (Cont l) (Cont r) = eqP l r
+  showP (Cont f) = "Cont (" ++ showP f ++ ")"
+instance TestableProfunctor (Cont Bool)
 
 -- * The Kleisli category of a decidable promonad is enumerable
 

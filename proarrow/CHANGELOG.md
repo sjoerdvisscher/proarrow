@@ -54,6 +54,7 @@
   cones and cocones without a universal property.
   Right adjoint preservation of weighted limits, left adjoint preservation of weighted colimits,
   and their inverses are derived by composing squares.
+* New `Coclosed` instances for `OPPOSITE k`, `COPROD (OPPOSITE k)` and `COPROD (KLEISLI (Cont r))`.
 
 ## 0.4.0.0 -- 2026-10-23
 

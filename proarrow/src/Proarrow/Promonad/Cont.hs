@@ -3,15 +3,16 @@
 module Proarrow.Promonad.Cont where
 
 import Data.Kind (Type)
-import Prelude (($))
+import Prelude (Either (..), either, ($))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), Tensor)
 import Proarrow.Category.Monoidal.Closed (Closed (..), curry, uncurry)
+import Proarrow.Category.Monoidal.Coclosed (Coclosed (..))
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
-import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
+import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -70,5 +71,10 @@ instance Closed (KLEISLI (Cont (r :: Type))) where
   curry = currySA
   apply = applySA
   (^^^) = expSA
+instance Coclosed (COPROD (KLEISLI (Cont (r :: Type)))) where
+  type (<~~) @(COPROD (KLEISLI (Cont r))) (COPR (KL a)) (COPR (KL b)) = COPR (KL (a, b -> r))
+  withObCoExp r = r
+  coeval = Coprod (Kleisli (Cont \k a -> k (Left (a, \b -> k (Right b)))))
+  coevalUniv (Coprod (Kleisli (Cont f))) = Coprod (Kleisli (Cont \k (a, br) -> f (either k br) a))
 
 -- Not CompactClosed, needs ((a -> r, b -> r) -> r) -> ((a, b) -> r) -> r
