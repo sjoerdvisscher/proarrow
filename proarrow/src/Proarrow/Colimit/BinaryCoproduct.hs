@@ -14,12 +14,13 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
+  ( Elem
   , FREE (..)
   , HasStructure (..)
   , IsFreeOb (..)
   , Lower
   , WithShow
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Free qualified as F
@@ -329,6 +330,7 @@ instance (Profunctor p, CategoryOf j, CategoryOf k) => Profunctor (Uncoprod p ::
 data family (+) (a :: k) (b :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, HasBinaryCoproducts `Elem` cs) => IsFreeOb (a + b) where
   type Lower f (a + b) = Lower f a || Lower f b
+  withTypeableFreeOb r = withTypeableFreeOb @a (withTypeableFreeOb @b r)
   lowerOb @k' @f r =
     fromAll @HasBinaryCoproducts @cs @k'
       (withLowerOb @f @a (withLowerOb @f @b (withObCoprod @k' @(Lower f a) @(Lower f b) r)))
@@ -337,9 +339,17 @@ instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs (p :: CAT k) HasBina
     Lft :: (Ob a, Ob b) => Struct HasBinaryCoproducts a (a + b)
     Rgt :: (Ob a, Ob b) => Struct HasBinaryCoproducts b (a + b)
     Sum :: a ~> o -> b ~> o -> Struct HasBinaryCoproducts (a + b) o
-  foldStructure @f _ (Lft @a @b) = withLowerOb @f @a (withLowerOb @f @b (lft @_ @(Lower f a) @(Lower f b)))
-  foldStructure @f _ (Rgt @a @b) = withLowerOb @f @a (withLowerOb @f @b (rgt @_ @(Lower f a) @(Lower f b)))
-  foldStructure go (Sum g h) = go g ||| go h
+  sameStructure Lft Lft = P.True
+  sameStructure Rgt Rgt = P.True
+  sameStructure (Sum _ _) (Sum _ _) = P.True
+  sameStructure _ _ = P.False
+  foldStructure @f _ (Lft @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (lft @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Rgt @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (rgt @_ @(Lower f a) @(Lower f b)))
+  foldStructure go (Sum g h) =
+    (|||)
+      P.<$> go g
+      P.<*> go h
+
 instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
   showsPrec _ Lft = P.showString "lft"
   showsPrec _ Rgt = P.showString "rgt"

@@ -12,7 +12,14 @@ import Data.Kind (Constraint)
 import Prelude (($))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elems, FREE (..), Free (..), HasStructure (..), Lower, withLowerOb)
+import Proarrow.Category.Instance.Free
+  ( Elems
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , Lower
+  , withLowerOb
+  )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal
@@ -110,8 +117,9 @@ instance
   where
   data Struct CompactClosed a b where
     DistribDual :: (Ob a, Ob b) => Struct CompactClosed (DualF (a **! b)) (DualF a **! DualF b)
-  foldStructure @f _ (DistribDual @a @b) =
-    withLowerOb @f @a (withLowerOb @f @b (distribDual @_ @(Lower f a) @(Lower f b)))
+  sameStructure DistribDual DistribDual = P.True
+  foldStructure @f _ (DistribDual @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (distribDual @_ @(Lower f a) @(Lower f b)))
+
 instance P.Show (Struct CompactClosed a b) where
   showsPrec _ DistribDual = P.showString "distribDual"
 

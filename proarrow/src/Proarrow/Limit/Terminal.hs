@@ -4,25 +4,27 @@
 -- kinds, and global elements @'El' a = 'TerminalObject' '~>' a@.
 module Proarrow.Limit.Terminal where
 
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import Prelude (Show, type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
+  ( Elem
+  , Elems
   , FREE (..)
   , Free (..)
   , HasStructure (..)
   , IsFreeOb (..)
   , Lower
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Category.Monoidal (Monoidal (..), UnitF)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
@@ -78,17 +80,55 @@ instance (HasTerminalObject k) => Representable (Corep (Constant '()) :: () +-> 
   tabulate f = Corep U.Unit \\ f
   repMap U.Unit = id
 
-class ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k
-instance ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k
+-- | A monoidal category whose unit is terminal. The coherence maps are mutual
+-- inverses; strict instances use identity defaults.
+type Semicartesian :: Kind -> Constraint
+class (HasTerminalObject k, Monoidal k) => Semicartesian k where
+  unitToTerm :: (Unit :: k) ~> TerminalObject
+  default unitToTerm :: ((Unit :: k) ~ TerminalObject) => (Unit :: k) ~> TerminalObject
+  unitToTerm = id
+
+  termToUnit :: (TerminalObject :: k) ~> Unit
+  default termToUnit :: ((Unit :: k) ~ TerminalObject) => (TerminalObject :: k) ~> Unit
+  termToUnit = id
+
+instance Semicartesian ()
+instance (Semicartesian j, Semicartesian k) => Semicartesian (j, k) where
+  unitToTerm = unitToTerm :**: unitToTerm
+  termToUnit = termToUnit :**: termToUnit
+
+type SemicartesianStructures :: [Kind -> Constraint]
+type SemicartesianStructures = '[Monoidal, HasTerminalObject, Semicartesian]
+
+instance (SemicartesianStructures `Elems` cs) => HasStructure cs (p :: CAT k) Semicartesian where
+  data Struct Semicartesian a b where
+    TermToUnit :: Struct Semicartesian TermF UnitF
+    UnitToTerm :: Struct Semicartesian UnitF TermF
+  sameStructure TermToUnit TermToUnit = P.True
+  sameStructure UnitToTerm UnitToTerm = P.True
+  sameStructure _ _ = P.False
+  foldStructure _ TermToUnit = P.pure termToUnit
+  foldStructure _ UnitToTerm = P.pure unitToTerm
+
+instance Show (Struct Semicartesian a b) where
+  showsPrec _ TermToUnit = P.showString "termToUnit"
+  showsPrec _ UnitToTerm = P.showString "unitToTerm"
+
+instance (SemicartesianStructures `Elems` cs) => Semicartesian (FREE cs (p :: CAT k)) where
+  termToUnit = St TermToUnit Nil
+  unitToTerm = St UnitToTerm Nil
 
 data family TermF :: k
 instance (HasTerminalObject `Elem` cs) => IsFreeOb (TermF :: FREE cs p) where
   type Lower f TermF = TerminalObject
+  withTypeableFreeOb r = r
   lowerOb @k' @_ r = fromAll @HasTerminalObject @cs @k' r
 instance (HasTerminalObject `Elem` cs) => HasStructure cs (p :: CAT k) HasTerminalObject where
   data Struct HasTerminalObject a b where
     Terminate :: (Ob a) => Struct HasTerminalObject a TermF
-  foldStructure @f _ (Terminate @a) = withLowerOb @f @a terminate
+  sameStructure Terminate Terminate = P.True
+  foldStructure @f _ (Terminate @a) = P.pure P.$ withLowerOb @f @a terminate
+
 instance Show (Struct HasTerminalObject a b) where
   showsPrec _ Terminate = P.showString "terminate"
 instance (HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs (p :: CAT k)) where

@@ -20,6 +20,7 @@ module Proarrow.Optic.MonoidalLens where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (lft, rgt)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
@@ -69,14 +70,15 @@ instance (Comonoid (m :: k)) => GetterFl (Rep (ActionAt Tensor m) :: k +-> k) (C
 instance (Comonoid (m :: k)) => AffineTravFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   -- a lens always matches
   affineMatch @_ @a @_ @t (Rep h) Objs = rgt @k @t @a . leftUnitor . (Mon.counit @m ** obj @a) . h
-  affineSet @_ @a @b (Rep h) (Corep i) = i . first @b (fst @k @m @a . h)
+  affineSet @_ @a @b (Rep h) (Corep i) = i . productToTensor @k @m @b . first @b (fst @k @m @a . tensorToProduct @k @m @a . h)
 
 instance (Comonoid (m :: k)) => GlassFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   glassP @s @a @b (Rep h@Objs) (Corep i) =
     withObSel @s @a @b $
       i
-        . ( (fst @k @m @a . h . fst @k @s @(Mod s a b))
-              &&& (applySel @s @a @b (snd @k @m @a . h) . snd @k @s @(Mod s a b))
+        . productToTensor @k @m @b
+        . ( (fst @k @m @a . tensorToProduct @k @m @a . h . fst @k @s @(Mod s a b))
+              &&& (applySel @s @a @b (snd @k @m @a . tensorToProduct @k @m @a . h) . snd @k @s @(Mod s a b))
           )
 
 -- | The monoidal-lens flavor: a lens whose residual is a comonoid, so it is a
@@ -164,12 +166,16 @@ instance (Monoidal k, Ob m) => MonTravFl (MonLensRep (m :: k)) (MonLensCorep m) 
 
 instance (Monoidal k, Ob m) => AffineTravFl (MonLensRep (m :: k)) (MonLensCorep m) where
   affineMatch @_ @a @_ @t (MonLensRep co h) (MonLensCorep _i@Objs) = rgt @k @t @a . leftUnitor . (Mon.counitOn co ** obj @a) . h
-  affineSet @_ @a @b (MonLensRep _ h) (MonLensCorep i) = i . first @b (fst @k @m @a . h)
+  affineSet @_ @a @b (MonLensRep _ h) (MonLensCorep i) = i . productToTensor @k @m @b . first @b (fst @k @m @a . tensorToProduct @k @m @a . h)
 
 instance (Monoidal k, Ob m) => GlassFl (MonLensRep (m :: k)) (MonLensCorep m) where
   glassP @s @a @b (MonLensRep _ h@Objs) (MonLensCorep i) =
     withObSel @s @a @b $
-      i . ((fst @k @m @a . h . fst @k @s @(Mod s a b)) &&& (applySel @s @a @b (snd @k @m @a . h) . snd @k @s @(Mod s a b)))
+      i
+        . productToTensor @k @m @b
+        . ( (fst @k @m @a . tensorToProduct @k @m @a . h . fst @k @s @(Mod s a b))
+              &&& (applySel @s @a @b (snd @k @m @a . tensorToProduct @k @m @a . h) . snd @k @s @(Mod s a b))
+          )
 
 instance (Monoidal k, Ob m) => MonLensFl (MonLensRep (m :: k)) (MonLensCorep m) where
   withMonLensP (MonLensRep co h) (MonLensCorep i) k = k @m co h i

@@ -17,7 +17,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), Not)
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
+  ( Elem
   , Elems
   , FREE (..)
   , Free (..)
@@ -25,6 +25,7 @@ import Proarrow.Category.Instance.Free
   , IsFreeOb (..)
   , Lower
   , WithShow
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Product ((:**:) (..))
@@ -200,6 +201,7 @@ instance (Dialogue j, Dialogue k) => Dialogue (j, k) where
 data family DualF (a :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), Dialogue `Elem` cs) => IsFreeOb (DualF a) where
   type Lower f (DualF a) = Dual (Lower f a)
+  withTypeableFreeOb r = withTypeableFreeOb @a r
   lowerOb @k' @f r = fromAll @Dialogue @cs @k' (withLowerOb @f @a (withObDual @k' @(Lower f a) r))
 
 -- | The structures the free category needs for 'Dialogue', and those its laws are stated for.
@@ -214,11 +216,20 @@ instance
     Dual :: a ~> b -> Struct Dialogue (DualF b) (DualF a)
     LinDist :: (Ob a, Ob b, Ob c) => a **! b ~> DualF c -> Struct Dialogue a (DualF (b **! c))
     LinDistInv :: (Ob a, Ob b, Ob c) => a ~> DualF (b **! c) -> Struct Dialogue (a **! b) (DualF c)
-  foldStructure go (Dual f) = dual (go f)
+  sameStructure (Dual _) (Dual _) = P.True
+  sameStructure (LinDist _) (LinDist _) = P.True
+  sameStructure (LinDistInv _) (LinDistInv _) = P.True
+  sameStructure _ _ = P.False
+  foldStructure go (Dual f) =
+    dual
+      P.<$> go f
   foldStructure @f go (LinDist @a @b @c g) =
-    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (linDist @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
+    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (linDist @_ @(Lower f a) @(Lower f b) @(Lower f c))))
+      P.<$> go g
   foldStructure @f go (LinDistInv @a @b @c g) =
-    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (linDistInv @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
+    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (linDistInv @_ @(Lower f a) @(Lower f b) @(Lower f c))))
+      P.<$> go g
+
 instance (WithShow a) => P.Show (Struct Dialogue a b) where
   showsPrec d (Dual f) = P.showParen (d P.> 10) P.$ P.showString "dual " . P.showsPrec 11 f
   showsPrec d (LinDist f) = P.showParen (d P.> 10) P.$ P.showString "linDist " . P.showsPrec 11 f

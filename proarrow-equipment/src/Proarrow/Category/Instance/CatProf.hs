@@ -17,7 +17,7 @@ import Proarrow.Category.Monoidal
   , swap
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction)
-import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian, distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC, dualityUnitDefault)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
@@ -52,7 +52,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Instance.Composition ((:.:))
@@ -224,3 +224,6 @@ instance HasParamNNO KIND where
 
 instance (MonoidalAction (t :: (KIND, KIND) +-> KIND)) => Costrong t Cat where
   coact @u = coactCC @t @u
+
+instance Semicartesian KIND
+instance Cartesian KIND

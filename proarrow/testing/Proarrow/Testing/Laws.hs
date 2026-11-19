@@ -733,22 +733,32 @@ testCartesian withOb withTestOb2 = testProperty "Cartesian" $ do
   Some @a <- genOb @k
   withOb @a (withTestOb2 @a @a (propCartesianAt @a))
 
--- Hoisted so that @a ** a ~ a && a@ is an ordinary given ('Cartesian.TensorIsProduct'), which the
--- quantified superclass of 'Cartesian.Cartesian' can't supply as a rewrite on its own.
 propCartesianAt
   :: forall {k} (a :: k)
    . ( Testable k
      , Cartesian.Cartesian k
-     , Cartesian.TensorIsProduct a a
      , TestOb (M.Unit @k)
      , TestOb a
      , Ob a
      , TestOb (a M.** a)
      )
   => Property ()
-propCartesianAt = do
-  testEq "copy" "copy" (CopyDiscard.copy @k @a) "id &&& id" (BinaryProduct.diag @a)
-  testEq "discard" "discard" (CopyDiscard.discard @k @a) "terminate" (Terminal.terminate @k @a)
+propCartesianAt = M.withOb2 @k @a @a $ do
+  testEq "copy" "copy" (CopyDiscard.copy @k @a) "id &&& id" (Cartesian.productToTensor @_ @a @a . BinaryProduct.diag @a)
+  testEq "discard" "discard" (CopyDiscard.discard @k @a) "terminate" (Terminal.termToUnit . Terminal.terminate @k @a)
+
+  testEq
+    "tensor coherence"
+    "productToTensor . tensorToProduct"
+    (Cartesian.productToTensor @k @a @a . Cartesian.tensorToProduct @k @a @a)
+    "id"
+    (obj @(a M.** a))
+  testEq
+    "unit coherence"
+    "termToUnit . unitToTerm"
+    (Terminal.termToUnit @k . Terminal.unitToTerm @k)
+    "id"
+    (obj @(M.Unit @k))
 
 testCartesian_ :: forall k. (Testable k, Cartesian.Cartesian k, TestObIsOb k, TestOb (M.Unit @k)) => TestTree
 testCartesian_ =

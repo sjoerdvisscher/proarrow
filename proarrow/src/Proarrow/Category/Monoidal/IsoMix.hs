@@ -54,8 +54,12 @@ instance (IsoMixStructures `Elems` cs) => HasStructure cs (p :: CAT k) IsoMix wh
   data Struct IsoMix a b where
     DualUnit :: Struct IsoMix (DualF UnitF) UnitF
     DualUnitInv :: Struct IsoMix UnitF (DualF UnitF)
-  foldStructure _ DualUnit = dualUnit
-  foldStructure _ DualUnitInv = dualUnitInv
+  sameStructure DualUnit DualUnit = P.True
+  sameStructure DualUnitInv DualUnitInv = P.True
+  sameStructure _ _ = P.False
+  foldStructure _ DualUnit = P.pure dualUnit
+  foldStructure _ DualUnitInv = P.pure dualUnitInv
+
 instance P.Show (Struct IsoMix a b) where
   showsPrec _ DualUnit = P.showString "dualUnit"
   showsPrec _ DualUnitInv = P.showString "dualUnitInv"

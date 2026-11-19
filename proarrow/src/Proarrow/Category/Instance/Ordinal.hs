@@ -26,6 +26,7 @@ import Proarrow.Category.Enriched.Thin
   )
 import Proarrow.Category.Instance.Bool (BOOL (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
@@ -48,7 +49,7 @@ import Proarrow.Limit.BinaryProduct
   )
 import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Object (ListOf (..))
 import Prelude qualified as P
@@ -422,3 +423,8 @@ instance HasPushouts (ORDINAL n) where
   factorPushout p1 _ k1 _ = factorCoequalizer p1 k1
 
 instance HasEpiMonoFactorization (ORDINAL n)
+
+instance (MonoidalOrdinal n) => Semicartesian (ORDINAL n)
+instance (MonoidalOrdinal n) => Cartesian (ORDINAL n) where
+  productToTensor @a @b = withObProd @(ORDINAL n) @a @b id
+  tensorToProduct @a @b = withObProd @(ORDINAL n) @a @b id

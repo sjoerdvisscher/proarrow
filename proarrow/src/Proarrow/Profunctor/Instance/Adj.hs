@@ -12,12 +12,12 @@ import Prelude (const)
 
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Cartesian (Cartesian)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (Profunctor (..), Promonad (..), lmap, rmap, type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (PIso, iso)
 import Proarrow.Optic.Getter (review, view)
@@ -29,12 +29,14 @@ newtype Adj p a b = Adj (p a b)
   deriving newtype (Profunctor, Representable, Corepresentable)
 
 instance (Cartesian j, Cartesian k, Corepresentable p) => MonoidalProfunctor (Adj p :: j +-> k) where
-  one = cotabulate terminate \\ corepObj @p @TerminalObject
-  Adj @_ @x l@Objs ** Adj @_ @y r@Objs =
+  one = cotabulate (termToUnit . terminate) \\ corepObj @p @Unit
+  Adj @_ @x (l@Objs :: p x s) ** Adj @_ @y (r@Objs :: p y t) =
     withOb2 @_ @x @y
       ( cotabulate
-          ( coindex @p @(x ** y) (lmap (fst @_ @x @y) l)
-              &&& coindex @p @(x ** y) (lmap (snd @_ @x @y) r)
+          ( productToTensor @j @s @t
+              . ( coindex @p @(x ** y) (lmap (fst @_ @x @y . tensorToProduct @k @x @y) l)
+                    &&& coindex @p @(x ** y) (lmap (snd @_ @x @y . tensorToProduct @k @x @y) r)
+                )
           )
       )
 

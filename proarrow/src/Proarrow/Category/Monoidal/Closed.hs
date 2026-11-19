@@ -11,14 +11,14 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..))
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
-  , Elems
+  ( Elems
   , FREE (..)
   , Free (..)
   , HasStructure (..)
   , IsFreeOb (..)
   , Lower
   , WithShow
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -197,13 +197,20 @@ type ClosedStructures = '[Monoidal, Closed]
 
 instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, ClosedStructures `Elems` cs) => IsFreeOb (a --> b) where
   type Lower f (a --> b) = Lower f a ~~> Lower f b
+  withTypeableFreeOb r = withTypeableFreeOb @a (withTypeableFreeOb @b r)
   lowerOb @k' @f r = fromAll @Closed @cs @k' (withLowerOb @f @a (withLowerOb @f @b (withObExp @k' @(Lower f a) @(Lower f b) r)))
 instance (ClosedStructures `Elems` cs) => HasStructure cs (p :: CAT k) Closed where
   data Struct Closed a b where
     Apply :: (Ob a, Ob b) => Struct Closed ((a --> b) **! a) b
     Curry :: forall a b c. (Ob a, Ob b) => (a **! b) ~> c -> Struct Closed a (b --> c)
-  foldStructure @f _ (Apply @a @b) = withLowerOb @f @a (withLowerOb @f @b (apply @_ @(Lower f a) @(Lower f b)))
-  foldStructure @f go (Curry @a @b f) = withLowerOb @f @a (withLowerOb @f @b (curry @_ @(Lower f a) @(Lower f b) (go f)))
+  sameStructure Apply Apply = P.True
+  sameStructure (Curry _) (Curry _) = P.True
+  sameStructure _ _ = P.False
+  foldStructure @f _ (Apply @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (apply @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f go (Curry @a @b f) =
+    withLowerOb @f @a (withLowerOb @f @b (curry @_ @(Lower f a) @(Lower f b)))
+      P.<$> go f
+
 instance (WithShow a) => P.Show (Struct Closed a b) where
   showsPrec _ Apply = P.showString "apply"
   showsPrec d (Curry f) = P.showParen (d P.> 10) $ P.showString "curry " . P.showsPrec 11 f

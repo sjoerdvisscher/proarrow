@@ -26,7 +26,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dima
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..), factorPullbackDefault, thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 
 type data COST = C Nat | INF
 
@@ -301,3 +301,5 @@ instance HasPushouts COST where
   factorPushout = factorPushoutDefault
 
 instance HasEpiMonoFactorization COST
+
+instance Semicartesian COST

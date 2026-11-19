@@ -10,15 +10,32 @@ import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (Nat2)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
+import Type.Reflection (SomeTypeRep (..), TypeRep, typeRep)
 import Prelude hiding (Monoid, curry, fst, id, mempty, snd, (**), (.))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinRel (FINREL (..))
-import Proarrow.Category.Instance.Free (FREE (..), Free (..), Lower, retract, widen)
+import Proarrow.Category.Instance.Free
+  ( All
+  , Embed
+  , FREE (..)
+  , Free (..)
+  , IsFreeOb (..)
+  , Lower
+  , emb
+  , fold
+  , foldA
+  , retract
+  , widen
+  )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), SymMonoidal, UnitF, withOb2, type (**!))
-import Proarrow.Category.Monoidal.Cartesian (Cartesian, prodToTensor, tensorToProd, termToUnit, unitToTerm)
+import Proarrow.Category.Monoidal.Cartesian
+  ( Cartesian
+  , prodToTensor
+  , tensorToProd
+  )
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue, DualF)
@@ -31,8 +48,9 @@ import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), lmap, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..), type (@))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), type (*!))
-import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian (..), TermF)
 import Proarrow.Monoid (Comonoid (..), Monoid (..), Supplies)
+import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -118,27 +136,98 @@ test =
     , testIsoMix @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r) (\r -> r)
     , testHypergraph @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , sheafTests
+    , testProperty "applicative folding sequences composition and structural children" P.$ do
+        let (names, result) =
+              foldA @'[HasBinaryProducts] @(Rep InterpT)
+                (\(Step name) -> ([name], not))
+                effectfulTerm
+            pureResult = fold @'[HasBinaryProducts] @(Rep InterpT) (\(Step _) -> not) effectfulTerm
+        expect "input first, then children left to right" ["input", "before", "left", "right"] names
+        expect "interpreted result" (False, True) (result True)
+        expect "agrees with pure folding" (pureResult True) (result True)
+    , testProperty "applicative folding short circuits before later children" P.$
+        case foldA @'[HasBinaryProducts] @(Rep InterpT)
+          (\(Step name) -> if name == "input" then Nothing else error "visited after failure")
+          effectfulTerm of
+          Nothing -> pure ()
+          Just _ -> check "ignored a failing generator interpretation" False
     , testProperty "cartesian coercions interpret to identities" P.$ do
         let roundTrip = retract @CARTCS @(Rep InterpT) (tensorToProd @(EMB '()) @(EMB '()) . prodToTensor @(EMB '()) @(EMB '()))
             unitTrip = retract @CARTCS @(Rep InterpT) (unitToTerm . termToUnit)
         check "cartesian coercions" (roundTrip (True, False) P.== (True, False) P.&& unitTrip () P.== ())
+    , testProperty "folding back into the free category preserves syntax" P.$
+        expect "self interpretation" (show narrowTerm) (show (selfFold narrowTerm))
+    , testProperty "cartesian and semicartesian coercions survive self-folding" P.$ do
+        let binary =
+              tensorToProd @(EMB '()) @(EMB '()) . prodToTensor @(EMB '()) @(EMB '())
+                :: Free (EMB '() *! EMB '() :: FREE CARTCS (InitialProfunctor :: CAT ())) (EMB '() *! EMB '())
+            nullary =
+              unitToTerm . termToUnit
+                :: Free (TermF :: FREE CARTCS (InitialProfunctor :: CAT ())) TermF
+        expect "product/tensor primitives" (show binary) (show (selfFold binary))
+        expect "terminal/unit primitives" (show nullary) (show (selfFold nullary))
     , testProperty "retract . widen = retract" P.$ do
         let l = retract @NARROWCS @(Rep Interp) narrowTerm
             r = retract @FREECS @(Rep Interp) (widen @FREECS narrowTerm)
         expect "retract . widen" r l
+    , testProperty "base runtime type evidence lifts through every free object former" P.$
+        expect
+          "nested object representation"
+          (SomeTypeRep (typeRep @ReflectedObject))
+          (SomeTypeRep (reflectedObject @ReflectedObject))
     ]
+
+-- Keep the reflecting syntax separate from FREECS, which also contains
+-- polymorphic Supplies classes and needs no Typeable evidence to be used.
+type REFLECTCS =
+  '[HasInitialObject, HasTerminalObject, HasBinaryProducts, HasBinaryCoproducts, Monoidal, Closed, Dialogue]
+type REFLECTKIND = FREE REFLECTCS (InitialProfunctor :: CAT ())
+type ReflectedObject =
+  ((EMB '() *! InitF) + (TermF **! (UnitF --> DualF (EMB '())))) :: REFLECTKIND
+
+-- Only objecthood is known for a here. The method supplies its Typeable evidence.
+reflectedObject :: forall (a :: REFLECTKIND). (Ob a) => TypeRep a
+reflectedObject = withTypeableFreeOb @a (typeRep @a)
+
+-- Self-lowering needs neither a discrete base nor instances of every structure
+-- in cs on the free category (without needing to interpret arrows).
+selfLoweredObject
+  :: forall {k} {cs} {p :: CAT k} (a :: FREE cs p)
+   . (Ob a) => Lower (Rep (Embed :: k +-> FREE cs p)) a :~: a
+selfLoweredObject = Refl
+
+-- Compile-time regression: ordinary free syntax over Type works for an
+-- arbitrary a, without Typeable a or a reflecting base category.
+unreflectedPair
+  :: forall a
+   . Free
+       (EMB a :: FREE '[HasBinaryProducts] (InitialProfunctor :: CAT Type))
+       (EMB a *! EMB a)
+unreflectedPair = id &&& id
 
 -- * The cartesian coercions
 
--- | A free category with the 'Cartesian' marker, interpreted into @Type@ (where the coercions
+-- | A free category with the 'Cartesian' structure, interpreted into @Type@ (where the coercions
 -- are identities), with the one generator object standing for 'Bool'.
-type CARTCS = '[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal]
+type CARTCS =
+  '[Cartesian, Semicartesian, HasTerminalObject, HasBinaryProducts, Monoidal, SymMonoidal, Supplies Comonoid]
 
 data family InterpT :: () +-> Type
 
 instance FunctorForRep InterpT where
   type InterpT @ '() = Bool
   fmap Unit = obj @Bool
+
+-- The generator interpretation needs effects, but only an Applicative target.
+type Step :: CAT ()
+data Step a b where
+  Step :: String -> Step '() '()
+
+effectfulTerm
+  :: Free (EMB '() :: FREE '[HasBinaryProducts] Step) (EMB '() *! EMB '())
+effectfulTerm = ((step "left" . step "before") &&& step "right") . step "input"
+  where
+    step name = emb (Step name)
 
 -- * Widening
 
@@ -150,6 +239,13 @@ narrowTerm
        ((InitF *! TermF) :: FREE NARROWCS (InitialProfunctor :: CAT ()))
        ((TermF *! InitF) *! TermF)
 narrowTerm = (terminate &&& (initiate @_ @InitF . fst @_ @InitF @TermF)) &&& snd @_ @InitF @TermF
+
+-- The indices are abstract here; the IsFreeOb superclass proves self-lowering.
+selfFold
+  :: forall cs (a :: FREE cs (InitialProfunctor :: CAT ())) b
+   . (All cs (FREE cs (InitialProfunctor :: CAT ()))) => Free a b -> Free a b
+selfFold term@Objs =
+  fold @cs @(Rep (Embed :: () +-> FREE cs (InitialProfunctor :: CAT ()))) (\case {}) term
 
 -- | A singleton witnessing the shape of an object expression, so 'genTerm' can pattern-match
 -- on source and target shapes directly instead of needing a type class per shape.

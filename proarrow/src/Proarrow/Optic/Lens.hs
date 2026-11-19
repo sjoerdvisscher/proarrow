@@ -17,7 +17,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt)
-import Proarrow.Category.Monoidal.Cartesian (Cartesian, TensorIsProduct, productToTensor, tensorToProduct)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian, productToTensor, tensorToProduct)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Functor (Functor (map), Prelude (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product, first)
@@ -88,16 +88,12 @@ lensVL f = lens (getConst . f Const) (P.uncurry (f (const id)))
 -- Tensor witnesses are also product-lens witnesses when tensor is product.
 instance (Cartesian k, Ob m) => LensFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   putP @_ @a @b (Rep forward) (Corep backward) =
-    backward . productToTensor @m @b . first @b (fst @k @m @a . tensorToProduct @m @a . forward)
+    backward . productToTensor @_ @m @b . first @b (fst @k @m @a . tensorToProduct @_ @m @a . forward)
 
 -- Product/tensor adapters are confined to the boundaries of the update.
 putTensorRight
   :: forall {k} (u :: k) v s t b
-   . ( Monoidal k
-     , HasBinaryProducts k
-     , TensorIsProduct s u
-     , TensorIsProduct b v
-     , TensorIsProduct t v
+   . ( Cartesian k
      , Ob u
      , Ob v
      , Ob s
@@ -107,21 +103,21 @@ putTensorRight
   => (s && b ~> t) -> (s ** u) && (b ** v) ~> (t ** v)
 putTensorRight put =
   withObProd @k @b @v $
-    productToTensor @t @v
+    productToTensor @_ @t @v
       . (put *** obj @v)
       . BP.associatorProdInv @s @b @v
       . (fst @k @s @u *** obj @(b && v))
-      . (tensorToProduct @s @u *** tensorToProduct @b @v)
+      . (tensorToProduct @_ @s @u *** tensorToProduct @_ @b @v)
 
 putBackward
   :: forall {k} (m :: k) s t b
-   . (Monoidal k, HasBinaryProducts k, TensorIsProduct m b, TensorIsProduct m t, Ob m, Ob s, Ob t, Ob b)
+   . (Cartesian k, Ob m, Ob s, Ob t, Ob b)
   => (s && b ~> t) -> s && (m ** b) ~> (m ** t)
 putBackward put =
   withOb2 @k @m @b $
-    let carried = fst @k @m @b . tensorToProduct @m @b
-        returned = snd @k @m @b . tensorToProduct @m @b
-    in productToTensor @m @t
+    let carried = fst @k @m @b . tensorToProduct @_ @m @b
+        returned = snd @k @m @b . tensorToProduct @_ @m @b
+    in productToTensor @_ @m @t
          . ((carried . snd @k @s @(m ** b)) &&& (put . (obj @s *** returned)))
 
 instance (Cartesian k, Prostrong LensFl p, Ob u, Ob v) => Prostrong LensFl (TensorRight (p :: k +-> k) u v) where
@@ -159,7 +155,7 @@ instance
   where
   proact ((f@Objs :: f y z) :.: Continuation context :.: (g@Objs :: g t r)) =
     Continuation
-      ( iso id (putP @f @g @y @z @t f g . tensorToProduct @y @t)
+      ( iso id (putP @f @g @y @z @t f g . tensorToProduct @_ @y @t)
           . OpticTensor.strengthBackward @y context
-          . iso id (productToTensor @y @z . (obj @y &&& getP @f @g @y @z f))
+          . iso id (productToTensor @_ @y @z . (obj @y &&& getP @f @g @y @z f))
       )

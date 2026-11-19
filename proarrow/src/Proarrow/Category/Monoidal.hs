@@ -12,7 +12,7 @@ import Prelude (Show, ($), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
+  ( Elem
   , Elems
   , FREE (..)
   , Free (..)
@@ -20,6 +20,7 @@ import Proarrow.Category.Instance.Free
   , IsFreeOb (..)
   , Lower
   , WithShow
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -250,9 +251,7 @@ instance Monoidal () where
 instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   type Unit = '(Unit, Unit)
 
-  -- Through the projections rather than by matching the pair, so that @a ** b@ reduces for an
-  -- abstract @a@: the quantified @a ** b ~ a && b@ of 'Proarrow.Category.Monoidal.Cartesian.Cartesian'
-  -- needs that.
+  -- Projections let the tensor reduce for abstract pair objects.
   type a ** b = '(Fst @ a ** Fst @ b, Snd @ a ** Snd @ b)
   withOb2 @'(a1, a2) @'(b1, b2) r = withOb2 @j @a1 @b1 (withOb2 @k @a2 @b2 r)
   leftUnitor @'(a1, a2) = leftUnitor @j @a1 :**: leftUnitor @k @a2
@@ -390,10 +389,12 @@ type Tensor = Rep MultRep
 data family UnitF :: k
 instance (Monoidal `Elem` cs) => IsFreeOb (UnitF :: FREE cs p) where
   type Lower f UnitF = Unit
+  withTypeableFreeOb r = r
   lowerOb @k' @_ r = fromAll @Monoidal @cs @k' r
 data family (**!) (a :: k) (b :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, Monoidal `Elem` cs) => IsFreeOb (a **! b) where
   type Lower f (a **! b) = Lower f a ** Lower f b
+  withTypeableFreeOb r = withTypeableFreeOb @a (withTypeableFreeOb @b r)
   lowerOb @k' @f r = fromAll @Monoidal @cs @k' (withLowerOb @f @a (withLowerOb @f @b (withOb2 @k' @(Lower f a) @(Lower f b) r)))
 instance (Monoidal `Elem` cs) => HasStructure cs (p :: CAT k) Monoidal where
   data Struct Monoidal i o where
@@ -405,14 +406,31 @@ instance (Monoidal `Elem` cs) => HasStructure cs (p :: CAT k) Monoidal where
     RightUnitorInv :: (Ob a) => Struct Monoidal a (a **! UnitF)
     Associator :: (Ob a, Ob b, Ob c) => Struct Monoidal ((a **! b) **! c) (a **! (b **! c))
     AssociatorInv :: (Ob a, Ob b, Ob c) => Struct Monoidal (a **! (b **! c)) ((a **! b) **! c)
-  foldStructure _ Par0 = one
-  foldStructure go (Par f g) = go f ** go g
-  foldStructure @f _ (LeftUnitor @a) = withLowerOb @f @a leftUnitor
-  foldStructure @f _ (LeftUnitorInv @a) = withLowerOb @f @a leftUnitorInv
-  foldStructure @f _ (RightUnitor @a) = withLowerOb @f @a rightUnitor
-  foldStructure @f _ (RightUnitorInv @a) = withLowerOb @f @a rightUnitorInv
-  foldStructure @f _ (Associator @a @b @c') = withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c' (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
-  foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c' (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+  sameStructure Par0 Par0 = P.True
+  sameStructure (Par _ _) (Par _ _) = P.True
+  sameStructure LeftUnitor LeftUnitor = P.True
+  sameStructure LeftUnitorInv LeftUnitorInv = P.True
+  sameStructure RightUnitor RightUnitor = P.True
+  sameStructure RightUnitorInv RightUnitorInv = P.True
+  sameStructure Associator Associator = P.True
+  sameStructure AssociatorInv AssociatorInv = P.True
+  sameStructure _ _ = P.False
+  foldStructure _ Par0 = P.pure one
+  foldStructure go (Par f g) =
+    (**)
+      P.<$> go f
+      P.<*> go g
+  foldStructure @f _ (LeftUnitor @a) = P.pure P.$ withLowerOb @f @a leftUnitor
+  foldStructure @f _ (LeftUnitorInv @a) = P.pure P.$ withLowerOb @f @a leftUnitorInv
+  foldStructure @f _ (RightUnitor @a) = P.pure P.$ withLowerOb @f @a rightUnitor
+  foldStructure @f _ (RightUnitorInv @a) = P.pure P.$ withLowerOb @f @a rightUnitorInv
+  foldStructure @f _ (Associator @a @b @c') =
+    P.pure P.$
+      withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c' (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+  foldStructure @f _ (AssociatorInv @a @b @c') =
+    P.pure P.$
+      withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c' (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+
 instance (WithShow a) => Show (Struct Monoidal a b) where
   showsPrec _ Par0 = P.showString "one"
   showsPrec d (Par f g) = P.showParen (d P.> 8) $ P.showsPrec 9 f . P.showString " ** " . P.showsPrec 9 g
@@ -444,7 +462,9 @@ type SymMonoidalStructures = '[Monoidal, SymMonoidal]
 instance (SymMonoidalStructures `Elems` cs) => HasStructure cs (p :: CAT k) SymMonoidal where
   data Struct SymMonoidal i o where
     Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
-  foldStructure @f _ (Swap @a @b) = withLowerOb @f @a (withLowerOb @f @b (swap @_ @(Lower f a) @(Lower f b)))
+  sameStructure Swap Swap = P.True
+  foldStructure @f _ (Swap @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (swap @_ @(Lower f a) @(Lower f b)))
+
 instance Show (Struct SymMonoidal a b) where
   showsPrec _ Swap = P.showString "swap"
 

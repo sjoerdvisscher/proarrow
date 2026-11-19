@@ -14,7 +14,7 @@ import Proarrow.Category.Instance.Prof qualified as F
 import Proarrow.Category.Instance.Sub qualified as F
 import Proarrow.Category.Instance.Zero (Absurd, VOID)
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian, distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
@@ -32,7 +32,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (Semicartesian, HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -119,3 +119,6 @@ instance (Bicategory kk) => EnrichedProfunctor (BI FUNK) (Bi :: CAT (BI kk)) whe
   enriched (Bi @(FUN p)) = withObRep @p @'() (Bi @(p % '()))
   rmap = Bi @(FUN (Rep Comp))
   lmap = Bi @(FUN (Rep Comp :.: Rep Swap))
+
+instance Semicartesian (BI FUNK)
+instance Cartesian (BI FUNK)

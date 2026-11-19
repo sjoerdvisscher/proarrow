@@ -15,6 +15,7 @@ import Data.Kind (Constraint, Type)
 import Prelude (Applicative, ($))
 
 import Proarrow.Category.Instance.Bool (BOOL (..))
+import Proarrow.Category.Instance.Free (Elems, FREE)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..), SubMonoidal)
 import Proarrow.Category.Monoidal
@@ -134,3 +135,5 @@ snd = leftUnitorWith (discard @k @a)
 
 (&&&) :: forall {k} (a :: k) x y. (CopyDiscard k) => a ~> x -> a ~> y -> a ~> x ** y
 f &&& g = (f ** g) . copy \\ f
+
+instance ('[Supplies Comonoid, Monoidal, SymMonoidal] `Elems` cs) => CopyDiscard (FREE cs p)

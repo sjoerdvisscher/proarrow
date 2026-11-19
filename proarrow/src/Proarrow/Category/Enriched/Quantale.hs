@@ -21,7 +21,7 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Promonad (..), obj)
-import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian (..))
 
 -- | As much of a quantale as a closure needs: a totally ordered, integral one. It is a
 -- 'Semicartesian' 'Distributive' category, so the unit is the top element and the bottom absorbs,
@@ -45,7 +45,7 @@ data MinIs x y where
 -- | In an integral quantale a tensor lies below each of its factors, since the other factor is at
 -- most the unit, so a unit into a tensor is a unit into each factor.
 splitUnit :: forall {v} (x :: v) y. (Quantale v, Ob x, Ob y) => Unit ~> (x ** y) -> (Unit ~> x, Unit ~> y)
-splitUnit f = (rightUnitorWith @x (terminate @v @y) . f, leftUnitorWith @y (terminate @v @x) . f)
+splitUnit f = (rightUnitorWith @x (termToUnit . terminate @v @y) . f, leftUnitorWith @y (termToUnit . terminate @v @x) . f)
 
 -- | The bottom absorbs the tensor, and nothing lies below the bottom.
 bottomTensor :: forall {v} (x :: v) y. (Quantale v, Ob x, Ob y) => (InitialObject ** x) ~> y

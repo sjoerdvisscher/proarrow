@@ -11,7 +11,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Prelude (type (~))
 
@@ -119,3 +119,7 @@ commSquare
   :: forall {k} f g a b c d
    . (a ~ f % FLS, b ~ f % TRU, c ~ g % FLS, d ~ g % TRU) => SUB f ~> (SUB g :: ARROW k) -> (a ~> b, b ~> d, a ~> c, c ~> d)
 commSquare n = (repMap @f F2T, n ! Tru, n ! Fls, repMap @g F2T) \\ n
+
+instance (Semicartesian k, SubMonoidal ob, ob (TerminalObject :: k)) => Semicartesian (SUBCAT (ob :: OB k)) where
+  unitToTerm = Sub unitToTerm
+  termToUnit = Sub termToUnit

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+* `HasStructure` supports applicative folding and operation comparison; `Free.foldA`
+  adds effectful interpretation; `structureChildren` enumerates immediate children.
+  `IsFreeOb` records `Lower (Rep Embed) a ~ a` and conditionally supplies `Typeable`
+  evidence through `withTypeableFreeOb`.
+  `Elem` exposes membership evidence; `fromAll` is standalone.
+* `Cartesian` and `Semicartesian` use explicit coherence maps with identity defaults.
 * `FinHask.unionFind` now uses `union-find-array` and requires `Enum` instead of `Ord`.
   Use compact indices; representatives may change. `FINHASK` objects still need no `Enum`.
 * `Proarrow.Category.Instance.OpenGame`: open games over a copy/discard category,

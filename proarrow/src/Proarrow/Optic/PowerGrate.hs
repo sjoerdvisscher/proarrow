@@ -38,7 +38,7 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Action (CoprodAction)
-import Proarrow.Category.Monoidal.Cartesian (Cartesian)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..), mkExponential)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..), fst, snd, (&&&))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..), Traversing)
@@ -186,6 +186,7 @@ instance (Monoidal k, HasCoproducts k, SNatI n) => GlassFl (Pow n :: k +-> k) (C
               . ( (fanOut @n @(Mod s a b) . snd @s @(Mod s a b))
                     &&& (splitPow @n @k @s @a . mkExponential sl . discard @k @(s ** Mod s a b))
                 )
+              . productToTensor @k @s @(Mod s a b)
           )
       )
 

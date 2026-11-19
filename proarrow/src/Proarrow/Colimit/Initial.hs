@@ -11,12 +11,13 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
+  ( Elem
   , FREE (..)
   , Free (..)
   , HasStructure (..)
   , IsFreeOb (..)
   , Lower
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -86,11 +87,14 @@ instance (HasInitialObject k, HasTerminalObject k, (InitialObject :: k) ~ Termin
 data family InitF :: k
 instance (HasInitialObject `Elem` cs) => IsFreeOb (InitF :: FREE cs p) where
   type Lower f InitF = InitialObject
+  withTypeableFreeOb r = r
   lowerOb @k' @_ r = fromAll @HasInitialObject @cs @k' r
 instance (HasInitialObject `Elem` cs) => HasStructure cs (p :: CAT k) HasInitialObject where
   data Struct HasInitialObject a b where
     Initial :: (Ob b) => Struct HasInitialObject InitF b
-  foldStructure @f _ (Initial @b) = withLowerOb @f @b initiate
+  sameStructure Initial Initial = P.True
+  foldStructure @f _ (Initial @b) = P.pure P.$ withLowerOb @f @b initiate
+
 instance Show (Struct HasInitialObject a b) where
   showsPrec _ Initial = P.showString "initiate"
 instance (HasInitialObject `Elem` cs) => HasInitialObject (FREE cs (p :: CAT k)) where

@@ -11,12 +11,13 @@ import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Cartesian (Cartesian)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.BinaryProduct qualified as P
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 
 type data CONSTRAINT = CNSTRNT Constraint
@@ -102,3 +103,6 @@ eqIsSuperOrd = Entails \r -> r
 
 maybeLiftsSemigroup :: CNSTRNT (P.Semigroup a) :- CNSTRNT (Monoid (P.Maybe a))
 maybeLiftsSemigroup = Entails \r -> r
+
+instance Semicartesian CONSTRAINT
+instance Cartesian CONSTRAINT

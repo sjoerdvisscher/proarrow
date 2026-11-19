@@ -102,8 +102,11 @@ instance
   where
   data Struct StarAutonomous a b where
     DualInv :: (Ob a, Ob b) => DualF a ~> DualF b -> Struct StarAutonomous b a
+  sameStructure (DualInv _) (DualInv _) = P.True
   foldStructure @f go (DualInv @a @b g) =
-    withLowerOb @f @a (withLowerOb @f @b (dualInv @_ @(Lower f a) @(Lower f b) (go g)))
+    withLowerOb @f @a (withLowerOb @f @b (dualInv @_ @(Lower f a) @(Lower f b)))
+      P.<$> go g
+
 instance (WithShow a) => P.Show (Struct StarAutonomous a b) where
   showsPrec d (DualInv f) = P.showParen (d P.> 10) P.$ P.showString "dualInv " . P.showsPrec 11 f
 

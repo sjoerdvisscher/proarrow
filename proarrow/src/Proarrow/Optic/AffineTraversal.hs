@@ -48,7 +48,7 @@ instance (AffineTravFl f g, AffineTravFl f' g') => AffineTravFl (f :.: f') (g' :
   -- match the outer; on failure of the inner, reconstruct via the outer's own setter, reusing s
   affineMatch @s @a @_ @t ((:.:) @m f@Objs f'@Objs) ((:.:) @n g'@Objs g@Objs) =
     ( (lft @_ @t @a . snd @s @t)
-        ||| ( ((lft @_ @t @a . affineSet @f @g f g . tensorToProduct @s @n) ||| (rgt @_ @t @a . snd @s @a))
+        ||| ( ((lft @_ @t @a . affineSet @f @g f g . tensorToProduct @_ @s @n) ||| (rgt @_ @t @a . snd @s @a))
                 . distL @_ @s @n @a
                 . second @s (affineMatch @f' @g' f' g')
             )
@@ -61,12 +61,12 @@ instance (AffineTravFl f g, AffineTravFl f' g') => AffineTravFl (f :.: f') (g' :
     withOb2 @_ @t @b $
       withOb2 @_ @m @b $
         ( (fst @t @b . snd @s @(t ** b))
-            ||| (affineSet @f @g f g . tensorToProduct @s @n . second @s (affineSet @f' @g' f' g' . tensorToProduct @m @b))
+            ||| (affineSet @f @g f g . tensorToProduct @_ @s @n . second @s (affineSet @f' @g' f' g' . tensorToProduct @_ @m @b))
         )
           . distL @_ @s @(t ** b) @(m ** b)
           . second @s (distR @_ @t @m @b)
           . (fst @s @b &&& first @b (affineMatch @f @g f g))
-          . productToTensor @s @b
+          . productToTensor @_ @s @b
 
 type AffineTraversal (s :: k) (t :: k) a b = Optic (Prostrong AffineTravFl) s t a b
 type AffineTraversal' s a = AffineTraversal s s a a

@@ -72,11 +72,11 @@ instance (HasBinaryProducts k, Ob (c :: k)) => GlassFl (Rep (Product c)) (Corep 
   glassP @s @a @b (Rep h@Objs) (Corep i) =
     withObSel @s @a @b $
       i
-        . tensorToProduct @c @b
+        . tensorToProduct @_ @c @b
         . ( (P.fst @k @c @a . h . fst @s @(Mod s a b))
               &&& (applySel @s @a @b (P.snd @k @c @a . h) . snd @s @(Mod s a b))
           )
-        . productToTensor @s @(Mod s a b)
+        . productToTensor @_ @s @(Mod s a b)
 
 -- | The exponential pair, a grate witness: the source is ignored, and the consumer is fed the
 -- selector @\\s -> h s d@ for each point @d@ of the exponent.
@@ -86,12 +86,12 @@ instance (Closed k, Ob (d :: k)) => GlassFl (Rep (Exp d)) (Corep (Exp d)) where
       i
         . curry @k @(Mod s a b) @d (apply @k @(s ~~> a) @b . (obj @(Mod s a b) ** swapClosed @a @s @d h))
         . snd @s @(Mod s a b)
-        . productToTensor @s @(Mod s a b)
+        . productToTensor @_ @s @(Mod s a b)
 
 instance (CategoryOf k) => GlassFl (Id :: k +-> k) (Id :: k +-> k) where
   glassP @s @a @b (Id l@Objs) (Id r@Objs) =
     withObSel @s @a @b $
-      r . applySel @s @a @b l . snd @s @(Mod s a b) . productToTensor @s @(Mod s a b)
+      r . applySel @s @a @b l . snd @s @(Mod s a b) . productToTensor @_ @s @(Mod s a b)
 
 -- | Composition threads the selector through: the outer glass is given the consumer
 -- @\\sel -> inner (sel s, \\sel' -> k (sel' . sel))@.
@@ -109,7 +109,7 @@ instance
               withOb2 @k @((s ** Mod s a b) ** (s ~~> x)) @(x ~~> a) $
                 let
                   -- the inner glass, fed a product-typed pair
-                  inner = glassP @f' @g' f' g' . tensorToProduct @x @(Mod x a b)
+                  inner = glassP @f' @g' f' g' . tensorToProduct @_ @x @(Mod x a b)
                   -- the source of the inner glass: the outer selector applied to @s@
                   xpart =
                     apply @k @s @x
@@ -130,9 +130,9 @@ instance
                   body = inner . (xpart &&& kipart)
                 in
                   glassP @f @g f g
-                    . tensorToProduct @s @(Mod s x y)
+                    . tensorToProduct @_ @s @(Mod s x y)
                     . (fst @s @(Mod s a b) &&& curry @k @(s ** Mod s a b) @(s ~~> x) body)
-                    . productToTensor @s @(Mod s a b)
+                    . productToTensor @_ @s @(Mod s a b)
 
 type Glass (s :: k) (t :: k) a b = Optic (Prostrong GlassFl) s t a b
 type Glass' s a = Glass s s a a

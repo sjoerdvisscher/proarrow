@@ -22,7 +22,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), mapDecision)
 import Proarrow.Category.Enriched.Thin qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Cartesian (Cartesian)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
 import Proarrow.Colimit.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, (++))
@@ -39,8 +39,8 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), diag)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -91,7 +91,8 @@ instance (Cartesian k, Comonad p, MonoidalProfunctor p) => HasBinaryProducts (KL
   withObProd @(KL a) @(KL b) r = withObProd @k @a @b r
   fst @(KL a) @(KL b) = arr (fst @_ @a @b)
   snd @(KL a) @(KL b) = arr (snd @_ @a @b)
-  Kleisli f &&& Kleisli g = Kleisli (lmap diag (f ** g)) \\ f
+  Kleisli (f :: p a b) &&& Kleisli (g :: p a c) =
+    Kleisli (dimap copy (tensorToProduct @k @b @c) (f ** g)) \\ f \\ g
 
 -- | Coproducts lift for the same reason as the initial object: for a 'Monad' @p (-) z@ is a
 -- representable presheaf.
@@ -206,3 +207,11 @@ pattern LiftF f <- (unlift -> (f, Obj, Obj))
     LiftF f = Kleisli (RepCostar f :.: repUniv)
 
 {-# COMPLETE LiftF #-}
+
+instance (Semicartesian k, Comonad p, MonoidalProfunctor p) => Semicartesian (KLEISLI (p :: k +-> k)) where
+  unitToTerm = arr unitToTerm
+  termToUnit = arr termToUnit
+
+instance (Cartesian k, Comonad p, MonoidalProfunctor p) => Cartesian (KLEISLI (p :: k +-> k)) where
+  productToTensor @(KL a) @(KL b) = arr (productToTensor @k @a @b)
+  tensorToProduct @(KL a) @(KL b) = arr (tensorToProduct @k @a @b)

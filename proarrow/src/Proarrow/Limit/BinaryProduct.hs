@@ -14,13 +14,14 @@ import Prelude qualified as P
 import Proarrow.Category.Enriched.Thin (DecidableProfunctor (..), Decision (..))
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Free
-  ( Elem (..)
+  ( Elem
   , FREE (..)
   , Free (..)
   , HasStructure (..)
   , IsFreeOb (..)
   , Lower
   , WithShow
+  , fromAll
   , withLowerOb
   )
 import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
@@ -30,7 +31,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Product (prod, (:*:) (..))
@@ -299,6 +300,7 @@ instance SymMonoidal BOOL where
 data family (*!) (a :: k) (b :: k) :: k
 instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, HasBinaryProducts `Elem` cs) => IsFreeOb (a *! b) where
   type Lower f (a *! b) = Lower f a && Lower f b
+  withTypeableFreeOb r = withTypeableFreeOb @a (withTypeableFreeOb @b r)
   lowerOb @k' @f r =
     fromAll @HasBinaryProducts @cs @k' (withLowerOb @f @a (withLowerOb @f @b (withObProd @k' @(Lower f a) @(Lower f b) r)))
 instance (HasBinaryProducts `Elem` cs) => HasStructure cs (p :: CAT k) HasBinaryProducts where
@@ -306,15 +308,24 @@ instance (HasBinaryProducts `Elem` cs) => HasStructure cs (p :: CAT k) HasBinary
     Fst :: (Ob a, Ob b) => Struct HasBinaryProducts (a *! b) a
     Snd :: (Ob a, Ob b) => Struct HasBinaryProducts (a *! b) b
     Prd :: i ~> a -> i ~> b -> Struct HasBinaryProducts i (a *! b)
-  foldStructure @f _ (Fst @a @b) = withLowerOb @f @a (withLowerOb @f @b (fst @_ @(Lower f a) @(Lower f b)))
-  foldStructure @f _ (Snd @a @b) = withLowerOb @f @a (withLowerOb @f @b (snd @_ @(Lower f a) @(Lower f b)))
-  foldStructure go (Prd f g) = go f &&& go g
+  sameStructure Fst Fst = P.True
+  sameStructure Snd Snd = P.True
+  sameStructure (Prd _ _) (Prd _ _) = P.True
+  sameStructure _ _ = P.False
+  foldStructure @f _ (Fst @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (fst @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Snd @a @b) = P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (snd @_ @(Lower f a) @(Lower f b)))
+  foldStructure go (Prd f g) =
+    (&&&)
+      P.<$> go f
+      P.<*> go g
+
 instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
   showsPrec _ Fst = P.showString "fst"
   showsPrec _ Snd = P.showString "snd"
   showsPrec d (Prd f g) =
     P.showParen (d P.> 5) P.$
       P.showsPrec 6 f . P.showString " &&& " . P.showsPrec 6 g
+
 instance (HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs (p :: CAT k)) where
   type a && b = a *! b
   withObProd r = r
@@ -351,3 +362,8 @@ instance Laws '[HasBinaryProducts] where
         p <- mor @a @(b && c) "p"
         p === (fst @_ @b @c . p) &&& (snd @_ @b @c . p)
     ]
+
+instance (HasProducts k) => Semicartesian (PROD k)
+
+instance Semicartesian Type
+instance Semicartesian BOOL

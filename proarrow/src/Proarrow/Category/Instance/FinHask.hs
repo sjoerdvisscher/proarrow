@@ -29,7 +29,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Finitary (Finitary (..), finiteSize)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Cartesian (distLProd, distRProd)
+import Proarrow.Category.Monoidal.Cartesian (Cartesian, distLProd, distRProd)
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
@@ -52,7 +52,7 @@ import Proarrow.Limit.BinaryProduct
   )
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
@@ -316,3 +316,6 @@ instance HasEpiMonoFactorization FINHASK where
     in FinHask (P.fmap (invMap M.!) f) :.: FinHask lb
 
 instance ElementaryTopos FINHASK
+
+instance Semicartesian FINHASK
+instance Cartesian FINHASK

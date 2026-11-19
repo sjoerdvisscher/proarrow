@@ -233,8 +233,11 @@ instance ('[Supplies Monoid, Monoidal] `Elems` cs) => HasStructure cs (p :: CAT 
   data Struct (Supplies Monoid) i o where
     Join :: (Ob a) => Struct (Supplies Monoid) (a **! a) a
     Sprout :: (Ob a) => Struct (Supplies Monoid) UnitF a
-  foldStructure @f _ (Join @a) = withLowerOb @f @a (mappend @(Lower f a))
-  foldStructure @f _ (Sprout @a) = withLowerOb @f @a (mempty @(Lower f a))
+  sameStructure Join Join = P.True
+  sameStructure Sprout Sprout = P.True
+  sameStructure _ _ = P.False
+  foldStructure @f _ (Join @a) = P.pure P.$ withLowerOb @f @a (mappend @(Lower f a))
+  foldStructure @f _ (Sprout @a) = P.pure P.$ withLowerOb @f @a (mempty @(Lower f a))
 
 instance P.Show (Struct (Supplies Monoid) a b) where
   showsPrec _ Join = P.showString "mappend"
@@ -246,8 +249,11 @@ instance ('[Supplies Comonoid, Monoidal] `Elems` cs) => HasStructure cs (p :: CA
   data Struct (Supplies Comonoid) i o where
     Fork :: (Ob a) => Struct (Supplies Comonoid) a (a **! a)
     Prune :: (Ob a) => Struct (Supplies Comonoid) a UnitF
-  foldStructure @f _ (Fork @a) = withLowerOb @f @a (comult @(Lower f a))
-  foldStructure @f _ (Prune @a) = withLowerOb @f @a (counit @(Lower f a))
+  sameStructure Fork Fork = P.True
+  sameStructure Prune Prune = P.True
+  sameStructure _ _ = P.False
+  foldStructure @f _ (Fork @a) = P.pure P.$ withLowerOb @f @a (comult @(Lower f a))
+  foldStructure @f _ (Prune @a) = P.pure P.$ withLowerOb @f @a (counit @(Lower f a))
 
 instance P.Show (Struct (Supplies Comonoid) a b) where
   showsPrec _ Fork = P.showString "comult"

@@ -58,13 +58,14 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.TensorNetwork (Size, TNET (..), dimsOf, fromVector, matMul, toVector)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Dialogue (Dialogue (..))
 import Proarrow.Category.Monoidal.Hypergraph (cap)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Object (KnownListOf (..), withKnownAppend, withKnownAssoc, type (++))
 import Proarrow.Optic (OPTIC (..), Prostrong)
@@ -400,3 +401,8 @@ data family AsLens :: DIFF +-> OPPOSITE (OPTIC Type Type (Prostrong LensFl))
 instance FunctorForRep AsLens where
   type AsLens @ a = OP (OPT (Point (UN DF a)) (Point (UN DF a)))
   fmap f@Diff{} = Op (toLens f)
+
+instance Semicartesian DIFF
+instance Cartesian DIFF where
+  productToTensor @a @b = withObProd @DIFF @a @b id
+  tensorToProduct @a @b = withObProd @DIFF @a @b id

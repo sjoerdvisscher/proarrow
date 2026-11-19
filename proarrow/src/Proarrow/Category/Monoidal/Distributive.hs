@@ -12,7 +12,14 @@ import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
-import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
+import Proarrow.Category.Instance.Free
+  ( Elems
+  , FREE
+  , Free (..)
+  , HasStructure (..)
+  , Lower
+  , withLowerOb
+  )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal
@@ -94,12 +101,17 @@ instance
     DistR :: (Ob a, Ob b, Ob c) => Struct Distributive ((a + b) **! c) ((a **! c) + (b **! c))
     AbsorbL :: (Ob a) => Struct Distributive (a **! InitF) InitF
     AbsorbR :: (Ob a) => Struct Distributive (InitF **! a) InitF
+  sameStructure DistL DistL = P.True
+  sameStructure DistR DistR = P.True
+  sameStructure AbsorbL AbsorbL = P.True
+  sameStructure AbsorbR AbsorbR = P.True
+  sameStructure _ _ = P.False
   foldStructure @f _ (DistL @a @b @c) =
-    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (distL @_ @(Lower f a) @(Lower f b) @(Lower f c))))
+    P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (distL @_ @(Lower f a) @(Lower f b) @(Lower f c))))
   foldStructure @f _ (DistR @a @b @c) =
-    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (distR @_ @(Lower f a) @(Lower f b) @(Lower f c))))
-  foldStructure @f _ (AbsorbL @a) = withLowerOb @f @a (absorbL @_ @(Lower f a))
-  foldStructure @f _ (AbsorbR @a) = withLowerOb @f @a (absorbR @_ @(Lower f a))
+    P.pure P.$ withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (distR @_ @(Lower f a) @(Lower f b) @(Lower f c))))
+  foldStructure @f _ (AbsorbL @a) = P.pure P.$ withLowerOb @f @a (absorbL @_ @(Lower f a))
+  foldStructure @f _ (AbsorbR @a) = P.pure P.$ withLowerOb @f @a (absorbR @_ @(Lower f a))
 
 instance P.Show (Struct Distributive a b) where
   showsPrec _ DistL = P.showString "distL"

@@ -20,15 +20,17 @@
 -- denotation along a functor @f@ out of @k@ is @'Lower' f a@, and 'withLowerOb' recovers that
 -- denotation's 'Ob' in 'fold'.
 --
--- Classes imposing type equalities (like 'Proarrow.Category.Monoidal.Cartesian.Cartesian'\'s
--- @tensor = product@) cannot be listed in @cs@, since each carrier is fixed (@**@ is always the
--- formal tensor). A kind wrapper can recover the instance:
--- @'Proarrow.Limit.BinaryProduct.PROD' ('FREE' '[HasTerminalObject, HasBinaryProducts] p)@ /is/ a
--- free cartesian category.
+-- Tensor and product remain distinct formal object shapes. Structures such as
+-- 'Proarrow.Category.Monoidal.Cartesian.Cartesian' connect them with explicit
+-- coherence arrows, whose interpretations may be identities.
 module Proarrow.Category.Instance.Free where
 
-import Data.Kind (Constraint)
-import Prelude (Show (..))
+import Data.Functor.Const (Const (..))
+import Data.Functor.Identity (Identity (..))
+import Data.Kind (Constraint, Type)
+import Data.Type.Equality ((:~:) (..))
+import Data.Typeable (Typeable)
+import Prelude (Applicative, Bool, Show (..), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Discrete (..))
@@ -42,6 +44,7 @@ import Proarrow.Core
   , Show2
   , dimapDefault
   , (//)
+  , (\\)
   , type (+->)
   )
 import Proarrow.Functor (FunctorForRep (..))
@@ -53,17 +56,31 @@ type family All (cs :: [Kind -> Constraint]) (k :: Kind) :: Constraint where
   All '[] k = ()
   All (c ': cs) k = (c k, All cs k)
 
--- | Membership of a structure in the list, with the entailment @'All' cs k => c k@ as a method
--- rather than a quantified superclass: as a given, the quantified form would shadow the ordinary
--- instances for the free category itself and demand @All cs (FREE cs p)@.
+-- | Membership of a structure in the list, witnessed by its position.
 type Elem :: (Kind -> Constraint) -> [Kind -> Constraint] -> Constraint
 class c `Elem` cs where
-  fromAll :: forall k r. (All cs k) => ((c k) => r) -> r
+  elemEvidence :: ElemEvidence c cs
+
+-- | The position selected by an 'Elem' instance, for looking up opt-in support.
+type ElemEvidence :: a -> [a] -> Type
+data ElemEvidence c cs where
+  ElemHere :: ElemEvidence c (c ': cs)
+  ElemThere :: ElemEvidence c cs -> ElemEvidence c (d ': cs)
 
 instance {-# OVERLAPPABLE #-} (c `Elem` cs) => c `Elem` (d ': cs) where
-  fromAll @k r = fromAll @c @cs @k r
+  elemEvidence = ElemThere (elemEvidence @c @cs)
 instance c `Elem` (c ': cs) where
-  fromAll r = r
+  elemEvidence = ElemHere
+
+-- | Select a structure constraint from 'All' using its membership evidence.
+-- The entailment is a continuation rather than a quantified superclass of 'Elem':
+-- as a given, the quantified form would shadow ordinary free-category instances.
+fromAll :: forall c cs k r. (c `Elem` cs, All cs k) => ((c k) => r) -> r
+fromAll = go (elemEvidence @c @cs)
+  where
+    go :: forall ds. (All ds k) => ElemEvidence c ds -> ((c k) => r) -> r
+    go ElemHere r = r
+    go (ElemThere rest) r = go rest r
 
 -- | Membership of several structures at once: @'[Monoidal, SymMonoidal] \`Elems\` cs@.
 type Elems :: [Kind -> Constraint] -> [Kind -> Constraint] -> Constraint
@@ -108,18 +125,28 @@ showPostComp d p g = P.showParen (d P.> 9) (P.showsPrec 10 p . P.showString " . 
 -- | The shape of an object of the free category, by object former. This is 'Ob' for the free
 -- category. It carries the shape's denotation 'Lower' along any functor out of @k@, and how to
 -- recover that denotation's 'Ob' from the leaves' ('lowerOb', normally used through
--- 'withLowerOb' and 'withLowerIdOb').
+-- 'withLowerOb' and 'withLowerIdOb'). Lowering along 'Embed' preserves the
+-- object itself, as recorded by the superclass equality.
 type IsFreeOb :: forall {k} {cs :: [Kind -> Constraint]} {p :: CAT k}. FREE cs p -> Constraint
-class IsFreeOb (a :: FREE cs (p :: CAT k)) where
+class (Lower (Rep (Embed :: k +-> FREE cs p)) a ~ a) => IsFreeOb (a :: FREE cs (p :: CAT k)) where
   -- | The denotation of the object along a functor @f@ out of @k@. (The class variable is
   -- re-annotated here so that @k@ is in scope before @f@'s kind mentions it.)
   type Lower (f :: k +-> k') (a :: FREE cs p) :: k'
 
   lowerOb :: forall k' (f :: k +-> k') r. (Representable f, All cs k') => ((Ob (Lower f a)) => r) -> r
 
+  -- | Recover runtime type evidence when base objecthood provides it.
+  -- The syntax parameters need runtime type evidence only for this operation;
+  -- ordinary free objects and arrows impose no such requirement.
+  withTypeableFreeOb
+    :: (Typeable k, Typeable cs, Typeable p, forall (x :: k). (Ob x) => Typeable x)
+    => ((Typeable a) => r)
+    -> r
+
 instance (Ob a) => IsFreeOb (EMB a) where
   type Lower f (EMB a) = f % a
   lowerOb @_ @f = withObRep @f @a
+  withTypeableFreeOb r = r
 
 -- | @'Ob' ('Lower' f a)@ from the shape of @a@, for interpreting along @f@.
 withLowerOb
@@ -144,12 +171,43 @@ class
   HasStructure cs (p :: CAT k) (c :: Kind -> Constraint)
   where
   data Struct c :: CAT (FREE cs p)
+
+  -- | Interpret an operation, visiting each immediate child once in order.
+  -- Folding along @Rep (Embed :: k +-> FREE cs p)@ interprets it back into
+  -- its own free category, returning a 'Free' arrow. This requires a discrete
+  -- base and @All cs (FREE cs p)@; 'fromAll' supplies the selected @c (FREE cs p)@.
+  -- Match child arrows with 'Proarrow.Object.Objs' to recover self-lowering
+  -- equalities when returning rewritten children.
   foldStructure
-    :: forall {k'} (f :: k +-> k') (a :: FREE cs p) (b :: FREE cs p)
-     . (c k', All cs k', Representable f)
-    => (forall (x :: FREE cs p) y. x ~> y -> Lower f x ~> Lower f y)
+    :: forall {k'} (f :: k +-> k') m (a :: FREE cs p) b
+     . (Applicative m, c k', All cs k', Representable f)
+    => (forall (x :: FREE cs p) y. x ~> y -> m (Lower f x ~> Lower f y))
     -> Struct c a b
-    -> Lower f a ~> Lower f b
+    -> m (Lower f a ~> Lower f b)
+
+  -- | Compare outer operations independently of children and object choices.
+  -- Fixed payloads participate in this equivalence relation; rebuilding preserves it.
+  sameStructure :: Struct c (a :: FREE cs p) b -> Struct c (x :: FREE ds q) y -> Bool
+
+-- | One immediate child, retaining its endpoint types.
+type StructureChild :: forall {k}. [Kind -> Constraint] -> CAT k -> Type
+data StructureChild cs p where
+  StructureChild :: (a :: FREE cs p) ~> b -> StructureChild cs p
+
+-- | Enumerate immediate children in the order used by 'foldStructure'.
+structureChildren
+  :: forall {k} {cs} {p :: CAT k} c (a :: FREE cs p) b
+   . (HasStructure cs p c, Discrete k, All cs (FREE cs p))
+  => Struct c a b -> [StructureChild cs p]
+structureChildren s =
+  fromAll @c @cs @(FREE cs p) P.$
+    getConst (foldStructure @_ @_ @_ @_ @(Rep (Embed :: k +-> FREE cs p)) (\child -> Const [StructureChild child]) s)
+
+-- | Compare membership positions, retaining equality of the selected structures.
+sameElem :: ElemEvidence c cs -> ElemEvidence d cs -> P.Maybe (c :~: d)
+sameElem ElemHere ElemHere = P.Just Refl
+sameElem (ElemThere c) (ElemThere d) = sameElem c d
+sameElem _ _ = P.Nothing
 
 -- | Interpret a free arrow along a functor @f@ into any category @k'@ supporting the structures
 -- @cs@, given an interpretation of the generators between the images of their objects. This is
@@ -162,12 +220,23 @@ fold
   => (forall x y. (Ob x, Ob y) => p x y -> (f % x) ~> (f % y))
   -> a ~> b
   -> Lower f a ~> Lower f b
-fold pn = go
+fold pn term = runIdentity (foldA @cs @f (\p -> Identity (pn p)) term)
+
+-- | 'fold' with applicative effects. Composition visits the input side first,
+-- and structural children are visited in the order specified by 'foldStructure'.
+foldA
+  :: forall {k} {k'} {p :: CAT k} (cs :: [Kind -> Constraint]) (f :: k +-> k') m (a :: FREE cs p) b
+   . (Applicative m, All cs k', Representable f)
+  => (forall x y. (Ob x, Ob y) => p x y -> m ((f % x) ~> (f % y)))
+  -> a ~> b
+  -> m (Lower f a ~> Lower f b)
+foldA pn = go
   where
-    go :: forall (x :: FREE cs p) y. x ~> y -> Lower f x ~> Lower f y
-    go Nil = withLowerOb @f @x id
-    go (Emb p g) = pn p . go g
-    go (St @c s g) = fromAll @c @cs @k' (foldStructure @_ @_ @_ @_ @f go s) . go g
+    go :: forall (x :: FREE cs p) y. x ~> y -> m (Lower f x ~> Lower f y)
+    go Nil = P.pure (withLowerOb @f @x id)
+    go (Emb p g) = (\g' p' -> p' . g') P.<$> go g P.<*> pn p
+    go (St @c s g) =
+      (\g' s' -> s' . g') P.<$> go g P.<*> fromAll @c @cs @k' (foldStructure @_ @_ @_ @_ @f go s)
 
 retract
   :: forall {k} {k'} cs (f :: k +-> k') a b

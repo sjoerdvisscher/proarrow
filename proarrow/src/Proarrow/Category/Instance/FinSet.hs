@@ -34,6 +34,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinHask (unionFind)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Cartesian (Cartesian (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
@@ -56,7 +57,7 @@ import Proarrow.Limit.BinaryProduct
   )
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Optic (iso)
 import Proarrow.Optic.Iso (Iso')
@@ -349,3 +350,8 @@ instance HasEpiMonoFactorization FINSET where
          :.: FinSet vec
 
 instance ElementaryTopos FINSET
+
+instance Semicartesian FINSET
+instance Cartesian FINSET where
+  productToTensor @a @b = withObProd @FINSET @a @b id
+  tensorToProduct @a @b = withObProd @FINSET @a @b id

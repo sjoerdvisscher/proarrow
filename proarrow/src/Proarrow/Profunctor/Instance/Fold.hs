@@ -10,7 +10,7 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, leftUnitorInvWith, swapInner)
 import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
-import Proarrow.Category.Monoidal.Cartesian (BiCCC, Cartesian, distLProd, distRProd)
+import Proarrow.Category.Monoidal.Cartesian (BiCCC, Cartesian (..), distLProd, distRProd)
 import Proarrow.Category.Monoidal.Strength (Costrong (..), Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), right)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
@@ -41,13 +41,19 @@ instance (SymMonoidal k) => MonoidalProfunctor (Fold :: k +-> k) where
       Fold (f ** f') (g ** g') ((m ** m') . swapInner @m @n @m @n) ((z ** z') . leftUnitorInv)
 
 instance (BiCCC k) => Strong CoprodAction (Fold :: k +-> k) where
-  act @(COPR a) (Fold @m k h m z) = withObCoprod @k @a @m P.$ Fold (obj @a +++ k) (right @a h) (step m) (rgt @_ @a @m . z)
+  act @(COPR a) (Fold @m k h m z) =
+    withObCoprod @k @a @m P.$
+      Fold
+        (obj @a +++ k)
+        (right @a h)
+        (step (m . productToTensor @k @m @m) . tensorToProduct @k @(a || m) @(a || m))
+        (rgt @_ @a @m . z)
     where
       step :: (Ob m, Ob a, Ob (a || m)) => (m && m) ~> m -> (a || m) && (a || m) ~> (a || m)
       step mult = (lft @k @a @m . fst @k @a @(a || m) ||| (snd @k @m @a +++ mult) . distLProd @m @a @m) . distRProd @a @m @(a || m)
 
 instance (Cartesian k) => Costrong ProdAction (Fold :: k +-> k) where
-  coact @(PR a) @_ @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . leftUnitorInvWith (fst @k @a @y . f . z)) m z
+  coact @(PR a) @x @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . tensorToProduct @k @a @x . leftUnitorInvWith (fst @k @a @y . f . z)) m z
 
 trav :: forall {k} (f :: k -> k) (a :: k) (b :: k). (Applicative f) => Fold a b -> Fold (f a) (f b)
 trav (Fold @m k h m z) = withObF @f @m (Fold (map k) (map h) (liftA2 @_ @m @m m) (pure z))
