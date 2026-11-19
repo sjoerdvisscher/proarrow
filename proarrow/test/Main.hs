@@ -8,12 +8,14 @@ import Prelude
 import Examples.CCC qualified as CCC
 import Examples.Cbpv qualified as Cbpv
 import Examples.Circuit qualified as Circuit
+import Examples.CircuitRewrite qualified as CircuitRewrite
 import Examples.CustomLaws qualified as CustomLaws
 import Examples.Database qualified as Database
 import Examples.Einsum qualified as Einsum
 import Examples.FRP qualified as FRP
 import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
+import Examples.HypergraphRewrite qualified as LawRewriting
 import Examples.IntComposition qualified as IntComposition
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
@@ -28,6 +30,7 @@ import Examples.Squares qualified as SquarePrograms
 import Examples.Toffoli qualified as Toffoli
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Examples.Vitrea qualified as Vitrea
+import Examples.ZXRewrite qualified as ZXRewrite
 import Props.Bool qualified as Bool
 import Props.Circuit qualified as CircuitLaws
 import Props.ContractionOrder qualified as ContractionOrder
@@ -45,6 +48,7 @@ import Props.Finitary qualified as Finitary
 import Props.Finitary.Graph qualified as FinitaryGraph
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
+import Props.HypergraphRewrite qualified as HypergraphRewrite
 import Props.IntConstruction qualified as IntConstruction
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
@@ -87,6 +91,7 @@ main =
           , OpenGameLaws.test
           , Cost.test
           , DPO.test
+          , HypergraphRewrite.test
           , Dot.test
           , FinHask.test
           , FinRel.test
@@ -131,6 +136,7 @@ main =
           , FRP.test
           , FreeExample.test
           , Graph.test
+          , LawRewriting.test
           , STLC.test
           , ULC.test
           , IntComposition.test
@@ -144,7 +150,9 @@ main =
           , SquarePrograms.test
           , Cbpv.test
           , Circuit.test
+          , CircuitRewrite.test
           , Toffoli.test
           , Vitrea.test
+          , ZXRewrite.test
           ]
       ]

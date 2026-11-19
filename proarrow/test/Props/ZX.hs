@@ -8,14 +8,18 @@ import Data.Map.Strict qualified as Map
 import GHC.TypeNats (Nat)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
-import Prelude hiding (elem, repeat)
+import Test.Tasty.Falsify (testProperty)
+import Prelude hiding (elem, id, repeat, (.))
 
-import Proarrow.Category.Instance.ZX (ZX (..), enumAll, isZero, nat)
+import Proarrow.Category.Instance.ZX (ZX (..), enumAll, filterSparse, isZero, nat)
+import Proarrow.Core (Promonad (..))
 import Proarrow.Testing
   ( Testable (..)
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
+  , check
+  , genNamed
   , genSomeDef
   , pattern GenNonEmpty
   )
@@ -25,7 +29,27 @@ test :: TestTree
 test =
   testGroup
     "ZX calculus"
-    [ testCategory @Nat
+    [ testProperty "indexed composition agrees exactly with the entrywise join" $ do
+        left <- genNamed @(ZX 2 3) "left"
+        right <- genNamed @(ZX 1 2) "right"
+        case (left, right) of
+          (ZX n, ZX m) ->
+            mapM_
+              ( \entries ->
+                  let expected =
+                        filterSparse $
+                          Map.fromListWith
+                            (+)
+                            [ ((c, a), mv * nv)
+                            | ((c, b1), mv) <- Map.toList n
+                            , ((b2, a), nv) <- Map.toList entries
+                            , b1 == b2
+                            ]
+                  in case left . ZX entries of
+                       ZX actual -> check "composition values or accumulation order changed" (actual == expected)
+              )
+              (m : [Map.filterWithKey (\(b, _) _ -> even (fromEnum b)) m])
+    , testCategory @Nat
     , testDagger @Nat
     , testMonoidal_ @Nat
     , testHypergraph_ @Nat

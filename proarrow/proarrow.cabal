@@ -38,6 +38,7 @@ extra-source-files:
     tools/optic-diagrams/README.md
     tools/optic-diagrams/render.py
     tools/optic-diagrams/template.html
+    tools/zx-rewrite/render.py
 
 flag blas
     description: Contract tensor networks of floating-point numbers with the system's BLAS: Accelerate
@@ -247,7 +248,9 @@ library
         Proarrow.Tools.SMC.Internal.Syntax
         Proarrow.Tools.SMC.Internal.Term
         Proarrow.Tools.DPO
+        Proarrow.Tools.HypergraphRewrite
         Proarrow.Tools.Laws
+        Proarrow.Tools.HypergraphRewrite.Free
         Proarrow.Tools.Diagrams.Dot
         Proarrow.Tools.Diagrams.Svg
         Proarrow.Universal
@@ -255,6 +258,7 @@ library
     build-depends:
         , base >=4.20 && <5
         , containers >=0.6 && <0.9
+        , transformers >=0.6 && <0.7
         , fin >= 0.3.2 && <1
         , vec >= 0.5.1 && <1
         , vector >= 0.13 && <0.14
@@ -294,6 +298,8 @@ test-suite test
     other-modules:
         Examples.Cbpv
         Examples.Circuit
+        Examples.CircuitRewrite
+        Examples.CircuitRewrite.Workloads
         Examples.CCC
         Examples.Cofree
         Examples.CustomLaws
@@ -304,6 +310,7 @@ test-suite test
         Examples.FrontDoor
         Examples.Readme
         Examples.Graph
+        Examples.HypergraphRewrite
         Examples.UntypedLambdaCalculus
         Examples.SimplyTypedLambdaCalculus
         Examples.IntComposition
@@ -321,11 +328,13 @@ test-suite test
         Examples.Squares
         Examples.Toffoli
         Examples.Vitrea
+        Examples.ZXRewrite
         Props.Bool
         Props.Probability
         Props.Pure
         Props.Circuit
         Props.DPO
+        Props.HypergraphRewrite
         Props.Discrete
         Props.Cospan
         Props.OpenHypergraph
@@ -373,6 +382,7 @@ test-suite test
         , directory >=1.3 && <1.4
         , filepath >=1.4 && <1.6
         , process >=1.6 && <1.7
+        , random >=1.2 && <1.4
         , falsify >=0.4 && <0.5
         , fin >= 0.3.2 && <1
         , vec >= 0.5.1 && <1

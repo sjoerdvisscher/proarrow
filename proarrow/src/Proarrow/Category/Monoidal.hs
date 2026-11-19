@@ -472,7 +472,8 @@ instance (SymMonoidalStructures `Elems` cs) => SymMonoidal (FREE cs (p :: CAT k)
   swap = St Swap Nil
 
 -- | The tensor is a bifunctor, and the unitors and the associator are natural isomorphisms
--- satisfying the triangle and pentagon identities.
+-- satisfying the triangle and pentagon identities. Unitors on a tensor are
+-- compatible with reassociation; these equations are oriented toward one unitor.
 instance Laws '[Monoidal] where
   laws =
     inverses "leftUnitor" (\ @a -> Inverses (leftUnitor @_ @a) (leftUnitorInv @_ @a))
@@ -481,6 +482,12 @@ instance Laws '[Monoidal] where
         "associator"
         (\ @a @b @c -> Inverses (associator @_ @a @b @c) (associatorInv @_ @a @b @c))
       P.++ [ Law "tensor identity" \ @a @b _ -> withOb2 @_ @a @b (obj @a ** obj @b === id)
+           , Law "leftUnitor tensor" \ @a @b _ ->
+               withOb2 @_ @a @b $
+                 (leftUnitor @_ @a ** obj @b) . associatorInv @_ @Unit @a @b === leftUnitor @_ @(a ** b)
+           , Law "rightUnitor tensor" \ @a @b _ ->
+               withOb2 @_ @a @b $
+                 (obj @a ** rightUnitor @_ @b) . associator @_ @a @b @Unit === rightUnitor @_ @(a ** b)
            , Law "tensor interchange" \ @a @b @c @d @e mor -> do
                f <- mor @a @b "f"
                g <- mor @b @c "g"

@@ -25,6 +25,12 @@ module Proarrow.Category.Instance.Circuit
   , register
   , Netlist
   , netlist
+  , Gate (..)
+  , BitPorts
+  , CircuitGraph
+  , toHypergraph
+  , fromHypergraph
+  , CircuitGraphError (..)
   , renderNetlist
   , toDot
   , toVerilog
@@ -41,16 +47,21 @@ import Data.IntMap.Strict qualified as IM
 import Data.IntSet qualified as IS
 import Data.Kind (Constraint, Type)
 import Data.List qualified as List
+import Data.Maybe (mapMaybe)
 import Prelude hiding (Functor, fmap, id, (**), (.))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.FinHask (unionFind)
+import Proarrow.Category.Instance.OpenHypergraph qualified as HG
 import Proarrow.Category.Instance.Simulator (SIMULATOR (..), Simulator (..), runSimulator, step)
+import Proarrow.Category.Instance.Unit ()
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
+import Proarrow.Object (withKnownAppend, type (++))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 -- | A bit, no wires, or two bundles. Tensor grouping is retained in the type.
@@ -227,17 +238,136 @@ data Netlist a b where
 -- | Build a netlist, retaining precisely the components that can influence an output, including
 -- through a register on a later cycle.
 netlist :: Circuit a b -> Netlist a b
-netlist (Circuit f) = Netlist ins outs (IM.restrictKeys ds (reachable IS.empty (ports outs)))
+netlist (Circuit f) = Netlist ins outs (retainDrivers ds (ports outs))
   where
     ((ins, outs), BuildState _ ds) = runBuild build (BuildState 0 IM.empty)
     build = do
       ins' <- freshBundle Input shape
       outs' <- f ins'
       pure (ins', outs')
+
+retainDrivers :: IM.IntMap Driver -> [Int] -> IM.IntMap Driver
+retainDrivers ds roots = IM.restrictKeys ds (reachable IS.empty roots)
+  where
     reachable seen [] = seen
     reachable seen (n : ns)
       | IS.member n seen = reachable seen ns
       | otherwise = reachable (IS.insert n seen) (inputs (ds IM.! n) ++ ns)
+
+-- | Gate labels independent of their connections. Each gate has one output;
+-- 'MuxGate' inputs are ordered selector, true branch, false branch.
+data Gate
+  = ConstantGate Bool
+  | NotGate
+  | AndGate
+  | OrGate
+  | XorGate
+  | MuxGate
+  | RegisterGate Bool
+  deriving (Eq, Ord, Show)
+
+-- | Flatten a grouped bundle to its bit ports, ordered left to right.
+-- The unit kind supplies the single wire sort used by circuit graphs.
+type BitPorts :: Wires -> [()]
+type family BitPorts a where
+  BitPorts Bit = '[ '()]
+  BitPorts Empty = '[]
+  BitPorts (Pair a b) = BitPorts a ++ BitPorts b
+
+-- | A gate-labelled open hypergraph with a circuit's flattened boundaries.
+-- General hypergraph wiring need not satisfy the circuit driver invariant;
+-- 'fromHypergraph' checks it before reconstructing a netlist.
+type CircuitGraph :: Wires -> Wires -> Type
+type CircuitGraph a b = (HG.Wires (BitPorts a) :: HG.OPENHG () Gate) ~> HG.Wires (BitPorts b)
+
+withBitPorts :: Shape a -> ((HG.SortList (BitPorts a)) => r) -> r
+withBitPorts BitS r = r
+withBitPorts EmptyS r = r
+withBitPorts (PairS (a :: Shape a) (b :: Shape b)) r =
+  withBitPorts a (withBitPorts b (withKnownAppend @(HG.SortOb @()) @(BitPorts a) @(BitPorts b) r))
+
+-- | Convert a netlist to a graph. Copying becomes fan-out, aliases identify
+-- nodes, and register labels retain their initial values. Unused input ports
+-- remain on the boundary. No simulation or cycle validation is performed here.
+toHypergraph :: forall a b. Netlist a b -> CircuitGraph a b
+toHypergraph (Netlist ins outs ds) =
+  withBitPorts (shape @a) $
+    withBitPorts (shape @b) $
+      HG.unsafeOpenHypergraph
+        (concat (replicate (length nodes) (HG.sortList @() @'[ '()])))
+        (map wire (ports ins))
+        (map wire (ports outs))
+        (mapMaybe gate (IM.toAscList ds))
+  where
+    root = unionFind [(n, i) | (n, Alias i) <- IM.toAscList ds]
+    nodes = IS.toAscList (IS.fromList (map root (ports ins ++ IM.keys ds)))
+    indices = IM.fromList (zip nodes [0 ..])
+    wire n = indices IM.! root n
+    gate (n, d) =
+      (\g -> HG.Box g (map wire (inputs d)) [wire n]) <$> case d of
+        Input -> Nothing
+        Alias _ -> Nothing
+        Constant x -> Just (ConstantGate x)
+        Not{} -> Just NotGate
+        And{} -> Just AndGate
+        Or{} -> Just OrGate
+        Xor{} -> Just XorGate
+        Mux{} -> Just MuxGate
+        Register x _ -> Just (RegisterGate x)
+
+-- | A graph that cannot be imported as a circuit. Node numbers refer to the
+-- graph's 'HG.hypergraphParts' numbering. An input boundary position is a driver,
+-- so identifying independent input positions is also a 'MultipleDrivers' error.
+data CircuitGraphError
+  = InvalidGateArity Gate Int Int
+  | MultipleDrivers [Int]
+  | UndrivenSignals [Int]
+  | InvalidCircuit CircuitError
+  deriving (Eq, Show)
+
+-- | Reconstruct grouped circuit boundaries, checking every gate's arity and
+-- requiring one driver per node. Input positions and gate outputs are drivers;
+-- output positions may repeat freely. Unobservable components are then removed,
+-- and 'prepare' checks observable combinational cycles. Registers preserve their
+-- initial values. The bundle shapes must be supplied, e.g. @fromHypergraph \@Bit \@Bit@.
+--
+-- An observable alias-only cycle exported by 'toHypergraph' becomes an undriven
+-- node and is rejected as 'UndrivenSignals'. Node numbering may change on a round trip.
+fromHypergraph
+  :: forall a b
+   . (KnownWires a, KnownWires b)
+  => CircuitGraph a b -> Either CircuitGraphError (Netlist a b)
+fromHypergraph graph = do
+  decoded <- traverse decode boxes
+  let assignments = [(n, Input) | n <- ins] ++ decoded
+      counts = IM.fromListWith (+) [(n, 1 :: Int) | (n, _) <- assignments]
+      multiple = IM.keys (IM.filter (> 1) counts)
+      missing = [n | n <- [0 .. length ns - 1], IM.notMember n counts]
+  if null multiple then pure () else Left (MultipleDrivers multiple)
+  if null missing then pure () else Left (UndrivenSignals missing)
+  let (inputBundle, _) = bundle (shape @a) ins
+      (outputBundle, _) = bundle (shape @b) outs
+      result = Netlist inputBundle outputBundle (retainDrivers (IM.fromList assignments) outs)
+  _ <- either (Left . InvalidCircuit) Right (prepare result)
+  pure result
+  where
+    (ns, ins, outs, boxes) = HG.hypergraphParts graph
+    bundle :: Shape x -> [Int] -> (Bundle x, [Int])
+    bundle BitS (n : rest) = (BBit n, rest)
+    bundle EmptyS rest = (BEmpty, rest)
+    bundle (PairS a b) rest =
+      let (l, rest') = bundle a rest
+          (r, rest'') = bundle b rest'
+      in (BPair l r, rest'')
+    bundle BitS [] = error "fromHypergraph: malformed hypergraph boundary"
+    decode (HG.Box (ConstantGate x) [] [n]) = Right (n, Constant x)
+    decode (HG.Box NotGate [a] [n]) = Right (n, Not a)
+    decode (HG.Box AndGate [a, b] [n]) = Right (n, And a b)
+    decode (HG.Box OrGate [a, b] [n]) = Right (n, Or a b)
+    decode (HG.Box XorGate [a, b] [n]) = Right (n, Xor a b)
+    decode (HG.Box MuxGate [s, a, b] [n]) = Right (n, Mux s a b)
+    decode (HG.Box (RegisterGate x) [a] [n]) = Right (n, Register x a)
+    decode (HG.Box g i o) = Left (InvalidGateArity g (length i) (length o))
 
 -- | A text netlist. Bit numbers are local to this netlist; bundle ports are ordered left to right.
 renderNetlist :: Netlist a b -> String

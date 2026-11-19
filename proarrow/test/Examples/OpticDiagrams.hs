@@ -13,29 +13,24 @@ module Examples.OpticDiagrams (test, sourcePicture, encodedPicture, compositionP
 import Data.Either (isLeft)
 import Data.Kind (Type)
 import Data.List (isInfixOf)
-import Data.Map.Strict qualified as M
 import Data.Vector.Storable qualified as SV
 import Test.Falsify (testFailed)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (id, mempty, (**), (.))
 
-import Proarrow.Category.Instance.DecoratedCospan (DECCOSPAN (..), DecCospan (..))
 import Proarrow.Category.Instance.Diff qualified as Diff
-import Proarrow.Category.Instance.FinHask (FinHask (..))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.OpenHypergraph
   ( Box (..)
-  , Boxes (..)
   , OPENHG
-  , Port (..)
   , SomeArrow
   , SomeHypergraph (..)
   , SomeSort
-  , WireSorts
   , Wires
   , box
   , frobenius
+  , hypergraphParts
   , isomorphic
   , openHypergraph
   , readBack
@@ -45,7 +40,6 @@ import Proarrow.Category.Instance.OpenHypergraph
   , substituteWith
   , unsafeOpenHypergraph
   )
-import Proarrow.Category.Instance.Sub (Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor, SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt)
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
@@ -114,7 +108,7 @@ opticBox gate =
 encoded :: Either String Encoded
 encoded = do
   SomeHypergraph graph <- substituteWith objectMap generatorMap source
-  let (nodes, ins, outs, boxes) = parts graph
+  let (nodes, ins, outs, boxes) = hypergraphParts graph
   openHypergraph nodes ins outs boxes
 
 -- Backward wires have negative types; SMC supplies their duality bends.
@@ -126,12 +120,6 @@ running = do
     (c, dc') <- graph -< (a, da)
     () <- annihilate dc dc'
     c ** da'
-
-parts :: forall l a b. (a :: OPENHG SVG l) ~> b -> ([SomeSort SVG], [Int], [Int], [Box l Int])
-parts (DecCospan @c (Sub (FinHask l)) (Sub (FinHask r)) (Boxes boxes)) =
-  (sortList @_ @(WireSorts (DC c)), fmap unPort (M.elems l), fmap unPort (M.elems r), fmap (fmap unPort) boxes)
-  where
-    unPort (Port i) = i
 
 -- An independent description of the composite optic, with one residual node for each generator.
 expected :: Running
@@ -213,6 +201,9 @@ sine = opticLegs @Double (\x -> (cos x, sin x)) (uncurry (*))
 parallel :: Number ** Number ~> Number ** Number
 parallel = toSMC @(F Number :** F Number) \(x, y) -> (square -< x, sine -< y)
 
+-- Keep both branches visible in the SMC example.
+{- HLINT ignore parallel "Use bimap" -}
+
 type Logged = KLEISLI (Star (Functor.Prelude ((,) [String])))
 type LoggedWire = Wires '[ '(KL Double, KL Double)] :: OPTICS Logged
 
@@ -259,7 +250,7 @@ compositionPicture = running >>= drawGraph interpret
 drawGraph :: (Leg -> SomeArrow SVG) -> (a :: Target) ~> b -> Either String String
 drawGraph draw graph = do
   result <- readBack frobenius draw graph
-  case result of Str picture@Svg{} -> pure (render picture)
+  case result of { Str picture@Svg{} -> pure (render picture) }
 
 test :: TestTree
 test =
@@ -320,7 +311,7 @@ test =
         either
           testFailed
           ( \graph ->
-              let (_, _, _, boxes) = parts graph
+              let (_, _, _, boxes) = hypergraphParts graph
                   legs = [Forward First, Backward First, Forward Second, Backward Second]
               in do
                    expect

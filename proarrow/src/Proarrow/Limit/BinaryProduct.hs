@@ -341,16 +341,17 @@ instance (HasBinaryProducts k) => Representable (Corep Diag :: (k, k) +-> k) whe
 
 -- | The universal property of the binary product: the projections recover the components of
 -- @f '&&&' g@, and every arrow into the product is the pairing of its components.
+-- Equations are oriented left-to-right for simplification.
 instance Laws '[HasBinaryProducts] where
   laws =
     [ Law "fst" \ @a @b @c mor -> do
         f <- mor @a @b "f"
         g <- mor @a @c "g"
-        f === fst @_ @b @c . (f &&& g)
+        fst @_ @b @c . (f &&& g) === f
     , Law "snd" \ @a @b @c mor -> do
         f <- mor @a @b "f"
         g <- mor @a @c "g"
-        g === snd @_ @b @c . (f &&& g)
+        snd @_ @b @c . (f &&& g) === g
     , Law "pairing naturality" \ @a @b @c @d mor -> do
         f <- mor @a @b "f"
         g <- mor @a @c "g"
@@ -360,7 +361,7 @@ instance Laws '[HasBinaryProducts] where
         withObProd @_ @b @c (fst @_ @b @c &&& snd @_ @b @c === id)
     , Law "pairing uniqueness" \ @a @b @c mor -> withObProd @_ @b @c do
         p <- mor @a @(b && c) "p"
-        p === (fst @_ @b @c . p) &&& (snd @_ @b @c . p)
+        (fst @_ @b @c . p) &&& (snd @_ @b @c . p) === p
     ]
 
 instance (HasProducts k) => Semicartesian (PROD k)

@@ -12,11 +12,14 @@ module Proarrow.Optic.Iso where
 
 import Data.Kind (Constraint)
 import Data.Type.Equality ((:~:) (..))
+import Data.Typeable (Typeable, eqT)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
-import Prelude (Maybe, fmap)
+import Proarrow.Category.Instance.Sub qualified as Full
+import Proarrow.Category.Instance.Unit qualified as U
+import Prelude (Maybe (..), fmap, type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Kind, Profunctor (..), Promonad (..), UN, VacuousOb, obj, type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( FLAVOR
@@ -74,6 +77,16 @@ withIso (Optic l) k = case l @(Yo a (OP b)) (Yo id id) of Yo sa bt -> k sa bt
 type DecidableIso :: Kind -> Constraint
 class (CategoryOf k) => DecidableIso k where
   isoOf :: forall (c :: (k +-> k) -> Constraint) (a :: k) (b :: k). (Ob a, Ob b) => Maybe (Optic c a a b b)
+
+-- Unit cannot import this module: the monoidal structures above depend on Unit.
+instance DecidableIso () where
+  isoOf = Just (iso U.Unit U.Unit)
+
+-- | Runtime type evidence makes equality decidable in a discrete full subcategory.
+instance (VacuousOb k, Hom k ~ (:~:)) => DecidableIso (Full.SUBCAT (Typeable :: k -> Constraint)) where
+  isoOf @_ @a @b = case eqT @(UN Full.SUB a) @(UN Full.SUB b) of
+    Just Refl -> Just (iso (Full.Sub Refl) (Full.Sub Refl))
+    Nothing -> Nothing
 
 -- | The identity iso when two objects are equal.
 isoFromEquality :: forall {k} c (a :: k) b. (CategoryOf k, Ob a) => Maybe (a :~: b) -> Maybe (Optic c a a b b)

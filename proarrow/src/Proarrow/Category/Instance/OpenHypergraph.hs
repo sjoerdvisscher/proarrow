@@ -33,6 +33,7 @@ module Proarrow.Category.Instance.OpenHypergraph
   , box
   , openHypergraph
   , unsafeOpenHypergraph
+  , hypergraphParts
   , SomeHypergraph (..)
   , substitute
   , substituteWith
@@ -451,6 +452,8 @@ substituteParts al replace (original, ins, outs, bs) = do
     , P.fmap (P.fmap renumber) (P.concat (P.reverse boxes))
     )
 
+-- | Node sorts, input and output attachments, and boxes. Nodes are numbered from zero;
+-- box positions distinguish occurrences, including boxes with identical labels and ports.
 hypergraphParts :: forall {s} l a b. (a :: OPENHG s l) ~> b -> ([SomeSort s], [P.Int], [P.Int], [Box l P.Int])
 hypergraphParts (DecCospan @c (Sub (FinHask l)) (Sub (FinHask r)) (Boxes bs)) =
   ( sortList @s @(PortSorts @s (UN SUB c))

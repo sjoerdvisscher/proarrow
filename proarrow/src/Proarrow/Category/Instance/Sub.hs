@@ -6,6 +6,7 @@ module Proarrow.Category.Instance.Sub where
 
 import Data.Kind (Constraint)
 
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
@@ -74,6 +75,12 @@ instance
   fst @(SUB a) @(SUB b) = Sub (fst @k @a @b)
   snd @(SUB a) @(SUB b) = Sub (snd @k @a @b)
   Sub l &&& Sub r = Sub (l &&& r)
+
+-- | Thin arrows retain their underlying existence constraint on the restricted objects.
+instance (ThinProfunctor p) => ThinProfunctor (Sub p) where
+  type HasArrow (Sub p) a b = HasArrow p (UN SUB a) (UN SUB b)
+  arr @(SUB a) @(SUB b) = Sub (arr @p @a @b)
+  withArr (Sub p) r = withArr p r
 
 instance (MonoidalProfunctor p, SubMonoidal ob) => MonoidalProfunctor (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   one = Sub one

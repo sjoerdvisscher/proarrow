@@ -16,7 +16,7 @@ import Prelude (Maybe (..), type (~))
 
 import Proarrow.Category.Instance.Bool (BOOL (..), BoolLeq, Booleans (..), NonTrivialHolds, NonTrivialProfunctor (..))
 import Proarrow.Category.Instance.Zero (Bottom (..), VOID, Zero)
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), VacuousOb, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, Profunctor (..), obj, type (+->))
 import Proarrow.Object (KnownListOf (..), ListOf (..))
 
 -- | The defaults take everything from a 'DecidableProfunctor' instance: the arrow exists when
@@ -37,10 +37,10 @@ instance ThinProfunctor Zero
 instance ThinProfunctor Booleans
 instance (Ob ff, Ob tt) => ThinProfunctor (NonTrivialProfunctor '(ff, tt))
 
-instance (VacuousOb k, Hom k ~ (:~:)) => ThinProfunctor ((:~:) :: CAT k) where
+instance (Profunctor ((:~:) :: CAT k)) => ThinProfunctor ((:~:) :: CAT k) where
   type HasArrow ((:~:) :: CAT k) a b = a ~ b
   arr = Refl
-  withArr Refl r = r
+  withArr f@Refl r = r \\ f
 
 -- * Decidable thin profunctors
 

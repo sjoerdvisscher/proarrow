@@ -164,18 +164,19 @@ type BijectionBody cs =
   -> Bijection m k
 
 -- | The two laws saying that maps @to@ and @from@ between hom-sets are inverse to each other:
--- @from (to f) = f@ and @to (from g) = g@. Each asks only for the arrow it needs, so an empty
+-- @from (to f) = f@ and @to (from g) = g@, oriented toward cancellation.
+-- Each asks only for the arrow it needs, so an empty
 -- hom-set on the other side discards nothing.
 bijection :: forall cs. String -> BijectionBody cs -> [Law cs]
 bijection name body =
   [ Law (name ++ " left inverse") \ @a @b @c @d @e mor -> case body @a @b @c @d @e mor of
       Bijection askF _ to from -> do
         f <- askF
-        f === from (to f)
+        from (to f) === f
   , Law (name ++ " right inverse") \ @a @b @c @d @e mor -> case body @a @b @c @d @e mor of
       Bijection _ askG to from -> do
         g <- askG
-        g === to (from g)
+        to (from g) === g
   ]
 
 -- * The laws of a category

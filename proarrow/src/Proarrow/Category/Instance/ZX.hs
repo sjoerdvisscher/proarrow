@@ -120,15 +120,16 @@ instance Profunctor ZX where
 instance Promonad ZX where
   id @n = ZX $ Map.fromList [((i, i), 1) | i <- enumAll @n]
   ZX n . ZX m =
-    ZX $
-      filterSparse $
-        Map.fromListWith
-          (+)
-          [ ((c, a), mv * nv)
-          | ((c, b1), mv) <- Map.toList n
-          , ((b2, a), nv) <- Map.toList m
-          , b1 == b2
-          ]
+    -- Keep columns ascending within each row for a stable accumulation order.
+    let rows = Map.map reverse (Map.fromListWith (++) [(b, [(a, v)]) | ((b, a), v) <- Map.toList m])
+    in ZX $
+         filterSparse $
+           Map.fromListWith
+             (+)
+             [ ((c, a), mv * nv)
+             | ((c, b), mv) <- Map.toList n
+             , (a, nv) <- Map.findWithDefault [] b rows
+             ]
 
 -- | The category of qubits, to implement ZX calculus from quantum computing.
 instance CategoryOf Nat where

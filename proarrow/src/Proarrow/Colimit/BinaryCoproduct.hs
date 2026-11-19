@@ -395,16 +395,17 @@ instance (HasBinaryCoproducts k) => Corepresentable (Rep Diag :: k +-> (k, k)) w
 
 -- | The universal property of the binary coproduct: the injections recover the components of
 -- @f '|||' g@, and every arrow out of the coproduct is the copairing of its components.
+-- Equations are oriented left-to-right for simplification.
 instance Laws '[HasBinaryCoproducts] where
   laws =
     [ Law "lft" \ @a @b @c mor -> do
         f <- mor @a @c "f"
         g <- mor @b @c "g"
-        f === (f ||| g) . lft @_ @a @b
+        (f ||| g) . lft @_ @a @b === f
     , Law "rgt" \ @a @b @c mor -> do
         f <- mor @a @c "f"
         g <- mor @b @c "g"
-        g === (f ||| g) . rgt @_ @a @b
+        (f ||| g) . rgt @_ @a @b === g
     , Law "copairing naturality" \ @a @b @c @d mor -> do
         f <- mor @a @c "f"
         g <- mor @b @c "g"
@@ -414,5 +415,5 @@ instance Laws '[HasBinaryCoproducts] where
         withObCoprod @_ @a @b (lft @_ @a @b ||| rgt @_ @a @b === id)
     , Law "copairing uniqueness" \ @a @b @c mor -> withObCoprod @_ @a @b do
         p <- mor @(a || b) @c "p"
-        p === (p . lft @_ @a @b) ||| (p . rgt @_ @a @b)
+        (p . lft @_ @a @b) ||| (p . rgt @_ @a @b) === p
     ]

@@ -276,7 +276,9 @@ instance CategoryOf Type where
 instance (VacuousOb k, Hom k ~ (:~:)) => Profunctor ((:~:) :: CAT k) where
   dimap Refl Refl Refl = Refl
 
-instance (VacuousOb k, Hom k ~ (:~:)) => Promonad ((:~:) :: CAT k) where
+-- Keep the profunctor dictionary explicit: deriving it through CategoryOf would
+-- select this instance's own superclass recursively.
+instance (Profunctor ((:~:) :: CAT k)) => Promonad ((:~:) :: CAT k) where
   id = Refl
   Refl . Refl = Refl
 

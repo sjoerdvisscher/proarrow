@@ -2,12 +2,25 @@
 
 ## Unreleased
 
+* `Proarrow.Tools.HypergraphRewrite`: open and closed graph rewriting with compatible
+  batches, indexed matching, parameters and bounded normalisation. Whole-arrow captures
+  support reuse, copying and deletion; `compileReducingRules` ensures termination by
+  requiring fewer boxes. Left rule boundaries must be injective.
+  `OpenHypergraph.hypergraphParts` exposes graph structure.
+* `Proarrow.Tools.HypergraphRewrite.Free`: compile `FREE` syntax and `Laws` into graph rules
+  with inferred object parameters. Examples cover products, coproducts, terminal objects,
+  closed β/η laws, circuit optimisation and ZX simplification.
+* Product, coproduct and bijection laws simplify left-to-right; monoidal laws include
+  tensor/unitor coherence. The CCC swap example adds pairing fusion locally.
 * `HasStructure` supports applicative folding and operation comparison; `Free.foldA`
   adds effectful interpretation; `structureChildren` enumerates immediate children.
   `IsFreeOb` records `Lower (Rep Embed) a ~ a` and conditionally supplies `Typeable`
   evidence through `withTypeableFreeOb`.
   `Elem` exposes membership evidence; `fromAll` is standalone.
 * `Cartesian` and `Semicartesian` use explicit coherence maps with identity defaults.
+* `Sub` lifts `ThinProfunctor`; typeable equality subcategories support `DecidableIso`.
+  Equality instances avoid recursive superclass dictionaries.
+* `ZX` matrix composition joins entries by their shared index, avoiding Cartesian scans.
 * `FinHask.unionFind` now uses `union-find-array` and requires `Enum` instead of `Ord`.
   Use compact indices; representatives may change. `FINHASK` objects still need no `Enum`.
 * `Proarrow.Category.Instance.OpenGame`: open games over a copy/discard category,
@@ -108,6 +121,10 @@
   backward passes into one computation.
 * `Proarrow.Category.Instance.Circuit` and `Simulator`: typed digital circuits with clocked
   simulation and Verilog generation, plus an SMC counter demo.
+  `toHypergraph` and `fromHypergraph` convert netlists to gate-labelled hypergraphs,
+  checking drivers and cycles and preserving register state. `CircuitRewrite` batches
+  local Boolean simplifications while preserving shared signals.
+  Adds `DecidableIso ()` for the bit-wire sort.
 * Wiki walkthroughs of the digital counter and parallel build examples, linked from the README.
 * `Proarrow.Category.Instance.Diff`: `DIFF`, differentiable maps with their reverse derivatives
 * SVG diagrams declare UTF-8 encoding for standalone viewers.
