@@ -17,6 +17,9 @@ import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.HypergraphRewrite qualified as LawRewriting
 import Examples.IntComposition qualified as IntComposition
+import Examples.KanExtension qualified as KanExtension
+import Examples.KanPushout qualified as KanPushout
+import Examples.KnuthBendix qualified as KBExample
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
 import Examples.OpenGames qualified as OpenGames
@@ -25,6 +28,7 @@ import Examples.OpticDiagrams qualified as OpticDiagrams
 import Examples.Parallel qualified as Parallel
 import Examples.Probabilistic qualified as Probabilistic
 import Examples.Sessions qualified as Sessions
+import Examples.SimplexRewrite qualified as SimplexRewrite
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.Squares qualified as SquarePrograms
 import Examples.Toffoli qualified as Toffoli
@@ -51,6 +55,7 @@ import Props.Hask qualified as Hask
 import Props.HypergraphRewrite qualified as HypergraphRewrite
 import Props.IntConstruction qualified as IntConstruction
 import Props.Kleisli qualified as Kleisli
+import Props.KnuthBendix qualified as KnuthBendix
 import Props.Mat qualified as Mat
 import Props.OpenGame qualified as OpenGameLaws
 import Props.OpenHypergraph qualified as OpenHypergraph
@@ -92,6 +97,7 @@ main =
           , Cost.test
           , DPO.test
           , HypergraphRewrite.test
+          , KnuthBendix.test
           , Dot.test
           , FinHask.test
           , FinRel.test
@@ -137,6 +143,10 @@ main =
           , FreeExample.test
           , Graph.test
           , LawRewriting.test
+          , KBExample.test
+          , KanExtension.test
+          , KanPushout.test
+          , SimplexRewrite.test
           , STLC.test
           , ULC.test
           , IntComposition.test

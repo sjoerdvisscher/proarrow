@@ -20,8 +20,9 @@
 -- a discrete one.
 module Proarrow.Category.Instance.Paths where
 
+import Data.Kind (Constraint, Type)
 import Data.Type.Equality ((:~:) (..))
-import Prelude (Eq (..), Maybe (..), Show (..), showParen, showString)
+import Prelude (Eq (..), Maybe (..), Show (..), showParen, showString, type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin
@@ -34,6 +35,7 @@ import Proarrow.Category.Enriched.Thin
   , withWrapAtLookup
   , wrapFinite
   )
+import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -57,6 +59,27 @@ data Paths a b where
   PNil :: (Ob a) => Paths (PTH a) (PTH a)
   PCons :: (Ob a, Ob b) => p a b -> Paths (i :: PATHS p) (PTH a) -> Paths i (PTH b)
 
+-- | Build a raw path from generators in composition order. Its expected
+-- 'Paths' result type ends the argument list, for example on either side of
+-- 'Proarrow.Tools.Laws.:=:'. With no arguments it is the empty path.
+-- This bypasses 'Rewrite', so it is suitable for stating rewrite rules.
+--
+-- >>> let p = path Unit Unit :: Paths (PTH '() :: PATHS Unit) (PTH '())
+-- >>> pathLength p
+-- 2
+path :: (Ob a, BuildPath p a a r) => r
+path = buildPath id
+
+type BuildPath :: forall {k}. CAT k -> k -> k -> Type -> Constraint
+class BuildPath p a b r | r -> p a b where
+  buildPath :: (forall (i :: PATHS p). Paths i (PTH a) -> Paths i (PTH b)) -> r
+
+instance (a ~ PTH x, b ~ PTH y, Ob x) => BuildPath p x y (Paths (a :: PATHS p) b) where
+  buildPath prefix = prefix PNil
+
+instance (Ob a, Ob c, BuildPath p c b r) => BuildPath p a b (p c a -> r) where
+  buildPath prefix q = buildPath (\rest -> prefix (PCons q rest))
+
 -- | The equations of the generated category, as a rewriting system on paths. 'rewrite' is handed a
 -- generator and the already-normalised path it is being composed onto, and returns the normal form
 -- of the two together; the default keeps the path as it is, which generates the free category.
@@ -76,12 +99,15 @@ class Rewrite (p :: CAT k) where
   rewrite :: (Ob a, Ob b) => p a b -> Paths (i :: PATHS p) (PTH a) -> Paths i (PTH b)
   rewrite = PCons
 
--- | Decidable equality of generators, which also has to decide their sources: the object between
--- two arrows of a path is existential, so @'Eq' (p x y)@ alone cannot compare two spines.
--- ('Proarrow.Core.Eq2' does not serve. It is equality of arrows of a fixed category, as
--- 'Proarrow.Limit.Pullback.isMono' wants.)
+-- | Decidable equality of generators, including both endpoint types. This
+-- supports comparisons between existential generators in different hom-sets,
+-- as needed by path equality and completion's automatically numbered alphabet.
+-- ('Proarrow.Core.Eq2' only compares arrows with already-equal endpoints.)
 class EqGen (p :: CAT k) where
-  eqGen :: p x b -> p y b -> Maybe (x :~: y)
+  eqGen :: p a b -> p c d -> Maybe ('(a, b) :~: '(c, d))
+
+instance EqGen Unit where
+  eqGen Unit Unit = Just Refl
 
 -- | Structural equality of paths. This is equality of arrows exactly when 'rewrite' is confluent
 -- and every path was built through 'emb', 'id' and composition, which keep paths in normal form.

@@ -16,7 +16,7 @@ import Prelude hiding (id, (.))
 
 import Proarrow.Category.Enriched.Thin (Finite (..), Indexed (..), Member (..), memberIndex)
 import Proarrow.Category.Instance.Discrete (DISCRETE (..))
-import Proarrow.Category.Instance.Paths (EqGen (..), PATHS (..), Paths (..), Rewrite (..), emb, pathLength)
+import Proarrow.Category.Instance.Paths (EqGen (..), PATHS (..), Paths (..), Rewrite (..), emb, path, pathLength)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN)
 import Proarrow.Functor (Copresheaf)
@@ -32,6 +32,8 @@ import Proarrow.Testing
   , optGen
   )
 import Proarrow.Testing.Laws (testCategory, testProfunctor)
+import Proarrow.Tools.Laws (ProEquation ((:=:)))
+import Proarrow.Tools.Laws qualified as Laws
 
 -- | The points of the schema, as bare data: two entity points and one attribute point. The
 -- category over them is 'DISCRETE', which supplies the identity arrows and makes 'Ob' the point\'s
@@ -201,7 +203,13 @@ test :: TestTree
 test =
   testGroup
     "Paths"
-    [ testProperty "the schema's equations hold in the schema, by construction" $ do
+    [ testProperty "variadic paths use their result context and bypass rewriting" $ do
+        check "empty path" ((path :: Department ~> Department) == PNil)
+        check "single generator" (path DName == PCons DName PNil)
+        let equation = path WorksIn Mngr Secr :=: path :: Laws.Equation HR
+        check "equation context ends both paths" (Laws.withSides equation (\l r -> pathLength l == 3 && pathLength r == 0))
+        check "ordinary composition still rewrites" (pathLength (emb WorksIn . emb Mngr . emb Secr) == 0)
+    , testProperty "the schema's equations hold in the schema, by construction" $ do
         check
           "a secretary followed by where they work should be the identity"
           (pathLength (emb WorksIn . emb Secr :: Department ~> Department) == 0)

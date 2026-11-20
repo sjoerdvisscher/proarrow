@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+* `Proarrow.Tools.KnuthBendix`: typed path completion with inferred or explicit
+  generator keys, interreduction, indexed overlaps and limits.
+  Incremental normalisation supports `Paths.Rewrite`; completion compiles a
+  prefix matcher with integer dispatch. Examples cover a codec and Set-valued
+  left Kan extensions: an infinite induced action and finite-set pushouts.
+  A size-bounded simplex presentation checks face/degeneracy normal forms against `Simplex`.
+* `Paths.path` builds raw paths from a variadic list of typed generators.
+* `Paths.EqGen` compares both endpoints through equality of their promoted pairs.
 * `Proarrow.Tools.HypergraphRewrite`: open and closed graph rewriting with compatible
   batches, indexed matching, parameters and bounded normalisation. Whole-arrow captures
   support reuse, copying and deletion; `compileReducingRules` ensures termination by
