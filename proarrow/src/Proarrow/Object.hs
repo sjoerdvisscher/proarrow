@@ -29,6 +29,7 @@ module Proarrow.Object
 
     -- * One object of many
   , SomeOf (..)
+  , SomeOb
   , someOfList
   , withListOf
   , someRepOf
@@ -136,6 +137,10 @@ withKnownAssoc r =
 type SomeOf :: forall {k}. OB k -> Type
 data SomeOf c where
   Some :: forall {k} {c :: OB k} (x :: k). (c x) => SomeOf c
+
+-- | An existential object with a runtime type representation.
+type SomeOb :: Type -> Type
+type SomeOb k = SomeOf ((Typeable :&&: Ob') :: OB k)
 
 -- | The elements of the list, each on its own.
 someOfList :: forall {k} (c :: OB k) xs. ListOf c xs -> [SomeOf c]
