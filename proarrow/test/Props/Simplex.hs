@@ -38,8 +38,12 @@ test =
     "Simplex"
     [ testCategory @Nat
     , testInitialObject @Nat
+    , testEqualizers_ @Nat
+    , testCoequalizers_ @Nat
+    , testEpiMonoFactorization_ @Nat
     , testTerminalObject @Nat
     , testMonoidal_ @Nat
+    , testComonoid_ @Z
     , testMonoid_ @Z
     , testMonoid_ @(S Z)
     , testProfunctor @(Rep Forget)

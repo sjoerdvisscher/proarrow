@@ -8,6 +8,8 @@
   prefix matcher with integer dispatch. Examples cover a codec and Set-valued
   left Kan extensions: an infinite induced action and finite-set pushouts.
   A size-bounded simplex presentation checks face/degeneracy normal forms against `Simplex`.
+* `Simplex` supports equalizers, coequalizers, epi–mono factorisation, `Comonoid Z`
+  and `Sized`.
 * `Paths.path` builds raw paths from a variadic list of typed generators.
 * `Paths.EqGen` compares both endpoints through equality of their promoted pairs.
 * `Proarrow.Tools.HypergraphRewrite`: open and closed graph rewriting with compatible
