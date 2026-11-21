@@ -8,20 +8,27 @@
 -- of it.
 module Proarrow.Category.Instance.Simplex (module Proarrow.Category.Instance.Simplex, Nat (..)) where
 
-import Data.Fin (Fin (..))
+import Data.Fin (Fin (..), universe, weakenLeft1)
 import Data.Kind (Type)
 import Data.Type.Nat (Nat (..), SNatI, type Plus)
-import Data.Vec.Lazy (Vec (..))
+import Data.Vec.Lazy (Vec (..), tabulate)
 import Prelude (Eq, Show (..), (++), type (~))
+import Prelude qualified as P
 
 import Data.Typeable (Typeable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly, associatorDefault)
+import Proarrow.Category.Monoidal.Hypergraph (Sized (..))
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object (pattern Objs)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 type n + m = Plus n m
 
@@ -82,6 +89,52 @@ instance HasTerminalObject Nat where
     SZ -> Y ZZ
     SS @n -> X (terminate @_ @n)
 
+-- | Factor through the ordered image, adding a new image point only when
+-- the source's first point was not already represented by the tail.
+instance HasEpiMonoFactorization Nat where
+  factorize ZZ = ZZ :.: ZZ
+  factorize (Y f) = case factorize f of
+    e :.: m -> e :.: Y m
+  factorize (X f) = case factorize f of
+    e :.: Y m -> X (Y e) :.: suc m
+    e :.: m@(X _) -> X e :.: m
+
+-- | The equalizer is the subchain of source points where the maps agree.
+instance HasEqualizers Nat where
+  equalize ZZ ZZ k = k ZZ
+  equalize (Y f) (Y g) k = equalize f g k
+  equalize (X f) (X g) k = equalize f g (k . suc)
+  equalize (X f) g@(Y _) k = equalize f (g . Y (src f)) (k . Y)
+  equalize f@(Y _) (X g) k = equalize (f . Y (src g)) g (k . Y)
+
+  factorEqualizer ZZ ZZ = ZZ
+  factorEqualizer (Y incl) (Y h) = factorEqualizer incl h
+  factorEqualizer incl@(X _) (X h) = X (factorEqualizer incl h)
+  factorEqualizer (X incl) h@(Y _) = Y (factorEqualizer incl h)
+  factorEqualizer _ _ = P.error "factorEqualizer: h's image must lie within incl's image"
+
+-- | The quotient collapses every interval between f i and g i. A boundary
+-- survives exactly when none of these intervals crosses it.
+instance HasCoequalizers Nat where
+  coequalize :: forall a b r. Simplex a b -> Simplex a b -> (forall c. Simplex b c -> r) -> r
+  coequalize f@Objs g k = case singNat @b of
+    SZ -> k ZZ
+    SS -> quotient (tabulate (\i -> P.not (P.any (crosses (weakenLeft1 i)) intervals))) k
+    where
+      intervals = [(P.min x y, P.max x y) | i <- universe, let x = fmap @Forget f i, let y = fmap @Forget g i]
+      crosses i (lo, hi) = lo P.<= i P.&& i P.< hi
+      quotient
+        :: forall n. (IsNat n) => Vec n P.Bool -> (forall m. (IsNat m) => Simplex (S n) (S m) -> r) -> r
+      quotient VNil cont = cont (suc ZZ)
+      quotient (keep ::: rest) cont = case singNat @n of
+        SS -> quotient rest \q -> if keep then cont (suc q) else cont (X q)
+
+  factorCoequalizer ZZ ZZ = ZZ
+  factorCoequalizer q (Y h) = Y (factorCoequalizer q h)
+  factorCoequalizer (X (Y q)) (X h) = X (factorCoequalizer q h)
+  factorCoequalizer (X q@(X _)) (X h) = factorCoequalizer q h
+  factorCoequalizer _ _ = P.error "factorCoequalizer: h must be constant on q's fibers"
+
 data family Forget :: Nat +-> Type
 instance FunctorForRep Forget where
   type Forget @ n = Fin n
@@ -114,11 +167,21 @@ instance Monoidal Nat where
   associator @a @b @c = associatorDefault @a @b @c
   associatorInv @a @b @c = associatorDefault @a @b @c
 
+-- | Cardinality of the ordinal.
+instance Sized Nat where
+  sizeOf @n = case singNat @n of
+    SZ -> 0
+    SS @pn -> 1 P.+ sizeOf @Nat @pn
+
 -- Not symmetric monoidal
 
 instance Monoid Z where
   mempty = ZZ
   mappend = ZZ
+
+instance Comonoid Z where
+  counit = ZZ
+  comult = ZZ
 
 instance Monoid (S Z) where
   mempty = Y ZZ
