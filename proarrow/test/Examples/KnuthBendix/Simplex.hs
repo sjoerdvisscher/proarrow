@@ -9,7 +9,7 @@
 -- Complete the finite presentation on sizes 0 through 4 using shortlex.
 -- Its normal forms need not follow Mathlib's index convention; interpretations
 -- into Simplex check that they represent every monotone map uniquely.
-module Examples.SimplexRewrite (test, Generator (..), equations, system, completedRules) where
+module Examples.KnuthBendix.Simplex (test, Generator (..), equations, system, completedRules, generators, generatorMap, rank) where
 
 import Data.Fin (Fin (..), absurd, toNatural, universe, weakenLeft1)
 import Data.Nat qualified as N
@@ -25,11 +25,13 @@ import Prelude hiding (id, (.))
 
 import Proarrow.Category.Instance.Paths (EqGen (..), PATHS (..), Paths (..), path)
 import Proarrow.Category.Instance.Simplex (Forget, IsNat (..), Nat (..), SNat (..), Simplex (..), suc)
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, Promonad (..), UN)
 import Proarrow.Functor qualified as F
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Object (SomeOb, SomeOf (..))
+import Proarrow.Object (SomeOb, SomeOf (..), pattern Objs)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Testing (check, expect)
 import Proarrow.Tools.KnuthBendix qualified as KB
 import Proarrow.Tools.KnuthBendix.NormalForms qualified as NF
@@ -204,19 +206,88 @@ test =
         check
           "an incorrectly indexed relation"
           (all (\e -> Laws.withSides e (\l r -> interpret l == interpret r)) (equations @Nat5))
+    , testProperty "discovers binary products and coproducts with their legs" $ do
+        () <- case NF.binaryProducts @Nat2 @Nat1 normalForms of
+          Just [NF.Cone @x left right] -> case eqT @x @Nat2 of
+            Just Refl -> do
+              expect "product projection to 2" id (interpret left)
+              expect "product projection to 1" terminate (interpret right)
+            Nothing -> testFailed "2 × 1 has the wrong apex"
+          _ -> testFailed "expected one product cone for 2 × 1"
+        () <- case NF.binaryCoproducts @Nat0 @Nat2 normalForms of
+          Just [NF.Cocone @x left right] -> case eqT @x @Nat2 of
+            Just Refl -> do
+              expect "coproduct injection from 0" initiate (interpret left)
+              expect "coproduct injection from 2" id (interpret right)
+            Nothing -> testFailed "0 + 2 has the wrong apex"
+          _ -> testFailed "expected one coproduct cocone for 0 + 2"
+        expect "2 × 2 has no product" (Just 0) (length <$> NF.binaryProducts @Nat2 @Nat2 normalForms)
+        expect "2 + 2 has no coproduct" (Just 0) (length <$> NF.binaryCoproducts @Nat2 @Nat2 normalForms)
+    , testProperty "discovers the equalizer and coequalizer of the two points of 2" $ do
+        let f = PCons (Face @Nat1 FZ) PNil
+            g = PCons (Face @Nat1 (FS FZ)) PNil
+        () <- case NF.equalizers normalForms f g of
+          Just [NF.Equalizer @x leg] -> case eqT @x @Nat0 of
+            Just Refl -> expect "empty inclusion into 1" initiate (interpret leg)
+            Nothing -> testFailed "the points have no common value"
+          _ -> testFailed "expected one equalizer"
+        case NF.coequalizers normalForms f g of
+          Just [NF.Coequalizer @x leg] -> case eqT @x @Nat1 of
+            Just Refl -> expect "collapse 2 to 1" terminate (interpret leg)
+            Nothing -> testFailed "the two points should collapse to one"
+          _ -> testFailed "expected one coequalizer"
+    , testProperty "discovers pullback and pushout squares for two point inclusions" $ do
+        let lastPoint = PCons (Face @Nat1 FZ) PNil
+            firstPoint = PCons (Face @Nat1 (FS FZ)) PNil
+        () <- case NF.pullbacks normalForms lastPoint firstPoint of
+          Just [NF.Cone @x left right] -> case eqT @x @Nat0 of
+            Just Refl -> do
+              expect "left projection from 0" initiate (interpret left)
+              expect "right projection from 0" initiate (interpret right)
+            Nothing -> testFailed "the point inclusions are disjoint"
+          _ -> testFailed "expected one pullback square"
+        () <- case NF.pushouts normalForms lastPoint firstPoint of
+          Just [NF.Cocone @x left right] -> case eqT @x @Nat3 of
+            Just Refl -> do
+              expect "left inclusion into the first two points" (generatorMap (Face @Nat2 (FS (FS FZ)))) (interpret left)
+              expect "right inclusion into the last two points" (generatorMap (Face @Nat2 FZ)) (interpret right)
+            Nothing -> testFailed "the two copies of 2 share one point"
+          _ -> testFailed "expected one pushout square"
+        expect
+          "gluing the first points has no pushout"
+          (Just 0)
+          (length <$> NF.pushouts normalForms firstPoint firstPoint)
     , testProperty "completion gives one normal form for every monotone map" $ do
         case completion of
           KB.Complete _ -> pure ()
           KB.Incomplete reason _ _ -> testFailed (show reason)
-        let counts :: [(Maybe NF.Cardinality, Maybe NF.Cardinality)]
+        let expectedCount :: forall a b. (IsNat a, IsNat b) => NF.Cardinality
+            expectedCount = NF.Finite (fromIntegral (length (simplexMaps @a @b)))
+            counts :: [(Maybe NF.Cardinality, Maybe NF.Cardinality)]
             counts =
-              [ (Just (NF.Finite (fromIntegral (length (simplexMaps @a @b)))), NF.cardinality @a @b normalForms)
+              [ (Just (expectedCount @a @b), NF.cardinality @a @b normalForms)
               | Some @a <- objects
               , Some @b <- objects
               ]
             forms :: [SomePath]
             forms = [SomePath p | Some @a <- objects, Some @b <- objects, Just ps <- [NF.enumerate @a @b normalForms], p <- ps]
         expect "hom-set cardinalities" (map fst counts) (map snd counts)
+        check
+          "source-wide counts"
+          ( and
+              [ NF.cardinalitiesFrom @a normalForms
+                  == Just [(target, expectedCount @a @b) | target@(Some @b) <- objects]
+              | Some @a <- objects
+              ]
+          )
+        check
+          "target-wide counts"
+          ( and
+              [ NF.cardinalitiesTo @b normalForms
+                  == Just [(source, expectedCount @a @b) | source@(Some @a) <- objects]
+              | Some @b <- objects
+              ]
+          )
         expect "initial object" [Some @(InitialObject :: Nat)] (NF.initialObjects normalForms)
         expect "terminal object" [Some @(TerminalObject :: Nat)] (NF.terminalObjects normalForms)
         check
@@ -235,6 +306,14 @@ test =
           )
         expect "all maps on sizes 0 through 4" 126 (length forms)
         expect "bijection with the existing X/Y representation" expectedMaps (S.fromList (map modelKey forms))
+        check "epi–mono factorisations agree with Simplex image factorisation" $
+          and
+            [ case (NF.epiMonoFactorization normalForms p, factorize (interpret p)) of
+                (Just (NF.EpiMonoFactorization e m), expectedEpi@Objs :.: expectedMono) ->
+                  (images (interpret e), images (interpret m)) == (images expectedEpi, images expectedMono)
+                _ -> False
+            | SomePath p <- forms
+            ]
         check
           "composition changes the interpreted map"
           ( and

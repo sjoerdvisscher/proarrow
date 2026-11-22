@@ -156,6 +156,17 @@ test =
         check "incomplete system rejected" (isNothing (NF.compile [Some @'()] alphabet unfinished))
         check "missing right-side generator rejected" (isNothing (NF.compile [Some @'()] (take 2 alphabet) done))
         check "missing left-side generators rejected" (isNothing (NF.compile [Some @'()] (drop 2 alphabet) done))
+    , testProperty "a nonidentity idempotent in a two-element monoid has no epi–mono factorisation" $ do
+        system <- either testFailed pure (finished [("aa", "a")])
+        forms <-
+          maybe
+            (testFailed "normal-form compilation failed")
+            pure
+            (NF.compile [Some @'()] [NF.Generator (Letter 'a')] (KB.Complete system))
+        case NF.epiMonoFactorization forms (word "a") of
+          Just NF.NoEpiMonoFactorization -> pure ()
+          _ -> testFailed "expected a definitive negative result"
+        check "unknown generator leaves the result undecided" (isNothing (NF.epiMonoFactorization forms (word "z")))
     , testProperty "crossing overlaps add the missing word rule" $ do
         system <- either testFailed pure (finished [("ab", "d"), ("bc", "e")])
         check "derived crossing equation" ("dc -> ae" `elem` reductions system)

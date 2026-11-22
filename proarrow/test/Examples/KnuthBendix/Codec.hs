@@ -3,7 +3,7 @@
 -- derives idempotence and the two ways to remove redundant canonicalisation.
 -- Its value object is both initial and terminal; enumeration supplies the
 -- universal arrows and the generators for the built-in law tests.
-module Examples.KnuthBendix (test, Codec (..), codecSystem, completedRules, redundantRules) where
+module Examples.KnuthBendix.Codec (test, Codec (..), codecSystem, completedRules, redundantRules) where
 
 import Data.Kind (Constraint, Type)
 import Data.Maybe (fromMaybe)

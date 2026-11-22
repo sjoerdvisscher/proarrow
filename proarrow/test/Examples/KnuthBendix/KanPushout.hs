@@ -7,7 +7,7 @@
 -- the square then identifies their two images at Apex. Unlike a group action,
 -- these arrows cannot be cancelled: input elements remain distinct even when
 -- their images in the pushout coincide.
-module Examples.KanPushout (test, SpanGenerator (..), Element, spanCompletion, leftImage, rightImage, apexImages) where
+module Examples.KnuthBendix.KanPushout (test, SpanGenerator (..), Element, spanCompletion, leftImage, rightImage, apexImages) where
 
 import Data.Fin (Fin, fin0, fin1, universe)
 import Data.Kind (Type)

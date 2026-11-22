@@ -12,7 +12,7 @@
 --
 -- For any D_infinity-action and reflection-fixed point y, sending g . Seed
 -- to g acting on y gives the unique equivariant map extending the singleton.
-module Examples.KanExtension
+module Examples.KnuthBendix.KanExtension
   ( test
   , Action (..)
   , Element
@@ -142,10 +142,36 @@ test =
         expect "infinitely many induced elements" (Just NF.Infinite) (NF.cardinality @Root @Line normalForms)
         expect "infinitely many group elements" (Just NF.Infinite) (NF.cardinality @Line @Line normalForms)
         expect "no arrows back to the root" (Just (NF.Finite 0)) (NF.cardinality @Line @Root normalForms)
+        expect
+          "source-wide counts include finite and infinite hom-sets"
+          (Just [(Some @Root, NF.Finite 1), (Some @Line, NF.Infinite)])
+          (NF.cardinalitiesFrom @Root normalForms)
+        expect
+          "source-wide counts include unreachable targets"
+          (Just [(Some @Root, NF.Finite 0), (Some @Line, NF.Infinite)])
+          (NF.cardinalitiesFrom @Line normalForms)
+        expect
+          "target-wide counts include finite and empty hom-sets"
+          (Just [(Some @Root, NF.Finite 1), (Some @Line, NF.Finite 0)])
+          (NF.cardinalitiesTo @Root normalForms)
+        expect
+          "target-wide counts propagate infinity back to each source"
+          (Just [(Some @Root, NF.Infinite), (Some @Line, NF.Infinite)])
+          (NF.cardinalitiesTo @Line normalForms)
         expect "only the root identity" (Just ["id"]) (fmap (map show) (NF.enumerate @Root @Root normalForms))
         expect "no arrows back to the root" (Just []) (fmap (map show) (NF.enumerate @Line @Root normalForms))
         expect "no initial object" [] (NF.initialObjects normalForms)
         expect "no terminal object" [] (NF.terminalObjects normalForms)
+        check
+          "infinite hom-sets can leave epi–mono factorisation undecided"
+          (isNothing (NF.epiMonoFactorization normalForms (PCons Seed PNil)))
+        expect
+          "a product can use only finite hom-sets in an infinite presentation"
+          (Just 1)
+          (length <$> NF.binaryProducts @Root @Root normalForms)
+        check
+          "infinite product and coproduct candidates are undecided"
+          (isNothing (NF.binaryProducts @Line @Line normalForms) && isNothing (NF.binaryCoproducts @Line @Line normalForms))
         let discrete = KB.complete (KB.Limits 1 1) [] :: KB.Completion Action
         check
           "a generator with an undeclared endpoint is rejected"

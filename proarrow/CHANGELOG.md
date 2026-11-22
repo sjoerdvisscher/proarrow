@@ -5,12 +5,14 @@
 * `Proarrow.Tools.KnuthBendix`: typed path completion with inferred or explicit
   generator keys, interreduction, indexed overlaps and limits.
   Incremental normalisation supports `Paths.Rewrite`; completion compiles a
-  prefix matcher with integer dispatch. Normal-form automata store the object universe and enumerate hom-sets,
-  count finite ones, detect infinity and find initial/terminal objects.
-  Cancellation checks detect epic and monic arrows using finite hom-sets.
+  prefix matcher with integer dispatch. Indexed normal-form automata enumerate
+  hom-sets, count arrows in both directions and detect infinity.
+  Searches find initial and terminal objects, binary (co)products,
+  (co)equalizers, pullbacks and pushouts. Cancellation checks detect epic
+  and monic arrows and find epi–mono factorisations.
   `NormalForms.renderDot` plots the automaton for a chosen hom-set.
-  Examples cover a codec, an infinite induced action, finite-set pushouts and
-  a bounded simplex presentation.
+  Examples cover a codec, an infinite induced action, finite-set pushouts
+  and bounded presentations of Simplex and FinSet.
 * `Simplex` supports equalizers, coequalizers, epi–mono factorisation, `Comonoid Z`
   and `Sized`.
 * `Paths.path` builds raw paths from a variadic list of typed generators.
