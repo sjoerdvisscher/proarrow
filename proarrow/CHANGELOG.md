@@ -13,6 +13,10 @@
   `NormalForms.renderDot` plots the automaton for a chosen hom-set.
   Examples cover a codec, an infinite induced action, finite-set pushouts
   and bounded presentations of Simplex and FinSet with shared monoid diagrams.
+  A finite-relations example encodes commutative ports as unordered legs and
+  normalises diagrams using either reachability or distributivity and the
+  special law. The matrix example uses the same distributivity to count paths
+  over the natural numbers.
 * `Simplex` supports equalizers, coequalizers, epi–mono factorisation, `Comonoid Z`
   and `Sized`.
 * `Proarrow.Category.Instance.Bimonoid`: the walking bimonoid with ordered-path
@@ -24,7 +28,8 @@
   support reuse, copying and deletion; `compileReducingRules` ensures termination by
   requiring fewer boxes. Write oriented rules as `lhs ==> rhs`.
 * `Proarrow.Tools.HypergraphRewrite.Completion`: bounded Knuth–Bendix-style
-  completion for string diagrams and open hypergraphs.
+  completion and interreduction for string diagrams and open hypergraphs.
+  `checkHypergraphConfluence` checks local confluence of fixed literal rules.
 * `Proarrow.Tools.HypergraphRewrite.Laws`: instantiate named categorical laws as
   hypergraph rewrite rules.
 * `Proarrow.Tools.HypergraphRewrite.Free`: compile `FREE` syntax and `Laws` into graph rules

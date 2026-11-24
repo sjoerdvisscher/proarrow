@@ -1,5 +1,6 @@
 module Props.HypergraphRewrite.Completion (test) where
 
+import Control.Monad (forM_)
 import Data.List (sort)
 import Test.Falsify (Property, testFailed)
 import Test.Tasty (TestTree, testGroup)
@@ -10,13 +11,21 @@ import Proarrow.Category.Instance.OpenHypergraph (W1, W2)
 import Proarrow.Category.Instance.OpenHypergraph qualified as HG
 import Proarrow.Category.Monoidal (MonoidalProfunctor ((**)), SymMonoidal (swap))
 import Proarrow.Core (Promonad (id, (.)), type (~>))
+import Proarrow.Monoid qualified as Mon
 import Proarrow.Testing (check, expect)
 import Proarrow.Tools.HypergraphRewrite ((==>))
 import Proarrow.Tools.HypergraphRewrite qualified as R
 import Proarrow.Tools.HypergraphRewrite.Completion qualified as Completion
 
 test :: TestTree
-test = testGroup "Hypergraph completion" [completionTests, pathContextTests]
+test =
+  testGroup
+    "Hypergraph completion"
+    [ completionTests
+    , pathContextTests
+    , testProperty "confluence checks keep the overlap boundary when comparing reducts" checkHypergraphBoundary
+    , testProperty "hypergraph completion removes redundant rules and simplifies right sides" checkHypergraphInterreduction
+    ]
 
 type Diagram l as bs = (HG.Wires as :: HG.OPENHG () l) ~> HG.Wires bs
 
@@ -24,6 +33,48 @@ type Wire l = HG.Wires @() @l W1
 
 wire :: Wire l ~> Wire l
 wire = id
+
+checkHypergraphBoundary :: Property ()
+checkHypergraphBoundary = do
+  let marker = HG.box @String @W2 @'[] "marker"
+      tag = HG.box @String @W1 @'[] "tag"
+      discard = Mon.counit @(Wire String)
+  left <- either testFailed pure (marker ==> tag ** discard)
+  right <- either testFailed pure (marker ==> discard ** tag)
+  result <- either testFailed pure (Completion.checkHypergraphConfluence Nothing [("left", left), ("right", right)])
+  case result of
+    Completion.HypergraphNotLocallyConfluent (Completion.CriticalOverlap "left" "right" _ l r) -> do
+      let withoutBoundary g =
+            let (nodes, _, _, boxes) = HG.hypergraphParts g
+            in HG.unsafeOpenHypergraph @String @'[] @'[] nodes [] [] boxes
+      check "the closed reducts are isomorphic" (HG.isomorphic (withoutBoundary l) (withoutBoundary r))
+      check "the tag attaches to different boundary ports" (not (HG.isomorphic l r))
+    _ -> testFailed "expected an unjoinable fork with an ordered boundary"
+
+checkHypergraphInterreduction :: Property ()
+checkHypergraphInterreduction = do
+  let tag = HG.box @Char @W1 @'[]
+      a = tag 'a'
+      b = tag 'b'
+      c = tag 'c'
+      d = tag 'd'
+      rank label = case label of
+        'a' -> 2 :: Int
+        'd' -> 2
+        'b' -> 1
+        _ -> 0
+      measure g = let (_, _, _, boxes) = HG.hypergraphParts g in sum (map (rank . HG.label) boxes)
+  seeds <- either testFailed pure (sequence [a ==> b, b ==> c, a ==> c, d ==> b])
+  result <- either testFailed pure (Completion.completeHypergraph 0 1 (\l r -> compare (measure l) (measure r)) seeds)
+  case result of
+    Completion.HypergraphComplete final compiled -> do
+      expect "a to b is redundant" 3 (length final)
+      forM_ [(0, b), (1, a), (2, d)] \(key, source) -> case R.rewritesCompiled compiled source of
+        [(actual, reduct)] -> do
+          expect "keys are positions in the retained rule list" key actual
+          check "the retained rule rewrites directly to c" (HG.isomorphic c reduct)
+        _ -> testFailed "expected exactly one retained rule to apply"
+    _ -> testFailed "expected interreduction without learning any rules"
 
 data SplitterGenerator = Entry | Split | SplitA | SplitB | A | B | C | D | E
   deriving (Eq)

@@ -9,6 +9,8 @@ module Proarrow.Tools.HypergraphRewrite.Completion
     CriticalOverlap (..)
   , criticalOverlaps
   , hypergraphOverlaps
+  , HypergraphConfluenceResult (..)
+  , checkHypergraphConfluence
   , PathContextResult (..)
   , checkPathContexts
 
@@ -110,6 +112,45 @@ hypergraphOverlaps :: (Eq l, DecidableIso s) => [(key, Rule s l)] -> Either Stri
 hypergraphOverlaps rules = do
   patterns <- traverse literalRule rules
   pure [renderOverlap host left right | (host, left, right) <- preCriticalPairs HypergraphOverlaps patterns]
+
+-- | The outcome of checking local confluence for single-step hypergraph
+-- rewriting. Success counts the overlaps checked. Failure returns a fork
+-- whose branches have disjoint sets of reducts, and a depth limit returns an
+-- unresolved fork.
+type HypergraphConfluenceResult :: Type -> Kind -> Type -> Type
+data HypergraphConfluenceResult key s l
+  = HypergraphLocallyConfluent Int
+  | HypergraphNotLocallyConfluent (CriticalOverlap key s l)
+  | HypergraphConfluenceLimit (CriticalOverlap key s l)
+
+-- | Check local confluence of fixed literal rules with unique keys. The depth
+-- bound applies separately to each side of an overlap. Use @Nothing@ for an
+-- unbounded search, which can diverge on a nonterminating system.
+--
+-- Any two matches in a host restrict to their union. A host boundary port or
+-- an outside box can meet that union only at a node preserved by both steps.
+-- Those nodes are exactly the boundary exposed by 'hypergraphOverlaps'. A
+-- joining derivation tracks each attachment through the boundary map, so it
+-- lifts back into the host. Even when it merges two boundary nodes, adding back the
+-- context leaves the current overlap graph embedded injectively: the context
+-- started with a distinct node for each attachment. Omitted pairs commute
+-- because their boxes and deletions do not interfere and neither replacement
+-- folds the other match. See the clipping and embedding argument in
+-- <https://arxiv.org/html/2109.06049#S3 String Diagram Rewrite Theory III, §3>.
+--
+-- This check concerns the single-step relation of
+-- 'Proarrow.Tools.HypergraphRewrite.rewritesCompiled'. For a terminating
+-- system, local confluence implies confluence.
+checkHypergraphConfluence
+  :: (Ord key, Eq l, DecidableIso s)
+  => Maybe Natural -> [(key, Rule s l)] -> Either String (HypergraphConfluenceResult key s l)
+checkHypergraphConfluence maxDepth rules = do
+  patterns <- traverse literalRule rules
+  compiled <- compileRules rules
+  pure $ case checkHypergraphPairs maxDepth (map snd . compiledMatches compiled) patterns of
+    AllJoinable count -> HypergraphLocallyConfluent count
+    Unjoinable (host, left, right) -> HypergraphNotLocallyConfluent (renderOverlap host left right)
+    JoinLimit (host, left, right) -> HypergraphConfluenceLimit (renderOverlap host left right)
 
 literalRule :: (key, Rule s l) -> Either String (FixedRule key s l)
 literalRule (key, Rule patternGraph instantiate) = do
@@ -352,6 +393,11 @@ checkPairs maxDepth reducts = checkAll 0 Nothing
         Just False -> Unjoinable pair
         Nothing -> checkAll count (Just (fromMaybe pair pending)) more
 
+checkHypergraphPairs
+  :: (Eq l, DecidableIso s)
+  => Maybe Natural -> (Graph s l -> [Prepared s l]) -> [FixedRule key s l] -> PairCheck key s l
+checkHypergraphPairs maxDepth next = checkPairs maxDepth (singleReducts next) . preCriticalPairs HypergraphOverlaps
+
 -- | The rules returned by bounded convex completion. Supplied rules come
 -- before learned rules. On success, redundant rules may be removed and
 -- retained right sides may be simplified. All path contexts of the resulting
@@ -417,15 +463,16 @@ completeConvex maxRules maxDepth compareDiagrams initial = do
            AllJoinable _ ->
              case checkContexts (Just maxDepth) patterns pairs of
                AllJoinable _ ->
-                 let retained = pruneRules maxDepth (zip rules patterns)
-                     (remainingRules, remainingPatterns) = unzip (simplifyRightSides maxDepth retained)
+                 let next = convexMatches . convexRulesWith id
+                     check ps = checkContexts (Just maxDepth) ps (preCriticalPairs (StringOverlaps True) ps)
+                     (remainingRules, remainingPatterns) = unzip (interreduce maxDepth next check (zip rules patterns))
                  in ConvexComplete remainingRules (convexRulesWith id remainingPatterns)
                JoinLimit (host, left, right) -> incomplete (ConvexJoinLimit (renderOverlap host left right))
                Unjoinable (host, left, right) -> incomplete (ConvexContextFailure (renderOverlap host left right))
 
 -- | The result of checking and completing the overlaps enumerated by
--- 'hypergraphOverlaps'. The rule list starts with the supplied rules and
--- continues with the learned rules in discovery order.
+-- 'hypergraphOverlaps'. The rules are listed in input and discovery order,
+-- with redundant rules removed and right sides simplified on success.
 type HypergraphCompletion :: Kind -> Type -> Type
 data HypergraphCompletion s l
   = HypergraphComplete [Rule s l] (CompiledRules Int s l)
@@ -443,8 +490,10 @@ data HypergraphCompletionStop s l
 -- The two bounds limit the number of learned rules and the search depth from
 -- each reduct. As with 'completeConvex', the caller supplies a well-founded
 -- comparison that decreases on rules and is preserved by contexts.
--- Success says that the enumerated overlaps join with their displayed
--- boundaries, using the ordinary matcher.
+-- Success establishes local confluence for the resulting single-step system
+-- by the same check as 'checkHypergraphConfluence'. After a successful join
+-- check, remove redundant rules and simplify right sides using the other
+-- rules. Each change must pass the overlap check within the same depth bound.
 -- A learned rule with repeated left boundary nodes uses one port per shared
 -- node when both sides identify the same ports and the factored rule still
 -- decreases. Otherwise completion returns 'HypergraphUnorientable' with the
@@ -462,12 +511,15 @@ completeHypergraph maxRules maxDepth compareDiagrams initial = do
   go maxRules initial patterns
   where
     go budget rules patterns = do
-      compiled <- compileRules (zip [0 ..] rules)
+      compiled <- compileRules (zip [0 :: Int ..] rules)
       let next = map snd . compiledMatches compiled
-          pairs = preCriticalPairs HypergraphOverlaps patterns
           incomplete = Right . HypergraphIncomplete rules
-      case checkPairs (Just maxDepth) (singleReducts next) pairs of
-        AllJoinable _ -> pure (HypergraphComplete rules compiled)
+      case checkHypergraphPairs (Just maxDepth) next patterns of
+        AllJoinable _ -> do
+          let rewritesFor = fixedMatches . fixedPatterns id
+              check ps = checkHypergraphPairs (Just maxDepth) (rewritesFor ps) ps
+              retained = map fst (interreduce maxDepth rewritesFor check (zip rules patterns))
+          HypergraphComplete retained <$> compileRules (zip [0 ..] retained)
         JoinLimit (host, left, right) -> incomplete (HypergraphJoinLimit (renderOverlap host left right))
         Unjoinable (host, left, right) ->
           let peak = renderOverlap host left right
@@ -525,42 +577,42 @@ orientPeak maxDepth compareDiagrams next makeRule (CriticalOverlap _ _ _ left ri
          GT -> makeRule ln rn
          EQ -> Left "the comparison did not orient the equation"
 
-pruneRules
+type RuleEntry key s l = (Rule s l, FixedRule key s l)
+
+interreduce
   :: (Eq l, DecidableIso s)
-  => Natural -> [(Rule s l, FixedRule key s l)] -> [(Rule s l, FixedRule key s l)]
-pruneRules depth = scan []
+  => Natural
+  -> ([FixedRule key s l] -> Graph s l -> [Prepared s l])
+  -> ([FixedRule key s l] -> PairCheck key s m)
+  -> [RuleEntry key s l]
+  -> [RuleEntry key s l]
+interreduce depth next check = simplifyRightSides [] . pruneRules []
   where
-    scan kept [] = reverse kept
-    scan kept (candidate@(_, (_, lhs, rhs)) : pending)
-      | Just True <- joinGraphs bound (convexReducts (convexRulesWith id patterns)) lhs rhs
-      , AllJoinable _ <- checkContexts bound patterns (preCriticalPairs (StringOverlaps True) patterns) =
-          scan [] remaining
-      | otherwise = scan (candidate : kept) pending
+    bound = Just depth
+    pruneRules kept [] = reverse kept
+    pruneRules kept (candidate@(_, (_, lhs, rhs)) : pending)
+      | Just True <- joinGraphs bound (singleReducts (next patterns)) lhs rhs
+      , AllJoinable _ <- check patterns =
+          pruneRules [] remaining
+      | otherwise = pruneRules (candidate : kept) pending
       where
-        bound = Just depth
         remaining = reverse kept ++ pending
         patterns = map snd remaining
 
-simplifyRightSides
-  :: (Eq l, DecidableIso s)
-  => Natural -> [(Rule s l, FixedRule key s l)] -> [(Rule s l, FixedRule key s l)]
-simplifyRightSides depth = scan []
-  where
-    scan kept [] = reverse kept
-    scan kept (candidate@(_, (key, lhs, rhs)) : pending) =
-      scan (chosen : kept) pending
+    simplifyRightSides kept [] = reverse kept
+    simplifyRightSides kept (candidate@(_, (key, lhs, rhs)) : pending) =
+      simplifyRightSides (chosen : kept) pending
       where
         before = map snd (reverse kept)
         after = map snd pending
-        others = convexRulesWith id (before ++ after)
-        result = normaliseGraphBy (RewriteLimits (Just depth) Nothing) (take 1 . convexMatches others) rhs
+        result = normaliseGraphBy (RewriteLimits bound Nothing) (take 1 . next (before ++ after)) rhs
         reduced = normalisedGraph result
         replacement = (key, lhs, reduced)
         patterns = before ++ replacement : after
         chosen
           | normalisationStatus result == NormalForm
           , normalisationRewrites result > 0
-          , AllJoinable _ <- checkContexts (Just depth) patterns (preCriticalPairs (StringOverlaps True) patterns) =
+          , AllJoinable _ <- check patterns =
               (Rule (mapLabels ExactLabel lhs) (const (Just reduced)), replacement)
           | otherwise = candidate
 
@@ -580,8 +632,11 @@ compileConvexRules :: [Rule s l] -> Either String (ConvexRules s l)
 compileConvexRules rules = convexRulesWith id <$> traverse (fixedRule . ((),)) rules
 
 convexRulesWith :: (l -> m) -> [FixedRule key s l] -> ConvexRules s m
-convexRulesWith wrap patterns =
-  ConvexRules [(mapLabels (ExactLabel . wrap) lhs, mapLabels wrap rhs) | (_, lhs, rhs) <- patterns]
+convexRulesWith wrap = ConvexRules . fixedPatterns wrap
+
+fixedPatterns :: (l -> m) -> [FixedRule key s l] -> [(Graph s (LabelTest m), Graph s m)]
+fixedPatterns wrap patterns =
+  [(mapLabels (ExactLabel . wrap) lhs, mapLabels wrap rhs) | (_, lhs, rhs) <- patterns]
 
 convexReducts :: (Eq l, DecidableIso s) => ConvexRules s l -> Graph s l -> [Graph s l]
 convexReducts rules = singleReducts (convexMatches rules)
@@ -593,8 +648,7 @@ singleReducts next host =
 convexMatches :: (Eq l, DecidableIso s) => ConvexRules s l -> Graph s l -> [Prepared s l]
 convexMatches (ConvexRules rules) host@(Graph _ _ _ bs) =
   [ (lhs, rhs, match)
-  | (lhs@(Graph _ ins outs _), rhs) <- rules
-  , (match@(mapping, _), _) <- matches lhs host
+  | (lhs@(Graph _ ins outs _), rhs, match@(mapping, _)) <- fixedMatches rules host
   , all
       ( \o ->
           let reachable = reachableNodes edges (mapping IM.! o)
@@ -604,6 +658,11 @@ convexMatches (ConvexRules rules) host@(Graph _ _ _ bs) =
   ]
   where
     edges = wireEdges bs
+
+fixedMatches
+  :: (Eq l, DecidableIso s) => [(Graph s (LabelTest l), Graph s l)] -> Graph s l -> [Prepared s l]
+fixedMatches rules host =
+  [(lhs, rhs, match) | (lhs, rhs) <- rules, (match, _) <- matches lhs host]
 
 -- Search by depth on both sides. A failed join requires exhausting both
 -- descendant sets. The seen sets also make finite cyclic searches terminate.

@@ -23,6 +23,7 @@ import Examples.KnuthBendix.FinSet qualified as FinSetRewrite
 import Examples.KnuthBendix.Frobenius qualified as Frobenius
 import Examples.KnuthBendix.KanExtension qualified as KanExtension
 import Examples.KnuthBendix.KanPushout qualified as KanPushout
+import Examples.KnuthBendix.MatrixDiagrams qualified as MatrixDiagrams
 import Examples.KnuthBendix.MonoidDiagrams qualified as MonoidDiagrams
 import Examples.KnuthBendix.Simplex qualified as SimplexRewrite
 import Examples.Learning qualified as Learning
@@ -156,6 +157,7 @@ main =
           , FinSetRewrite.test
           , MonoidDiagrams.test
           , Bimonoid.test
+          , MatrixDiagrams.test
           , Frobenius.test
           , STLC.test
           , ULC.test

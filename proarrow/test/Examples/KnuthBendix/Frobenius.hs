@@ -282,13 +282,17 @@ checkMergingRuleOverlap = do
     expect "two junctions and two boxes" (2, [0, 1], [], 2) (length nodes, ins, outs, length boxes)
     expect "the merged branch is stuck" [] (map fst (R.rewritesCompiled compiled merged))
     expect "the erased branch can merge" [False] (map fst (R.rewritesCompiled compiled erased))
+  before <- either testFailed pure (Completion.checkHypergraphConfluence Nothing rules)
+  case before of
+    Completion.HypergraphNotLocallyConfluent (Completion.CriticalOverlap False True _ _ _) -> pure ()
+    _ -> testFailed "expected the merge and erase rules to be locally nonconfluent"
   let boxCount g = let (_, _, _, boxes) = HG.hypergraphParts g in length boxes
   completion <-
     either testFailed pure (Completion.completeHypergraph 1 8 (\l r -> compare (boxCount l) (boxCount r)) [identify, erase])
   case completion of
     Completion.HypergraphIncomplete _ (Completion.HypergraphUnorientable reason _) ->
       testFailed ("could not complete the merged boundary: " ++ reason)
-    Completion.HypergraphComplete [_, _, repair] _ -> do
+    Completion.HypergraphComplete final@[_, _, repair] completed -> do
       check "the learned rule requires b's ports to share a junction" (null (R.rewrites repair host))
       forM_ mixed \(Completion.CriticalOverlap _ _ _ merged erased) ->
         case (R.rewrites repair merged, R.rewrites identify erased) of
@@ -297,6 +301,26 @@ checkMergingRuleOverlap = do
             expect "both ports still attach to the shared junction" (1, [0, 0], [], []) (length points, inputs, outputs, boxes)
             check "the learned rule joins the overlap" (HG.isomorphic joined repaired)
           _ -> testFailed "expected one step from each branch to the joined graph"
+      let finalRules = zip [0 :: Int ..] final
+      shallow <- either testFailed pure (Completion.checkHypergraphConfluence (Just 0) finalRules)
+      case shallow of
+        Completion.HypergraphConfluenceLimit _ -> pure ()
+        _ -> testFailed "expected the completed system to need a joining step"
+      checked <- either testFailed pure (Completion.checkHypergraphConfluence Nothing finalRules)
+      case checked of
+        Completion.HypergraphLocallyConfluent overlapCount -> check "overlaps checked" (overlapCount >= length mixed)
+        _ -> testFailed "expected the completed system to be locally confluent"
+      -- The context box shares both junctions. Merging them must also merge
+      -- its two attachments, while leaving the box outside the rewrite.
+      let inContext g = (g ** marker 'c') . (wire ** swapWires ** wire) . (copy ** copy)
+          expected = inContext merge
+      case R.rewritesCompiled completed (inContext host) of
+        [(0, merged), (1, erased)] ->
+          forM_ [merged, erased] \branch -> case R.rewritesCompiled completed branch of
+            [(_, joined)] ->
+              check "the join lifts through a box attached to both junctions" (HG.isomorphic expected joined)
+            _ -> testFailed "expected one joining step in the context"
+        _ -> testFailed "expected both initial steps to lift into the context"
     _ -> testFailed "expected completion to learn one single-junction rule"
 
 checkDifferentBoundaries :: Property ()
