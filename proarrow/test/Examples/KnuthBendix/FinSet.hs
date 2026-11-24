@@ -3,7 +3,7 @@
 -- | A bounded path presentation for finite sets and functions. Extend the
 -- simplicial generators by adjacent transpositions. Generate the short
 -- relations involving swaps by grouping parallel words with the same table.
-module Examples.KnuthBendix.FinSet (test) where
+module Examples.KnuthBendix.FinSet (test, normalFormTables, normalFormMaps, table) where
 
 import Control.Monad (forM_, replicateM)
 import Data.Fin (Fin (..), toNatural, universe, weakenLeft1)
@@ -86,6 +86,14 @@ interpret (PCons g rest) = generatorMap g . interpret rest
 
 table :: FinSet a b -> [Integer]
 table (FinSet xs) = map (toInteger . toNatural) (V.toList xs)
+
+normalFormTables :: forall a b. (IsNat a, IsNat b) => Either String [[Integer]]
+normalFormTables = map table <$> normalFormMaps @a @b
+
+normalFormMaps :: forall a b. (IsNat a, IsNat b) => Either String [FinSet (FS.FS a) (FS.FS b)]
+normalFormMaps = do
+  forms <- normalForms
+  maybe (Left "undeclared FinSet endpoint") (Right . map interpret) (NF.enumerate @a @b forms)
 
 liftPath :: Paths (a :: PATHS SX.Generator) b -> Word (UN PTH a) (UN PTH b)
 liftPath PNil = PNil

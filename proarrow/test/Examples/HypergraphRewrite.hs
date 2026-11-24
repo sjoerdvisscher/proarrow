@@ -40,7 +40,6 @@ import Proarrow.Testing (check, expect)
 import Proarrow.Tools.CCC qualified as CCC
 import Proarrow.Tools.HypergraphRewrite
   ( CompiledRules
-  , Direction (..)
   , NormalisationResult (..)
   , NormalisationStatus (..)
   , Parameter (..)
@@ -48,10 +47,7 @@ import Proarrow.Tools.HypergraphRewrite
   , compileReducingRules
   , compileRules
   , normalise
-  , parameterRulesWith
   , rewrites
-  , rewritesWithDirection
-  , ruleWith
   , subgraphRule
   , unlimitedRewrites
   )
@@ -65,6 +61,7 @@ import Proarrow.Tools.HypergraphRewrite.Free
   , freeLawRules
   , fromFreeWith
   )
+import Proarrow.Tools.HypergraphRewrite.Laws (Direction (..), parameterRulesWith, rewritesWithDirection, ruleWith)
 import Proarrow.Tools.Laws
   ( Equation
   , Labelled (..)

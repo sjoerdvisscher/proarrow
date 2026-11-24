@@ -52,6 +52,7 @@ import Prelude hiding (Functor, fmap, id, (**), (.))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinHask (unionFind)
+import Proarrow.Category.Instance.OpenHypergraph (W1)
 import Proarrow.Category.Instance.OpenHypergraph qualified as HG
 import Proarrow.Category.Instance.Simulator (SIMULATOR (..), Simulator (..), runSimulator, step)
 import Proarrow.Category.Instance.Unit ()
@@ -270,7 +271,7 @@ data Gate
 -- The unit kind supplies the single wire sort used by circuit graphs.
 type BitPorts :: Wires -> [()]
 type family BitPorts a where
-  BitPorts Bit = '[ '()]
+  BitPorts Bit = W1
   BitPorts Empty = '[]
   BitPorts (Pair a b) = BitPorts a ++ BitPorts b
 
@@ -294,7 +295,7 @@ toHypergraph (Netlist ins outs ds) =
   withBitPorts (shape @a) $
     withBitPorts (shape @b) $
       HG.unsafeOpenHypergraph
-        (concat (replicate (length nodes) (HG.sortList @() @'[ '()])))
+        (concat (replicate (length nodes) (HG.sortList @() @W1)))
         (map wire (ports ins))
         (map wire (ports outs))
         (mapMaybe gate (IM.toAscList ds))

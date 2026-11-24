@@ -9,7 +9,19 @@
 -- Complete the finite presentation on sizes 0 through 4 using shortlex.
 -- Its normal forms need not follow Mathlib's index convention; interpretations
 -- into Simplex check that they represent every monotone map uniquely.
-module Examples.KnuthBendix.Simplex (test, Generator (..), equations, system, completedRules, generators, generatorMap, rank) where
+module Examples.KnuthBendix.Simplex
+  ( test
+  , Generator (..)
+  , equations
+  , system
+  , completedRules
+  , generators
+  , generatorMap
+  , rank
+  , normalFormTables
+  , normalFormMaps
+  , images
+  ) where
 
 import Data.Fin (Fin (..), absurd, toNatural, universe, weakenLeft1)
 import Data.Nat qualified as N
@@ -174,6 +186,12 @@ normalForms :: NF.NormalForms Generator
 normalForms = case NF.compile objects generators completion of
   Just forms -> forms
   Nothing -> error "simplex normal-form compilation failed"
+
+normalFormTables :: forall a b. (IsNat a, IsNat b) => Maybe [[Integer]]
+normalFormTables = map images <$> normalFormMaps @a @b
+
+normalFormMaps :: forall a b. (IsNat a, IsNat b) => Maybe [Simplex a b]
+normalFormMaps = map interpret <$> NF.enumerate @a @b normalForms
 
 data SomePath where
   SomePath :: forall a b. (IsNat a, IsNat b) => Paths (PTH a :: PATHS Generator) (PTH b) -> SomePath

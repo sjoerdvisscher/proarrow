@@ -70,12 +70,8 @@ import Proarrow.Object (SomeOf (..), pattern Objs)
 import Proarrow.Optic.Iso ()
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Representable (Rep)
-import Proarrow.Tools.HypergraphRewrite
-  ( Direction (..)
-  , Rule
-  , subgraphRuleWithDirection
-  , withSortParameters
-  )
+import Proarrow.Tools.HypergraphRewrite (Rule, withSortParameters)
+import Proarrow.Tools.HypergraphRewrite.Laws (Direction (..), subgraphRuleWithDirection)
 import Proarrow.Tools.Laws (Equation, Labelled (..), LawBody, Laws (..), ProEquation (..), lawName, withSides)
 
 -- | Named generators with arbitrary free-object endpoints, including compound

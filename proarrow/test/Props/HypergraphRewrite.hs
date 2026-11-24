@@ -20,6 +20,9 @@ import Proarrow.Category.Instance.OpenHypergraph
   ( Box (..)
   , OPENHG
   , SortList
+  , W1
+  , W2
+  , W3
   , Wires
   , isomorphic
   , sortList
@@ -684,13 +687,13 @@ data PLabel a = Phase String a | Pair a a | Marker String
   deriving (Eq, Show, Functor, Foldable, Traversable)
 
 type PGraph a = OPENHG () (PLabel a)
-type POpen a = Wires '[ '()] :: PGraph a
+type POpen a = Wires W1 :: PGraph a
 type PClosed a = Wires '[] :: PGraph a
 
 pdiagram
   :: (SortList as, SortList bs)
   => Int -> [Int] -> [Int] -> [Box (PLabel a) Int] -> (Wires as :: PGraph a) ~> Wires bs
-pdiagram n = unsafeOpenHypergraph (concat (replicate n (sortList @() @'[ '()])))
+pdiagram n = unsafeOpenHypergraph (concat (replicate n (sortList @() @W1)))
 
 pchain :: a -> a -> POpen a ~> POpen a
 pchain a b = pdiagram 3 [0] [2] [Box (Phase "z" a) [0] [1], Box (Phase "z" b) [1] [2]]
@@ -870,7 +873,7 @@ portTests =
             ins <- Falsify.gen (Gen.elem ([] :| [[0], [0, 1], [1, 0, 1], [0, 0, 0, 1]]))
             outs <- Falsify.gen (Gen.elem ([] :| [[1], [1, 0], [0, 0, 1]]))
             let graph label =
-                  unsafeOpenHypergraph (sortList @() @'[ '(), '()]) [] [] [Box label ins outs]
+                  unsafeOpenHypergraph (sortList @() @W2) [] [] [Box label ins outs]
                     :: (Wires '[] :: OPENHG () String) ~> Wires '[]
             check
               "capture changed ports"
@@ -878,7 +881,7 @@ portTests =
     , testProperty "adjacent captures retain every split in order, including empty suffixes and aliases" $ do
         let pg = R.PortGraph @() [] []
             graph name ins outs =
-              unsafeOpenHypergraph (sortList @() @'[ '(), '()]) [] [] [Box name ins outs]
+              unsafeOpenHypergraph (sortList @() @W2) [] [] [Box name ins outs]
                 :: (Wires '[] :: OPENHG () String) ~> Wires '[]
             lhs = pg [Box "old" [] [R.Capture "prefix", R.Capture "suffix"]]
             rhs = pg [Box "new" [R.Capture "prefix"] [R.Capture "suffix"]]
@@ -894,11 +897,11 @@ portTests =
               )
               [[], [0], [0, 1], [0, 1, 0]]
     , testProperty "a known port anchor retains every occurrence after a variable prefix" $ do
-        let pg = R.PortGraph (sortList @() @'[ '()]) [0]
+        let pg = R.PortGraph (sortList @() @W1) [0]
             lhs = pg [Box "old" [] [R.Capture "prefix", R.Node 0, R.Capture "suffix"], Box "anchor" [] [R.Node 0]]
             rhs = pg [Box "new" [R.Capture "prefix"] [R.Node 0, R.Capture "suffix"], Box "anchor" [] [R.Node 0]]
             graph name ins outs =
-              unsafeOpenHypergraph (sortList @() @'[ '(), '()]) [] [] [Box name ins outs, Box "anchor" [] [0]]
+              unsafeOpenHypergraph (sortList @() @W2) [] [] [Box name ins outs, Box "anchor" [] [0]]
                 :: (Wires '[] :: OPENHG () String) ~> Wires '[]
         case R.portRule lhs rhs >>= \r -> compileRules [(0 :: Int, r)] of
           Left err -> testFailed err
@@ -914,7 +917,7 @@ portTests =
     , testProperty "captures preserve ordered sequences, including repeated names" $ do
         let pg = R.PortGraph @() [] []
             graph ins outs =
-              unsafeOpenHypergraph (sortList @() @'[ '(), '()]) [] [] [Box "old" ins outs]
+              unsafeOpenHypergraph (sortList @() @W2) [] [] [Box "old" ins outs]
                 :: (Wires '[] :: OPENHG () String) ~> Wires '[]
         case R.portRule (pg [Box "old" [R.Capture "same"] [R.Capture "same"]]) (pg [Box "new" [] [R.Capture "same"]]) of
           Left err -> testFailed err
@@ -923,7 +926,7 @@ portTests =
             expect "different multiplicity matched" 0 (length (rewrites r (graph [0, 0] [0])))
             expect "same sequence did not match" 1 (length (rewrites r (graph [1, 0, 1] [1, 0, 1])))
     , testProperty "position-free incidence finds connections after variable prefixes" $ do
-        let sorts2 = sortList @() @'[ '()]
+        let sorts2 = sortList @() @W1
             lhs =
               R.PortGraph
                 sorts2
@@ -945,10 +948,10 @@ portTests =
               (length (rewrites r (graph [Box "left" [] [1, 0, 2], Box "right" [] [3, 4, 0], Box "tap" [0] []])))
             let exposed =
                   unsafeOpenHypergraph (concat (replicate 5 sorts2)) [0] [] [Box "left" [] [1, 0, 2], Box "right" [] [3, 4, 0]]
-                    :: (Wires '[ '()] :: OPENHG () String) ~> Wires '[]
+                    :: (Wires W1 :: OPENHG () String) ~> Wires '[]
             expect "host boundary was deleted" 0 (length (rewrites r exposed))
     , testProperty "captured aliases of internal nodes cannot be deleted" $ do
-        let ss = sortList @() @'[ '()]
+        let ss = sortList @() @W1
             lhs = R.PortGraph ss [] [Box "old" [] [R.Node 0, R.Capture "rest"]]
             rhs = R.PortGraph [] [] [Box "new" [] [R.Capture "rest"]]
             graph = unsafeOpenHypergraph ss [] [] [Box "old" [] [0, 0]] :: (Wires '[] :: OPENHG () String) ~> Wires '[]
@@ -956,10 +959,10 @@ portTests =
           Left err -> testFailed err
           Right r -> expect "deleted a captured node" 0 (length (rewrites r graph))
     , testProperty "a capture can alias an explicit interface node" $ do
-        let ss = sortList @() @'[ '()]
+        let ss = sortList @() @W1
             lhs = R.PortGraph ss [0] [Box "old" [] [R.Node 0, R.Capture "rest"]]
             rhs = R.PortGraph ss [0] [Box "new" [] [R.Capture "rest", R.Node 0]]
-            graph label = unsafeOpenHypergraph ss [0] [0] [Box label [] [0, 0]] :: (Wires '[ '()] :: OPENHG () String) ~> Wires '[ '()]
+            graph label = unsafeOpenHypergraph ss [0] [0] [Box label [] [0, 0]] :: (Wires W1 :: OPENHG () String) ~> Wires W1
         case R.portRule lhs rhs of
           Left err -> testFailed err
           Right r -> check "interface alias split" (case rewrites r (graph "old") of [g] -> isomorphic (graph "new") g; _ -> False)
@@ -976,7 +979,7 @@ portTests =
     , testProperty "independent captured matches can share preserved nodes in one batch" $ do
         let pg = R.PortGraph @() [] []
             graph label =
-              unsafeOpenHypergraph (sortList @() @'[ '(), '(), '()]) [] [] [Box label [] [0, 1], Box label [] [0, 2]]
+              unsafeOpenHypergraph (sortList @() @W3) [] [] [Box label [] [0, 1], Box label [] [0, 2]]
                 :: (Wires '[] :: OPENHG () String) ~> Wires '[]
         case R.portRule (pg [Box "old" [] [R.Capture "legs"]]) (pg [Box "new" [] [R.Capture "legs"]]) of
           Left err -> testFailed err
@@ -989,7 +992,7 @@ portTests =
             build sizes =
               let n = sizes M.! "legs"
               in R.PortGraph
-                   (concat (replicate n (sortList @() @'[ '()])))
+                   (concat (replicate n (sortList @() @W1)))
                    []
                    ( Box (Phase "new" (Variable "a" + 1)) [] [R.Node i | i <- [0 .. n - 1]]
                        : [Box (Marker "link") [R.Element "legs" i] [R.Node i] | i <- [0 .. n - 1]]
@@ -1009,14 +1012,14 @@ portTests =
     , testProperty "literal and variable-arity signatures can both match a box" $ do
         let pg = R.PortGraph @() [] []
             graph label =
-              unsafeOpenHypergraph (sortList @() @'[ '(), '()]) [] [] [Box label [] [0, 1]]
+              unsafeOpenHypergraph (sortList @() @W2) [] [] [Box label [] [0, 1]]
                 :: (Wires '[] :: OPENHG () String) ~> Wires '[]
         case R.portRule (pg [Box "old" [] [R.Capture "legs"]]) (pg [Box "variable" [] [R.Capture "legs"]]) >>= \variadic ->
           rule (graph "old") (graph "literal") >>= \literal -> compileRules [(1 :: Int, literal), (0, variadic)] of
           Left err -> testFailed err
           Right compiled -> expect "overlapping signatures lost" [0, 1] (map fst (rewritesCompiled compiled (graph "old")))
     , testProperty "invalid port templates fail at construction" $ do
-        let ss = sortList @() @'[ '()]
+        let ss = sortList @() @W1
             good = R.PortGraph ss [0] [Box "old" [] [R.Node 0, R.Capture "legs"]]
             rhs = R.PortGraph ss [0] [Box "new" [] [R.Capture "legs"]]
         check "bad left node" (isLeft (R.portRule (R.PortGraph ss [0] [Box "old" [] [R.Node 1]]) rhs))

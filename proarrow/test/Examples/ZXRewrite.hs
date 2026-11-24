@@ -26,6 +26,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (TestOptions (..), testProperty, testPropertyWith)
 import Prelude hiding (id, (**), (.))
 
+import Proarrow.Category.Instance.OpenHypergraph (W1, W2, W5)
 import Proarrow.Category.Instance.OpenHypergraph qualified as HG
 import Proarrow.Category.Instance.ZX qualified as ZX
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal (..))
@@ -45,8 +46,8 @@ data Generator a = Spider Colour a | Hadamard | Scalar Int Rational | Selected a
   deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
 
 type Diagram = HG.OPENHG () (Generator Rational)
-type Q = HG.Wires '[ '()] :: Diagram
-type QQ = HG.Wires '[ '(), '()] :: Diagram
+type Q = HG.Wires W1 :: Diagram
+type QQ = HG.Wires W2 :: Diagram
 type SomeDiagram = HG.SomeHypergraph () (Generator Rational)
 
 phase :: Rational -> Rational
@@ -66,7 +67,7 @@ x = spider X
 -- Like the existing ZX.cnot, this uses unnormalised spiders: the diagram
 -- denotes CNOT / sqrt 2. We retain this scalar throughout simplification.
 cnot :: QQ ~> QQ
-cnot = (obj @Q ** spider @'[ '(), '()] @'[ '()] X 0) . (spider @'[ '()] @'[ '(), '()] Z 0 ** obj @Q)
+cnot = (obj @Q ** spider @W2 @W1 X 0) . (spider @W1 @W2 Z 0 ** obj @Q)
 
 -- A gate list keeps generation independent of diagram construction. Qubits
 -- are numbered left to right; phases are rational multiples of pi.
@@ -149,7 +150,7 @@ before :: QQ ~> QQ
 before = (z (1 / 4) ** h) . (z (-(1 / 4)) ** h) . cnot . ((h . x (1 / 4) . h) ** id)
 
 sorts :: Int -> [HG.SomeSort ()]
-sorts n = concat (replicate n (HG.sortList @() @'[ '()]))
+sorts n = concat (replicate n (HG.sortList @() @W1))
 
 ports :: HG.Box l n -> [n]
 ports (HG.Box _ is os) = is ++ os
@@ -1308,7 +1309,7 @@ graphLikeTests =
     "graph-like normalisation"
     [ testProperty "identity and swap preserve the boundary order" $ do
         let identity = obj @Q
-            crossed = HG.unsafeOpenHypergraph @_ @'[ '(), '()] @'[ '(), '()] (sorts 2) [0, 1] [1, 0] []
+            crossed = HG.unsafeOpenHypergraph @_ @W2 @W2 (sorts 2) [0, 1] [1, 0] []
         checkGraphLikeNormalisation identity
         checkGraphLikeNormalisation crossed
         case normaliseGraphLike identity of
@@ -1318,8 +1319,8 @@ graphLikeTests =
           Left err -> testFailed err
           Right normal -> checkMatrix normal (matrixEntries (swap @Nat @1 @1))
     , testProperty "cups and caps keep their repeated boundary references" $ do
-        let cup = HG.unsafeOpenHypergraph @_ @'[] @'[ '(), '()] (sorts 1) [] [0, 0] []
-            cap = HG.unsafeOpenHypergraph @_ @'[ '(), '()] @'[] (sorts 1) [0, 0] [] []
+        let cup = HG.unsafeOpenHypergraph @_ @'[] @W2 (sorts 1) [] [0, 0] []
+            cap = HG.unsafeOpenHypergraph @_ @W2 @'[] (sorts 1) [0, 0] [] []
         checkGraphLikeNormalisation cup
         checkGraphLikeNormalisation cap
         case normaliseGraphLike cup of
@@ -1334,15 +1335,15 @@ graphLikeTests =
           Left err -> testFailed err
           Right normal -> checkMatrix normal (matrixEntries (ZX.hadamard @1))
     , testProperty "a multi-boundary phase spider is separated by identity paths" $ do
-        let graph = spider @'[ '(), '()] @'[ '()] Z (1 / 4)
+        let graph = spider @W2 @W1 Z (1 / 4)
         checkGraphLikeNormalisation graph
         case normaliseGraphLike graph of
           Left err -> testFailed err
           Right normal -> checkMatrix normal (matrixEntries (ZX.zSpider (pi / 4) :: ZX.ZX 2 1))
     , testProperty "implicit fan-out, states and discards become explicit spiders" $ do
-        let copy = HG.unsafeOpenHypergraph @_ @'[ '()] @'[ '(), '()] (sorts 1) [0] [0, 0] []
-            state = HG.unsafeOpenHypergraph @_ @'[] @'[ '()] (sorts 1) [] [0] []
-            discard = HG.unsafeOpenHypergraph @_ @'[ '()] @'[] (sorts 1) [0] [] []
+        let copy = HG.unsafeOpenHypergraph @_ @W1 @W2 (sorts 1) [0] [0, 0] []
+            state = HG.unsafeOpenHypergraph @_ @'[] @W1 (sorts 1) [] [0] []
+            discard = HG.unsafeOpenHypergraph @_ @W1 @'[] (sorts 1) [0] [] []
         checkGraphLikeNormalisation copy
         checkGraphLikeNormalisation state
         checkGraphLikeNormalisation discard
@@ -1466,7 +1467,7 @@ automaticTests =
             checkMatrix result (matrixEntries (ZX.xSpider (pi / 2) :: ZX.ZX 1 1))
     , testProperty "boundary padding is preserved without entering a cleanup cycle" $ do
         checkAutomaticSimplification (obj @Q)
-        let copy = HG.unsafeOpenHypergraph @_ @'[ '()] @'[ '(), '()] (sorts 1) [0] [0, 0] []
+        let copy = HG.unsafeOpenHypergraph @_ @W1 @W2 (sorts 1) [0] [0, 0] []
         checkAutomaticSimplification copy
         case normaliseGraphLike copy of
           Left err -> testFailed err
@@ -1960,7 +1961,7 @@ boundaryPivotTests =
           )
           [1 / 4, 1]
     , testProperty "identity, Hadamard, phase and copy padding do not cause reverse-pivot cycles" $ do
-        let copy = HG.unsafeOpenHypergraph @_ @'[ '()] @'[ '(), '()] (sorts 1) [0] [0, 0] []
+        let copy = HG.unsafeOpenHypergraph @_ @W1 @W2 (sorts 1) [0] [0, 0] []
         checkAutomaticSimplification copy
         mapM_ checkAutomaticSimplification [obj @Q, h, z (1 / 4)]
         mapM_
@@ -2234,7 +2235,7 @@ test =
         case fusionExample c a b left right shared of { HG.SomeHypergraph graph -> checkOptimisation graph }
     , testProperty "compiled captures handle degrees created by earlier fusions" $ do
         let graph =
-              HG.unsafeOpenHypergraph @_ @'[] @'[ '(), '(), '(), '(), '()]
+              HG.unsafeOpenHypergraph @_ @'[] @W5
                 (sorts 7)
                 []
                 [2, 3, 4, 5, 6]
@@ -2262,7 +2263,7 @@ test =
         case rules of
           Left err -> testFailed err
           Right compiled -> do
-            let (n, after) = R.rewriteBatchCompiled compiled (HG.unsafeOpenHypergraph @_ @'[ '(), '()] @'[ '(), '()] ns is os states)
+            let (n, after) = R.rewriteBatchCompiled compiled (HG.unsafeOpenHypergraph @_ @W2 @W2 ns is os states)
             expect "two disjoint rewrites" 2 n
             expect "one phase remains" 1 (boxCount after)
             checkMatrix after (matrixEntries ((ZX.zSpider (pi * (1 / 3 + 1 / 5)) :: ZX.ZX 1 1) ** obj @1))
@@ -2280,7 +2281,7 @@ test =
         checkOptimisation graph
         checkMatrix graph Map.empty
     , testProperty "cups, repeated boundaries and isolated scalar wires survive interpretation" $ do
-        let cup = HG.unsafeOpenHypergraph @_ @'[] @'[ '(), '()] (sorts 1) [] [0, 0] []
+        let cup = HG.unsafeOpenHypergraph @_ @'[] @W2 (sorts 1) [] [0, 0] []
             scalar = HG.unsafeOpenHypergraph @_ @'[] @'[] (sorts 1) [] [] []
         checkMatrix cup (matrixEntries (ZX.zSpider 0 :: ZX.ZX 0 2))
         checkMatrix scalar (Map.singleton (0, 0) 2)

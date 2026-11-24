@@ -17,10 +17,13 @@ import Examples.Free qualified as FreeExample
 import Examples.Graph qualified as Graph
 import Examples.HypergraphRewrite qualified as LawRewriting
 import Examples.IntComposition qualified as IntComposition
+import Examples.KnuthBendix.Bimonoid qualified as Bimonoid
 import Examples.KnuthBendix.Codec qualified as Codec
 import Examples.KnuthBendix.FinSet qualified as FinSetRewrite
+import Examples.KnuthBendix.Frobenius qualified as Frobenius
 import Examples.KnuthBendix.KanExtension qualified as KanExtension
 import Examples.KnuthBendix.KanPushout qualified as KanPushout
+import Examples.KnuthBendix.MonoidDiagrams qualified as MonoidDiagrams
 import Examples.KnuthBendix.Simplex qualified as SimplexRewrite
 import Examples.Learning qualified as Learning
 import Examples.LinearLogic qualified as LinearLogic
@@ -54,6 +57,7 @@ import Props.Finitary.Graph qualified as FinitaryGraph
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
 import Props.HypergraphRewrite qualified as HypergraphRewrite
+import Props.HypergraphRewrite.Completion qualified as HypergraphCompletion
 import Props.IntConstruction qualified as IntConstruction
 import Props.Kleisli qualified as Kleisli
 import Props.KnuthBendix qualified as KnuthBendix
@@ -98,6 +102,7 @@ main =
           , Cost.test
           , DPO.test
           , HypergraphRewrite.test
+          , HypergraphCompletion.test
           , KnuthBendix.test
           , Dot.test
           , FinHask.test
@@ -149,6 +154,9 @@ main =
           , KanPushout.test
           , SimplexRewrite.test
           , FinSetRewrite.test
+          , MonoidDiagrams.test
+          , Bimonoid.test
+          , Frobenius.test
           , STLC.test
           , ULC.test
           , IntComposition.test

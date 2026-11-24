@@ -27,6 +27,7 @@ import Prelude hiding (id, (**), (.))
 import Examples.Circuit (counter)
 import Examples.CircuitRewrite.Workloads qualified as Workloads
 import Proarrow.Category.Instance.Circuit
+import Proarrow.Category.Instance.OpenHypergraph (W1)
 import Proarrow.Category.Instance.OpenHypergraph qualified as HG
 import Proarrow.Category.Instance.Simulator (runSimulator)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
@@ -178,7 +179,7 @@ lhs ==> rhs = HG.reifySorts @() nodeSorts \ @as -> builtIn do
     rightNodes = nubOrd (images ++ concat [ins ++ outs | HG.Box _ ins outs <- replacement])
     indices = IM.fromList (zip rightNodes [0 ..])
     renumber = (indices IM.!)
-    rightSorts = concat (replicate (length rightNodes) (HG.sortList @() @'[ '()]))
+    rightSorts = concat (replicate (length rightNodes) (HG.sortList @() @W1))
 
 singleOutput :: [Int] -> Int
 singleOutput [n] = n
@@ -229,7 +230,7 @@ graph
   -> [Int]
   -> [HG.Box Gate Int]
   -> (HG.Wires as :: HG.OPENHG () Gate) ~> HG.Wires bs
-graph n = HG.unsafeOpenHypergraph (concat (replicate n (HG.sortList @() @'[ '()])))
+graph n = HG.unsafeOpenHypergraph (concat (replicate n (HG.sortList @() @W1)))
 
 expectImportError
   :: forall a b

@@ -24,6 +24,13 @@ module Proarrow.Category.Instance.OpenHypergraph
   , SORTED
   , reifySorts
 
+    -- * Unit-sorted wire lists
+  , W1
+  , W2
+  , W3
+  , W4
+  , W5
+
     -- * Open hypergraphs
   , OPENHG
   , Wires
@@ -260,6 +267,21 @@ type OPENHG s l = DECCOSPAN (Boxes l :: SORTED s -> Type)
 -- | The boundary with a wire for each sort in the list.
 type Wires :: forall s l. [s] -> OPENHG s l
 type Wires xs = DC (SUB (FH (Port xs)))
+
+-- | One unit-sorted wire.
+type W1 = '[ '()]
+
+-- | Two unit-sorted wires.
+type W2 = '[ '(), '()]
+
+-- | Three unit-sorted wires.
+type W3 = '[ '(), '(), '()]
+
+-- | Four unit-sorted wires.
+type W4 = '[ '(), '(), '(), '()]
+
+-- | Five unit-sorted wires.
+type W5 = '[ '(), '(), '(), '(), '()]
 
 -- | The sorts of the wires of a boundary.
 type WireSorts :: forall s l. OPENHG s l -> [s]

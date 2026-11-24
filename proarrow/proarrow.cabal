@@ -81,6 +81,7 @@ library
         Proarrow.Category.Enriched.Quantale
         Proarrow.Category.Enriched.Thin
         Proarrow.Category.Enriched.Thin.Composition
+        Proarrow.Category.Instance.Bimonoid
         Proarrow.Category.Instance.Bool
         Proarrow.Category.Instance.Circuit
         Proarrow.Category.Instance.Collage
@@ -249,10 +250,12 @@ library
         Proarrow.Tools.SMC.Internal.Term
         Proarrow.Tools.DPO
         Proarrow.Tools.HypergraphRewrite
+        Proarrow.Tools.HypergraphRewrite.Completion
+        Proarrow.Tools.HypergraphRewrite.Free
+        Proarrow.Tools.HypergraphRewrite.Laws
         Proarrow.Tools.Laws
         Proarrow.Tools.KnuthBendix
         Proarrow.Tools.KnuthBendix.NormalForms
-        Proarrow.Tools.HypergraphRewrite.Free
         Proarrow.Tools.Diagrams.Dot
         Proarrow.Tools.Diagrams.Svg
         Proarrow.Universal
@@ -269,6 +272,8 @@ library
     hs-source-dirs:   src
     other-modules:
         Proarrow.Category.Instance.TensorNetwork.Blas
+        Proarrow.Tools.HypergraphRewrite.Internal
+        Proarrow.Tools.HypergraphRewrite.Internal.Matcher
     if flag(blas)
         cpp-options: -DBLAS
         if os(darwin)
@@ -313,10 +318,13 @@ test-suite test
         Examples.Readme
         Examples.Graph
         Examples.HypergraphRewrite
+        Examples.KnuthBendix.Bimonoid
         Examples.KnuthBendix.Codec
         Examples.KnuthBendix.FinSet
+        Examples.KnuthBendix.Frobenius
         Examples.KnuthBendix.KanExtension
         Examples.KnuthBendix.KanPushout
+        Examples.KnuthBendix.MonoidDiagrams
         Examples.KnuthBendix.Simplex
         Examples.UntypedLambdaCalculus
         Examples.SimplyTypedLambdaCalculus
@@ -342,6 +350,7 @@ test-suite test
         Props.Circuit
         Props.DPO
         Props.HypergraphRewrite
+        Props.HypergraphRewrite.Completion
         Props.KnuthBendix
         Props.Discrete
         Props.Cospan

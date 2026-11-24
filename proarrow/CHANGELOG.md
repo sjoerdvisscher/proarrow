@@ -12,16 +12,21 @@
   and monic arrows and find epi–mono factorisations.
   `NormalForms.renderDot` plots the automaton for a chosen hom-set.
   Examples cover a codec, an infinite induced action, finite-set pushouts
-  and bounded presentations of Simplex and FinSet.
+  and bounded presentations of Simplex and FinSet with shared monoid diagrams.
 * `Simplex` supports equalizers, coequalizers, epi–mono factorisation, `Comonoid Z`
   and `Sized`.
+* `Proarrow.Category.Instance.Bimonoid`: the walking bimonoid with ordered-path
+  normal forms, a dagger and a zero object.
 * `Paths.path` builds raw paths from a variadic list of typed generators.
 * `Paths.EqGen` compares both endpoints through equality of their promoted pairs.
 * `Proarrow.Tools.HypergraphRewrite`: open and closed graph rewriting with compatible
   batches, indexed matching, parameters and bounded normalisation. Whole-arrow captures
   support reuse, copying and deletion; `compileReducingRules` ensures termination by
-  requiring fewer boxes. Left rule boundaries must be injective.
-  `OpenHypergraph.hypergraphParts` exposes graph structure.
+  requiring fewer boxes. Write oriented rules as `lhs ==> rhs`.
+* `Proarrow.Tools.HypergraphRewrite.Completion`: bounded Knuth–Bendix-style
+  completion for string diagrams and open hypergraphs.
+* `Proarrow.Tools.HypergraphRewrite.Laws`: instantiate named categorical laws as
+  hypergraph rewrite rules.
 * `Proarrow.Tools.HypergraphRewrite.Free`: compile `FREE` syntax and `Laws` into graph rules
   with inferred object parameters. Examples cover products, coproducts, terminal objects,
   closed β/η laws, circuit optimisation and ZX simplification.
