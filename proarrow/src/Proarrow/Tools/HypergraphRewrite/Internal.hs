@@ -9,14 +9,26 @@ module Proarrow.Tools.HypergraphRewrite.Internal
   , rule
   , Parameter (Literal, Variable)
   , mapParameter
+  , zipParameters
   , parameterRule
   , subgraphRule
   , withSortParameters
   , Port (..)
+  , CaptureEnd (..)
+  , PortSymmetry (..)
+  , symmetricInputs
+  , symmetricOutputs
   , PortGraph (..)
+  , mapPortLabels
+  , PortReplacement (..)
+  , instantiatePorts
+  , checkPortLeft
   , portRule
   , parameterPortRule
+  , parameterPortExample
+  , parameterPortVariants
   , parameterPortRuleWith
+  , parameterPortRuleMap
   , rulePattern
   , hasSubgraphs
   , LabelTest (..)
@@ -45,7 +57,7 @@ import Data.Foldable (toList)
 import Data.IntMap.Strict qualified as IM
 import Data.IntSet qualified as IS
 import Data.Kind (Type)
-import Data.List (genericTake, mapAccumL)
+import Data.List (genericTake, mapAccumL, permutations)
 import Data.Map.Strict qualified as M
 import Data.Set qualified as S
 import Data.Type.Equality ((:~:) (..))
@@ -75,7 +87,7 @@ data Graph s l = Graph [SomeSort s] [Int] [Int] [Box l Int]
 type Rule :: Kind -> Type -> Type
 data Rule s l
   = Rule (Graph s (LabelTest l)) ([l] -> Maybe (Graph s l))
-  | PortRule (PortGraph s (LabelTest l)) (M.Map String [Int] -> [l] -> Maybe (PortGraph s l))
+  | PortRule (PortGraph s (LabelTest l)) (PortReplacement s l)
   | SortRule ([SomeSort s] -> [SomeSort s] -> [SomeSort s] -> Maybe [SomeSort s]) (Rule s l)
   | SubgraphRule (Graph s (Either l String)) (Graph s (Either l String))
 
@@ -131,12 +143,59 @@ withSortParameters = SortRule
 data Port = Node Int | Capture String | Element String Int
   deriving (Eq, Ord, Show)
 
+-- | Endpoints of a box inserted on a captured leg.
+data CaptureEnd = Outer | Inner
+  deriving (Eq, Ord, Show)
+
+-- | Permitted permutations of a box's ports. Inputs and outputs permute independently.
+data PortSymmetry = OrderedPorts | SymmetricInputs | SymmetricOutputs | SymmetricPorts
+  deriving (Eq, Show)
+
+symmetricInputs, symmetricOutputs :: PortSymmetry -> Bool
+symmetricInputs policy = policy == SymmetricInputs || policy == SymmetricPorts
+symmetricOutputs policy = policy == SymmetricOutputs || policy == SymmetricPorts
+
 -- | A port-rule fragment: sorts of numbered nodes, its explicit interface, and
 -- boxes. Every captured node is also preserved, including aliases between
 -- captures or with explicit interface nodes. RHS numbered nodes are fresh,
 -- except where glued to the left through the two explicit interfaces.
 type PortGraph :: Kind -> Type -> Type
 data PortGraph s l = PortGraph [SomeSort s] [Int] [Box l Port]
+
+data PortReplacement s l where
+  PortTemplate :: PortGraph s l -> PortReplacement s l
+  ParameterPorts
+    :: (Traversable f, Eq a) => [f (Parameter a)] -> PortGraph s (f (Parameter a)) -> PortReplacement s (f a)
+  ComputedPorts
+    :: (Traversable f, Eq a)
+    => [f (Parameter a)]
+    -> (M.Map String Int -> Maybe (PortGraph s (f (Parameter a))))
+    -> PortReplacement s (f a)
+  MappedPorts
+    :: (Traversable f, Eq a)
+    => [f (Parameter a)]
+    -> PortGraph s (f (Parameter a))
+    -> [(String, Box (f (Parameter a)) CaptureEnd)]
+    -> PortReplacement s (f a)
+
+instantiatePorts
+  :: IS.IntSet
+  -> PortReplacement s l
+  -> M.Map String [Int]
+  -> [l]
+  -> Maybe (PortGraph s l, [(String, Box l CaptureEnd)])
+instantiatePorts _ (PortTemplate rhs) _ _ = Just (rhs, [])
+instantiatePorts _ (ParameterPorts lhs rhs) _ labels = (,[]) <$> instantiateParameterPorts lhs rhs labels
+instantiatePorts protected (ComputedPorts lhs build) captures labels = do
+  -- A symbolic marker stands for a sequence of unknown length.
+  unless (IS.null protected || all (all (`IS.notMember` protected)) captures) Nothing
+  rhs <- build (M.map length captures)
+  (,[]) <$> instantiateParameterPorts lhs rhs labels
+instantiatePorts _ (MappedPorts lhs (PortGraph ns boundary rhs) mappings) _ labels = do
+  env <- parameterBindings lhs labels
+  boxes <- traverse (instantiateBox env) rhs
+  mapped <- traverse (traverse (instantiateBox env)) mappings
+  pure (PortGraph ns boundary boxes, mapped)
 
 mapPortLabels :: (l -> m) -> PortGraph s l -> PortGraph s m
 mapPortLabels f (PortGraph ns interface bs) = PortGraph ns interface [Box (f l) i o | Box l i o <- bs]
@@ -153,7 +212,7 @@ portRule :: (DecidableIso s) => PortGraph s l -> PortGraph s l -> Either String 
 portRule lhs rhs = do
   checkPortLeft lhs
   checkPortRight lhs rhs
-  pure (PortRule (mapPortLabels ExactLabel lhs) (\_ _ -> Just rhs))
+  pure (PortRule (mapPortLabels ExactLabel lhs) (PortTemplate rhs))
 
 -- | A port rule with the label parameters of 'parameterRule'. Both its
 -- topology template and parameter names are checked when constructing the rule.
@@ -164,7 +223,95 @@ parameterPortRule lhs rhs = do
   checkPortLeft lhs
   checkPortRight lhs rhs
   checkParameters (portLabels lhs) (portLabels rhs)
-  parameterPortRuleWith lhs (const rhs)
+  pure (PortRule (mapPortLabels (ConstructorLabel . void) lhs) (ParameterPorts (portLabels lhs) rhs))
+
+-- | Insert one copy of a two-ended box on each occurrence in a captured
+-- sequence. The replacement's named capture uses the fresh 'Inner' nodes.
+-- The original captured nodes attach to 'Outer'. The replacement refers to
+-- whole captures, so the operation can also be checked at a symbolic arity.
+parameterPortRuleMap
+  :: (DecidableIso s, Traversable f, Eq (f ()), Typeable f, Eq a)
+  => PortGraph s (f (Parameter a))
+  -> [(String, Box (f (Parameter a)) CaptureEnd)]
+  -> PortGraph s (f (Parameter a))
+  -> Either String (Rule s (f a))
+parameterPortRuleMap lhs mappings rhs@(PortGraph _ _ boxes) = do
+  checkPortLeft lhs
+  checkPortRight lhs rhs
+  let names = S.fromList (map fst mappings)
+      parameters = portLabels lhs
+      indexed Element{} = True
+      indexed _ = False
+      hasEnds (Box _ ins outs) = case ins ++ outs of
+        [a, b] -> a /= b
+        _ -> False
+  unless (S.size names == length mappings && S.isSubsetOf names (captureNames lhs)) $
+    Left "parameterPortRuleMap: expected distinct bound captures"
+  unless (all (hasEnds . snd) mappings) (Left "parameterPortRuleMap: expected one outer and one inner port")
+  when (any indexed [p | box <- boxes, p <- inputs box ++ outputs box]) $
+    Left "parameterPortRuleMap: expected whole captures on the right"
+  checkParameters parameters (portLabels rhs ++ map (label . snd) mappings)
+  pure (PortRule (mapPortLabels (ConstructorLabel . void) lhs) (MappedPorts parameters rhs mappings))
+
+-- | Instantiate the labels of a fixed parameterized port rule for inspection.
+-- The two fragments retain their capture names and numbered interfaces.
+parameterPortExample
+  :: (String -> a) -> Rule s (f a) -> Either String (PortGraph s (f a), PortGraph s (f a))
+parameterPortExample value (PortRule (PortGraph ns boundary boxes) (ParameterPorts patterns rhs)) = do
+  let names = S.unions (map parameterNames (concatMap toList patterns))
+      env = M.fromSet value names
+      instantiate = traverse (`evaluateParameter` env)
+      makeBox (Box _ ins outs) p = (\l -> Box l ins outs) <$> instantiate p
+  labels <- maybe (Left "parameterPortExample: unbound parameter") Right (traverse (uncurry makeBox) (zip boxes patterns))
+  replacement <-
+    maybe
+      (Left "parameterPortExample: replacement rejected its example labels")
+      Right
+      (instantiateParameterPorts patterns rhs (map label labels))
+  pure (PortGraph ns boundary labels, replacement)
+parameterPortExample _ _ = Left "parameterPortExample: expected a parameterized port rule with a fixed replacement"
+
+-- | Expand a fixed parameterized port rule into ordered matching variants.
+-- The classifier sees the label with its parameters erased. Permute only
+-- numbered port lists on the left, preserving the boundary and replacement.
+-- Lists with captures stay ordered. Symmetric lists enumerate all distinct
+-- permutations with the original list first, so use this for small arities.
+parameterPortVariants
+  :: (f () -> PortSymmetry)
+  -> Rule s (f a)
+  -> Either String [Rule s (f a)]
+parameterPortVariants symmetry (PortRule (PortGraph ns boundary boxes) replacement@ParameterPorts{}) =
+  Right [PortRule (PortGraph ns boundary variant) replacement | variant <- traverse variants boxes]
+  where
+    variants box@(Box label' ins outs) = case label' of
+      ConstructorLabel shape ->
+        let policy = symmetry shape
+        in [ Box label' i o
+           | i <- orders (symmetricInputs policy) ins
+           , o <- orders (symmetricOutputs policy) outs
+           ]
+      ExactLabel{} -> [box]
+    orders symmetric ps
+      | symmetric && all numbered ps = distinctPermutations ps
+      | otherwise = [ps]
+    numbered Node{} = True
+    numbered _ = False
+parameterPortVariants _ _ = Left "parameterPortVariants: expected a parameterized port rule with a fixed replacement"
+
+distinctPermutations :: (Ord a) => [a] -> [[a]]
+distinctPermutations xs
+  | M.size counts == length xs = permutations xs
+  | otherwise = xs : filter (/= xs) (arrange counts)
+  where
+    counts = M.fromListWith (+) [(x, 1 :: Int) | x <- xs]
+    arrange remaining
+      | M.null remaining = [[]]
+      | otherwise =
+          [ x : rest
+          | (x, count) <- M.toAscList remaining
+          , let unused = if count == 1 then M.delete x remaining else M.insert x (count - 1) remaining
+          , rest <- arrange unused
+          ]
 
 -- | Build a replacement from capture lengths, for example one Hadamard per
 -- captured leg. 'Element' refers to an individual captured port. The builder
@@ -178,16 +325,25 @@ parameterPortRuleWith
   -> Either String (Rule s (f a))
 parameterPortRuleWith lhs build = do
   checkPortLeft lhs
-  checkParameters (portLabels lhs) []
-  pure (PortRule (mapPortLabels (ConstructorLabel . void) lhs) instantiate)
+  checkParameters parameters []
+  pure (PortRule (mapPortLabels (ConstructorLabel . void) lhs) (ComputedPorts parameters replacement))
   where
-    instantiate captures labels = do
-      let rhs@(PortGraph ns boundary bs) = build (M.map length captures)
+    parameters = portLabels lhs
+    replacement sizes = do
+      let rhs = build sizes
       unless (isRight (checkPortRight lhs rhs)) Nothing
-      unless (isRight (checkParameters (portLabels lhs) (portLabels rhs))) Nothing
-      env <- parameterBindings (portLabels lhs) labels
-      boxes <- traverse (\(Box l i o) -> (\l' -> Box l' i o) <$> traverse (`evaluateParameter` env) l) bs
-      pure (PortGraph ns boundary boxes)
+      unless (isRight (checkParameters parameters (portLabels rhs))) Nothing
+      pure rhs
+
+instantiateParameterPorts
+  :: (Traversable f, Eq a) => [f (Parameter a)] -> PortGraph s (f (Parameter a)) -> [f a] -> Maybe (PortGraph s (f a))
+instantiateParameterPorts lhs (PortGraph ns boundary bs) labels = do
+  env <- parameterBindings lhs labels
+  boxes <- traverse (instantiateBox env) bs
+  pure (PortGraph ns boundary boxes)
+
+instantiateBox :: (Traversable f) => M.Map String a -> Box (f (Parameter a)) n -> Maybe (Box (f a) n)
+instantiateBox env (Box l i o) = (\l' -> Box l' i o) <$> traverse (`evaluateParameter` env) l
 
 captureNames :: PortGraph s l -> S.Set String
 captureNames (PortGraph _ _ bs) = S.fromList [name | b <- bs, Capture name <- inputs b ++ outputs b]
@@ -248,6 +404,7 @@ mapParameter :: (a -> a) -> Parameter a -> Parameter a
 mapParameter f (Literal a) = Literal (f a)
 mapParameter f p = Computed (parameterNames p) (fmap f . evaluateParameter p)
 
+-- | Combine two replacement expressions, for example by adding phases modulo two.
 zipParameters :: (a -> a -> a) -> Parameter a -> Parameter a -> Parameter a
 zipParameters f (Literal a) (Literal b) = Literal (f a b)
 zipParameters f a b = Computed (S.union (parameterNames a) (parameterNames b)) \env ->
@@ -375,7 +532,23 @@ sameGraph :: (Eq l, DecidableIso s) => Graph s l -> Graph s l -> Bool
 sameGraph lhs@(Graph ls li lo lb) rhs@(Graph rs ri ro rb) =
   length ls == length rs
     && length lb == length rb
-    && any (\((m, _), _) -> map (m IM.!) li == ri && map (m IM.!) lo == ro) (matches (mapLabels ExactLabel lhs) rhs)
+    && length li == length ri
+    && length lo == length ro
+    && sameMultiset sameSort ls rs
+    && sameMultiset (==) (map boxShape lb) (map boxShape rb)
+    && not (null (matchesWithBindings (zip li ri ++ zip lo ro) (mapLabels ExactLabel lhs) rhs))
+  where
+    boxShape (Box l ins outs) = (l, length ins, length outs, snd (mapAccumL numberPort IM.empty (ins ++ outs)))
+    -- Number each node by its first occurrence, across both port lists.
+    numberPort seen node = case IM.lookup node seen of
+      Just number -> (seen, number)
+      Nothing ->
+        let number = IM.size seen
+        in (IM.insert node number seen, number)
+    sameMultiset _ [] ys = null ys
+    sameMultiset equal (x : xs) ys = case break (equal x) ys of
+      (_, []) -> False
+      (before, _ : after) -> sameMultiset equal xs (before ++ after)
 
 graph :: (a :: OPENHG s l) ~> b -> Graph s l
 graph h = let (ns, i, o, bs) = hypergraphParts h in Graph ns i o bs
@@ -405,8 +578,12 @@ nonConflictingBy deletions candidates = reverse chosen
            else state
 
 matches :: (Eq l, DecidableIso s) => Graph s (LabelTest l) -> Graph s l -> [(Match, [l])]
-matches (Graph ns li lo boxes) (Graph hs hi ho hostBoxes) = do
-  (nodes, used, labels) <- matchBoxes plans (IM.empty, IS.empty) IS.empty
+matches = matchesWithBindings []
+
+matchesWithBindings :: (Eq l, DecidableIso s) => [(Int, Int)] -> Graph s (LabelTest l) -> Graph s l -> [(Match, [l])]
+matchesWithBindings bindings (Graph ns li lo boxes) (Graph hs hi ho hostBoxes) = do
+  initial <- maybe [] pure (foldM extend (IM.empty, IS.empty) bindings)
+  (nodes, used, labels) <- matchBoxes plans initial IS.empty
   match <- complete [0 .. V.length patternSorts - 1] nodes used
   pure (match, labels)
   where

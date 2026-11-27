@@ -1394,12 +1394,17 @@ renderEquationWith o (Svg _ l) (Svg _ r) = sideBySide @as @bs o [l, r]
 -- the boundary labels, stretched to the height of the tallest, and with an equals sign between
 -- each and the next.
 sideBySide :: forall (as :: [W]) (bs :: [W]). (IsList as, IsList bs) => Options -> [Diagram] -> String
-sideBySide o ds =
+sideBySide o = sideBySideWithBoundary o (wires @as) (wires @bs)
+
+-- | Lay out diagram bodies with caller-supplied labels and styles for their
+-- shared input and output positions.
+sideBySideWithBoundary :: Options -> [(String, WireKind)] -> [(String, WireKind)] -> [Diagram] -> String
+sideBySideWithBoundary o ins outs ds =
   let ls = map (layout o) ds
       h = maximum (0 : map layoutHeight ls)
       gs = [stretch h (toGeo (max h slot) l) | l <- ls]
       bands = map boundaryBands gs
-      side = framed (maximum (0 : map fst bands)) (maximum (0 : map snd bands)) (visible o (wires @as)) (visible o (wires @bs))
+      side = framed (maximum (0 : map fst bands)) (maximum (0 : map snd bands)) (visible o ins) (visible o outs)
       fs = map side gs
       -- each side starts where the one before it ends, with room for the equals sign between
       offsets = scanl (\x f -> x + geoWidth f + 48) 0 fs

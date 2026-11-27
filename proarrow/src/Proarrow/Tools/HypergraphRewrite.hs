@@ -15,14 +15,20 @@ module Proarrow.Tools.HypergraphRewrite
   , (==>)
   , Parameter (Literal, Variable)
   , mapParameter
+  , zipParameters
   , parameterRule
   , subgraphRule
   , withSortParameters
   , Port (..)
+  , CaptureEnd (..)
+  , PortSymmetry (..)
   , PortGraph (..)
   , portRule
   , parameterPortRule
+  , parameterPortExample
+  , parameterPortVariants
   , parameterPortRuleWith
+  , parameterPortRuleMap
 
     -- * Rewriting
   , rewrites
@@ -48,12 +54,14 @@ import Proarrow.Category.Instance.OpenHypergraph (OPENHG, WireSorts, Wires, unsa
 import Proarrow.Core (CategoryOf (..), (//))
 import Proarrow.Optic.Iso (DecidableIso)
 import Proarrow.Tools.HypergraphRewrite.Internal
-  ( Graph (..)
+  ( CaptureEnd (..)
+  , Graph (..)
   , NormalisationResult (..)
   , NormalisationStatus (..)
   , Parameter (Literal, Variable)
   , Port (..)
   , PortGraph (..)
+  , PortSymmetry (..)
   , Prepared
   , RewriteLimits (..)
   , Rule (..)
@@ -63,8 +71,11 @@ import Proarrow.Tools.HypergraphRewrite.Internal
   , matches
   , nonConflictingBy
   , normaliseBy
+  , parameterPortExample
   , parameterPortRule
+  , parameterPortRuleMap
   , parameterPortRuleWith
+  , parameterPortVariants
   , parameterRule
   , portRule
   , replaceMany
@@ -73,6 +84,7 @@ import Proarrow.Tools.HypergraphRewrite.Internal
   , subgraphRule
   , unlimitedRewrites
   , withSortParameters
+  , zipParameters
   )
 import Proarrow.Tools.HypergraphRewrite.Internal.Matcher (CompiledRules (..), compileRuleSet, compiledMatches)
 

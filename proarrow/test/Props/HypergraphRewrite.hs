@@ -987,6 +987,30 @@ portTests =
             let (n, result) = rewriteBatch r (graph "old")
             expect "both matches applied" 2 n
             check "sharing lost" (isomorphic (graph "new") result)
+    , testProperty "a repeated binary connection can share one of its wires" $ do
+        let sorts = concat (replicate 2 (sortList @() @W2))
+            boundary = [0 .. 3]
+            left = [R.Node 0, R.Capture "left", R.Node 2]
+            right = [R.Node 1, R.Capture "right", R.Node 3]
+            link a b = Box "link" [] [a, b]
+            lhs =
+              R.PortGraph
+                sorts
+                boundary
+                [link (R.Node 0) (R.Node 1), Box "left" [] left, Box "right" [] right, link (R.Node 2) (R.Node 3)]
+            rhs = R.PortGraph sorts boundary [Box "joined" [] (left ++ right)]
+            graph boxes = unsafeOpenHypergraph sorts [] [] boxes :: (Wires '[] :: OPENHG () String) ~> Wires '[]
+            path = [link 0 1, Box "left" [] [0, 2], Box "right" [] [1, 3]]
+        r <- either testFailed pure (R.portRule lhs rhs)
+        expect "one link cannot stand in for both fixed boxes" 0 (length (rewrites r (graph path)))
+        mapM_
+          ( \endpoint ->
+              let shared = Box "shared" [] [endpoint]
+              in case rewrites r (graph (path ++ [link 2 3, shared])) of
+                   [target] -> check "either link may have another incidence" (isomorphic (graph [shared, Box "joined" [] [0, 2, 1, 3]]) target)
+                   _ -> testFailed "expected one match using the shared wire"
+          )
+          [0, 2]
     , testProperty "length-dependent replacements allocate fresh nodes per captured occurrence" $ do
         let lhs = R.PortGraph @() [] [] [Box (Phase "old" (Variable "a")) [] [R.Capture "legs"]]
             build sizes =

@@ -25,11 +25,9 @@
 * `Paths.EqGen` compares both endpoints through equality of their promoted pairs.
 * `Proarrow.Tools.HypergraphRewrite`: open and closed graph rewriting with compatible
   batches, indexed matching, parameters and bounded normalisation. Whole-arrow captures
-  support reuse, copying and deletion; `compileReducingRules` ensures termination by
-  requiring fewer boxes. Write oriented rules as `lhs ==> rhs`.
+  support reuse, copying and deletion; Write oriented rules as `lhs ==> rhs`.
 * `Proarrow.Tools.HypergraphRewrite.Completion`: bounded Knuth–Bendix-style
   completion and interreduction for string diagrams and open hypergraphs.
-  `checkHypergraphConfluence` checks local confluence of fixed literal rules.
 * `Proarrow.Tools.HypergraphRewrite.Laws`: instantiate named categorical laws as
   hypergraph rewrite rules.
 * `Proarrow.Tools.HypergraphRewrite.Free`: compile `FREE` syntax and `Laws` into graph rules
